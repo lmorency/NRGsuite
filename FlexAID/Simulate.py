@@ -364,7 +364,7 @@ class Simulate:
             
             self.SimStatus.set('Not running: Aborted.')
             
-            #Create the .stop file
+            #Create the .abort file
             abort_file = open(self.Manage.ABORT, 'w')
             abort_file.close()
             
@@ -384,7 +384,7 @@ class Simulate:
             
             self.SimStatus.set('Not running: Stopped.')
             
-            #Create the .stop
+            #Create the .stop file
             stop_file = open(self.Manage.STOP, 'w')
             stop_file.close()
             

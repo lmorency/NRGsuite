@@ -35,9 +35,9 @@ class Config3:
 
         self.top = top
         self.AtomTypes = self.top.IOFile.AtomTypes
-	self.Tab = self.top.Btn_Config3
-
-	self.FrameName = 'Config3'
+        self.Tab = self.top.Btn_Config3
+        
+        self.FrameName = 'Config3'
 
         self.Def_Vars()
         self.Init_Vars()

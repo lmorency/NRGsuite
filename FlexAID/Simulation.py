@@ -50,6 +50,7 @@ class Start(threading.Thread):
         threading.Thread.__init__(self)
 
         self.commandline = commandline
+        #self.commandline += ' > /Users/francisgaudreault/test.log'
 
         self.top = top
         self.FlexAID = self.top.top
@@ -213,29 +214,17 @@ class Parse(threading.Thread):
 
         
         self.top.progressBarHandler(0,self.NbTotalGen)
-
+        self.top.Init_Table()
         
         # Set the auto_zoom to off
         cmd.set("auto_zoom", 0)
         cmd.delete("TOP_*__")
         cmd.frame(1)
+        
+        while self.FlexAID.Run is not None: # and self.FlexAID.Run.poll() is None:
 
-
-        # Copy and read the log temporary file
-#        while(1):
-#            if os.path.isfile(self.LOGFILE):
-#                break
-#            
-#            time.sleep(INTERVAL)
-
-
-        print(repr(self.FlexAID.Run))
-
-        while not self.FlexAID.Run is None and self.FlexAID.Run.poll() is None:
-            
             while (1):
-                
-                # PARSING OUTPUT
+                # Parsing output
                 try:
                     Line = self.FlexAID.Run.stdout.readline()
                 except:
@@ -435,13 +424,13 @@ class Parse(threading.Thread):
 
                     m = re.match("SIGMA_SHARE", Line)
                     if m:
-                        
                         self.ParseGA = True
                         continue
-                    
+                                
             time.sleep(INTERVAL)
 
-        #print "Done parsing."
+
+        print "FlexAID ended."
 
         self.FlexAID.ProcessRunning = False
 

@@ -40,7 +40,7 @@ class Manage():
         self.PAUSE = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'.pause')
         self.STOP = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'.stop')
         self.ABORT = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'.abort')
-
+        
         self.LOGFILE = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'sim.log')
         self.LOGFILETMP = self.LOGFILE + '.tmp'
 
@@ -126,7 +126,7 @@ class Manage():
                 os.remove(self.ABORT)
 
             if os.path.isfile(self.STOP):
-                os.remove(self.STOP)                
+                os.remove(self.STOP)
 
             if os.path.isfile(self.LOGFILE):
                 os.remove(self.LOGFILE)

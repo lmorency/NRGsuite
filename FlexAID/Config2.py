@@ -40,8 +40,8 @@ class Config2:
         self.PyMOL = PyMOL
         
         self.top = top
-	self.Tab = self.top.Btn_Config2
-	self.FrameName = 'Config2'
+        self.Tab = self.top.Btn_Config2
+        self.FrameName = 'Config2'
 
         self.Def_Vars()
         self.Init_Vars()
@@ -67,6 +67,9 @@ class Config2:
         self.IntConsSelection = StringVar()
         self.IntForced = IntVar()
 
+        self.IntTranslation = IntVar()
+        self.IntRotation = IntVar()
+        
         self.dictAtomTypes = dict()
         self.dictFlexBonds = dict()
         self.dictNeighbours = dict()
@@ -89,6 +92,9 @@ class Config2:
         self.IntFactor.set(0.0)
         self.IntConsSelection.set('')
         self.IntForced.set(0)
+
+        self.IntTranslation.set(1)
+        self.IntRotation.set(1)
 
         self.FlexStatus.set('')
         self.SATStatus.set('')
@@ -341,8 +347,34 @@ class Config2:
         fC2Right.pack(side=LEFT, fill=BOTH, expand=True)
 
         #************************************************#
+        #*         Ligand Translation/Rotation          *#
+        #************************************************#
+
+        self.fTransRot = Frame(fC2Left)
+        self.fTransRot.pack(fill=X, side=TOP, padx=5, pady=5)
+        fTransRotLine1 = Frame(self.fTransRot)
+        fTransRotLine1.pack(side=TOP, fill=X)
+        fTransRotLine2 = Frame(self.fTransRot)
+        fTransRotLine2.pack(side=TOP, fill=X)
+        fTransRotLine3 = Frame(self.fTransRot)
+        fTransRotLine3.pack(side=TOP, fill=X)
+
+        Label(fTransRotLine1, text='Ligand translation and rotation', font=self.top.font_Title).pack(side=TOP, anchor=W)
+        Checkbutton(fTransRotLine2, text='Translational degrees of freedom', width=25, variable=self.IntTranslation, font=self.top.font_Text).pack(fill=X, anchor=W)
+        Checkbutton(fTransRotLine3, text='Rotational degrees of freedom', width=25, variable=self.IntRotation, font=self.top.font_Text).pack(fill=X, anchor=W)        
+
+        #************************************************#
         #*             Ligand Flexible Bonds            *#
         #************************************************#
+
+        self.fBonds = Frame(fC2Left)
+        self.fBonds.pack(fill=X, side=TOP, padx=5, pady=5)
+        fBondsLine1 = Frame(self.fBonds)
+        fBondsLine1.pack(side=TOP, fill=X)
+        fBondsLine2 = Frame(self.fBonds)
+        fBondsLine2.pack(side=TOP, fill=X)
+        fBondsLine3 = Frame(self.fBonds)
+        fBondsLine3.pack(side=TOP, fill=X)
         
         self.fBonds = Frame(fC2Left)
         self.fBonds.pack(fill=X, side=TOP, padx=5, pady=5)
@@ -406,7 +438,8 @@ class Config2:
         fCovConstraintLine4 = Frame(fCovConstraint)
         fCovConstraintLine4.pack(fill=X, side=TOP)
  
-        Label(fCovConstraintLine1, text = 'Covalent constraints', font=self.top.font_Title, justify=LEFT).pack(side=LEFT, anchor=W)
+        #Label(fCovConstraintLine1, text = 'Covalent constraints', font=self.top.font_Title, justify=LEFT).pack(side=LEFT, anchor=W)
+        Label(fCovConstraintLine1, text = 'Constraints', font=self.top.font_Title, justify=LEFT).pack(side=LEFT, anchor=W)
 
         Label(fCovConstraintLine2, text = 'Name:', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT, anchor=E)
         optionTuple = '',
@@ -425,12 +458,13 @@ class Config2:
         self.btnClearCovConstraint.pack(side=LEFT)
 
         Label(fCovConstraintLine4, text = '', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT, anchor=E)
-        Label(fCovConstraintLine4, text = 'Distance (A):', font=self.top.font_Text).pack(side=LEFT, anchor=S)
+        Label(fCovConstraintLine4, text = 'Interaction distance (A):', font=self.top.font_Text).pack(side=LEFT, anchor=S)
 
-        self.sclCovDist = Scale(fCovConstraintLine4, from_ = 0.0, to = 3.0, orient=HORIZONTAL, length=120, resolution=0.05, variable=self.CovDist)
+        self.sclCovDist = Scale(fCovConstraintLine4, from_ = 0.0, to = 10.0, orient=HORIZONTAL, length=120, resolution=0.05, variable=self.CovDist)
         self.sclCovDist.pack(side=LEFT)
         self.sclCovDist.config(state='disabled')
 
+        """
         #************************************************#
         #*                  INTERACTION                 *#
         #************************************************#        
@@ -445,8 +479,8 @@ class Config2:
         fIntConstraintLine3.pack(fill=X, side=TOP)
         fIntConstraintLine4 = Frame(fIntConstraint)
         fIntConstraintLine4.pack(fill=X, side=TOP)
-        #fIntConstraintLine5 = Frame(fIntConstraint)
-        #fIntConstraintLine5.pack(fill=X, side=TOP)
+        fIntConstraintLine5 = Frame(fIntConstraint)
+        fIntConstraintLine5.pack(fill=X, side=TOP)
  
         Label(fIntConstraintLine1, text = 'Interaction Constraints', font=self.top.font_Title, justify=LEFT).pack(side=LEFT, anchor=W)
 
@@ -476,7 +510,7 @@ class Config2:
         #Label(fIntConstraintLine5, text = '', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT)
         #self.chkIntForced = Checkbutton(fIntConstraintLine5, text = 'Force', font=self.top.font_Text, variable=self.IntForced)
         #self.chkIntForced.pack(side=LEFT)
-        
+        """
 
     ''' ==================================================================================
     FUNCTION MenuLoadMessage: Display the message based on the menu selected

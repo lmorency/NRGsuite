@@ -39,14 +39,14 @@ class UpdateScreen():
         # TOPn to edit
         self.TOP = TOP
 
-	# Starting index of line
+        # Starting index of line
     	self.colNo = colNo
 
-	# input line to parse
-	self.Line = Line
+        # input line to parse
+        self.Line = Line
 
-	# State on which updating is happening
-	self.State = State
+        # State on which updating is happening
+        self.State = State
 
         self.dictSimData = self.top.dictSimData
         self.dictFlexBonds = self.top.dictFlexBonds
@@ -69,9 +69,8 @@ class UpdateScreen():
 
     #def run(self):
     def start(self):
-
-	self.Update()
-        
+    
+        self.Update()
         #self.top.Updating -= 1
 
 
@@ -450,7 +449,9 @@ class UpdateScreen():
     def CriticalError(self, text):
 
         self.top.FlexAID.DisplayMessage("CRITICAL ERROR: " + text, 1)
-
-        #Create the .pause file            
+    
+        #Create the .abort file
         abort_file = open(self.top.top.Manage.ABORT, 'w')
         abort_file.close()
+
+        
