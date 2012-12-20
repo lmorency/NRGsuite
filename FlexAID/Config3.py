@@ -199,6 +199,10 @@ class Config3:
         else:
             self.optSolventType.config(state='normal')
 
+        # Overrides solvent type - always as negative
+        self.optSolventType.config(state='disabled')
+        self.SolventType.set('< No type >')
+
         # Need for processing the ligand again if atom typing is changed
         self.top.IOFile.fProcessLigand = False
 

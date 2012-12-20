@@ -38,17 +38,20 @@ class Simulate:
 
     def __init__(self,top,PyMOL):
 	        
-		self.PyMOL = PyMOL
-		self.top = top
-		
-		self.Tab = self.top.Btn_Simulate
-		self.FrameName = 'Simulate'
-		
-		self.Def_Vars()
-		self.Init_Vars()
-		
-		self.Frame()
-		self.Trace()
+        self.PyMOL = PyMOL
+        self.top = top
+
+        self.Tab = self.top.Btn_Simulate
+        self.FrameName = 'Simulate'
+
+        self.Def_Vars()
+        self.Init_Vars()
+
+        self.Frame()
+        self.Trace()
+
+        self.IdleStatus()
+
 
     def Def_Vars(self):
         
@@ -67,7 +70,6 @@ class Simulate:
         self.currentClick = None
         self.ProcessError = False
 
-        self.SimStatus.set('Not running.')
         self.ProgBarText.set('... / ...')
         self.SimDefDisplay.set('sticks')
         self.SimMeshDisplay.set(0)
@@ -106,6 +108,7 @@ class Simulate:
         self.LoadMessage()
 
         self.fSimulate.pack(fill=BOTH, expand=True)
+        self.IdleStatus()
 
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
@@ -185,9 +188,10 @@ class Simulate:
         fSim_ProgressLine3.pack(side=TOP, fill=X)
         
         Label(fSim_ProgressLine1, text='Status:', font=self.top.font_Title).pack(side=LEFT) 
-        Label(fSim_ProgressLine1, textvariable=self.SimStatus, font=self.top.font_Title, fg=self.top.Color_Blue).pack(side=LEFT) 
+        self.lblSimStatus = Label(fSim_ProgressLine1, textvariable=self.SimStatus, font=self.top.font_Title, fg=self.top.Color_Blue)
+        self.lblSimStatus.pack(side=LEFT) 
 
-        self.ProgressBar = Canvas(fSim_ProgressLine2, bg='white', width=325, height=25, relief=RAISED, bd=1)
+        self.ProgressBar = Canvas(fSim_ProgressLine2, bg=self.top.Color_White, width=325, height=25, relief=RAISED, bd=1)
         self.ProgressBar.pack(side=LEFT, fill=BOTH, expand=True, anchor=W)
         
         self.RectPB = self.ProgressBar.create_rectangle(0, 0, 0, self.ProgressBar.winfo_reqheight(), fill=self.top.Color_Blue, width=0)
@@ -266,7 +270,6 @@ class Simulate:
         self.Btn_PauseResume.config(state='normal')
         self.Btn_Stop.config(state='normal')
         self.Btn_Abort.config(state='normal')
-        self.SimStatus.set('Running...')
 
         # START FLEXAID AS THREAD
         commandline =   '"%s" "%s" "%s" "%s"' % (   self.top.FlexAIDExecutable,
@@ -282,9 +285,65 @@ class Simulate:
         self.top.DisplayMessage('   Starting executable thread.', 2)
         Start = Simulation.Start(self, commandline)
         
-        self.top.DisplayMessage("For better performance you can disable object SPHERE_AREA__ or GRID_AREA__", 0)
+        self.top.DisplayMessage("For better performance you can disable object BINDINGSITE_AREA__", 0)
     
     
+    ''' =============================================================================== 
+    FUNCTION InitStatus: Initializes necessary variables from FlexAID parsing thread   
+    ===============================================================================  '''     
+    def InitStatus(self):
+
+        self.lblSimStatus.config(fg=self.top.Color_Blue)        
+        self.SimStatus.set('Initializing...')
+
+    ''' =============================================================================== 
+    FUNCTION IdleSim: Simulation was not started yet
+    ===============================================================================  '''     
+    def IdleStatus(self):
+
+        self.lblSimStatus.config(fg=self.top.Color_Black)
+        self.SimStatus.set('Idle.')
+
+    ''' =============================================================================== 
+    FUNCTION RunStatus: Signal given to parse genetic algorithm
+    ===============================================================================  '''     
+    def RunStatus(self):
+
+        self.lblSimStatus.config(fg=self.top.Color_Green)
+        self.SimStatus.set('Running...')
+
+    ''' =============================================================================== 
+    FUNCTION PauseStatus: Signal given to pause FlexAID
+    ===============================================================================  '''     
+    def PauseStatus(self):
+
+        self.lblSimStatus.config(fg='purple')
+        self.SimStatus.set('Paused.')
+
+    ''' =============================================================================== 
+    FUNCTION StopStatus: Signal given to stop FlexAID
+    ===============================================================================  '''     
+    def StopStatus(self):
+
+        self.lblSimStatus.config(fg='yellow')
+        self.SimStatus.set('Stopped.')
+
+    ''' =============================================================================== 
+    FUNCTION AbortStatus: Signal given to pause FlexAID
+    ===============================================================================  '''     
+    def AbortStatus(self):
+
+        self.lblSimStatus.config(fg='orange')
+        self.SimStatus.set('Aborted.')
+
+    ''' =============================================================================== 
+    FUNCTION ErrorStatus: An error occured.
+    ===============================================================================  '''     
+    def ErrorStatus(self):
+
+        self.lblSimStatus.config(fg='red')
+        self.SimStatus.set('Critical error.')
+
     ''' ==================================================================================
     FUNCTION Init_Table: Initialisation the dictionary that contain the energy 
                                                  and fitness for each solution.
@@ -324,45 +383,46 @@ class Simulate:
                 
         if self.SimStatus.get() == 'Running...':
         
-          self.Btn_PauseResume.config(text='Resume...')
-          self.Btn_Stop.config(state='disabled')
-          self.Btn_Abort.config(state='disabled')
-          self.SimStatus.set('Paused.')
-          
-          #Create the .pause file            
-          pause_file = open(self.Manage.PAUSE, 'w')
-          pause_file.close()
-          
-          self.top.DisplayMessage('   the simulation...', 0)
+            self.Btn_PauseResume.config(text='Resume...')
+            self.Btn_Stop.config(state='disabled')
+            self.Btn_Abort.config(state='disabled')
+
+            self.PauseStatus()
+
+            #Create the .pause file            
+            pause_file = open(self.Manage.PAUSE, 'w')
+            pause_file.close()
+
+            self.top.DisplayMessage('   the simulation...', 0)
           
         elif self.SimStatus.get() == 'Paused.':
         
-          self.Btn_PauseResume.config(text='Pause...')
-          self.Btn_Stop.config(state='normal')
-          self.Btn_Abort.config(state='normal')
-          self.SimStatus.set('Running...')
-        
-          if os.path.isfile(self.Manage.PAUSE):
-              try:
-                  os.remove(self.Manage.PAUSE)
-              except OSError:
-                  time.sleep(0.1)
-                  os.remove(self.Manage.PAUSE)
+            self.Btn_PauseResume.config(text='Pause...')
+            self.Btn_Stop.config(state='normal')
+            self.Btn_Abort.config(state='normal')
+
+            self.RunStatus()
+
+            if os.path.isfile(self.Manage.PAUSE):
+                try:
+                    os.remove(self.Manage.PAUSE)
+                except OSError:
+                    pass
           
-          self.top.DisplayMessage('  Resuming the simulation...', 0)
+            self.top.DisplayMessage('  Resuming the simulation...', 0)
         
     ''' =============================================================================== 
     FUNCTION Btn_AbortSim: Abort the simulation 
     ===============================================================================  '''    
     def Btn_AbortSim(self):
         
-        if self.SimStatus.get() == 'Running.':
+        if self.SimStatus.get() == 'Running...':
  
             self.Btn_PauseResume.config(state='disabled')
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')
             
-            self.SimStatus.set('Not running: Aborted.')
+            self.AbortStatus()
             
             #Create the .abort file
             abort_file = open(self.Manage.ABORT, 'w')
@@ -382,14 +442,13 @@ class Simulate:
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')
             
-            self.SimStatus.set('Not running: Stopped.')
+            self.StopStatus()
             
             #Create the .stop file
             stop_file = open(self.Manage.STOP, 'w')
             stop_file.close()
             
             self.top.DisplayMessage('  Stop the simulation.', 0)
-
                
         
     ''' ==================================================================================

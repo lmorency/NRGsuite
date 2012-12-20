@@ -27,11 +27,14 @@ import Constants
 #class UpdateScreen(threading.Thread):
 class UpdateScreen():
 
-    def __init__(self, top, ID, colNo, Line, State, TOP):
+    def __init__(self, top, ID, colNo, Line, State, TOP, Translation, Rotation):
         #threading.Thread.__init__(self)
 
         self.top = top
-
+        
+        self.Translation = Translation
+        self.Rotation = Rotation
+        
         # unique ID of complex
         self.ID = ID
         #print self.ID + " initialized!"
@@ -137,7 +140,7 @@ class UpdateScreen():
 
 
         except:
-            self.CriticalError("Error while updating data list")
+            self.CriticalError("ERROR: while updating data list")
             return 0
 
         return 1
@@ -182,7 +185,7 @@ class UpdateScreen():
             cmd.delete(self.LigandObj)                        
 
         except:
-            self.CriticalError("Error while editing view")
+            self.CriticalError("ERROR: while editing view")
             return 0
 
         return 1
@@ -195,7 +198,7 @@ class UpdateScreen():
         try:
         
             #Get the new coordinates of the ligand
-            self.dictCoord = {}    
+            self.dictCoord = {}
             self.dictCoord = Geometry.buildcc(self.top.ListAtom,self.top.RecAtom,self.top.DisAngDih,self.top.Ori)
         
             #Replace the coordinate in pdb file with the new one
@@ -205,7 +208,7 @@ class UpdateScreen():
             for pdbLine in self.top.ReferenceFile:
                 
                 type = pdbLine[0:6].strip()
-                if (type == 'HETATM') or (type == 'ATOM'):
+                if type == 'HETATM' or type == 'ATOM':
 
                     NoAtom = int(pdbLine[7:11])
                     #print NoAtom
@@ -229,7 +232,7 @@ class UpdateScreen():
 
 
         except IOError:
-            self.CriticalError("Error while writing PDB ligand file.")
+            self.CriticalError("ERROR: while writing PDB ligand file.")
             return 0
 
         return 1
@@ -254,7 +257,7 @@ class UpdateScreen():
                     # If the dihangle between atoms NEED to be modified
                     if self.dictFlexBonds[k][0] == 1: 
 
-                        # Deplacement in the LogFile Column
+                        # Read and move to next column
                         ColValue = float(self.Line[self.colNo:self.colNo+9])
                         self.colNo = self.colNo + 10
 
@@ -299,7 +302,7 @@ class UpdateScreen():
                                     # SET the 2nd ATOM Dihedral Angle...
                                     self.top.DisAngDih[int(ATflex_B)][2] = ColValue                                                                   
         except:
-            self.CriticalError("Error while updating ligand flexibility")
+            self.CriticalError("ERROR: while updating ligand flexibility")
             return 0
 
         return 1
@@ -310,58 +313,33 @@ class UpdateScreen():
     def UpdateLigandAnchorPoint(self):
 
         try: 
-            # Alter atom X,Y,Z of ligand according to GPA positionning columns
-            if self.top.RngTYPE == 'LOCCLF':
-
+                                    
+            if self.Translation:
                 index = int(float(self.Line[self.colNo:self.colNo+9]))
-                self.colNo += 10
-
-                coordX = float(self.top.GridLines[index][30:38].strip())     # The atom X coordinate
-                coordY = float(self.top.GridLines[index][39:46].strip())     # The atom Y coordinate
-                coordZ = float(self.top.GridLines[index][47:54].strip())     # The atom Z coordinate
-
+                
+                coordX = self.top.GridVertex[index][0]     # The atom X coordinate
+                coordY = self.top.GridVertex[index][1]     # The atom Y coordinate
+                coordZ = self.top.GridVertex[index][2]     # The atom Z coordinate
+                
                 pointA = [coordX, coordY, coordZ]
                 pointB = [self.top.OriX[0], self.top.OriX[1], self.top.OriX[2]]
                 pointC = [self.top.Ori[0], self.top.Ori[1], self.top.Ori[2]]
                 pointD = [self.top.OriY[0], self.top.OriY[1], self.top.OriY[2]]
-
+                
                 self.top.DisAngDih[self.top.VarAtoms[0]][0] = Geometry.distance(pointA, pointB)                             
                 self.top.DisAngDih[self.top.VarAtoms[0]][1] = Geometry.angle(pointA, pointB, pointC)
                 self.top.DisAngDih[self.top.VarAtoms[0]][2] = Geometry.dihedralAngle(pointA, pointB, pointC, pointD)
 
-                self.top.DisAngDih[self.top.VarAtoms[1]][1] = float(self.Line[self.colNo:self.colNo+9])
-                self.top.DisAngDih[self.top.VarAtoms[1]][2] = float(self.Line[self.colNo+10:self.colNo+19])
-                self.top.DisAngDih[self.top.VarAtoms[2]][2] = float(self.Line[self.colNo+20:self.colNo+29])
-
-                self.colNo += 30
-
-            else:
-
-                self.top.DisAngDih[self.top.VarAtoms[0]][0] = float(self.Line[self.colNo:self.colNo+9])
-                self.top.DisAngDih[self.top.VarAtoms[0]][1] = float(self.Line[self.colNo+10:self.colNo+19])
-                self.top.DisAngDih[self.top.VarAtoms[0]][2] = float(self.Line[self.colNo+20:self.colNo+29])
-                self.top.DisAngDih[self.top.VarAtoms[1]][1] = float(self.Line[self.colNo+30:self.colNo+39])
-                self.top.DisAngDih[self.top.VarAtoms[1]][2] = float(self.Line[self.colNo+40:self.colNo+49])
-                self.top.DisAngDih[self.top.VarAtoms[2]][2] = float(self.Line[self.colNo+50:self.colNo+59])
-
-                self.colNo += 60
-
-                #print("*******************************************")
-                #print("Line Log: " + str(self.Line))
-                #print("ATOM: " + str(self.top.VarAtoms[0]) + "  " + str(self.top.DisAngDih[self.top.VarAtoms[0]][0]) + " " +
-                #      str(self.top.DisAngDih[self.top.VarAtoms[0]][1]) + " " + str(self.top.DisAngDih[self.top.VarAtoms[0]][2]))
-                #print("ATOM: " + str(self.top.VarAtoms[1]) + "           " +
-                #      str(self.top.DisAngDih[self.top.VarAtoms[1]][1]) + " " + str(self.top.DisAngDih[self.top.VarAtoms[1]][2]))
-                #print("ATOM: " + str(self.top.VarAtoms[2]) + "                       " + str(self.top.DisAngDih[self.top.VarAtoms[2]][2]))
-
-
-                # In the dictionary: key = ConnNo, value = 0/1 NOT Selected / Selected (to be flexible),
-                #                                  value = 0/1 NOT Forced / Forced, 
-                #                                  value = Number of HETTYP (atom no)
-                #                                  value = List of ATOMS no (from FLEDIH)
+                self.colNo += 11
+            
+            if self.Rotation:
+                self.top.DisAngDih[self.top.VarAtoms[1]][1] = float(self.Line[self.colNo:self.colNo+10])
+                self.top.DisAngDih[self.top.VarAtoms[1]][2] = float(self.Line[self.colNo+11:self.colNo+21])
+                self.top.DisAngDih[self.top.VarAtoms[2]][2] = float(self.Line[self.colNo+22:self.colNo+32])
+                self.colNo += 33
 
         except:
-            self.CriticalError("Error while updating ligand anchor point")
+            self.CriticalError("ERROR: while updating ligand anchor point")
             return 0
 
         return 1
@@ -427,7 +405,7 @@ class UpdateScreen():
 
         except:
 
-            self.CriticalError("Error while updating side-chain conformations")
+            self.CriticalError("ERRRO: while updating side-chain conformations")
     
     '''=========================================================================
       Get_AtomString: Retrives the PyMOL atom selection string

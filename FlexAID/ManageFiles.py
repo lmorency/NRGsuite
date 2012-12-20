@@ -172,7 +172,7 @@ class Manage():
 
         elif rngOpt == 'LOCCLF':
             self.Config1.Generate_CleftBindingSite()
-            line = 'RNGOPT LOCCLF'
+            line = 'RNGOPT LOCCLF '
             line += self.Config1.CleftPath + '\n'
             config_file.write(line)        
         
@@ -186,7 +186,11 @@ class Manage():
             self.Create_ConsFile(ConsFile)
             config_file.write('CONSTR ' + ConsFile + '\n')
 
-        config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq)  + ' - 0\n')
+        if self.Config2.IntTranslation.get():
+            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq)  + ' - -1\n')
+            
+        if self.Config2.IntRotation.get():
+            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq)  + ' - 0\n')
         
         # Ligand flexibility
         if self.Config2.FlexBondsPar.get() == 'CUSTOM':
@@ -251,7 +255,9 @@ class Manage():
         config_file.write('DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps') + '\n')
 
         config_file.write('MAXRES 30'  + '\n')
-        config_file.write('ENDINP')
+
+        config_file.write('NRGSUI\n')
+        config_file.write('ENDINP\n')
 
         config_file.close()
         

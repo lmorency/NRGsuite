@@ -37,5 +37,5 @@ def GetFontType():
     return FontType
 
 def GetFontSize():
-    FontSize = 14
+    FontSize = 12
     return FontSize

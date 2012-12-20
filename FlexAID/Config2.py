@@ -360,8 +360,8 @@ class Config2:
         fTransRotLine3.pack(side=TOP, fill=X)
 
         Label(fTransRotLine1, text='Ligand translation and rotation', font=self.top.font_Title).pack(side=TOP, anchor=W)
-        Checkbutton(fTransRotLine2, text='Translational degrees of freedom', width=25, variable=self.IntTranslation, font=self.top.font_Text).pack(fill=X, anchor=W)
-        Checkbutton(fTransRotLine3, text='Rotational degrees of freedom', width=25, variable=self.IntRotation, font=self.top.font_Text).pack(fill=X, anchor=W)        
+        Checkbutton(fTransRotLine2, text='Translational degrees of freedom', variable=self.IntTranslation, font=self.top.font_Text).pack(fill=X, anchor=W)
+        Checkbutton(fTransRotLine3, text='Rotational degrees of freedom', variable=self.IntRotation, font=self.top.font_Text).pack(fill=X, anchor=W)        
 
         #************************************************#
         #*             Ligand Flexible Bonds            *#

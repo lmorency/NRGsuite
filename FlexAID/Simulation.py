@@ -51,6 +51,7 @@ class Start(threading.Thread):
 
         self.commandline = commandline
         #self.commandline += ' > /Users/francisgaudreault/test.log'
+        print self.commandline
 
         self.top = top
         self.FlexAID = self.top.top
@@ -61,25 +62,27 @@ class Start(threading.Thread):
     # Start FlexAID on a side thread
     def run(self):        
         
-        try:
+        print "FlexAID starting thread has begun."
+        
+        self.FlexAID.ProcessRunning = True
 
-            self.FlexAID.ProcessRunning = True
+        try:
             if self.FlexAID.OSid == 'WIN':
                 self.FlexAID.Run = Popen(self.commandline, shell=False, bufsize=1, stdout=PIPE, stderr=STDOUT)
             else:
                 self.FlexAID.Run = Popen(self.commandline, shell=True,  bufsize=1, stdout=PIPE, stderr=STDOUT)
                 
             self.FlexAID.Run.wait()
-
         except:
 
-            self.FlexAID.DisplayMessage('   Fatal error: Could not execute FlexAID', 1)
+            self.FlexAID.DisplayMessage('   Fatal error: Could not run the executable FlexAID', 1)
             self.FlexAID.DisplayMessage('   Make sure you downloaded NRGsuite for the right platform', 1)
-
-            self.FlexAID.ProcessRunning = False
             self.top.ProcessError = True
 
+        print "FlexAID starting thread has ended."
+        
         self.FlexAID.Run = None
+        self.FlexAID.ProcessRunning = False
         
 
 
@@ -96,6 +99,7 @@ class Parse(threading.Thread):
 
         self.FlexStatus = self.FlexAID.Config2.FlexStatus.get()
         self.OSid = self.FlexAID.OSid
+        self.BindingSiteDisplay = self.FlexAID.Config1.BindingSiteDisplay
 
         self.LOGFILE = self.top.Manage.LOGFILE
                 
@@ -114,7 +118,11 @@ class Parse(threading.Thread):
         self.Generation = -1
         self.Best = ''
         self.TOP = -1
+        self.GridVertex = {}
 
+        self.Translation = self.FlexAID.Config2.IntTranslation.get()
+        self.Rotation = self.FlexAID.Config2.IntRotation.get()
+        
         #self.Updating = 0
 
         self.State = 0
@@ -167,7 +175,6 @@ class Parse(threading.Thread):
         # In order, atoms that need their values to be modified
         self.VarAtoms = self.getVarAtoms(self.top.Manage.INPFlexAIDRunSimulationProject_Dir)    # 1st = 3 positions, 2nd = 2 positions, 3rd = 1 position
          
-        print('STEP 5: Start the thread...')
         self.start()
         
     '''
@@ -176,9 +183,11 @@ class Parse(threading.Thread):
     def run(self):
     #def start(self):
         
-        # 20 msec
-        INTERVAL = 0.05
+        print "FlexAID parsing thread has begun."
 
+        # 20 msec
+        INTERVAL = 0.01
+        TIMEOUT = INTERVAL * 50
 
         # Number of ligand atoms
         nbAtoms = len(self.DisAngDih)
@@ -200,17 +209,20 @@ class Parse(threading.Thread):
 
     
         print "Waiting for the simulation to start..."
-
+        while not self.FlexAID.ProcessRunning:
+            time.sleep(INTERVAL)
+        
         # Wait for the simulation to start...
-        while (1):
+        while TIMEOUT:
             if not self.FlexAID.Run is None:
                 print "FlexAID is running..."
                 break
             elif self.top.ProcessError:
                 print "An error occured while trying to run FlexAID"
                 return
-
+                        
             time.sleep(INTERVAL)
+            TIMEOUT -= INTERVAL
 
         
         self.top.progressBarHandler(0,self.NbTotalGen)
@@ -220,6 +232,8 @@ class Parse(threading.Thread):
         cmd.set("auto_zoom", 0)
         cmd.delete("TOP_*__")
         cmd.frame(1)
+
+        self.top.InitStatus()
         
         while self.FlexAID.Run is not None: # and self.FlexAID.Run.poll() is None:
 
@@ -227,6 +241,7 @@ class Parse(threading.Thread):
                 # Parsing output
                 try:
                     Line = self.FlexAID.Run.stdout.readline()
+                    #print Line
                 except:
                     break
 
@@ -270,7 +285,8 @@ class Parse(threading.Thread):
                                 #print("updating " + ID)
 
                                 #print Line
-                                Update = UpdateScreen.UpdateScreen(self, ID, colNo, Line, self.CurrentState, self.TOP)
+                                Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
+                                                                    self.Translation, self.Rotation )
 
                                     
                                 #Update.join()
@@ -286,20 +302,11 @@ class Parse(threading.Thread):
                                 if (self.TOP+1) == self.NBLineGEN:
                                     self.State = self.CurrentState
 
-                                    # Range of optimization
-                                    RngOpt = self.FlexAID.Config1.RngOpt.get()
-
                                     try:
                                         # append range object to next state
-                                        if RngOpt == 'LOCCEN':
-                                            cmd.create(self.FlexAID.Config1.SphereDisplay, self.FlexAID.Config1.SphereDisplay, 
-                                                       1, self.CurrentState)
-                                        elif RngOpt == 'LOCCLF':
-                                            cmd.create(self.FlexAID.Config1.GridDisplay, self.FlexAID.Config1.GridDisplay,
-                                                       1, self.CurrentState)
-
+                                        cmd.create(self.BindingSiteDisplay, self.BindingSiteDisplay,1, self.CurrentState)
                                     except:
-                                        self.FlexAID.DisplayMessage("Could not display range of optimization: Object no longer exists", 1)
+                                        self.FlexAID.DisplayMessage("ERROR: Could not display binding-site. Object no longer exists", 1)
 
                                     # Update energy/fitness table
                                     self.top.update_DataList()
@@ -334,9 +341,12 @@ class Parse(threading.Thread):
     
                     # track errors
                     if Line.startswith('ERROR'):
-                        self.FlexAID.DisplayMessage(str("A critical error occured\nFlexAID :: " + Line), 1)
-                        self.FlexAID.Run.terminate()
-                        self.FlexAID.Run = None
+                        self.FlexAID.DisplayMessage(str("A critical error occured\n" + Line), 1)
+                        self.top.ErrorStatus()
+                        try:
+                            self.FlexAID.Run.terminate()
+                        except:
+                            pass                            
                         break
                     
                     # parse output
@@ -388,7 +398,6 @@ class Parse(threading.Thread):
 
                     m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
                     if m:
-
                         self.ListAtom.append(int(m.group(1)))
 
                         if len(self.ListAtom) == nbAtoms:
@@ -400,37 +409,38 @@ class Parse(threading.Thread):
 
                     m = re.match("the protein center of coordinates is:\s+(\S+)\s+(\S+)\s+(\S+)\s+", Line)
                     if m:
-                        
                         self.Ori[0] = float(m.group(1))
                         self.Ori[1] = float(m.group(2))
                         self.Ori[2] = float(m.group(3))
 
-                        if self.RngOpt == 'LOCCLF':
-
-                            self.OriX[0] = self.Ori[0] + 1  # X
-                            self.OriX[1] = self.Ori[1]      # Y
-                            self.OriX[2] = self.Ori[2]      # Z 
-                            
-                            self.OriY[0] = self.Ori[0]      # X
-                            self.OriY[1] = self.Ori[1] + 1  # Y
-                            self.OriY[2] = self.Ori[2]      # Z                        
+                        self.OriX[0] = self.Ori[0] + 1.0  # X
+                        self.OriX[1] = self.Ori[1]        # Y
+                        self.OriX[2] = self.Ori[2]        # Z
                         
-                            fileGrd = open(self.GridPath)
-                            self.GridLines = fileGrd.readlines()
-                            fileGrd.close() 
-
+                        self.OriY[0] = self.Ori[0]        # X
+                        self.OriY[1] = self.Ori[1] + 1.0  # Y
+                        self.OriY[2] = self.Ori[2]        # Z
+                        
                         continue            
 
-
+                    m = re.match("Grid\[(\d+)\]=", Line)
+                    if m:
+                        index = int(m.group(1))
+                        
+                        strcoor = Line[(Line.find('=')+1):]
+                        self.GridVertex[index] = [float(strcoor[0:8]), float(strcoor[8:16]), float(strcoor[16:24])]
+                        continue
+                        
                     m = re.match("SIGMA_SHARE", Line)
                     if m:
                         self.ParseGA = True
+                        self.top.RunStatus()
                         continue
                                 
             time.sleep(INTERVAL)
 
 
-        print "FlexAID ended."
+        print "FlexAID parsing thread has ended."
 
         self.FlexAID.ProcessRunning = False
 
@@ -445,7 +455,6 @@ class Parse(threading.Thread):
         self.top.Btn_PauseResume.config(state='disabled')
         self.top.Btn_Stop.config(state='disabled')
         self.top.Btn_Abort.config(state='disabled')
-        self.top.SimulationSTATUS = ''
 
         # Put back the auto_zoom to on
         cmd.set("auto_zoom", -1)
@@ -546,15 +555,15 @@ class Parse(threading.Thread):
         # Creation of a dictionary containing the 3 neighbors of each atoms
         for line in inpFile:
             if line.startswith('HETTYP'):
-                noLine = int(line[7:11])
-                if (int(line[32:36]) == 0):
-                    if (int(line[27:31]) == 0):
-                        if (int(line[22:26]) == 0):
-                            NoAtom3 = noLine
+                noAtom = int(line[7:11])
+                if int(line[32:36]) == 0:
+                    if int(line[27:31]) == 0:
+                        if int(line[22:26]) == 0:
+                            NoAtom3 = noAtom
                         else:
-                            NoAtom2 = noLine
+                            NoAtom2 = noAtom
                     else:
-                        NoAtom1 = noLine
+                        NoAtom1 = noAtom
                         
                 
         return [NoAtom3, NoAtom2, NoAtom1]

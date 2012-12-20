@@ -116,7 +116,7 @@ class displayFlexAID:
         self.Color_Blue = '#6699FF'
         self.Color_Red = '#FF9999'
         self.Color_White = '#FFFFFF'
-	self.Color_Black = 'black'                
+        self.Color_Black = 'black'                
 
         #print("FlexAID: initializing window")
         # Initialize the window
@@ -195,7 +195,7 @@ class displayFlexAID:
 
         fTop = Frame(self.frame, relief=RIDGE, border=4, height=50)
         fTop.pack(fill=BOTH, expand=True)#, padx=10, pady=10, ipady=10, ipadx=10, side=TOP)
-	fTop.pack_propagate(0)
+        fTop.pack_propagate(0)
         
         self.Btn_IOFiles = Button(fTop, text='Input Files', bg=self.Color_White, command=self.Btn_IOFiles_Clicked, font=self.font_Text)
         self.Btn_IOFiles.pack(side=LEFT, fill=BOTH, expand=True)
@@ -258,8 +258,8 @@ class displayFlexAID:
         fBottomLeft = Frame(fBottom)
         fBottomLeft.pack(side=LEFT, fill=Y, ipadx=20, ipady=20)
 
-	#self.MessageBox = MessageBox.scrollableContainer(fBottomLeft, bd=2, bg="black")
-	#self.MessageBox.pack(fill=BOTH, expand=True)
+        #self.MessageBox = MessageBox.scrollableContainer(fBottomLeft, bd=2, bg="black")
+        #self.MessageBox.pack(fill=BOTH, expand=True)
 
         scrollBar = Scrollbar(fBottomLeft)
         scrollBar.pack(side=RIGHT, fill=Y)
@@ -644,17 +644,16 @@ class displayFlexAID:
         
         self.TextMessage.config(state='normal')
  
-	#self.TextMessage.config(font='red')
-	self.TextMessage.insert(INSERT, '\n' + msg)
+        #self.TextMessage.config(font='red')
+        self.TextMessage.insert(INSERT, '\n' + msg)
 
-	if priority == 1:
-	    #self.TextMessage.tag_add('warn', lineNo + '.0', lineNo + '.' + str(NbChar))
-	    self.TextMessage.tag_config('warn', foreground='red')
-	elif priority == 2:
-	    #self.TextMessage.tag_add('notice', lineNo + '.0', lineNo + '.' + str(NbChar))
-	    self.TextMessage.tag_config('notice', foreground='blue')   
+        if priority == 1:
+            #self.TextMessage.tag_add('warn', lineNo + '.0', lineNo + '.' + str(NbChar))
+            self.TextMessage.tag_config('warn', foreground='red')
+        elif priority == 2:
+            #self.TextMessage.tag_add('notice', lineNo + '.0', lineNo + '.' + str(NbChar))
+            self.TextMessage.tag_config('notice', foreground='blue')
 
-	self.TextMessage.yview(INSERT)
-        
+        self.TextMessage.yview(INSERT)        
         self.TextMessage.config(state='disabled')
-        
+

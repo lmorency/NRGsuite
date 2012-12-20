@@ -62,9 +62,9 @@ class flexbond(Wizard):
         self.AtomDisplay = 'HIGHLIGHT_ATOM__'
 
         self.pick_count = 0
-                
+        
         self.panelForceBond = 'Adv.: Force bond OFF'
-        self.Force = False            
+        self.Force = False
 
         self.point1 = list()
         self.point2 = list()
