@@ -421,9 +421,9 @@ class Config1:
         
         if not self.PyMOL:
             return
-        
-        Center = General_cmd.Get_CenterOfMass2(self.top.IOFile.ProtName.get())
-        Width = General_cmd.Get_MaxWidth(self.top.IOFile.ProtName.get())
+                
+        Center = General_cmd.Get_CenterOfMass2(self.top.IOFile.ProtName.get(), cmd.get_state())
+        Width = General_cmd.Get_MaxWidth(self.top.IOFile.ProtName.get(), cmd.get_state())
 
         if len(Center) > 0 and Width != -1:
             self.BindingSite.Sphere = SphereObj.SphereObj(Width/4.0,Width/2.0,Center)
@@ -515,7 +515,7 @@ class Config1:
                 in_.close()
 
                 TargetFlex.listSideChain[:] = [ res for res in TargetFlex.listSideChain if self.listResidues.count(res) ]
-
+                
                 if TargetFlex.Count_SideChain() > 0: # or normal modes
                     self.TargetFlex = TargetFlex
                     self.Update_FlexSideChain_DDL()
@@ -807,9 +807,9 @@ class Config1:
 
         if not self.PyMOL:
             return
-
+        
         if self.top.ActiveWizard is not None:
-            Center = General_cmd.Get_CenterOfMass2(sel)
+            Center = General_cmd.Get_CenterOfMass2(sel, cmd.get_state())
             
             if len(Center) > 0:
                 self.top.ActiveWizard.SphereView.Set_Center(Center)

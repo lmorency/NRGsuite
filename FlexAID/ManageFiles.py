@@ -247,7 +247,7 @@ class Manage():
 
 
         config_file.write('SLVTYP ' + str(self.Config3.SolventTypeIndex.get()) + '\n')
-        if not self.Config3.SolventTypeIndex.get():
+        if self.Config3.SolventTypeIndex.get() == 0:
             config_file.write('SLVPEN ' + self.Config3.SolventTerm.get() + '\n')
 
         config_file.write('STATEP ' + self.FlexAID.FlexAIDSimulationProject_Dir  + '\n')
@@ -315,11 +315,11 @@ class Manage():
                     
         FlexFile = open(outfile, 'w')
                   
-        for item in self.Config1.TargetFlex.listFlexSideChain:
-            lastelm = len(item) - 1
+        for item in self.Config1.TargetFlex.listSideChain:
+            lastch = len(item) - 1
             ResName = item[0:3]
-            ChainID = item[lastelm]
-            ResSeq = item[3:(lastelm)]
+            ChainID = item[lastch]
+            ResSeq = item[3:(lastch)]
 
             Line = 'RESIDU ' + str(ResSeq).rjust(4) + ' ' + ChainID + ' ' + ResName + '\n'
             FlexFile.write(Line)

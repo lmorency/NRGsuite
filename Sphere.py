@@ -147,8 +147,10 @@ class Sphere(Wizard):
         
         return
         
+        
     def get_prompt(self):
         return ['Press Shift+Mouse3(Wheel Click) to Move the sphere...']
+
 
     def reset(self):
 
@@ -161,14 +163,16 @@ class Sphere(Wizard):
             self.Quit_Wizard()
             return
 
+
     def cancel(self):
 
         self.App.WizardResult = 1
         self.Quit_Wizard()
             
+
     def btn_Done(self):
 
-        Center = General_cmd.Get_CenterOfMass2(self.SphereDisplay)
+        Center = General_cmd.Get_CenterOfMass2(self.SphereDisplay, self.State)
         if len(Center) > 0:
             self.SphereView.Set_Center(Center)
 
@@ -177,6 +181,7 @@ class Sphere(Wizard):
 
         self.App.WizardResult = 2
         self.Quit_Wizard()
+
 
     def get_panel(self):
         return [

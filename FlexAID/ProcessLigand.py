@@ -41,7 +41,7 @@ from subprocess import Popen, PIPE
 class ProcLig():
 
 
-    def __init__(self, top, StartAtomIndex, UseOldTypes):
+    def __init__(self, top, StartAtomIndex, AtomTypes, AnchorAtom):
         
         #threading.Thread.__init__(self)
 
@@ -51,7 +51,8 @@ class ProcLig():
         self.ProtPath = self.FlexAID.IOFile.ProtPath
         self.LigandPath = self.FlexAID.IOFile.LigandPath
 
-        self.UseOldTypes = UseOldTypes
+        self.AtomTypes = AtomTypes
+        self.AnchorAtom = AnchorAtom
 
         self.FlexAIDWRKInstall_Dir = os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK')
         
@@ -188,9 +189,16 @@ class ProcLig():
         commandline += ' --atom_index ' + str(self.StartAtomIndex)
         commandline += ' -ref '
         
-        if self.UseOldTypes:
+        if self.AtomTypes == 'Sobolev':
             commandline += ' --old_types'
-
+        elif self.AtomTypes == 'Gaudreault':
+            commandline += ' --new_types'
+        elif self.AtomTypes == 'Sybyl':
+            commandline += ' --babel_types'
+        
+        if self.AnchorAtom != -1:
+            commandline += ' --force_gpa ' + str(self.AnchorAtom)
+        
         #print commandline
 
         # Execute command-line

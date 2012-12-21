@@ -215,13 +215,13 @@ def get_ID(index, sel):
 ''' ==================================================================================
 FUNCTION Get_CenterOfMass2: Gets the center of mass of an object
 ==================================================================================  '''            
-def Get_CenterOfMass2(selection):
+def Get_CenterOfMass2(selection, state):
 
     try:
-        nAtoms = cmd.count_atoms(selection, state=1)
+        nAtoms = cmd.count_atoms(selection, state=state)
 
         if nAtoms > 0:
-            MinMax = cmd.get_extent(selection, state=1)
+            MinMax = cmd.get_extent(selection, state=state)
 
             MaxWidth = 0.0
             for i in range(0,3):
@@ -239,13 +239,13 @@ def Get_CenterOfMass2(selection):
 ''' ==================================================================================
 FUNCTION Get_MaxWidth: Returns the max width from the center of an object
 ==================================================================================  '''            
-def Get_MaxWidth(selection):
+def Get_MaxWidth(selection,state):
 
     try:
-        nAtoms = cmd.count_atoms(selection, state=1)
+        nAtoms = cmd.count_atoms(selection, state=state)
 
         if nAtoms > 0:
-            MinMax = cmd.get_extent(selection, state=1)
+            MinMax = cmd.get_extent(selection, state=state)
 
             MaxWidth = 0.0
             for i in range(0,3):

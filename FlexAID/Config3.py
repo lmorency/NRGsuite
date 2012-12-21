@@ -94,10 +94,10 @@ class Config3:
             self.SolventType.set('< Type-based >')
             self.SolventTypeIndex.set(13)
         elif self.AtomTypes.get() == 'Sybyl':
-            self.SolventType.set('< Type-based >')
-            self.SolventTypeIndex.set(27)
+            self.SolventType.set('< No type >')
+            self.SolventTypeIndex.set(0)
 
-        self.SolventTerm.set('-2.0')
+        self.SolventTerm.set('-5.0')
 
         self.DeltaAngle.set('2.5')
         self.DeltaDihedral.set('2.5')
@@ -193,15 +193,12 @@ class Config3:
     =================================================================================  '''    
     def AtomTypes_Toggle(self, *args):
         
-        if self.AtomTypes.get() == 'Sobolev':
-            self.optSolventType.config(state='disabled')
+        if self.AtomTypes.get() != 'Gaudreault':
+            self.optSolventType.config(state='normal')
             self.SolventType.set('< No type >')
         else:
-            self.optSolventType.config(state='normal')
-
-        # Overrides solvent type - always as negative
-        self.optSolventType.config(state='disabled')
-        self.SolventType.set('< No type >')
+            self.optSolventType.config(state='disabled')
+            self.SolventType.set('< Type-based >')
 
         # Need for processing the ligand again if atom typing is changed
         self.top.IOFile.fProcessLigand = False
@@ -215,18 +212,17 @@ class Config3:
     =================================================================================  '''    
     def SolventType_Toggle(self, *args):
         
-        if self.SolventType.get() != '< No type >':
-            self.entSolventTerm.config(state='disabled')
+        if self.SolventType.get() == '< No type >':
+            self.entSolventTerm.config(state='normal')
             self.SolventTypeIndex.set(0)
 
-        elif self.SolventType.get() != '< Type-based >':
-            self.entSolventTerm.config(state='normal')
-            
+        elif self.SolventType.get() == '< Type-based >':
+            self.entSolventTerm.config(state='disabled')
             if self.AtomTypes.get() == 'Gaudreault':
                 self.SolventTypeIndex.set(13)
             elif self.AtomTypes.get() == 'Sybyl':
                 self.SolventTypeIndex.set(27)
-                
+            
     ''' ==================================================================================
     FUNCTION DEE_Toggle: Disables/enables the edit box according to checkstate
     =================================================================================  '''    

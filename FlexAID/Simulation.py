@@ -50,7 +50,6 @@ class Start(threading.Thread):
         threading.Thread.__init__(self)
 
         self.commandline = commandline
-        #self.commandline += ' > /Users/francisgaudreault/test.log'
         print self.commandline
 
         self.top = top
@@ -62,7 +61,7 @@ class Start(threading.Thread):
     # Start FlexAID on a side thread
     def run(self):        
         
-        print "FlexAID starting thread has begun."
+        #print "FlexAID starting thread has begun."
         
         self.FlexAID.ProcessRunning = True
 
@@ -79,7 +78,7 @@ class Start(threading.Thread):
             self.FlexAID.DisplayMessage('   Make sure you downloaded NRGsuite for the right platform', 1)
             self.top.ProcessError = True
 
-        print "FlexAID starting thread has ended."
+        #print "FlexAID starting thread has ended."
         
         self.FlexAID.Run = None
         self.FlexAID.ProcessRunning = False
@@ -135,18 +134,11 @@ class Parse(threading.Thread):
         self.ParseGA = False
         self.FixedAngle = {}
 
-        # Rotamers data
-        self.dictRotamers = defaultdict(list)         # Contains the list of all dihedral for a residue
-                                                      # dictRotamers['ALA'] = [1.000, 2.000, 3.100, 2.900, ...]
-        self.dictRotamersIndex = defaultdict(list)    # Contains the list of indexes to map in Rotamers dict
-                                                      # dictRotamersIndex['ALA36A'] = [0, 5, 18, 56, ...]
-        self.dictNumberRotamers = {}                  # Corresponds to the number of Rotamers for a residue
-                                                      # dictNumberRotamers['ALA'] = Xn
-
         self.ReferencePath = self.FlexAID.IOFile.ReferencePath
 
-        self.listFlexSideChainNRot = list()
-        self.listFlexSideChain = self.FlexAID.Config1.TargetFlex.listSideChain
+        self.listSideChain = self.FlexAID.Config1.TargetFlex.listSideChain
+        self.dictSideChainNRot = {}
+        self.dictSideChainRotamers = {}
 
         self.dictSimData = self.top.dictSimData
 
@@ -183,11 +175,11 @@ class Parse(threading.Thread):
     def run(self):
     #def start(self):
         
-        print "FlexAID parsing thread has begun."
+        #print "FlexAID parsing thread has begun."
 
         # 20 msec
-        INTERVAL = 0.01
-        TIMEOUT = INTERVAL * 50
+        INTERVAL = 0.05
+        TIMEOUT = INTERVAL * 10
 
         # Number of ligand atoms
         nbAtoms = len(self.DisAngDih)
@@ -215,7 +207,7 @@ class Parse(threading.Thread):
         # Wait for the simulation to start...
         while TIMEOUT:
             if not self.FlexAID.Run is None:
-                print "FlexAID is running..."
+                #print "FlexAID is running..."
                 break
             elif self.top.ProcessError:
                 print "An error occured while trying to run FlexAID"
@@ -304,7 +296,7 @@ class Parse(threading.Thread):
 
                                     try:
                                         # append range object to next state
-                                        cmd.create(self.BindingSiteDisplay, self.BindingSiteDisplay,1, self.CurrentState)
+                                        cmd.create(self.BindingSiteDisplay, self.BindingSiteDisplay, 1, self.CurrentState)
                                     except:
                                         self.FlexAID.DisplayMessage("ERROR: Could not display binding-site. Object no longer exists", 1)
 
@@ -336,7 +328,14 @@ class Parse(threading.Thread):
 
                         continue
                     
+                    m = re.match("clustering all individuals", Line)
+                    if m:
+                        self.top.ClusterStatus()
 
+                    m = re.match("Done", Line)
+                    if m:
+                        self.top.SuccessStatus()
+                        
                 else:
     
                     # track errors
@@ -349,40 +348,11 @@ class Parse(threading.Thread):
                             pass                            
                         break
                     
-                    # parse output
-                    m = re.match("\d+ possible rotamer", Line)
-                    if m:
 
-                        words = Line.split()
-                        residue = words[5] + words[6] + words[7]
+                    m = re.match("Rotamer for", Line)
+                    if m:                        
+                        self.AddRotamerFromLine(Line)
                         
-                        # If the residue is found in the list
-                        if self.listFlexSideChain.count(residue) > 0: # and residue not in self.dictRotamersIndex:
-
-                            for i in range(0,int(words[0])):
-                                self.dictRotamersIndex[residue].append(int(words[9+i]))
-                            
-                            #print str(self.dictRotamersIndex[residue])
-
-                            if int(words[0]) > 0 and words[5] not in self.dictRotamers:
-                                if self.AddToRotamers(words[5]) == 0:
-                                    print "No rotamers found for residue " + words[5]
-                            
-                            self.listFlexSideChainNRot.append(int(words[0]))
-                            
-                            #print str(self.listFlexSideChain)
-                            #print str(self.listFlexSideChainNRot)
-                            
-                            
-                            if len(self.listFlexSideChain) == len(self.listFlexSideChainNRot):
-                                break
-
-                        else:
-                            print "Residue " + residue + " was not found in Flexible Side-Chains list."
-
-                        continue
-
-
 
                     m = re.match("shiftval=", Line)
                     if m and self.FlexStatus != '':
@@ -440,15 +410,12 @@ class Parse(threading.Thread):
             time.sleep(INTERVAL)
 
 
-        print "FlexAID parsing thread has ended."
-
+        #print "FlexAID parsing thread has ended."
         self.FlexAID.ProcessRunning = False
 
         # Empty rotamers data
-        self.dictRotamers.clear()
-        self.dictRotamersIndex.clear()
-        self.dictNumberRotamers.clear()
-        del self.listFlexSideChainNRot[:]
+        self.dictSideChainNRot.clear()
+        self.dictSideChainRotamers.clear()
 
         # Re-enable buttons
         self.top.Btn_Start.config(state='normal') 
@@ -509,34 +476,29 @@ class Parse(threading.Thread):
                     for elem in range(3, elemTot):
                         self.dictFlexBonds[k][elem] = AtListSorted[elem-3]            
         
+
     '''
-    @summary: SUBROUTINE AddToRotamers: Add the residue name to list of rotamers (from file rotobs)
+    @summary: SUBROUTINE AddRotamerFromLine: Adds a rotamer from the output of FlexAID
     '''
-    def AddToRotamers(self, ResName):
+    def AddRotamerFromLine(self, Line):
         
-        # Try opening file 'rotobs.lst'
-        f = open(os.path.join(self.FlexAID.RootDir,'WRK','deps','rotobs.lst'),'r')
-        lines = f.readlines()
-        f.close()
+        words = Line.split()
+        
+        #  0      1    2     3      4           5        6        7
+        #Rotamer for GLU81- with dihedrals  -87.647  -80.859   27.236            
 
-        self.dictNumberRotamers[ResName] = 0
-
-        for line in lines:
-
-            if line[0:3] == ResName:
-
-                columns = str(line).split()
-                
-                for i in range(1,len(columns)):
-                    self.dictRotamers[ResName].append(float(str(columns[i]).strip()))
-                    
-                self.dictNumberRotamers[ResName] += 1
-
-
-        #print str(self.dictRotamers[ResName])
-
-        return self.dictNumberRotamers[ResName] 
-             
+        if self.dictSideChainNRot.get(words[2],''):
+            for i in range(5,len(words)):
+                self.dictSideChainRotamers[words[2]].append(float(words[i].strip()))
+        else:
+            self.dictSideChainNRot[words[2]] = 0
+            self.dictSideChainRotamers[words[2]] = [float(words[5].strip())]
+            for i in range(6,len(words)):
+                self.dictSideChainRotamers[words[2]].append(float(words[i].strip()))
+        
+        self.dictSideChainNRot[words[2]] += 1
+        
+        #print "%s now has %d rotamer(s)" % (words[2], self.dictSideChainNRot[words[2]])
             
     '''
     @summary: SUBROUTINE getVarAtoms: Get the atoms that need their values to be modified                  

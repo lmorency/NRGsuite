@@ -18,7 +18,7 @@
 '''
 
 '''
-@title: FlexAID - SetAtomType.py
+@title: FlexAID - AtomTypes.py
 
 @summary: Permit to select to change the atom type from a wizard menu in pymol.
 

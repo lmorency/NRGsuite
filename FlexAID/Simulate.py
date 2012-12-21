@@ -288,28 +288,29 @@ class Simulate:
         self.top.DisplayMessage("For better performance you can disable object BINDINGSITE_AREA__", 0)
     
     
-    ''' =============================================================================== 
-    FUNCTION InitStatus: Initializes necessary variables from FlexAID parsing thread   
-    ===============================================================================  '''     
-    def InitStatus(self):
-
-        self.lblSimStatus.config(fg=self.top.Color_Blue)        
-        self.SimStatus.set('Initializing...')
 
     ''' =============================================================================== 
     FUNCTION IdleSim: Simulation was not started yet
     ===============================================================================  '''     
     def IdleStatus(self):
 
-        self.lblSimStatus.config(fg=self.top.Color_Black)
+        self.lblSimStatus.config(fg='black')
         self.SimStatus.set('Idle.')
+
+    ''' =============================================================================== 
+    FUNCTION InitStatus: Initializes necessary variables from FlexAID parsing thread   
+    ===============================================================================  '''     
+    def InitStatus(self):
+
+        self.lblSimStatus.config(fg='cyan')        
+        self.SimStatus.set('Initializing...')
 
     ''' =============================================================================== 
     FUNCTION RunStatus: Signal given to parse genetic algorithm
     ===============================================================================  '''     
     def RunStatus(self):
 
-        self.lblSimStatus.config(fg=self.top.Color_Green)
+        self.lblSimStatus.config(fg='blue')
         self.SimStatus.set('Running...')
 
     ''' =============================================================================== 
@@ -335,6 +336,22 @@ class Simulate:
 
         self.lblSimStatus.config(fg='orange')
         self.SimStatus.set('Aborted.')
+
+    ''' =============================================================================== 
+    FUNCTION ClusterStatus: GA has ended - clustering all individuals
+    ===============================================================================  '''     
+    def ClusterStatus(self):
+
+        self.lblSimStatus.config(fg='blue violet')
+        self.SimStatus.set('Clustering...')
+
+    ''' =============================================================================== 
+    FUNCTION SuccessStatus: GA has ended - clustering all individuals
+    ===============================================================================  '''     
+    def SuccessStatus(self):
+
+        self.lblSimStatus.config(fg='chartreuse')
+        self.SimStatus.set('Successfully done.')
 
     ''' =============================================================================== 
     FUNCTION ErrorStatus: An error occured.

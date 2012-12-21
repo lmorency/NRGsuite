@@ -26,6 +26,7 @@ import tkFileDialog
 import General
 import Constants
 import ProcessLigand
+import Anchor
 
 if __debug__:
     from pymol import cmd
@@ -78,7 +79,10 @@ class IOFile:
         self.LigandName = StringVar()
         self.AtomTypes = StringVar()
         self.TargetRNA = IntVar()
+        self.Anchor = IntVar()
 
+        self.Translation = list()
+        
         self.Validator = list()
 
     def Init_Vars(self):
@@ -99,6 +103,9 @@ class IOFile:
         self.LigandName.set('')
         self.AtomTypes.set('Sybyl')
         self.TargetRNA.set(0)
+        self.Anchor.set(-1)
+
+        self.Translation = [1000.000, 1000.000, 1000.000]
 
         self.fProcessLigand = False
         self.ProcessError = False
@@ -163,7 +170,7 @@ class IOFile:
             General.setState(self.fIOFile)
 
             self.top.ProcessRunning = True
-            p = ProcessLigand.ProcLig(self, StartAtomIndex, self.AtomTypes.get())
+            p = ProcessLigand.ProcLig(self, StartAtomIndex, self.AtomTypes.get(), self.Anchor.get())
 
         else:
 
@@ -182,7 +189,7 @@ class IOFile:
 
         self.fProcessLigand = False
         self.top.Reset_Step2()
-
+        self.Anchor.set(-1)
 
     ''' ==================================================================================
     FUNCTION Show: Displays the frame onto the middle main frame
@@ -331,24 +338,45 @@ class IOFile:
         Button(fPDBligandLine1, text='Load', command=self.Btn_LoadLigand_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Display', command=self.Btn_DisplayLigand_Clicked,font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Reset', command=self.Btn_ResetLigand_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDBligandLine1, text='Anchor', command=self.Btn_Anchor_Clicked, font=self.font_Text).pack(side=LEFT)
         
         # Second line
         Label(fPDBligandLine2, width=30, text='', font=self.font_Title).pack(side=LEFT)
         EntLigand = Entry(fPDBligandLine2, disabledbackground=self.Color_White, disabledforeground=self.Color_Black, textvariable=self.LigandName, font=self.font_Text)
         EntLigand.pack(side=LEFT, fill=X)
-        EntLigand.config(state='disabled')      
+        EntLigand.config(state='disabled')
         Label(fPDBligandLine2, width=10, text='', font=self.font_Text).pack(side=LEFT)
 
     ''' ==================================================================================
     FUNCTIONS Reset Ligand and Protein textbox fields
     ================================================================================== '''
-    def Btn_ResetProt_Clicked(self):     
+    def Btn_ResetProt_Clicked(self):
         self.ProtPath = ''
         self.ProtName.set('')
 
     def Btn_ResetLigand_Clicked(self):
         self.LigandPath = ''
         self.LigandName.set('')
+
+    ''' ==================================================================================
+    FUNCTION Btn_Anchor_Clicked: Selects the anchor atom of the ligand
+    ==================================================================================  '''    
+    def Btn_Anchor_Clicked(self):
+
+        if not self.PyMOL:
+            return
+
+        if len(self.LigandPath) > 0:
+            
+            if self.top.ActiveWizard is None:
+            
+                self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath, self.Anchor.get())
+                
+                cmd.set_wizard(self.top.ActiveWizard)
+                self.top.ActiveWizard.Start()
+                
+            else:
+                self.top.DisplayMessage("A wizard is currently active", 2)
 
     ''' ==================================================================================
     FUNCTION Btn_Save : Ligand and Protein
@@ -573,7 +601,7 @@ class IOFile:
     # Welcome menu message
     def LoadMessage(self):
 
-	self.DisplayMessage('' ,0)
+        self.DisplayMessage('' ,0)
         self.DisplayMessage('  FlexAID < Input Files > Menu', 2)
         self.DisplayMessage('  INFO:   Select a < TARGET > and a < LIGAND > by:', 2)
         self.DisplayMessage('          1) Saving a PyMOL object/selection to your project directory', 2)
@@ -674,3 +702,15 @@ class IOFile:
 
             self.top.Config2.dictAtomTypes[atom] = [inpInfo[atom][0], inpInfo[atom][0]]
 
+
+    #=======================================================================
+    ''' Enables/disables controls related to AnchorWizard  '''
+    #=======================================================================   
+    def AnchorRunning(self, boolRun):
+        
+        if boolRun:
+           pass
+           
+        else:
+            self.Anchor.set(self.top.WizardResult)
+            

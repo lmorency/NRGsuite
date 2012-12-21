@@ -179,7 +179,7 @@ def store_Residues(listResidues, PDBFile, HETATM):
             
                 index = int(line[6:11].strip())
                 resn = line[17:20].strip()
-                chain = line[21:22].strip()
+                chain = line[21:22]
                 resi = line[23:26].strip() 
 
                 if index > max:

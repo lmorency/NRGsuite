@@ -258,8 +258,8 @@ class UpdateScreen():
                     if self.dictFlexBonds[k][0] == 1: 
 
                         # Read and move to next column
-                        ColValue = float(self.Line[self.colNo:self.colNo+9])
-                        self.colNo = self.colNo + 10
+                        ColValue = float(self.Line[self.colNo:self.colNo+10])
+                        self.colNo = self.colNo + 11
 
                         # Is there ONLY 1 atom that define the flexible bond
                         if self.dictFlexBonds[k][2] == 1:
@@ -315,7 +315,7 @@ class UpdateScreen():
         try: 
                                     
             if self.Translation:
-                index = int(float(self.Line[self.colNo:self.colNo+9]))
+                index = int(float(self.Line[self.colNo:self.colNo+10]))
                 
                 coordX = self.top.GridVertex[index][0]     # The atom X coordinate
                 coordY = self.top.GridVertex[index][1]     # The atom Y coordinate
@@ -354,19 +354,19 @@ class UpdateScreen():
             strSelectSC  = ''
 
             # Loop through Flexible side-chains
-            for j in range(0,len(self.top.listFlexSideChain)):
+            for residue in self.top.listSideChain:
 
-                #print "Setting dihedrals for " + self.top.listFlexSideChain[j]
+                #print "Setting dihedrals for " + residue
 
                 # Were any rotamers accepted for this side-chain
-                if self.top.listFlexSideChainNRot[j] > 0:
+                if self.top.dictSideChainNRot.get(residue,''):
 
-                    #print "List of possible rotamers:" + str(self.top.listFlexSideChainNRot[j])
+                    #print "List of possible rotamers:" + str(self.top.dictSideChainNRot[residue])
 
                     # Residu Name
-                    Res = self.top.listFlexSideChain[j][0:3]
-                    Num = self.top.listFlexSideChain[j][3:len(self.top.listFlexSideChain[j])-1]
-                    Chn = self.top.listFlexSideChain[j][len(self.top.listFlexSideChain[j])-1:len(self.top.listFlexSideChain[j])]
+                    Res = residue[0:3]
+                    Num = residue[3:len(residue)-1]
+                    Chn = residue[len(residue)-1:len(residue)]
 
                     strSelectSC += "(resn " + Res + " & resi " + Num
                     if Chn != '-':
@@ -375,26 +375,24 @@ class UpdateScreen():
                     strSelectSC += " & ! name C+O+N " + " & " + self.ProteinObj + " & present) or "
 
                     # Get Integer value from GA.
-                    IntVal = int(float(str(self.Line[self.colNo:(self.colNo+9)]).strip()) + 0.5)
-
-                    if IntVal >= 1: # 0 is the default PDB side-chain conf.
-
-                        # Starting index in list of rotamers for Residu Name
-                        StartIndex = int(self.top.dictRotamersIndex[self.top.listFlexSideChain[j]][IntVal-1]*Constants.nFlexBonds[Res])
-
+                    IntVal = int(float(self.Line[self.colNo:(self.colNo+10)].strip()) + 0.5)
+                    nFlex = Constants.nFlexBonds[Res]
+                    
+                    if IntVal > 0: # 0 is the default PDB side-chain conf.
+        
                         # Get List of Dihedrals to rebuild
-                        for k in range(0,Constants.nFlexBonds[Res]):
+                        for k in range(0,nFlex):
 
                             # Set dihedrals for side-chain
                             cmd.set_dihedral(self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+0]),
                                              self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+1]),
                                              self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+2]),
                                              self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+3]),
-                                             self.top.dictRotamers[Res][StartIndex+k], self.State)
+                                             self.top.dictSideChainRotamers[residue][(IntVal-1)*nFlex+k], self.State)
 
                             
                     # Get next column starting index
-                    self.colNo = self.colNo + 10
+                    self.colNo = self.colNo + 11
 
 
             # Side-chain selection string - remove last 4 chars
@@ -405,7 +403,7 @@ class UpdateScreen():
 
         except:
 
-            self.CriticalError("ERRRO: while updating side-chain conformations")
+            self.CriticalError("ERROR: while updating side-chain conformations")
     
     '''=========================================================================
       Get_AtomString: Retrives the PyMOL atom selection string
