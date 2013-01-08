@@ -586,7 +586,7 @@ class Config1:
                 BindingSite = pickle.load(in_)
                 in_.close()
                 
-                if BindingSite.Type != 0 and (BindingSite.Count_Cleft() > 0 or BindingSite.Sphere != None):
+                if BindingSite.Count_Cleft() > 0 or BindingSite.Sphere != None:
                     self.BindingSite = BindingSite
 
                     if self.BindingSite.Type == 1:

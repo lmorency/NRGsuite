@@ -68,17 +68,20 @@ class Manage:
         nCopy = 0
         for Cleft in iter(self.top.Default.TempBindingSite.listClefts):
 
+            DestFile = os.path.join(SavePath,os.path.basename(Cleft.CleftFile))
             try:
-                shutil.copy(Cleft.CleftFile, SavePath)
+                shutil.copy(Cleft.CleftFile, DestFile)
                 nCopy = nCopy + 1
             except:
-                self.top.DisplayMessage("  ERROR: Could not copy file '" + Cleft.CleftFile + "'", 2)
+                pass
+                #self.top.DisplayMessage("  ERROR: Could not copy file '" + Cleft.CleftFile + "'", 2)
 
-            Cleft.CleftFile = os.path.join(SavePath,os.path.basename(Cleft.CleftFile))
+            Cleft.CleftFile = DestFile
 
-
-        self.top.DisplayMessage("  Successfully copied (" + str(nCopy) + ") cleft object file(s)", 0)
-
+        if nCopy:
+            self.top.DisplayMessage("  Successfully copied (" + str(nCopy) + ") cleft object file(s)", 0)
+        else:
+            self.top.DisplayMessage("  No cleft object file(s) were copied", 0)
 
 
     # Copies the temporary Partition file

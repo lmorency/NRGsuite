@@ -247,7 +247,7 @@ class AdvOptions:
         #================================================================================== 
         
         # Quit the advanced options menu
-        Btn_Back = Button(self.fAdvOptions, text='Back', font=self.top.font_Text, command=self.Btn_Back_Clicked)
+        Btn_Back = Button(self.fAdvOptions, text='Back', font=self.top.font_Text, relief=RIDGE, command=self.Btn_Back_Clicked)
         Btn_Back.pack(side=RIGHT)
 
     ''' ==================================================================================

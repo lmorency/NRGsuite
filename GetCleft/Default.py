@@ -104,15 +104,14 @@ class RunThread(threading.Thread):
         if nCleft > 0:
             self.top.DisplayMessage("  Stored (" + str(nCleft) + 
                                     ") cleft objects from object/selection '" +
-                                    self.top.defaultOption + "'", 0)
+                                    self.Selection + "'", 0)
 
             self.GetCleft.Go_Step2()
         else:
             self.top.DisplayMessage("  No clefts found for object/selection '" +
-                                    self.top.defaultOption + "'", 0)
+                                    self.Selection + "'", 0)
             
         self.top.Display_Temp()
-
 
         self.top.GetCleftRunning(False)
         
@@ -145,17 +144,10 @@ class Default:
         self.Frame()
         self.Trace()
 
-        #self.defaultOption.set('1stp')
 
     def Def_Vars(self):
 
         self.TempBindingSite = BindingSite.BindingSite()
-
-        #self.RadioCLF = StringVar()
- 
-        # Check boxes
-        #self.intChkAtoms = IntVar()
-        #self.intChkClefts = IntVar()
 
         self.NbCleft = StringVar()
         self.MessageValue = StringVar()
@@ -174,12 +166,8 @@ class Default:
         self.ValidOutput = list()
         self.Validator = list()
 
+
     def Init_Vars(self):
-
-        #self.RadioCLF.set('surface')
-
-        #self.intChkAtoms.set(0)
-        #self.intChkClefts.set(1)
 
         self.FetchPDB.set('')
         self.NbCleft.set('10')
@@ -190,7 +178,8 @@ class Default:
 
         self.listResidues = []
         self.PartitionColor = 'partition'
-
+        self.LastdefaultOption = ''
+        
         self.ValidNbCleft = [ True, 1, 0, None ]
         self.ValidOutput = [ True, 1, 0, None ]
 
@@ -235,11 +224,13 @@ class Default:
     def Show(self):
         
         self.fDefault.pack(fill=BOTH, expand=True)
-
         self.LoadMessage()
                 
         self.Btn_RefreshOptMenu_Clicked()
-
+        
+        if self.LastdefaultOption != '' and General_cmd.object_Exists(self.LastdefaultOption):
+            self.defaultOption.set(self.LastdefaultOption)
+        
 
     ''' ==================================================================================
     FUNCTION Frame: Displays the Default Frame
@@ -257,29 +248,36 @@ class Default:
         fStructureLine1.pack(side=TOP, fill=X, expand=True)
         fStructureLine2 = Frame(fStructure)
         fStructureLine2.pack(side=TOP, fill=X, expand=True)
-        fStructureLine3 = Frame(fStructure)
-        fStructureLine3.pack(side=TOP, fill=X, expand=True)
 
-        Label(fStructureLine1, text='Selection of the structure', font=self.top.font_Title).pack(side=LEFT)
+        Label(fStructureLine1, text='Retrieve a structure', font=self.top.font_Title).pack(side=LEFT)
 
         # Get a PDB File from a file on your harddrive
-        Button(fStructureLine2, text='Open file', command=self.Btn_OpenPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=20)
+        Button(fStructureLine2, text='Open file', command=self.Btn_OpenPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=5)
         
         # Download a PDB File from the internet
-        Label(fStructureLine2, text='Enter the PDB code:', font=self.font_Text, justify=CENTER).pack(side=LEFT, padx=5)
-        Entry(fStructureLine2, textvariable=self.FetchPDB, width=10, background='white', font=self.font_Text, justify=CENTER).pack(side=LEFT)
-        Button(fStructureLine2, text='Download', command=self.Btn_DownloadPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=5)
+        Button(fStructureLine2, text='Download', command=self.Btn_DownloadPDB_Clicked, font=self.font_Text, width=10).pack(side=RIGHT, padx=5)
+        Entry(fStructureLine2, textvariable=self.FetchPDB, width=10, background='white', font=self.font_Text, justify=CENTER).pack(side=RIGHT)
+        Label(fStructureLine2, text='Enter the PDB code:', font=self.font_Text, justify=CENTER).pack(side=RIGHT, padx=5)
+
+        fSelection = Frame(self.fDefault)
+        fSelection.pack(side=TOP, padx=5, pady=5, fill=X, expand=True)
+        fSelectionLine1 = Frame(fSelection)
+        fSelectionLine1.pack(side=TOP, fill=X, expand=True)
+        fSelectionLine2 = Frame(fSelection)
+        fSelectionLine2.pack(side=TOP, fill=X, expand=True)
+
+        Label(fSelectionLine1, text='Select a structure', font=self.top.font_Title).pack(side=LEFT)
 
         # List of selections
-        Label(fStructureLine3, text='PyMOL objects/selections:', font=self.font_Text, justify=LEFT).pack(side=LEFT, expand=True, fill=X, anchor=W)
-
-        optionTuple = ('',)
-        self.optionMenuWidget = apply(OptionMenu, (fStructureLine3, self.defaultOption) + optionTuple)
-        self.optionMenuWidget.config(bg=self.Color_White, font=self.font_Text, width=15)
-        self.optionMenuWidget.pack(side=LEFT)
+        Label(fSelectionLine2, text='PyMOL objects/selections:', font=self.font_Text, justify=LEFT).pack(side=LEFT, padx=5)
         
         # Refresh the list with the selections in Pymol
-        Button(fStructureLine3, text='Refresh', command=self.Btn_RefreshOptMenu_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fSelectionLine2, text='Refresh', command=self.Btn_RefreshOptMenu_Clicked, font=self.font_Text, width=10).pack(side=RIGHT, padx=5)
+
+        optionTuple = ('',)
+        self.optionMenuWidget = apply(OptionMenu, (fSelectionLine2, self.defaultOption) + optionTuple)
+        self.optionMenuWidget.config(bg=self.Color_White, font=self.font_Text, width=15)
+        self.optionMenuWidget.pack(side=RIGHT)
                 
         #==================================================================================
         '''                     --- Basic GetCleft Options ---                          '''
@@ -299,26 +297,25 @@ class Default:
         fBasicLine5.pack(fill=X, side=TOP)
 
         Label(fBasicLine1, text='Basic parameters', font=self.top.font_Title).pack(side=LEFT)
-        Label(fBasicLine2, text='Contact with residue (e.g. ALA13A):', width=30, font=self.top.font_Text).pack(side=LEFT)
+        Label(fBasicLine2, text='Residue in contact (e.g. ALA13A):', font=self.top.font_Text).pack(side=LEFT)
         self.EntryResidu = Entry(fBasicLine2,textvariable=self.ResiduValue, background='white', justify=CENTER, font=self.top.font_Text)
-        self.EntryResidu.pack(side=LEFT)
+        self.EntryResidu.pack(side=RIGHT)
 
-        Label(fBasicLine3, text='Number of clefts to show:', width=30, font=self.top.font_Text).pack(side=LEFT)
-        EntryNbCleft = Entry(fBasicLine3, width=5, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
-        EntryNbCleft.pack(side=LEFT)
+        Label(fBasicLine3, text='Number of clefts to show:', font=self.top.font_Text).pack(side=LEFT)
+        EntryNbCleft = Entry(fBasicLine3, width=8, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
+        EntryNbCleft.pack(side=RIGHT)
         args_list = [EntryNbCleft, self.NbCleft, 1, 100, -1, self.ValidNbCleft, 'Number of clefts', 'int']
         EntryNbCleft.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
         self.ValidNbCleft[3] = EntryNbCleft
 
-        Label(fBasicLine4, text='Output cleft name:', width=30, font=self.top.font_Text).pack(side=LEFT)
-        EntryOutput = Entry(fBasicLine4, textvariable=self.OutputFileValue, background='white', justify=LEFT, font=self.top.font_Text)
-        EntryOutput.pack(side=LEFT)
+        Label(fBasicLine4, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
+        EntryOutput = Entry(fBasicLine4, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
+        EntryOutput.pack(side=RIGHT)
         args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, self.ValidOutput, 'Output filename', 'str']
         EntryOutput.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
         self.ValidOutput[3] = EntryOutput
 
-        #Label(fBasicLine5, text='', width=30, font=self.top.font_Text).pack(side=LEFT)
-        Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, command=self.Btn_AdvancedOptions).pack(side=LEFT)
+        Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, width=20, relief=RIDGE, command=self.Btn_AdvancedOptions).pack(side=RIGHT)
 
         #==================================================================================
         '''                           --- BUTTONS AREA ---                              '''
@@ -326,14 +323,14 @@ class Default:
         fButtons = Frame(self.fDefault)
         fButtons.pack(fill=X, expand=True, padx=5, pady=5)
                                                   
+        # Starts the GetCleft application
+        self.Btn_StartGetCleft = Button(fButtons, text='Start', command=self.Btn_StartGetCleft_Clicked, font=self.top.font_Text)
+        self.Btn_StartGetCleft.pack(side=LEFT)
+        self.Btn_StartGetCleft.config(state='disabled')
+
         # Clear PyMOL elements
         Btn_Clear = Button(fButtons, text='Clear', command=self.Btn_Clear_Clicked, font=self.top.font_Text)
-        Btn_Clear.pack(side=RIGHT)
-
-        # Refresh the list with a file selection
-        self.Btn_StartGetCleft = Button(fButtons, text='Start', command=self.Btn_StartGetCleft_Clicked, font=self.top.font_Text)
-        self.Btn_StartGetCleft.pack(side=RIGHT)
-        self.Btn_StartGetCleft.config(state='disabled')
+        Btn_Clear.pack(side=LEFT)
 
         #==================================================================================
         '''                         --- COLOR CHART AREA ---                            '''
@@ -348,13 +345,13 @@ class Default:
         fChartLine3 = Frame(fChart)
         fChartLine3.pack(fill=X, expand=True)
 
-        Label(fChartLine1, text='Clefts color chart', font=self.top.font_Title).pack(side=TOP)
+        #Label(fChartLine1, text='Clefts color chart', font=self.top.font_Title).pack(side=TOP)
         #Label(fChartLine2, text='Index', width=10, font=self.top.font_Text).pack(side=LEFT)        
 
-        fSim_Prog = Frame(fChartLine2, border=1, relief=SUNKEN, width=400, height=25)
-        fSim_Prog.pack(side=TOP)#, anchor=W) 
-        self.ChartBar = Canvas(fSim_Prog, bg=self.top.Color_Grey, width=400, height=25, highlightthickness=0, relief='flat', bd=0)
-        self.ChartBar.pack(fill=BOTH, anchor=W)
+        fSim_Prog = Frame(fChartLine2, border=1, relief=SUNKEN, width=400, height=20)
+        fSim_Prog.pack(side=TOP, fill=X) 
+        self.ChartBar = Canvas(fSim_Prog, bg=self.top.Color_Grey, highlightthickness=0, relief=FLAT, bd=0, width=400, height=20)
+        self.ChartBar.pack(fill=BOTH)
 
         #==================================================================================
         '''        --- The DISPLAY options for the CLEFT and SPHERES ---                '''
@@ -441,7 +438,7 @@ class Default:
             
             self.DisplayMessage("  Analyzing clefts for object/selection '" + self.defaultOption.get() + "'...", 0)
             
-            TmpFile = '/Users/francisgaudreault/1stp.pdb'
+            #TmpFile = '/Users/francisgaudreault/1stp.pdb'
             Command_Line = '"' + self.top.GetCleftExecutable + '" -p "' + TmpFile + '"' + self.Get_Arguments()
             
             # Clear temporary clefts
@@ -460,9 +457,14 @@ class Default:
             self.SetColorList()
             self.DisplayColorChart()
 
+            View = cmd.get_view()
+            
             self.Load_Clefts()
             self.Show_Clefts(self.ColorList)
 
+            # reset view
+            cmd.set_view(View)
+            
     ''' ========================================================
                  Gets all arguments for the cmdline
         ========================================================'''
@@ -553,7 +555,8 @@ class Default:
     def Btn_RefreshOptMenu_Clicked(self):
         
         if self.PyMOL:
-            General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption)
+            exc = []
+            General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, exc, None)
 
     ''' ==================================================================================
     FUNCTION Btn_AdvancedOptions: Opens the Advanced menu of GetCleft
@@ -616,7 +619,7 @@ class Default:
     ==================================================================================  '''        
     def Get_BindingSitePath(self):
 
-        TARGETNAME = self.LastdefaultOption.upper()
+        TARGETNAME = self.defaultOption.get().upper()
         BindingSitePath = os.path.join(self.top.BindingSiteProject_Dir,TARGETNAME)
         
         return BindingSitePath
@@ -626,7 +629,7 @@ class Default:
     ==================================================================================  '''        
     def Get_CleftPath(self):
 
-        TARGETNAME = self.LastdefaultOption.upper()
+        TARGETNAME = self.defaultOption.get().upper()
         CleftPath = os.path.join(self.top.GetCleftSaveProject_Dir,TARGETNAME)
         
         return CleftPath
@@ -644,6 +647,8 @@ class Default:
         
             CleftPath = self.top.GetCleftSaveProject_Dir
 
+        print CleftPath
+        
         LoadFiles = tkFileDialog.askopenfilename(filetypes=[('PDB Cleft file','*.pdb')],
                                                  initialdir=CleftPath, title='Select cleft file(s) to load',
                                                  multiple=1)
@@ -672,7 +677,7 @@ class Default:
     ==================================================================================  '''        
     def Btn_Save_Clefts(self):
 
-        if self.TempBindingSite.Count_Cleft() > 0: #or normal_modes enabled
+        if self.TempBindingSite.Count_Cleft() > 0:
             
             if self.PyMOL:
                 self.Update_TempBindingSite()
@@ -696,7 +701,7 @@ class Default:
             BindingSitePath = self.top.BindingSiteProject_Dir
         
         LoadPath = tkFileDialog.askopenfilename(filetypes=[('NRG BindingSite','*.nrgbs')],
-                                                initialdir=BindingSitePath, title='Select a BindingSite file to load')
+                                                initialdir=BindingSitePath, title='Select a NRG BindingSite file to load')
         
         if len(LoadPath) > 0:
             try:
@@ -720,7 +725,7 @@ class Default:
 
         BindingSitePath = self.Get_BindingSitePath()
 
-        if self.TempBindingSite.Count_Cleft() > 0: #or normal_modes enabled
+        if self.TempBindingSite.Count_Cleft() > 0:
             
             if not os.path.isdir(BindingSitePath):
                 os.makedirs(BindingSitePath)
@@ -734,15 +739,16 @@ class Default:
                 if SaveFile.find('.nrgbs') == -1:
                     SaveFile = SaveFile + '.nrgbs'
 
-                if self.PyMOL:
-                    self.Update_TempBindingSite()
-
+                self.Update_TempBindingSite()
+                self.TempBindingSite.Type = 2
+    
                 self.top.Manage.save_Temp(self.LastdefaultOption.upper())
 
                 try:
                     out = open(SaveFile, 'w')
                     pickle.dump(self.TempBindingSite, out)
                     out.close()
+                    
                     self.top.DisplayMessage("  Successfully saved '" + SaveFile + "'", 0)
                 except:
                     self.top.DisplayMessage("  ERROR: Could not save binding-site configuration", 1)
@@ -760,7 +766,7 @@ class Default:
                 cmd.load(Cleft.CleftFile, state=1)
 
     ''' ==================================================================================
-    FUNCTION Update_TempBindingSite: Update cleft object with only those present in PyMOL
+    FUNCTION Update_TempBindingSite: Update cleft object with only those undeleted in PyMOL
     ==================================================================================  '''                 
     def Update_TempBindingSite(self):
         
@@ -773,13 +779,17 @@ class Default:
     ==================================================================================  '''                 
     def Btn_OpenPDB_Clicked(self):
         
-        FilePath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb')], initialdir=self.top.ProteinProject_Dir, title='Select a PDB File to Load')
+        FilePath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb')], initialdir=self.top.TargetProject_Dir, title='Select a PDB File to Load')
         
         if len(FilePath) > 0:
+        
+            Name = os.path.basename(os.path.splitext(FilePath)[0])
+        
             if self.PyMOL:
                 # Load the pdb file in Pymol
                 cmd.load(FilePath)
-
+                self.defaultOption.set(Name)
+                
     ''' ==================================================================================
     FUNCTION SetColorList: Reset the color lists
     ==================================================================================  '''        

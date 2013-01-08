@@ -39,7 +39,7 @@ import CleftObj
 import ManageFiles2
 import Default
 import AdvOptions
-#import CropCleft
+import CropCleft
 import Volume
 
 #=========================================================================================
@@ -81,7 +81,7 @@ class displayGetCleft:
 
         self.Project_Dir = Project_Dir
         self.GetCleftProject_Dir = os.path.join(self.Project_Dir,'GetCleft')
-        self.ProteinProject_Dir = os.path.join(self.Project_Dir,'Protein')
+        self.TargetProject_Dir = os.path.join(self.Project_Dir,'Target')
 
         self.GetCleftSaveProject_Dir = os.path.join(self.GetCleftProject_Dir,'Save')
         self.GetCleftTempProject_Dir = os.path.join(self.GetCleftProject_Dir,'Temp')
@@ -101,7 +101,7 @@ class displayGetCleft:
         self.Color_Blue = '#6699FF'
         self.Color_Red = '#FF9999'
         self.Color_White = '#FFFFFF'
-	self.Color_Black = 'black'
+        self.Color_Black = 'black'
 
         self.top = top
         self.top.title('GetCleft')
@@ -126,7 +126,7 @@ class displayGetCleft:
         
         #================================================================================== 
         #                       FRAMES Settings and startup
-        #==================================================================================
+        #==================================================================================        
         self.fMain = Frame(self.top)  # Main frame
         self.fMain.pack(expand=True)
 
@@ -144,21 +144,39 @@ class displayGetCleft:
         self.Default = Default.Default(self, self.PyMOL)
         self.Manage = ManageFiles2.Manage(self)
         self.AdvOptions = AdvOptions.AdvOptions(self)        
-        #self.Crop = CropCleft.CropCleft(self, self.PyMOL)        
+        self.Crop = CropCleft.CropCleft(self, self.PyMOL)
         self.Volume = Volume.EstimateVolume(self)        
         
+        self.MakeMenuBar()
+
         self.listBtnTabs = [self.Btn_Config,self.Btn_Volume,self.Btn_CropCleft]
 
         # Default view
         self.Btn_Config_Clicked()
-        
-        # For testing purposes only
-        Button(self.fMiddle, command=self.Default.Btn_Save_Clefts, text='Save clefts').pack(side=TOP)
-        #Button(self.fMiddle, command=self.Default.Btn_Load_Clefts, text='Load clefts').pack(side=TOP)
-        Button(self.fMiddle, command=self.Default.Btn_Save_BindingSite, text='Save binding-site').pack(side=TOP)
-        #Button(self.fMiddle, command=self.Default.Btn_Load_BindingSite, text='Load binding-site').pack(side=TOP)
-        #Button(self.fMiddle, command=self.Btn_EstimateVolume, text='Show Volume').pack(side=TOP)
 
+        # Remove all temporary clefts in Temporary Dir
+        self.Manage.Clean()
+
+    ''' ==================================================================================
+    FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
+    ==================================================================================  '''        
+    def MakeMenuBar(self):
+        
+        menubar = Menu(self.top)
+        
+        loadmenu = Menu(menubar, tearoff=0)
+        loadmenu.add_command(label="Load Clefts", command=self.Default.Btn_Load_Clefts)
+        loadmenu.add_command(label="Load Binding-site", command=self.Default.Btn_Load_BindingSite)
+        menubar.add_cascade(label="Load", menu=loadmenu)
+
+        savemenu = Menu(menubar, tearoff=0)        
+        savemenu.add_command(label="Save Clefts", command=self.Default.Btn_Save_Clefts)
+        savemenu.add_command(label="Save Binding-site", command=self.Default.Btn_Save_BindingSite)
+        menubar.add_cascade(label="Save", menu=savemenu)
+        
+        self.top.config(menu=menubar)
+        
+        
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
     ==================================================================================  '''        
@@ -166,13 +184,12 @@ class displayGetCleft:
         
         #==================================================================================
         '''                  --- TOP MENU OF THE INTERFACE ---                          '''
-        #==================================================================================
-
+        #==================================================================================        
         fTop = Frame(self.fMain, relief=RIDGE, border=4, height=50)
         fTop.pack(fill=BOTH, expand=True)#, padx=10, pady=10, ipady=10, ipadx=10, side=TOP)
-	fTop.pack_propagate(0)
+        fTop.pack_propagate(0)
         
-        self.Btn_Config = Button(fTop, text='Config', bg=self.Color_White, command=self.Btn_Config_Clicked, font=self.font_Text)
+        self.Btn_Config = Button(fTop, text='Generate', bg=self.Color_White, command=self.Btn_Config_Clicked, font=self.font_Text)
         self.Btn_Config.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Config.config(state='normal')
 
@@ -217,9 +234,9 @@ class displayGetCleft:
 
         fBottomLeft = Frame(fBottom)
         fBottomLeft.pack(side=LEFT, fill=Y)
-
-	#self.MessageBox = MessageBox.scrollableContainer(fBottomLeft, bd=2, bg="black")
-	#self.MessageBox.pack(fill=BOTH, expand=True)
+        
+        #self.MessageBox = MessageBox.scrollableContainer(fBottomLeft, bd=2, bg="black")
+        #self.MessageBox.pack(fill=BOTH, expand=True)
 
         scrollBar = Scrollbar(fBottomLeft)
         scrollBar.pack(side=RIGHT, fill=Y)
@@ -280,8 +297,8 @@ class displayGetCleft:
         if not os.path.isdir(self.GetCleftProject_Dir):
             os.makedirs(self.GetCleftProject_Dir)
             
-        if not os.path.isdir(self.ProteinProject_Dir):
-            os.makedirs(self.ProteinProject_Dir)
+        if not os.path.isdir(self.TargetProject_Dir):
+            os.makedirs(self.TargetProject_Dir)
 
         if not os.path.isdir(self.BindingSiteProject_Dir):
             os.makedirs(self.BindingSiteProject_Dir)

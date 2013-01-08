@@ -162,7 +162,6 @@ class CropCleft:
               
         self.fCrop = Frame(self.top.fMiddle, relief=RIDGE, border=0, width=400, height=460)
         self.fCrop.pack(fill=X, expand=True)
-        self.fCrop.pack_propagate(0)
   
         fCropTitle = Frame(self.fCrop, relief=RIDGE, border=0, width=400, height=40)
         fCropTitle.pack(fill=X, expand=True, side=TOP)
@@ -183,9 +182,6 @@ class CropCleft:
         self.fCropBtn = Frame(self.fCrop, width=400, height=60)
         self.fCropBtn.pack(fill=X, expand=True, side=TOP)
         self.fCropBtn.pack_propagate(0)
-
-        Title = Label(fCropTitle, text = 'Cleft Partitioner', height=5, font=self.top.font_Title)
-        Title.pack(side=LEFT, anchor=W, padx=5)
                 
         #==================================================================================
         '''            --- Selection of the Cleft to be partioned ---                   '''

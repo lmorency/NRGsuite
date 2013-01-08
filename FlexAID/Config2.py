@@ -353,15 +353,15 @@ class Config2:
         self.fTransRot = Frame(fC2Left)
         self.fTransRot.pack(fill=X, side=TOP, padx=5, pady=5)
         fTransRotLine1 = Frame(self.fTransRot)
-        fTransRotLine1.pack(side=TOP, fill=X)
+        fTransRotLine1.pack(side=TOP, fill=X, padx=5, pady=5)
         fTransRotLine2 = Frame(self.fTransRot)
-        fTransRotLine2.pack(side=TOP, fill=X)
+        fTransRotLine2.pack(side=TOP, fill=X, padx=5, pady=5)
         fTransRotLine3 = Frame(self.fTransRot)
-        fTransRotLine3.pack(side=TOP, fill=X)
+        fTransRotLine3.pack(side=TOP, fill=X, padx=5, pady=5)
 
         Label(fTransRotLine1, text='Ligand translation and rotation', font=self.top.font_Title).pack(side=TOP, anchor=W)
-        Checkbutton(fTransRotLine2, text='Translational degrees of freedom', variable=self.IntTranslation, font=self.top.font_Text).pack(fill=X, anchor=W)
-        Checkbutton(fTransRotLine3, text='Rotational degrees of freedom', variable=self.IntRotation, font=self.top.font_Text).pack(fill=X, anchor=W)        
+        Checkbutton(fTransRotLine2, text='Translational degrees of freedom', variable=self.IntTranslation, font=self.top.font_Text).pack(fill=X, side=LEFT)
+        Checkbutton(fTransRotLine3, text='Rotational degrees of freedom', variable=self.IntRotation, font=self.top.font_Text).pack(fill=X, side=LEFT)        
 
         #************************************************#
         #*             Ligand Flexible Bonds            *#
@@ -370,24 +370,15 @@ class Config2:
         self.fBonds = Frame(fC2Left)
         self.fBonds.pack(fill=X, side=TOP, padx=5, pady=5)
         fBondsLine1 = Frame(self.fBonds)
-        fBondsLine1.pack(side=TOP, fill=X)
+        fBondsLine1.pack(side=TOP, fill=X, padx=5)
         fBondsLine2 = Frame(self.fBonds)
-        fBondsLine2.pack(side=TOP, fill=X)
+        fBondsLine2.pack(side=TOP, fill=X, padx=5)
         fBondsLine3 = Frame(self.fBonds)
-        fBondsLine3.pack(side=TOP, fill=X)
+        fBondsLine3.pack(side=TOP, fill=X, padx=5)
         
-        self.fBonds = Frame(fC2Left)
-        self.fBonds.pack(fill=X, side=TOP, padx=5, pady=5)
-        fBondsLine1 = Frame(self.fBonds)
-        fBondsLine1.pack(side=TOP, fill=X)
-        fBondsLine2 = Frame(self.fBonds)
-        fBondsLine2.pack(side=TOP, fill=X)
-        fBondsLine3 = Frame(self.fBonds)
-        fBondsLine3.pack(side=TOP, fill=X)
-
         Label(fBondsLine1, text='Ligand flexibility', font=self.top.font_Title).pack(side=TOP, anchor=W)
-        Radiobutton(fBondsLine2, text='Rigid bonds', width=15, value='RIGID', variable=self.FlexBondsPar, font=self.top.font_Text).pack(side=LEFT, anchor=W)
-        Radiobutton(fBondsLine3, text='Customize:', width=15, value='CUSTOM', variable=self.FlexBondsPar, font=self.top.font_Text).pack(side=LEFT, anchor=W)
+        Radiobutton(fBondsLine2, text='Rigid bonds', value='RIGID', variable=self.FlexBondsPar, font=self.top.font_Text).pack(side=LEFT, anchor=W)
+        Radiobutton(fBondsLine3, text='Customize:', value='CUSTOM', variable=self.FlexBondsPar, font=self.top.font_Text).pack(side=LEFT, anchor=W)
         Entry(fBondsLine3, text='', state='disabled', textvariable=self.FlexStatus, font=self.top.font_Text, disabledforeground=self.top.Color_Black, disabledbackground=self.top.Color_White).pack(side=LEFT)
 
         #************************************************#
