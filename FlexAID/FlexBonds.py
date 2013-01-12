@@ -143,7 +143,6 @@ class flexbond(Wizard):
             self.FlexAID.WizardError = True
         
         self.top.FlexBondsRunning(False)
-        self.FlexAID.WizardResult = len(self.top.dictFlexBonds)
         self.FlexAID.ActiveWizard = None
 
         cmd.set_wizard()
@@ -207,29 +206,14 @@ class flexbond(Wizard):
         nBondsForced = 0
         for index in iter(self.top.dictFlexBonds):
             if self.top.dictFlexBonds[index][0]:
-                if self.top.dictFlexBonds[index][1]:
-                    nBondsForced += 1
+                #if self.top.dictFlexBonds[index][1]:
+                #    nBondsForced += 1
                 nBonds += 1
-
             if not self.top.dictFlexBonds[index][1]:
                 nPoss += 1
 
-               
-        if nBonds > 0:
-            if (nBonds - nBondsForced) == nPoss:
-                Status = ' ALL flexible bond(s)'
-            else:
-                Status = ' ' + str(nBonds) + ' flexible bond(s)'
-                
-            if nBondsForced > 0:
-                Status += ' [%d forced]' % nBondsForced
-
-            self.top.FlexStatus.set(Status)
-            
-        else:
-            self.top.FlexBondsPar.set('RIGID')
-                    
-
+        self.FlexAID.WizardResult = nBonds
+        
         self.Quit_Wizard()
   
     #=======================================================================

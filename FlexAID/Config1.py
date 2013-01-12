@@ -427,7 +427,7 @@ class Config1:
 
         if len(Center) > 0 and Width != -1:
             self.BindingSite.Sphere = SphereObj.SphereObj(Width/4.0,Width/2.0,Center)
-            self.sclResizeSphere.config(from_=1.0,to=self.BindingSite.Sphere.MaxRadius)
+            self.sclResizeSphere.config(from_=0.0,to=self.BindingSite.Sphere.MaxRadius)
             self.SphereSize.set(self.BindingSite.Sphere.Radius)
         else:
             self.DisplayMessage("  ERROR: Could not display the default sphere", 1)
@@ -590,7 +590,7 @@ class Config1:
                     self.BindingSite = BindingSite
 
                     if self.BindingSite.Type == 1:
-                        self.sclResizeSphere.config(from_=1.0,to=self.BindingSite.Sphere.MaxRadius)
+                        self.sclResizeSphere.config(from_=0.0,to=self.BindingSite.Sphere.MaxRadius)
                         self.SphereSize.set(self.BindingSite.Sphere.Radius)
                         self.RngOpt.set('LOCCEN')
                     elif self.BindingSite.Type == 2:

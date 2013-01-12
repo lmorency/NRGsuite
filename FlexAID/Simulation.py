@@ -72,6 +72,10 @@ class Start(threading.Thread):
                 self.FlexAID.Run = Popen(self.commandline, shell=True,  bufsize=1, stdout=PIPE, stderr=STDOUT)
                 
             self.FlexAID.Run.wait()
+            
+            if self.FlexAID.Run.returncode != 0:
+                self.top.ProcessError = True
+
         except:
 
             self.FlexAID.DisplayMessage('   Fatal error: Could not run the executable FlexAID', 1)
@@ -196,25 +200,24 @@ class Parse(threading.Thread):
                 self.dictCoordRef = self.Get_CoordRef()
 
         except:
-            print "Could not read ligand PDB File"
+            self.FlexAID.DisplayMessage("Could not read ligand PDB File",1)
             return
 
     
-        print "Waiting for the simulation to start..."
-        while not self.FlexAID.ProcessRunning:
-            time.sleep(INTERVAL)
-        
+        #self.FlexAID.DisplayMessage("Waiting for the simulation to start...",1)
+    
         # Wait for the simulation to start...
-        while TIMEOUT:
-            if not self.FlexAID.Run is None:
+        #while TIMEOUT:
+        #    if not self.FlexAID.Run is None:
                 #print "FlexAID is running..."
-                break
-            elif self.top.ProcessError:
-                print "An error occured while trying to run FlexAID"
-                return
-                        
-            time.sleep(INTERVAL)
-            TIMEOUT -= INTERVAL
+        #        break
+        #    elif self.top.ProcessError:
+        #        self.FlexAID.DisplayMessage("An error occured while trying to run FlexAID", 1)
+        #        self.top.ErrorStatus()
+        #        break
+                
+        #    time.sleep(INTERVAL)
+        #    TIMEOUT -= INTERVAL
 
         
         self.top.progressBarHandler(0,self.NbTotalGen)
@@ -224,8 +227,6 @@ class Parse(threading.Thread):
         cmd.set("auto_zoom", 0)
         cmd.delete("TOP_*__")
         cmd.frame(1)
-
-        self.top.InitStatus()
         
         while self.FlexAID.Run is not None: # and self.FlexAID.Run.poll() is None:
 
@@ -241,6 +242,16 @@ class Parse(threading.Thread):
                 if Line == '':
                     break
                 
+                # track errors
+                if Line.startswith('ERROR'):
+                    self.FlexAID.DisplayMessage(str("A critical error occured\n" + Line), 1)
+                    self.top.ErrorStatus()
+                    try:
+                        self.FlexAID.Run.terminate()
+                    except:
+                        pass
+                    break
+
                 if self.ParseGA:
                              
                     '''
@@ -338,17 +349,6 @@ class Parse(threading.Thread):
                         
                 else:
     
-                    # track errors
-                    if Line.startswith('ERROR'):
-                        self.FlexAID.DisplayMessage(str("A critical error occured\n" + Line), 1)
-                        self.top.ErrorStatus()
-                        try:
-                            self.FlexAID.Run.terminate()
-                        except:
-                            pass                            
-                        break
-                    
-
                     m = re.match("Rotamer for", Line)
                     if m:                        
                         self.AddRotamerFromLine(Line)
@@ -368,6 +368,8 @@ class Parse(threading.Thread):
 
                     m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
                     if m:
+                        self.top.InitStatus()
+                        
                         self.ListAtom.append(int(m.group(1)))
 
                         if len(self.ListAtom) == nbAtoms:

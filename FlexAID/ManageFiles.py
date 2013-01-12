@@ -293,12 +293,13 @@ class Manage():
             gaInp_file.write('SHARESCL %.2f\n' % float(self.GAParam.FitScale.get()))
 
         gaInp_file.write('REPMODEL ' + self.GAParam.RepModel.get() + '\n')
-        if self.GAParam.RepModel.get() == 'BOOMWD':
-            gaInp_file.write('BOOMFRAC %.2f\n' % float(self.GAParam.RepBWD.get()))
-        elif self.GAParam.RepModel.get() == 'STEADS':        
+        if self.GAParam.RepModel.get() == 'BOOM':
+            gaInp_file.write('BOOMFRAC %.2f\n' % float(self.GAParam.RepB.get()))
+        elif self.GAParam.RepModel.get() == 'STEADY':
             gaInp_file.write('STEADNUM ' + str(self.GAParam.RepSS.get()) + '\n')
-        elif self.GAParam.RepModel.get() == 'STEAWD':        
-            gaInp_file.write('STEADNUM ' + str(self.GAParam.RepSSWD.get()) + '\n')
+
+        if self.GAParam.RepDup.get():
+            gaInp_file.write('DUPLICAT\n')
 
         gaInp_file.write('PRINTCHR ' + str(self.GAParam.NbTopChrom.get()) + '\n')
 
@@ -431,17 +432,19 @@ class Manage():
         # Store file content
         inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'r')
         lines = inpFile.readlines()
+        print lines
         inpFile.close()
 
         # Re-write file
         inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'w')
         for line in lines:
-            #if line.startswith('ICDATA'):
-            #    inpFile.write('ICDATA ' + self.ICFlexAIDSimulationProject_Dir + '\n')
+            print line
+
             if line.startswith('HETTYP'):
                 index = line[6:11].strip()
                 newline = line[:11] + self.Config2.dictAtomTypes[index][1].rjust(2, ' ') +  line[13:]
                 inpFile.write(newline)
             else:
                 inpFile.write(line)
+
         inpFile.close()

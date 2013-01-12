@@ -30,8 +30,8 @@ class GAParam:
         self.PyMOL = PyMOL
         
         self.top = top
-	self.Tab = self.top.Btn_GAParam
-	self.FrameName = 'GAParam'
+        self.Tab = self.top.Btn_GAParam
+        self.FrameName = 'GAParam'
 
         self.Def_Vars()
         self.Init_Vars()
@@ -55,8 +55,8 @@ class GAParam:
         self.RepModel = StringVar()
         self.LastRepModel = StringVar()
         self.RepSS = StringVar()
-        self.RepSSWD = StringVar()
-        self.RepBWD = StringVar()
+        self.RepB = StringVar()
+        self.RepDup = IntVar()
         self.UseAGA = IntVar()
         self.LastUseAGA = IntVar()
         self.AGAk1 = StringVar()
@@ -74,8 +74,7 @@ class GAParam:
         self.ValidFitPeak = list()
         self.ValidFitScale = list()
         self.ValidRepSS = list()
-        self.ValidRepSSWD = list()
-        self.ValidRepBWD = list()
+        self.ValidRepB = list()
         self.ValidAGAk1 = list()
         self.ValidAGAk2 = list()
         self.ValidAGAk3 = list()
@@ -96,10 +95,10 @@ class GAParam:
         self.FitAlpha.set('4.0')
         self.FitPeak.set('5.0')
         self.FitScale.set('10.0')
-        self.RepModel.set('BOOMWD')
+        self.RepModel.set('BOOM')
+        self.RepDup.set(0)
         self.RepSS.set('500')
-        self.RepSSWD.set('500')
-        self.RepBWD.set('1.0')
+        self.RepB.set('1.0')
         self.UseAGA.set(0)
         self.AGAk1.set('0.95')
         self.AGAk2.set('0.10')
@@ -117,8 +116,7 @@ class GAParam:
         self.ValidFitPeak = [True, 1, 0, None]
         self.ValidFitScale = [True, 1, 0, None]
         self.ValidRepSS = [True, 1, 0, None]
-        self.ValidRepSSWD = [True, 1, 0, None]
-        self.ValidRepBWD = [True, 1, 0, None]
+        self.ValidRepB = [True, 1, 0, None]
         self.ValidAGAk1 = [True, 1, 0, None]
         self.ValidAGAk2 = [True, 1, 0, None]
         self.ValidAGAk3 = [True, 1, 0, None]
@@ -126,7 +124,7 @@ class GAParam:
         
         self.Validator = [self.ValidNbGen, self.ValidNbGenFreq, self.ValidNbChrom, self.ValidNbTopChrom,
                           self.ValidCrossRate, self.ValidMutaRate, self.ValidFitAlpha, self.ValidFitPeak,
-                          self.ValidFitScale, self.ValidRepSS, self.ValidRepSSWD, self.ValidRepBWD, 
+                          self.ValidFitScale, self.ValidRepSS, self.ValidRepB, 
                           self.ValidAGAk1, self.ValidAGAk2, self.ValidAGAk3, self.ValidAGAk4]
 
     ''' ==================================================================================
@@ -196,11 +194,11 @@ class GAParam:
         fGenetic = Frame(fPLeft)
         fGenetic.pack(side=TOP, anchor=W, fill=X, padx=5, pady=5)
         fGeneticLine1 = Frame(fGenetic)
-        fGeneticLine1.pack(side=TOP, anchor=W, fill=X)
+        fGeneticLine1.pack(side=TOP, anchor=W, fill=X, padx=5, pady=2)
         fGeneticLine2 = Frame(fGenetic)
-        fGeneticLine2.pack(side=TOP, anchor=W, fill=X)
+        fGeneticLine2.pack(side=TOP, anchor=W, fill=X, padx=5, pady=2)
         fGeneticLine3 = Frame(fGenetic)
-        fGeneticLine3.pack(side=TOP, anchor=W, fill=X)
+        fGeneticLine3.pack(side=TOP, anchor=W, fill=X, padx=5, pady=2)
 
         Label(fGeneticLine1, text='Genetic parameters', font=self.top.font_Title).pack(side=LEFT)
         Label(fGeneticLine2, text='Number of chromosomes:', font=self.top.font_Text).pack(side=LEFT)
@@ -222,11 +220,11 @@ class GAParam:
         fOperators = Frame(fPLeft)
         fOperators.pack(side=TOP, anchor=W, fill=X, padx=5, pady=5)
         fOperatorsLine1 = Frame(fOperators)
-        fOperatorsLine1.pack(side=TOP, anchor=W, fill=X)
+        fOperatorsLine1.pack(side=TOP, anchor=W, fill=X, padx=5, pady=2)
         fOperatorsLine2 = Frame(fOperators)
-        fOperatorsLine2.pack(side=TOP, anchor=W, fill=X)
+        fOperatorsLine2.pack(side=TOP, anchor=W, fill=X, padx=5, pady=2)
         fOperatorsLine3 = Frame(fOperators)
-        fOperatorsLine3.pack(side=TOP, anchor=W, fill=X)
+        fOperatorsLine3.pack(side=TOP, anchor=W, fill=X, padx=5, pady=2)
 
         Label(fOperatorsLine1, text='Genetic operators', font=self.top.font_Title).pack(side=LEFT)
         Label(fOperatorsLine2, text='Crossover rate:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
@@ -248,9 +246,9 @@ class GAParam:
         fAGA = Frame(fPLeft)
         fAGA.pack(side=TOP, fill=X, padx=5, pady=5)
         fAGALine1 = Frame(fAGA)
-        fAGALine1.pack(side=TOP, fill=X)
+        fAGALine1.pack(side=TOP, fill=X, padx=5, pady=2)
         fAGALine2 = Frame(fAGA)
-        fAGALine2.pack(side=TOP, fill=X)
+        fAGALine2.pack(side=TOP, fill=X, padx=5, pady=2)
 
         Label(fAGALine1, text='Adaptive operators:', font=self.top.font_Text).pack(side=LEFT)
         Checkbutton(fAGALine1, text='Use', variable=self.UseAGA, font=self.top.font_Text).pack(side=RIGHT)
@@ -314,11 +312,11 @@ class GAParam:
         fFitness = Frame(fPRight)#, borderwidth=2, relief=SUNKEN)
         fFitness.pack(side=TOP, fill=X, padx=5, pady=5)
         fFitnessLine1 = Frame(fFitness)
-        fFitnessLine1.pack(side=TOP, fill=X)
+        fFitnessLine1.pack(side=TOP, fill=X, padx=5, pady=2)
         fFitnessLine2 = Frame(fFitness)
-        fFitnessLine2.pack(side=TOP, fill=X)
+        fFitnessLine2.pack(side=TOP, fill=X, padx=5, pady=2)
         fFitnessLine3 = Frame(fFitness)
-        fFitnessLine3.pack(side=TOP, fill=X)
+        fFitnessLine3.pack(side=TOP, fill=X, padx=5, pady=2)
 
         Label(fFitnessLine1, text='Fitness model', font=self.top.font_Title).pack(side=LEFT)
         Radiobutton(fFitnessLine2, text='Linear', value='LINEAR', variable=self.FitModel, font=self.top.font_Text).pack(side=LEFT)
@@ -350,16 +348,16 @@ class GAParam:
         fRepModel = Frame(fPRight)
         fRepModel.pack(side=TOP, fill=X, padx=5, pady=5)
         fRepModelLine1 = Frame(fRepModel)
-        fRepModelLine1.pack(side=TOP, fill=X)
+        fRepModelLine1.pack(side=TOP, fill=X, padx=5, pady=2)
         fRepModelLine2 = Frame(fRepModel)
-        fRepModelLine2.pack(side=TOP, fill=X)
+        fRepModelLine2.pack(side=TOP, fill=X, padx=5, pady=2)
         fRepModelLine3 = Frame(fRepModel)
-        fRepModelLine3.pack(side=TOP, fill=X)
+        fRepModelLine3.pack(side=TOP, fill=X, padx=5, pady=2)
         fRepModelLine4 = Frame(fRepModel)
-        fRepModelLine4.pack(side=TOP, fill=X)
+        fRepModelLine4.pack(side=TOP, fill=X, padx=5, pady=2)
         
         Label(fRepModelLine1, text='Reproduction model', font=self.top.font_Title).pack(side=LEFT)
-        Radiobutton(fRepModelLine2, text='Steady-state:', value='STEADS', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
+        Radiobutton(fRepModelLine2, text='Elitism (Steady-state):', value='STEADY', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
         self.entSS = Entry(fRepModelLine2, width=5, background='white', justify=CENTER, textvariable=self.RepSS, font=self.top.font_Text)
         self.entSS.pack(side=RIGHT)
         args_list = [self.entSS, self.RepSS, 1, 1000, -1, self.ValidRepSS,'Reproduction Steady-State','int']
@@ -367,42 +365,28 @@ class GAParam:
         self.ValidRepSS[3] = self.entSS
         Label(fRepModelLine2, text='Chr.:', font=self.top.font_Text).pack(side=RIGHT)
 
-        Radiobutton(fRepModelLine3, text='Steady-state w/o duplicates:', value='STEAWD', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
-        self.entSSWD = Entry(fRepModelLine3, width=5, background='white', justify=CENTER, textvariable=self.RepSSWD, font=self.top.font_Text)
-        self.entSSWD.pack(side=RIGHT)
-        args_list = [self.entSSWD, self.RepSSWD, 1, 1000, -1, self.ValidRepSSWD,'Reproduction Steady-State w/o Duplicates','int']
-        self.entSSWD.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
-        self.ValidRepSSWD[3] = self.entSSWD
-        Label(fRepModelLine3, text='Chr.:', font=self.top.font_Text).pack(side=RIGHT)
-
-        Radiobutton(fRepModelLine4, text='Boom w/o duplicates:', value='BOOMWD', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
-        self.entBWD = Entry(fRepModelLine4, width=5, background='white', justify=CENTER, textvariable=self.RepBWD, font=self.top.font_Text)
-        self.entBWD.pack(side=RIGHT)
-        args_list = [self.entBWD, self.RepBWD, 0.01, 5.00, 2, self.ValidRepBWD,'Reproduction Boom w/o Duplicates','float']
-        self.entBWD.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
-        self.ValidRepBWD[3] = self.entBWD
-        Label(fRepModelLine4, text='Ratio.:', font=self.top.font_Text).pack(side=RIGHT)
+        Radiobutton(fRepModelLine3, text='Population boom:', value='BOOM', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
+        self.entB = Entry(fRepModelLine3, width=5, background='white', justify=CENTER, textvariable=self.RepB, font=self.top.font_Text)
+        self.entB.pack(side=RIGHT)
+        args_list = [self.entB, self.RepB, 0.01, 5.00, 2, self.ValidRepB,'Reproduction PopBoom','float']
+        self.entB.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.ValidRepB[3] = self.entB
+        Label(fRepModelLine3, text='Ratio.:', font=self.top.font_Text).pack(side=RIGHT)
         
+        Checkbutton(fRepModelLine4, text='Allow duplicates', variable=self.RepDup, font=self.top.font_Text).pack(side=LEFT)
 
     ''' ==================================================================================
     FUNCTION RepModel_Toggle: Disables/enables the edit box according to checkstate
     =================================================================================  '''    
     def RepModel_Toggle(self, *args):
         
-        if self.RepModel.get() == 'STEADS':
+        if self.RepModel.get() == 'STEADY':
             self.entSS.config(state='normal')
-            self.entSSWD.config(state='disabled')
-            self.entBWD.config(state='disabled')
+            self.entB.config(state='disabled')
             
-        elif self.RepModel.get() == 'STEAWD':
+        elif self.RepModel.get() == 'BOOM':
             self.entSS.config(state='disabled')
-            self.entSSWD.config(state='normal')
-            self.entBWD.config(state='disabled')
-
-        else:
-            self.entSS.config(state='disabled')
-            self.entSSWD.config(state='disabled')
-            self.entBWD.config(state='normal')
+            self.entB.config(state='normal')
             
     ''' ==================================================================================
     FUNCTION FitModel_Toggle: Disables/enables the edit box according to checkstate

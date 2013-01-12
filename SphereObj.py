@@ -6,7 +6,7 @@ class SphereObj:
     def __init__(self, Radius=0.0, MaxRadius=0.0, Center=[0.0,0.0,0.0]):
 
         self.Radius = Radius
-	self.MaxRadius = MaxRadius
+        self.MaxRadius = MaxRadius
         self.Center = Center
 
     ''' ==================================================================================

@@ -38,7 +38,7 @@ import Prefs
 import CleftObj
 import ManageFiles2
 import Default
-import AdvOptions
+#import AdvOptions
 import CropCleft
 import Volume
 
@@ -143,7 +143,7 @@ class displayGetCleft:
         # Build class objects of each tab
         self.Default = Default.Default(self, self.PyMOL)
         self.Manage = ManageFiles2.Manage(self)
-        self.AdvOptions = AdvOptions.AdvOptions(self)        
+        #self.AdvOptions = AdvOptions.AdvOptions(self)        
         self.Crop = CropCleft.CropCleft(self, self.PyMOL)
         self.Volume = Volume.EstimateVolume(self)        
         
@@ -288,6 +288,8 @@ class displayGetCleft:
         #print "Setting Tab buttons to Step 2"
         for Btn in self.listBtnTabs:
             Btn.config(state='normal',bg=self.Color_White)
+
+        self.Btn_Config.config(bg=self.Color_Blue)
 
     ''' ==================================================================================
     FUNCTION ValidateFolders: Be sure the folders Exists 
@@ -504,6 +506,7 @@ class displayGetCleft:
                 self.fMiddle.update_idletasks()
 
                 #print "Killed Frame " + self.ActiveFrame.FrameName
+                self.ActiveFrame.Tab.config(bg=self.Color_White)
                 #self.ActiveFrame.Del_Trace()
 
             self.ActiveFrame = Frame

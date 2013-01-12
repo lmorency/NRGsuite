@@ -41,12 +41,31 @@ class Manage:
         
         self.top = top
 
+    # Delete the clf files of the GetCleft output
+    def delete_Temp(self):
+    
+        for CleftFile in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*_clf_*')):
+            try:
+                os.remove(CleftFile)
+            except:
+                pass
 
+
+    # Rename the pdb files to nrgclf format
+    def rename_Temp(self):
+
+        for CleftFile in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*_sph_*')):
+            Filename = os.path.splitext(CleftFile)[0] + '.nrgclf'
+
+            try:
+                shutil.move(CleftFile,Filename)
+            except:
+                pass
+            
     # Store the temporary clefts
     def store_Temp(self):
         
-        for CleftFile in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*_sph_*')):
-
+        for CleftFile in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*.nrgclf')):
             CleftName = os.path.splitext(os.path.basename(CleftFile))[0]
             
             Cleft = CleftObj.CleftObj()
@@ -56,7 +75,14 @@ class Manage:
 
             self.top.Default.TempBindingSite.Add_Cleft(Cleft)
 
-
+    # When creating a new partition object, copy the partition in the temp directory (do not save)
+    def copy_TempPartition(self, FromFile, DestFile):
+        
+        try:
+            shutil.copy(FromFile, DestFile)
+        except:
+            self.top.DisplayMessage("  ERROR: Could not copy temporary partition file.", 1)
+    
     # Copy files from the Temp to the Save directory
     def save_Temp(self, folderName):
 
@@ -69,6 +95,8 @@ class Manage:
         for Cleft in iter(self.top.Default.TempBindingSite.listClefts):
 
             DestFile = os.path.join(SavePath,os.path.basename(Cleft.CleftFile))
+            print Cleft.CleftFile
+            print DestFile
             try:
                 shutil.copy(Cleft.CleftFile, DestFile)
                 nCopy = nCopy + 1
@@ -89,35 +117,16 @@ class Manage:
         
         try:
             shutil.copy(PartitionFile, OutputFile)            
-            self.top.DisplayMessage("Partition file saved to " + OutputFile, 0)
+            #self.top.DisplayMessage("Partition file saved to " + OutputFile, 0)
         except:
             self.top.DisplayMessage("Could not copy temporary partition file", 2)
 
     # Clean temporary directories and bindingsite
     def Clean(self):
 
-        for file in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*.pdb')):
+        for file in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*')):
             try:
                 os.remove(file)
             except OSError:
                 self.top.DisplayMessage("  ERROR: Could not remove temporary file(s)", 1)
 
-
-    ''' ==========================================================
-    update_Filename: updates the default filename (Partition Cleft)
-    ==========================================================='''           
-    def update_Filename(self, parent):
-
-        var = os.path.split(parent)
-        
-        file = var[1]
-        file = file.replace('.pdb','')
-        file = file + '_pt_'
-
-        i = 1
-        newfile = file + str(i) + '.pdb'
-        while os.path.isfile(os.path.join(var[0],newfile)):
-            i += 1
-            newfile = file + str(i) + '.pdb'
-        
-        return [var[0], newfile]

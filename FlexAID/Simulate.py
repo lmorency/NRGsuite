@@ -110,6 +110,8 @@ class Simulate:
         self.fSimulate.pack(fill=BOTH, expand=True)
         self.IdleStatus()
 
+        self.Reset_Buttons()
+
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
     =================================================================================  '''    
@@ -166,7 +168,7 @@ class Simulate:
         fSim_PlayerLine2.pack(side=TOP, fill=X)
         
         Label(fSim_PlayerLine1, text='Simulation controls', font=self.top.font_Title).pack(side=LEFT, anchor=W)        
-        self.Btn_Start = Button(fSim_PlayerLine2, text='Start', command=self.Btn_StartSim, font=self.top.font_Text)
+        self.Btn_Start = Button(fSim_PlayerLine2, text='Start', command=self.Btn_StartSim, font=self.top.font_Text, state='normal')
         self.Btn_Start.pack(side=LEFT)
         self.Btn_PauseResume = Button(fSim_PlayerLine2, text='Pause', command=self.Btn_PauseResumeSim, font=self.top.font_Text, state='disabled')
         self.Btn_PauseResume.pack(side=LEFT)
@@ -276,15 +278,15 @@ class Simulate:
                                                     self.Manage.CONFIG,
                                                     self.Manage.ga_inp,
                                                     self.Manage.FlexAIDRunSimulationProject_Dir )
-
-        # START PARSING AS THREAD
-        self.top.DisplayMessage('   Starting parsing thread.', 2)
-        Parse = Simulation.Parse(self)
         
         # START SIMULATION
         self.top.DisplayMessage('   Starting executable thread.', 2)
         Start = Simulation.Start(self, commandline)
         
+        # START PARSING AS THREAD
+        self.top.DisplayMessage('   Starting parsing thread.', 2)
+        Parse = Simulation.Parse(self)
+
         self.top.DisplayMessage("For better performance you can disable object BINDINGSITE_AREA__", 0)
     
     
@@ -393,6 +395,16 @@ class Simulate:
                             [ self.ColorList[i], None, None, None, None ] )
             i += 1
                 
+    ''' =============================================================================== 
+    FUNCTION Reset_Buttons(self): resets button states back to defaults
+    ===============================================================================  '''        
+    def Reset_Buttons(self):
+    
+        self.Btn_Start.config(state='normal')
+        self.Btn_PauseResume.config(state='disabled')
+        self.Btn_Stop.config(state='disabled')
+        self.Btn_Abort.config(state='disabled')
+
     ''' =============================================================================== 
     FUNCTION Btn_PauseResumeSim: Pauses/Resumes the simulation   
     ===============================================================================  '''        

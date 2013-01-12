@@ -186,13 +186,16 @@ class Config2:
             self.Disable_Frame()
         else:
             self.Enable_Frame()
-
+            
             if self.top.WizardError or self.top.WizardResult == 0:
                 self.FlexBondsPar.set('RIGID')
                 self.FlexStatus.set('')
+            
             elif self.top.WizardResult > 0:
-                self.FlexStatus.set(str(self.top.WizardResult) + ' flexible bond(s) set')
+                Status = ' (' + str(self.top.WizardResult) + ') flexible bond(s) set'
+                self.FlexStatus.set(Status)
 
+                    
     ''' ==================================================================================
     FUNCTION SAT_Toggle: Enables wizard to set atom types
     =================================================================================  '''    
@@ -239,14 +242,11 @@ class Config2:
 
         if self.top.ActiveWizard is None:
             
-            print "CONSRUNNING"
             self.ConsRunning(None, None, None, True)
 
-            print "CONSTRUCTOR"
             self.top.ActiveWizard = Constraint.constraint(self,Type)
             cmd.set_wizard(self.top.ActiveWizard)
 
-            print "START"
             self.top.ActiveWizard.Start()
             
         else:
@@ -353,11 +353,11 @@ class Config2:
         self.fTransRot = Frame(fC2Left)
         self.fTransRot.pack(fill=X, side=TOP, padx=5, pady=5)
         fTransRotLine1 = Frame(self.fTransRot)
-        fTransRotLine1.pack(side=TOP, fill=X, padx=5, pady=5)
+        fTransRotLine1.pack(side=TOP, fill=X, padx=5, pady=2)
         fTransRotLine2 = Frame(self.fTransRot)
-        fTransRotLine2.pack(side=TOP, fill=X, padx=5, pady=5)
+        fTransRotLine2.pack(side=TOP, fill=X, padx=5, pady=2)
         fTransRotLine3 = Frame(self.fTransRot)
-        fTransRotLine3.pack(side=TOP, fill=X, padx=5, pady=5)
+        fTransRotLine3.pack(side=TOP, fill=X, padx=5, pady=2)
 
         Label(fTransRotLine1, text='Ligand translation and rotation', font=self.top.font_Title).pack(side=TOP, anchor=W)
         Checkbutton(fTransRotLine2, text='Translational degrees of freedom', variable=self.IntTranslation, font=self.top.font_Text).pack(fill=X, side=LEFT)
@@ -370,11 +370,11 @@ class Config2:
         self.fBonds = Frame(fC2Left)
         self.fBonds.pack(fill=X, side=TOP, padx=5, pady=5)
         fBondsLine1 = Frame(self.fBonds)
-        fBondsLine1.pack(side=TOP, fill=X, padx=5)
+        fBondsLine1.pack(side=TOP, fill=X, padx=5, pady=2)
         fBondsLine2 = Frame(self.fBonds)
-        fBondsLine2.pack(side=TOP, fill=X, padx=5)
+        fBondsLine2.pack(side=TOP, fill=X, padx=5, pady=2)
         fBondsLine3 = Frame(self.fBonds)
-        fBondsLine3.pack(side=TOP, fill=X, padx=5)
+        fBondsLine3.pack(side=TOP, fill=X, padx=5, pady=2)
         
         Label(fBondsLine1, text='Ligand flexibility', font=self.top.font_Title).pack(side=TOP, anchor=W)
         Radiobutton(fBondsLine2, text='Rigid bonds', value='RIGID', variable=self.FlexBondsPar, font=self.top.font_Text).pack(side=LEFT, anchor=W)
@@ -388,26 +388,26 @@ class Config2:
         self.fSAT = Frame(fC2Left)
         self.fSAT.pack(fill=X, side=TOP, padx=5, pady=5)
         fSATLine1 = Frame(self.fSAT)
-        fSATLine1.pack(side=TOP, fill=X)
+        fSATLine1.pack(side=TOP, fill=X, padx=5, pady=2)
         fSATLine2 = Frame(self.fSAT)
-        fSATLine2.pack(side=TOP, fill=X)
+        fSATLine2.pack(side=TOP, fill=X, padx=5, pady=2)
         fSATLine3 = Frame(self.fSAT)
-        fSATLine3.pack(side=TOP, fill=X)
+        fSATLine3.pack(side=TOP, fill=X, padx=5, pady=2)
 
         Label(fSATLine1, text='Ligand atom types', font=self.top.font_Title, state='disabled').pack(side=TOP,anchor=W)
-        Radiobutton(fSATLine2, text='Default types', width=15, value='DEFAULT', variable=self.SetAtmTypeOpt, font=self.top.font_Text, state='disabled', justify=LEFT).pack(side=LEFT, anchor=W)
-        Radiobutton(fSATLine3, text='Customize:', width=15, value='CUSTOM', variable=self.SetAtmTypeOpt, font=self.top.font_Text, state='disabled').pack(side=LEFT, anchor=W)
+        Radiobutton(fSATLine2, text='Default types', value='DEFAULT', variable=self.SetAtmTypeOpt, font=self.top.font_Text, state='disabled', justify=LEFT).pack(side=LEFT, anchor=W)
+        Radiobutton(fSATLine3, text='Customize:', value='CUSTOM', variable=self.SetAtmTypeOpt, font=self.top.font_Text, state='disabled').pack(side=LEFT, anchor=W)
         Entry(fSATLine3, text='', state='disabled',textvariable=self.SATStatus, font=self.top.font_Text, disabledforeground=self.top.Color_Black, disabledbackground=self.top.Color_White).pack(side=LEFT)
 
         #************************************************#
         #*                Reference pose (RMSD)         *#
         #************************************************#
-        fRMSD = Frame(fC2Left)
+        fRMSD = Frame(fC2Right)
         fRMSD.pack(fill=X, side=TOP, padx=5, pady=5)
         fRMSDLine1 = Frame(fRMSD)
-        fRMSDLine1.pack(side=TOP, fill=X)
+        fRMSDLine1.pack(side=TOP, fill=X, padx=5, pady=2)
         fRMSDLine2 = Frame(fRMSD)
-        fRMSDLine2.pack(side=TOP, fill=X)
+        fRMSDLine2.pack(side=TOP, fill=X, padx=5, pady=2)
         
         Label(fRMSDLine1, text='RMSD structure', font=self.top.font_Title).pack(side=LEFT,anchor=W)        
         Checkbutton(fRMSDLine2, text='Ligand pose as reference', variable=self.UseReference, font=self.top.font_Text).pack(side=LEFT)
@@ -421,13 +421,13 @@ class Config2:
         fCovConstraint = Frame(fC2Right)#,bd=1,bg="red")
         fCovConstraint.pack(fill=X, side=TOP, padx=5, pady=5)
         fCovConstraintLine1 = Frame(fCovConstraint)
-        fCovConstraintLine1.pack(fill=X, side=TOP)
+        fCovConstraintLine1.pack(fill=X, side=TOP, padx=5, pady=2)
         fCovConstraintLine2 = Frame(fCovConstraint)
-        fCovConstraintLine2.pack(fill=X, side=TOP)
+        fCovConstraintLine2.pack(fill=X, side=TOP, padx=5, pady=2)
         fCovConstraintLine3 = Frame(fCovConstraint)
-        fCovConstraintLine3.pack(fill=X, side=TOP)
+        fCovConstraintLine3.pack(fill=X, side=TOP, padx=5, pady=2)
         fCovConstraintLine4 = Frame(fCovConstraint)
-        fCovConstraintLine4.pack(fill=X, side=TOP)
+        fCovConstraintLine4.pack(fill=X, side=TOP, padx=5, pady=2)
  
         #Label(fCovConstraintLine1, text = 'Covalent constraints', font=self.top.font_Title, justify=LEFT).pack(side=LEFT, anchor=W)
         Label(fCovConstraintLine1, text = 'Constraints', font=self.top.font_Title, justify=LEFT).pack(side=LEFT, anchor=W)

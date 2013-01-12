@@ -96,8 +96,9 @@ class RunThread(threading.Thread):
 
         self.GetCleft.Run = None
 
-
         # Store clefts and show them
+        self.GetCleft.Manage.delete_Temp()
+        self.GetCleft.Manage.rename_Temp()
         self.GetCleft.Manage.store_Temp()
             
         nCleft = self.top.TempBindingSite.Count_Cleft()
@@ -150,6 +151,8 @@ class Default:
         self.TempBindingSite = BindingSite.BindingSite()
 
         self.NbCleft = StringVar()
+        self.MinRadius = DoubleVar()
+        self.MaxRadius = DoubleVar()
         self.MessageValue = StringVar()
 
         self.FetchPDB = StringVar()
@@ -171,6 +174,8 @@ class Default:
 
         self.FetchPDB.set('')
         self.NbCleft.set('10')
+        self.MinRadius.set('1.50')
+        self.MaxRadius.set('4.00')
         self.OutputFileValue.set('')
         self.ResiduValue.set('')
         self.MessageValue.set('')
@@ -181,9 +186,11 @@ class Default:
         self.LastdefaultOption = ''
         
         self.ValidNbCleft = [ True, 1, 0, None ]
+        self.ValidMinRadius = [ True, 1, 0, None ]
+        self.ValidMaxRadius = [ True, 1, 0, None ]
         self.ValidOutput = [ True, 1, 0, None ]
 
-        self.Validator = [ self.ValidNbCleft, self.ValidOutput ]
+        self.Validator = [ self.ValidNbCleft, self.ValidMinRadius, self.ValidMaxRadius, self.ValidOutput ]
         
     
     ''' ==================================================================================
@@ -252,7 +259,7 @@ class Default:
         Label(fStructureLine1, text='Retrieve a structure', font=self.top.font_Title).pack(side=LEFT)
 
         # Get a PDB File from a file on your harddrive
-        Button(fStructureLine2, text='Open file', command=self.Btn_OpenPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=5)
+        Button(fStructureLine2, text='Open target', command=self.Btn_OpenPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=5)
         
         # Download a PDB File from the internet
         Button(fStructureLine2, text='Download', command=self.Btn_DownloadPDB_Clicked, font=self.font_Text, width=10).pack(side=RIGHT, padx=5)
@@ -296,26 +303,45 @@ class Default:
         fBasicLine5 = Frame(fBasic)
         fBasicLine5.pack(fill=X, side=TOP)
 
-        Label(fBasicLine1, text='Basic parameters', font=self.top.font_Title).pack(side=LEFT)
-        Label(fBasicLine2, text='Residue in contact (e.g. ALA13A):', font=self.top.font_Text).pack(side=LEFT)
-        self.EntryResidu = Entry(fBasicLine2,textvariable=self.ResiduValue, background='white', justify=CENTER, font=self.top.font_Text)
+        Label(fBasicLine1, text='Parametrization', font=self.top.font_Title).pack(side=LEFT)
+
+        Label(fBasicLine2, text='Insert spheres radii:', font=self.top.font_Text).pack(side=LEFT)
+
+        EntryMaxRadius = Entry(fBasicLine2, width=5, textvariable=self.MaxRadius, background='white', justify=CENTER, font=self.top.font_Text)
+        EntryMaxRadius.pack(side=RIGHT)
+        Label(fBasicLine2, text='Max:', font=self.top.font_Text).pack(side=RIGHT, padx=2)
+
+        EntryMinRadius = Entry(fBasicLine2, width=5, textvariable=self.MinRadius, background='white', justify=CENTER, font=self.top.font_Text)
+        EntryMinRadius.pack(side=RIGHT)
+        Label(fBasicLine2, text='Min:', font=self.top.font_Text).pack(side=RIGHT, padx=2)
+
+        args_list = [EntryMaxRadius, self.MaxRadius, EntryMinRadius, 10.00, 2, self.ValidMaxRadius, 'Maximum radius', 'float']
+        EntryMaxRadius.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.ValidMaxRadius[3] = EntryMaxRadius
+
+        args_list = [EntryMinRadius, self.MinRadius, 0.25, EntryMaxRadius, 2, self.ValidMinRadius, 'Minimum radius', 'float']
+        EntryMinRadius.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.ValidMinRadius[3] = EntryMinRadius
+        
+        Label(fBasicLine3, text='Residue in contact (e.g. ALA13A):', font=self.top.font_Text).pack(side=LEFT)
+        self.EntryResidu = Entry(fBasicLine3,textvariable=self.ResiduValue, background='white', justify=CENTER, font=self.top.font_Text)
         self.EntryResidu.pack(side=RIGHT)
 
-        Label(fBasicLine3, text='Number of clefts to show:', font=self.top.font_Text).pack(side=LEFT)
-        EntryNbCleft = Entry(fBasicLine3, width=8, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
+        Label(fBasicLine4, text='Number of clefts to show:', font=self.top.font_Text).pack(side=LEFT)
+        EntryNbCleft = Entry(fBasicLine4, width=8, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
         EntryNbCleft.pack(side=RIGHT)
         args_list = [EntryNbCleft, self.NbCleft, 1, 100, -1, self.ValidNbCleft, 'Number of clefts', 'int']
         EntryNbCleft.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
         self.ValidNbCleft[3] = EntryNbCleft
 
-        Label(fBasicLine4, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
-        EntryOutput = Entry(fBasicLine4, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
+        Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
+        EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
         EntryOutput.pack(side=RIGHT)
         args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, self.ValidOutput, 'Output filename', 'str']
         EntryOutput.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
         self.ValidOutput[3] = EntryOutput
 
-        Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, width=20, relief=RIDGE, command=self.Btn_AdvancedOptions).pack(side=RIGHT)
+        #Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, width=20, relief=RIDGE, command=self.Btn_AdvancedOptions).pack(side=RIGHT)
 
         #==================================================================================
         '''                           --- BUTTONS AREA ---                              '''
@@ -348,10 +374,10 @@ class Default:
         #Label(fChartLine1, text='Clefts color chart', font=self.top.font_Title).pack(side=TOP)
         #Label(fChartLine2, text='Index', width=10, font=self.top.font_Text).pack(side=LEFT)        
 
-        fSim_Prog = Frame(fChartLine2, border=1, relief=SUNKEN, width=400, height=20)
-        fSim_Prog.pack(side=TOP, fill=X) 
-        self.ChartBar = Canvas(fSim_Prog, bg=self.top.Color_Grey, highlightthickness=0, relief=FLAT, bd=0, width=400, height=20)
-        self.ChartBar.pack(fill=BOTH)
+        fSim_Prog = Frame(fChartLine2, border=1, relief=SUNKEN, width=400, height=25)
+        fSim_Prog.pack(side=TOP)#, anchor=W) 
+        self.ChartBar = Canvas(fSim_Prog, bg=self.top.Color_Grey, width=400, height=25, highlightthickness=0, relief='flat', bd=0)
+        self.ChartBar.pack(fill=BOTH, anchor=W)
 
         #==================================================================================
         '''        --- The DISPLAY options for the CLEFT and SPHERES ---                '''
@@ -489,9 +515,10 @@ class Default:
         Args += ' -t ' + self.NbCleft.get()          
             
         # Size of spheres
-        Args += ' -l ' + self.top.AdvOptions.Entry_L.get()
-        Args += ' -u ' + self.top.AdvOptions.Entry_U.get()
-            
+        Args += ' -l ' + str(self.MinRadius.get())
+        Args += ' -u ' + str(self.MaxRadius.get())
+        
+        """    
         # Misc.
         Args += ' -k ' + self.top.AdvOptions.Entry_K.get()
 
@@ -507,10 +534,11 @@ class Default:
                 
         if self.top.AdvOptions.Entry_C.get() != 'ALL':
             Args += ' -c ' + self.Entry_C.get()
-                
-        Args += ' -s'
-
+        
+        """
         #Args += ' -ca'
+        
+        Args += ' -s'
 
         self.LastdefaultOption = self.defaultOption.get()
 
@@ -526,28 +554,6 @@ class Default:
         else:
             self.Btn_StartGetCleft.config(state='disabled')
 
-#    ''' ========================================================
-#                  Toggles the view of the clefts (clf)
-#        ========================================================'''
-#    def Toggle_CleftView(self, *args):
-#        
-#        self.show_Atoms(False)
-#        
-#    ''' ========================================================
-#             Enables/disables the view of the clefts (clf)
-#        ========================================================'''
-#    def Check_Atoms(self, *args):
-#
-#        self.show_Atoms(False)
-#
-#    ''' ========================================================
-#             Enables/disables the view of the spheres (sph)
-#        ========================================================'''
-#    def Check_Spheres(self, *args):
-#       
-#        self.show_Spheres(False)
-#
-
     ''' ==================================================================================
     FUNCTION Btn_RefreshOptMenu_Clicked: Refresh the selections list in the application
                                          with the selections in Pymol 
@@ -558,13 +564,16 @@ class Default:
             exc = []
             General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, exc, None)
 
+    """
     ''' ==================================================================================
     FUNCTION Btn_AdvancedOptions: Opens the Advanced menu of GetCleft
     ==================================================================================  '''                
     def Btn_AdvancedOptions(self):
 
         self.top.SetActiveFrame(self.top.AdvOptions)
-        
+       
+    """
+    
     ''' ========================================================
                   Welcome message upon frame built
     ========================================================='''
@@ -647,9 +656,8 @@ class Default:
         
             CleftPath = self.top.GetCleftSaveProject_Dir
 
-        print CleftPath
         
-        LoadFiles = tkFileDialog.askopenfilename(filetypes=[('PDB Cleft file','*.pdb')],
+        LoadFiles = tkFileDialog.askopenfilename(filetypes=[('Cleft file','*.nrgclf')],
                                                  initialdir=CleftPath, title='Select cleft file(s) to load',
                                                  multiple=1)
         
@@ -711,6 +719,7 @@ class Default:
                 
                 self.Btn_Clear_Clicked()
                 self.TempBindingSite = TempBindingSite
+
                 self.Display_Temp()
 
                 self.GetCleft.Go_Step2()
@@ -763,7 +772,7 @@ class Default:
 
         for Cleft in iter(self.TempBindingSite.listClefts):
             if self.PyMOL:
-                cmd.load(Cleft.CleftFile, state=1)
+                cmd.load(Cleft.CleftFile, Cleft.CleftName, state=1, format='pdb')
 
     ''' ==================================================================================
     FUNCTION Update_TempBindingSite: Update cleft object with only those undeleted in PyMOL
@@ -787,7 +796,7 @@ class Default:
         
             if self.PyMOL:
                 # Load the pdb file in Pymol
-                cmd.load(FilePath)
+                cmd.load(FilePath, state=1)
                 self.defaultOption.set(Name)
                 
     ''' ==================================================================================

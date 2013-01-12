@@ -26,10 +26,11 @@ import tkFileDialog
 import General
 import Constants
 import ProcessLigand
-import Anchor
 
 if __debug__:
     from pymol import cmd
+    
+    import Anchor
     import General_cmd
 
 
@@ -239,41 +240,109 @@ class IOFile:
         fPDB_optionsLine2.pack(side=TOP, fill=X)
 
         # Header Get PDB
-        Label(fPDB_optionsLine1, text='Selection of the target', font=self.font_Title).pack(side=LEFT)
+        Label(fPDB_optionsLine1, text='Retrieve a file', font=self.font_Title).pack(side=LEFT)
         
         # Get a PDB File from a file on your harddrive
-        Button(fPDB_optionsLine2, text='Open file', command=self.Btn_OpenPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=20)
+        Button(fPDB_optionsLine2, text='Open file', command=self.Btn_OpenPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=5)
         
         # Download a PDB File from the internet
-        Label(fPDB_optionsLine2, text='Enter the PDB code:', font=self.font_Text, justify=CENTER).pack(side=LEFT, padx=5)
-        Entry(fPDB_optionsLine2, textvariable=self.FetchPDB, width=10, background='white', font=self.font_Text, justify=CENTER).pack(side=LEFT)
-        Button(fPDB_optionsLine2, text='Download', command=self.Btn_DownloadPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=5)
+        Button(fPDB_optionsLine2, text='Download', command=self.Btn_DownloadPDB_Clicked, font=self.font_Text, width=10).pack(side=RIGHT, padx=5)
+        Entry(fPDB_optionsLine2, textvariable=self.FetchPDB, width=10, background='white', font=self.font_Text, justify=CENTER).pack(side=RIGHT)
+        Label(fPDB_optionsLine2, text='Enter the PDB code:', font=self.font_Text, justify=CENTER).pack(side=RIGHT, padx=5)
         
-        
+
         #==================================================================================
         #                                 Object/selections
         #==================================================================================
-        fPDBsel = Frame(self.fIOFile)#, border=1, relief=SUNKEN)
-        fPDBsel.pack(fill=X, expand=True, side=TOP, padx=5, pady=5)
+        fPDB_options2 = Frame(self.fIOFile)#, border=1, relief=SUNKEN)
+        fPDB_options2.pack(fill=X, side=TOP, padx=5, pady=5)
 
-        fPDBselLine1 = Frame(fPDBsel)#, border=1, relief=SUNKEN)
-        fPDBselLine1.pack(side=TOP, fill=X)
-        fPDBselLine2 = Frame(fPDBsel)#, border=1, relief=SUNKEN)
-        fPDBselLine2.pack(side=TOP, fill=X)
+        fPDB_options2Line1 = Frame(fPDB_options2)#, border=1, relief=SUNKEN)
+        fPDB_options2Line1.pack(side=TOP, fill=X)
+        fPDB_options2Line2 = Frame(fPDB_options2)#, border=1, relief=SUNKEN)
+        fPDB_options2Line2.pack(side=TOP, fill=X)
+        fPDB_options2Line3 = Frame(fPDB_options2)#, border=1, relief=SUNKEN)
+        fPDB_options2Line3.pack(side=TOP, fill=X)
+
+        # Header Select
+        Label(fPDB_options2Line1, text='Select an object or selection', font=self.font_Title).pack(side=LEFT)
 
         # List of selections
-        Label(fPDBselLine2, text='PyMOL objects/selections:', width=25, justify=RIGHT, font=self.font_Text).pack(side=LEFT, anchor=E)
+        Label(fPDB_options2Line2, text='PyMOL objects/selections:', width=25, justify=RIGHT, font=self.font_Text).pack(side=LEFT, anchor=E)
 
         optionTuple = ('',)
-        self.optionMenuWidget = apply(OptionMenu, (fPDBselLine2, self.defaultOption) + optionTuple)
+        self.optionMenuWidget = apply(OptionMenu, (fPDB_options2Line2, self.defaultOption) + optionTuple)
         self.optionMenuWidget.config(bg=self.Color_White, width=15, font=self.font_Text)
         self.optionMenuWidget.pack(side=LEFT)
         
-        # Refresh the list with the selections in Pymol
-        Button(fPDBselLine2, text='Refresh', command=self.Btn_RefreshOptMenu_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDBselLine2, text='Save as target', command=self.Btn_SaveProt_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDBselLine2, text='Save as ligand', command=self.Btn_SaveLigand_Clicked, font=self.font_Text).pack(side=LEFT)
- 
+        # Refresh the list with the selections in Pymol        
+        Button(fPDB_options2Line2, text='Refresh', command=self.Btn_RefreshOptMenu_Clicked, font=self.font_Text).pack(side=LEFT)
+
+        # List of selections
+        #Button(fPDB_options2Line2, text='LIGAND', font=self.font_Text, relief=RIDGE, command=self.Btn_SetLigand_Clicked).pack(side=RIGHT)
+        #Button(fPDB_options2Line2, text='TARGET', font=self.font_Text, relief=RIDGE, command=self.Btn_SetProt_Clicked).pack(side=RIGHT)
+
+        #Label(fPDB_options2Line2, text='Set as...', justify=RIGHT, font=self.font_Text).pack(side=RIGHT, anchor=E)
+
+        # List of selections
+        Button(fPDB_options2Line2, text='LIGAND', command=self.Btn_SaveLigand_Clicked, font=self.font_Text, relief=RIDGE).pack(side=RIGHT)
+        Button(fPDB_options2Line2, text='TARGET', command=self.Btn_SaveProt_Clicked, font=self.font_Text, relief=RIDGE).pack(side=RIGHT)
+
+        Label(fPDB_options2Line2, text='Save as...', justify=RIGHT, font=self.font_Text).pack(side=RIGHT, anchor=E)
+        
+
+               
+        #==================================================================================
+        #                                SET TARGET
+        #==================================================================================                
+        fPDBprotein = Frame(self.fIOFile, border=1, relief=RAISED)
+        fPDBprotein.pack(side=TOP, pady=10)
+
+        fPDBproteinLine1 = Frame(fPDBprotein)
+        fPDBproteinLine1.pack(side=TOP, fill=X, padx=3, pady=3)
+
+        fPDBproteinLine2 = Frame(fPDBprotein)
+        fPDBproteinLine2.pack(side=TOP, fill=X, padx=3, pady=3)
+
+        # First line
+        Label(fPDBproteinLine1, width=30, text='THE TARGET', font=self.font_Title).pack(side=LEFT)
+        Button(fPDBproteinLine1, text='Load', command=self.Btn_LoadProt_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDBproteinLine1, text='Display', command=self.Btn_DisplayProtein_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDBproteinLine1, text='Reset', command=self.Btn_ResetProt_Clicked, font=self.font_Text).pack(side=LEFT)
+
+        # Second line
+        Label(fPDBproteinLine2, width=30, text='', font=self.font_Title).pack(side=LEFT)
+        EntProtein = Entry(fPDBproteinLine2, textvariable=self.ProtName, disabledbackground=self.Color_White, disabledforeground=self.Color_Black, font=self.font_Text)
+        EntProtein.pack(side=LEFT, fill=X)
+        EntProtein.config(state='disabled')
+        Checkbutton(fPDBproteinLine2, variable=self.TargetRNA, width=10, text='RNA', font=self.font_Text, justify=LEFT).pack(side=LEFT)
+        
+        #==================================================================================
+        #                               SET LIGAND
+        #==================================================================================   
+
+        fPDBligand = Frame(self.fIOFile, border=1, relief=RAISED)
+        fPDBligand.pack(side=TOP, pady=10)
+
+        fPDBligandLine1 = Frame(fPDBligand)
+        fPDBligandLine1.pack(side=TOP, fill=X, padx=3, pady=3)
+
+        fPDBligandLine2 = Frame(fPDBligand)
+        fPDBligandLine2.pack(side=TOP, fill=X, padx=3, pady=3)
+
+        # First line
+        Label(fPDBligandLine1, width=30, text='THE LIGAND', font=self.font_Title).pack(side=LEFT)
+        Button(fPDBligandLine1, text='Load', command=self.Btn_LoadLigand_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDBligandLine1, text='Display', command=self.Btn_DisplayLigand_Clicked,font=self.font_Text).pack(side=LEFT)
+        Button(fPDBligandLine1, text='Reset', command=self.Btn_ResetLigand_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDBligandLine1, text='Anchor', command=self.Btn_Anchor_Clicked, font=self.font_Text).pack(side=LEFT)
+        
+        # Second line
+        Label(fPDBligandLine2, width=30, text='', font=self.font_Title).pack(side=LEFT)
+        EntLigand = Entry(fPDBligandLine2, disabledbackground=self.Color_White, disabledforeground=self.Color_Black, textvariable=self.LigandName, font=self.font_Text)
+        EntLigand.pack(side=LEFT, fill=X)
+        EntLigand.config(state='disabled')
+        Label(fPDBligandLine2, width=10, text='', font=self.font_Text).pack(side=LEFT)
 
         #==================================================================================
         #                                 Processing of molecules
@@ -294,58 +363,6 @@ class IOFile:
         Radiobutton(fProcessingLine2, text='Sobolev', variable=self.AtomTypes, value="Sobolev", font=self.font_Text).pack(side=LEFT)
         Radiobutton(fProcessingLine2, text='Gaudreault', variable=self.AtomTypes, value="Gaudreault", font=self.font_Text).pack(side=LEFT, padx=10)
         Radiobutton(fProcessingLine2, text='Sybyl', variable=self.AtomTypes, value="Sybyl", font=self.font_Text).pack(side=LEFT)
-               
-        #==================================================================================
-        #                                SET TARGET
-        #==================================================================================                
-        fPDBprotein = Frame(self.fIOFile, border=1, relief=RAISED)
-        fPDBprotein.pack(side=TOP, pady=5)
-
-        fPDBproteinLine1 = Frame(fPDBprotein)
-        fPDBproteinLine1.pack(side=TOP, fill=X, padx=3, pady=3)
-
-        fPDBproteinLine2 = Frame(fPDBprotein)
-        fPDBproteinLine2.pack(side=TOP, fill=X, padx=3, pady=3)
-
-        # First line
-        Label(fPDBproteinLine1, width=30, text='SET TARGET', font=self.font_Title).pack(side=LEFT)
-        Button(fPDBproteinLine1, text='Load', command=self.Btn_LoadProt_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDBproteinLine1, text='Display', command=self.Btn_DisplayProtein_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDBproteinLine1, text='Reset', command=self.Btn_ResetProt_Clicked, font=self.font_Text).pack(side=LEFT)
-
-        # Second line
-        Label(fPDBproteinLine2, width=30, text='', font=self.font_Title).pack(side=LEFT)
-        EntProtein = Entry(fPDBproteinLine2, textvariable=self.ProtName, disabledbackground=self.Color_White, disabledforeground=self.Color_Black, font=self.font_Text)
-        EntProtein.pack(side=LEFT, fill=X)
-        EntProtein.config(state='disabled')
-        Checkbutton(fPDBproteinLine2, variable=self.TargetRNA, width=10, text='RNA', font=self.font_Text, justify=LEFT).pack(side=LEFT)
-        
-        #==================================================================================
-        #                               SET LIGAND
-        #==================================================================================   
-
-        fPDBligand = Frame(self.fIOFile, border=1, relief=RAISED)
-        fPDBligand.pack(side=TOP, pady=5)
-
-        fPDBligandLine1 = Frame(fPDBligand)
-        fPDBligandLine1.pack(side=TOP, fill=X, padx=3, pady=3)
-
-        fPDBligandLine2 = Frame(fPDBligand)
-        fPDBligandLine2.pack(side=TOP, fill=X, padx=3, pady=3)
-
-        # First line
-        Label(fPDBligandLine1, width=30, text='SET LIGAND', font=self.font_Title).pack(side=LEFT)
-        Button(fPDBligandLine1, text='Load', command=self.Btn_LoadLigand_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDBligandLine1, text='Display', command=self.Btn_DisplayLigand_Clicked,font=self.font_Text).pack(side=LEFT)
-        Button(fPDBligandLine1, text='Reset', command=self.Btn_ResetLigand_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDBligandLine1, text='Anchor', command=self.Btn_Anchor_Clicked, font=self.font_Text).pack(side=LEFT)
-        
-        # Second line
-        Label(fPDBligandLine2, width=30, text='', font=self.font_Title).pack(side=LEFT)
-        EntLigand = Entry(fPDBligandLine2, disabledbackground=self.Color_White, disabledforeground=self.Color_Black, textvariable=self.LigandName, font=self.font_Text)
-        EntLigand.pack(side=LEFT, fill=X)
-        EntLigand.config(state='disabled')
-        Label(fPDBligandLine2, width=10, text='', font=self.font_Text).pack(side=LEFT)
 
     ''' ==================================================================================
     FUNCTIONS Reset Ligand and Protein textbox fields
@@ -378,8 +395,42 @@ class IOFile:
             else:
                 self.top.DisplayMessage("A wizard is currently active", 2)
 
+    """
     ''' ==================================================================================
-    FUNCTION Btn_Save : Ligand and Protein
+    FUNCTION Btn_Set : Sets the object or selection as the target or ligand
+    ==================================================================================  '''    
+    def Btn_SetLigand_Clicked(self):
+
+        if not self.PyMOL:
+            return
+
+        # Get the Drop Down List Selection Name
+        ddlSelection = self.defaultOption.get()
+
+        if ddlSelection == '':
+            return
+
+        try:
+            state = cmd.get_state()
+            n = cmd.count_atoms(ddlSelection, state=state)
+
+            if n < 3:
+                self.DisplayMessage("  ERROR for object/selection '" + ddlSelection + "': The ligand must have at least (3) atoms)", 1)
+                return
+
+            elif n > Constants.MAX_LIGAND_ATOMS:
+                self.DisplayMessage("  ERROR for object/selection '" + ddlSelection + "': The ligand must have a maximum of (" + 
+                                    Constants.MAX_LIGAND_ATOMS + ') atoms', 1)
+                return
+        
+        except:
+            self.DisplayMessage("  ERROR: object/selection '" + ddlSelection + "' does not exist on current state", 1)
+            return
+
+    """
+        
+    ''' ==================================================================================
+    FUNCTION Btn_Save : Save Ligand and Protein objects, object is reloaded automatically
     ==================================================================================  '''    
     def Btn_SaveLigand_Clicked(self):
         
@@ -396,7 +447,7 @@ class IOFile:
             state = cmd.get_state()
             n = cmd.count_atoms(ddlSelection, state=state)
 
-            if n < 2:
+            if n < 3:
                 self.DisplayMessage("  ERROR for object/selection '" + ddlSelection + "': The ligand must have at least (3) atoms)", 1)
                 return
 
@@ -417,10 +468,12 @@ class IOFile:
                 self.LigandPath = self.LigandPath + '.pdb'
 
             cmd.save(self.LigandPath, ddlSelection, state, 'pdb') # Save the Selection
-
             self.LigandName.set(os.path.basename(os.path.splitext(self.LigandPath)[0]))
-            self.DisplayMessage('  Successfully saved and loaded the ligand:  ' + self.LigandName.get() + "'", 0)                            
+            cmd.load(self.LigandPath, state=1)
+
+            self.DisplayMessage('  Successfully saved and loaded the ligand:  ' + self.LigandName.get() + "'", 0)
     
+            
 
     def Btn_SaveProt_Clicked(self):
         
@@ -437,7 +490,7 @@ class IOFile:
             state = cmd.get_state()
             n = cmd.count_atoms(ddlSelection, state=state)
 
-            if n < 2:
+            if n < 3:
                 self.DisplayMessage("  ERROR for object/selection '" + ddlSelection + "': The protein must have at least (3) atoms)", 1)
                 return
         except:
@@ -453,8 +506,11 @@ class IOFile:
 
             cmd.save(self.ProtPath, ddlSelection, state, 'pdb') # Save the Selection
             self.ProtName.set(os.path.basename(os.path.splitext(self.ProtPath)[0]))
+            cmd.load(self.ProtPath, state=1)
+            
             self.DisplayMessage('  Successfully saved and loaded the target: ' + self.ProtName.get(), 0)                                    
                 
+            
 
     ''' ==================================================================================
     FUNCTIONS Load Ligand and Protein and display the filename in the textbox
@@ -478,7 +534,7 @@ class IOFile:
                     # For testing purposes only
                     n = 50
 
-                if n < 2:
+                if n < 3:
                     self.DisplayMessage("  ERROR for object '" + Name + "': The ligand must have at least (3) atoms)", 1)
                     return
 
@@ -713,4 +769,4 @@ class IOFile:
            
         else:
             self.Anchor.set(self.top.WizardResult)
-            
+            self.fProcessLigand = False
