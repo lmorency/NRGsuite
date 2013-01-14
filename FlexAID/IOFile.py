@@ -517,7 +517,7 @@ class IOFile:
     ================================================================================== '''        
     def Btn_LoadLigand_Clicked(self):        
         
-        LigandPath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb')], initialdir=self.top.FlexAIDLigandProject_Dir, title='Select a Ligand File to Load')
+        LigandPath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb'),('MOL File','*.mol'),('MOL2 File','*.mol2'),('SDF File','*.sdf')], initialdir=self.top.FlexAIDLigandProject_Dir, title='Select a Ligand File to Load')
         
         if len(LigandPath) > 0 and LigandPath != self.LigandPath:
             
@@ -567,7 +567,7 @@ class IOFile:
            
     def Btn_LoadProt_Clicked(self):
         
-        ProtPath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb')], initialdir=self.top.ProteinProject_Dir, title='Select a Target File to Load')
+        ProtPath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb'),('MOL File','*.mol'),('MOL2 File','*.mol2'),('SDF File','*.sdf')], initialdir=self.top.ProteinProject_Dir, title='Select a Target File to Load')
         
         if len(ProtPath) > 0 and ProtPath != self.ProtPath:
             self.ProtPath = ProtPath            
