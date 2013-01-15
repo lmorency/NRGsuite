@@ -98,8 +98,8 @@ class RunThread(threading.Thread):
 
         # Store clefts and show them
         self.GetCleft.Manage.delete_Temp()
-        self.GetCleft.Manage.rename_Temp()
-        self.GetCleft.Manage.store_Temp()
+        #self.GetCleft.Manage.rename_Temp()
+        self.GetCleft.Manage.store_Temp(self.top.LastdefaultOption)
             
         nCleft = self.top.TempBindingSite.Count_Cleft()
         if nCleft > 0:
@@ -107,13 +107,12 @@ class RunThread(threading.Thread):
                                     ") cleft objects from object/selection '" +
                                     self.Selection + "'", 0)
 
+            self.top.Display_Temp()
             self.GetCleft.Go_Step2()
         else:
             self.top.DisplayMessage("  No clefts found for object/selection '" +
                                     self.Selection + "'", 0)
             
-        self.top.Display_Temp()
-
         self.top.GetCleftRunning(False)
         
 #=========================================================================================
@@ -135,6 +134,7 @@ class Default:
         self.font_Title = self.top.font_Title
 
         self.Color_Black = self.top.Color_Black
+        self.Color_Blue = self.top.Color_Blue
         self.Color_White = self.top.Color_White
 
         self.DisplayMessage = self.top.DisplayMessage
@@ -479,17 +479,16 @@ class Default:
         ========================================================'''
     def Display_Temp(self):
 
-        if self.TempBindingSite.Count_Cleft() > 0:
-            self.SetColorList()
-            self.DisplayColorChart()
+        self.SetColorList()
+        self.DisplayColorChart()
 
-            View = cmd.get_view()
-            
-            self.Load_Clefts()
-            self.Show_Clefts(self.ColorList)
+        View = cmd.get_view()
+        
+        self.Load_Clefts()
+        self.Show_Clefts(self.ColorList)
 
-            # reset view
-            cmd.set_view(View)
+        # reset view
+        cmd.set_view(View)
             
     ''' ========================================================
                  Gets all arguments for the cmdline
@@ -600,7 +599,7 @@ class Default:
     def DisplayColorChart(self):
         
         nClefts = self.TempBindingSite.Count_Cleft()
-
+        
         self.ChartBar.delete('all')
         
         if nClefts > Color.NBCOLOR:
@@ -624,24 +623,32 @@ class Default:
             LeftCoord = RightCoord
 
     ''' ==================================================================================
+    FUNCTION Get_CleftPath: Retrieves the default path of the clefts
+    ==================================================================================  '''        
+    def Get_CleftPath(self):
+                
+        if self.LastdefaultOption != '':
+            TARGETNAME = self.LastdefaultOption.upper()
+        else:
+            TARGETNAME = self.defaultOption.get().upper()
+
+        CleftPath = os.path.join(self.top.CleftProject_Dir,TARGETNAME)
+        
+        return CleftPath
+
+    ''' ==================================================================================
     FUNCTION Get_BindingSitePath: Retrieves the default path of the bindingsite
     ==================================================================================  '''        
     def Get_BindingSitePath(self):
+        
+        if self.LastdefaultOption != '':
+            TARGETNAME = self.LastdefaultOption.upper()
+        else:
+            TARGETNAME = self.defaultOption.get().upper()
 
-        TARGETNAME = self.defaultOption.get().upper()
         BindingSitePath = os.path.join(self.top.BindingSiteProject_Dir,TARGETNAME)
         
         return BindingSitePath
-
-    ''' ==================================================================================
-    FUNCTION Get_BindingSitePath: Retrieves the default path of clefts
-    ==================================================================================  '''        
-    def Get_CleftPath(self):
-
-        TARGETNAME = self.defaultOption.get().upper()
-        CleftPath = os.path.join(self.top.GetCleftSaveProject_Dir,TARGETNAME)
-        
-        return CleftPath
 
     ''' ==================================================================================
     FUNCTION Btn_Load_Clefts: Asks for user to load clefts
@@ -654,7 +661,7 @@ class Default:
             self.DisplayMessage("  Could not find a Cleft folder for your target:", 2)
             self.DisplayMessage("  The default Cleft folder is used.", 2)
         
-            CleftPath = self.top.GetCleftSaveProject_Dir
+            CleftPath = self.top.CleftProject_Dir
 
         
         LoadFiles = tkFileDialog.askopenfilename(filetypes=[('Cleft file','*.nrgclf')],
@@ -662,38 +669,61 @@ class Default:
                                                  multiple=1)
         
         if len(LoadFiles) > 0:
+        
+            TempBindingSite = BindingSite.BindingSite()
             
-            self.Btn_Clear_Clicked()
-
             for LoadFile in iter(LoadFiles):
-                CleftName = os.path.splitext(os.path.basename(LoadFile))[0]
-
-                Cleft = CleftObj.CleftObj()
-                Cleft.CleftFile = LoadFile
-                Cleft.CleftName = CleftName
-                Cleft.Set_CleftMD5()
-
-                self.TempBindingSite.Add_Cleft(Cleft)
+                try:
+                    in_ = open(LoadFile, 'r')
+                    Cleft = pickle.load(in_)
+                    in_.close()
+                    
+                    TempBindingSite.Add_Cleft(Cleft)
+                except:
+                    self.top.DisplayMessage("  ERROR: Could not the cleft '" + LoadFile + "'", 1)
+                    pass
                 
-            self.Display_Temp()
-
-            self.top.Go_Step2()
-
+            if TempBindingSite.Count_Cleft() > 0:
+                self.Btn_Clear_Clicked()
+                self.TempBindingSite = TempBindingSite
+                
+                self.Display_Temp()
+                self.top.Go_Step2()
 
     ''' ==================================================================================
     FUNCTION Btn_Save_Clefts: Asks for user to save clefts
     ==================================================================================  '''        
     def Btn_Save_Clefts(self):
 
+        if not self.PyMOL:
+            return
+            
         if self.TempBindingSite.Count_Cleft() > 0:
+                        
+            self.Update_TempBindingSite()
             
-            if self.PyMOL:
-                self.Update_TempBindingSite()
+            self.top.Manage.save_Temp()
             
-            self.top.Manage.save_Temp(self.LastdefaultOption.upper())
+            for Cleft in self.TempBindingSite.listClefts:
+            
+                CleftPath = os.path.join(self.top.CleftProject_Dir,Cleft.UTarget)
+                
+                if not os.path.isdir(CleftPath):
+                    os.makedirs(CleftPath)
+
+                CleftSaveFile = os.path.join(CleftPath,os.path.basename(os.path.splitext(Cleft.CleftFile)[0]) + '.nrgclf')
+
+                try:
+                    out = open(CleftSaveFile, 'w')
+                    pickle.dump(Cleft, out)
+                    out.close()
+                    
+                    self.top.DisplayMessage("  Successfully saved '" + CleftSaveFile + "'", 0)
+                except:
+                    self.top.DisplayMessage("  ERROR: Could not save binding-site configuration", 1)
         
         else:
-            self.top.DisplayMessage("  No clefts to save as 'clefts'", 2)            
+            self.top.DisplayMessage("  No clefts to save as 'clefts'", 2)
 
     ''' ==================================================================================
     FUNCTION Btn_Load_BindingSite: Asks for user to load binding-site
@@ -717,15 +747,16 @@ class Default:
                 TempBindingSite = pickle.load(in_)
                 in_.close()
                 
-                self.Btn_Clear_Clicked()
-                self.TempBindingSite = TempBindingSite
+                if TempBindingSite.Count_Cleft() > 0:
+                    self.Btn_Clear_Clicked()
+                    self.TempBindingSite = TempBindingSite
 
-                self.Display_Temp()
-
-                self.GetCleft.Go_Step2()
-
+                    self.Display_Temp()
+                    self.top.Go_Step2()
+                    
             except:
                 self.DisplayMessage("  ERROR: Could not find read the BindingSite", 2)
+
 
     ''' ==================================================================================
     FUNCTION Btn_Save_BindingSite: Asks for user to save binding-site
@@ -750,8 +781,9 @@ class Default:
 
                 self.Update_TempBindingSite()
                 self.TempBindingSite.Type = 2
-    
-                self.top.Manage.save_Temp(self.LastdefaultOption.upper())
+                
+                # Save all cleft 
+                self.top.Manage.save_Temp()
 
                 try:
                     out = open(SaveFile, 'w')
@@ -770,15 +802,25 @@ class Default:
     ==================================================================================  '''        
     def Load_Clefts(self):
 
+        if not self.PyMOL:
+            return
+            
         for Cleft in iter(self.TempBindingSite.listClefts):
-            if self.PyMOL:
-                cmd.load(Cleft.CleftFile, Cleft.CleftName, state=1, format='pdb')
+                cmd.load(Cleft.CleftFile, Cleft.CleftName, state=1)
+                
+                if Cleft.Partition and Cleft.PartitionParent != None and \
+                        General_cmd.object_Exists(Cleft.PartitionParent.CleftName):
+                    
+                    General_cmd.Oscillate(Cleft.PartitionParent.CleftName, 0.0)
 
     ''' ==================================================================================
     FUNCTION Update_TempBindingSite: Update cleft object with only those undeleted in PyMOL
     ==================================================================================  '''                 
     def Update_TempBindingSite(self):
         
+        if not self.PyMOL:
+            return
+
         for Cleft in iter(self.TempBindingSite.listClefts):
             if not General_cmd.object_Exists(Cleft.CleftName):
                 self.TempBindingSite.Remove_Cleft(Cleft)
@@ -850,7 +892,7 @@ class Default:
         for Cleft in iter(self.TempBindingSite.listClefts):
             if self.PyMOL:
                 try:
-                    cmd.hide('nonbonded', Cleft.CleftName)
+                    cmd.hide('everything', Cleft.CleftName)
                     cmd.show('surface', Cleft.CleftName)
                     cmd.color(ColorList[i], Cleft.CleftName)
                     cmd.refresh()

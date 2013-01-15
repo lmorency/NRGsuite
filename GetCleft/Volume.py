@@ -18,10 +18,64 @@
 '''
 
 from Tkinter import *
+from subprocess import Popen, PIPE
 
 import tkTable
 import functools
-import Grid
+import threading
+
+if __debug__:
+    import General_cmd
+
+class RunVolume(threading.Thread):
+
+    def __init__(self, top, Cleft, Iterations):
+        
+        threading.Thread.__init__(self)
+
+        self.top = top
+        self.GetCleft = self.top.top
+        self.Cleft = Cleft
+        
+        self.cmdline  = '"' + self.GetCleft.VolumeExecutable + '"'
+        self.cmdline += ' -i "' + self.Cleft.CleftFile + '"'
+        self.cmdline += ' -t ' + Iterations
+        #print self.cmdline
+
+        self.start()
+        
+        
+    def run(self):
+    
+        self.GetCleft.ProcessRunning = True
+        
+        if self.GetCleft.OSid == 'WIN':
+            self.GetCleft.Run = Popen(self.cmdline, shell=False, stdout=PIPE)
+        else:
+            self.GetCleft.Run = Popen(self.cmdline, shell=True, stdout=PIPE)
+            
+        self.GetCleft.Run.wait()        
+        
+        
+        if self.GetCleft.Run == None:
+            self.top.DisplayMessage("  Thread timed-out for " + self.Cleft.CleftName, 0)
+                        
+        elif self.GetCleft.Run.returncode != 0:
+            self.top.ProcessError = True
+            self.top.DisplayMessage("  ERROR: An error occured while executing volume_calc.", 1)
+            
+        else:
+            self.top.DisplayMessage("Thread terminated for " + self.Cleft.CleftName, 0)
+            
+            Line = self.GetCleft.Run.stdout.readline()
+            if Line.startswith('Volume'):
+                self.Cleft.Volume = float(Line[8:].strip())
+
+        self.GetCleft.Run = None
+
+        self.GetCleft.ProcessRunning = False
+        
+        
 
 class EstimateVolume:
 
@@ -33,8 +87,6 @@ class EstimateVolume:
 
         self.DisplayMessage = self.top.DisplayMessage
 
-        self.TempBindingSite = self.top.Default.TempBindingSite
-
         self.Def_Vars()
         self.Init_Vars()
 
@@ -43,19 +95,19 @@ class EstimateVolume:
 
     def Def_Vars(self):
 
-        self.Precision = StringVar()
+        self.Iterations = StringVar()
         self.CleftVolume = DoubleVar()
         
-        self.ValidPrecision = list()
+        self.ValidIterations = list()
         self.Validator = list()
 
     def Init_Vars(self):
 
         self.ProcessError = False
-        self.Precision.set('1.0')
+        self.Iterations.set('3')
 
-        self.ValidPrecision = [True, 1, 0, None]
-        self.Validator = [  ]
+        self.ValidIterations = [True, 1, 0, None]
+        self.Validator = [ ]
 
     ''' ==================================================================================
     FUNCTION Kill_Frame: Kills the main frame window
@@ -63,7 +115,6 @@ class EstimateVolume:
     def Kill_Frame(self):
                 
         self.fVolume.pack_forget()
-        #self.fVolume.destroy()
 
         return True
 
@@ -90,9 +141,9 @@ class EstimateVolume:
 
         #self.LoadMessage()
         
-        self.Init_Table()
-
         self.top.Default.Update_TempBindingSite()
+        
+        self.Init_Table()
 
     ''' ==================================================================================
     FUNCTION Frame_CalcVolume: Display the Calculate Volume Option in the Interface 
@@ -100,6 +151,22 @@ class EstimateVolume:
     def Frame(self):
                         
         self.fVolume = Frame(self.top.fMiddle)
+
+        '''===========================================================================
+                                    Number of Iterations
+        ==========================================================================='''
+        fIterations = Frame(self.fVolume, relief=RIDGE, border=0, width=400, height=30)
+        fIterations.pack(fill=X, expand=True, side=TOP)
+                
+        EntryIterations = Entry(fIterations, width=6, background='white', justify=CENTER, font=self.top.font_Text, textvariable=self.Iterations)
+        EntryIterations.pack(side=RIGHT, anchor=SE, padx=5)
+        args_list = [EntryIterations, self.Iterations, 1, 5, -1, self.ValidIterations,'Iterations','int']
+        EntryIterations.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.ValidIterations[3] = EntryIterations
+
+        lblIterations = Label(fIterations, text='Iterations:', font=self.top.font_Text)
+        lblIterations.pack(side=RIGHT, anchor=SE)
+                
 
         #==================================================================================
         '''                           --- BUTTONS AREA ---                              '''
@@ -115,169 +182,155 @@ class EstimateVolume:
         Label(fButtonsLine1, text='Volume estimator', font=self.top.font_Title).pack(side=LEFT)
 
         self.Btn_Selected = Button(fButtonsLine2, text='Selected', font=self.top.font_Text,command=self.Btn_Selected_Clicked)
-        self.Btn_Selected.pack(side=LEFT)
+        self.Btn_Selected.pack(side=LEFT, padx=2)
 
         self.Btn_Remaining = Button(fButtonsLine2, text='Remaining', font=self.top.font_Text, command=self.Btn_Remaining_Clicked)
-        self.Btn_Remaining.pack(side=LEFT)
+        self.Btn_Remaining.pack(side=LEFT, padx=2)
 
         self.Btn_ALL = Button(fButtonsLine2, text='ALL', font=self.top.font_Text, command=self.Btn_ALL_Clicked)
-        self.Btn_ALL.pack(side=LEFT)
+        self.Btn_ALL.pack(side=LEFT, padx=2)
 
-        #fTitle = Frame(self.fVolume, relief=RIDGE, border=0, width=400, height=30)
-        #fTitle.pack(fill=X, expand=True, side=TOP)
 
-        #fProbe = Frame(self.fVolume, relief=RIDGE, border=0, width=400, height=30)
-        #fProbe.pack(fill=X, expand=True, side=TOP)
-
-        fList = Frame(self.fVolume, relief=SUNKEN, border=1, width=400, height=300)
+        fList = Frame(self.fVolume, relief=SUNKEN, border=1, width=375, height=200)
         fList.pack(fill=X, expand=True, side=TOP, pady=20)
-                
-        #EntryPrecision = Entry(fProbe, width=6, background='white', justify=CENTER, font=self.top.font_Text, textvariable=self.Precision)
-        #EntryPrecision.pack(side=RIGHT, anchor=SE, padx=5)
-        #args_list = [EntryPrecision, self.Precision, 0.25, 2.00, 2, self.ValidPrecision,'Precision','float']
-        #EntryPrecision.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
-        #self.ValidPrecision[3] = EntryPrecision
-
-
-        #lblProbeSpace = Label(fProbe, text='Precision:', font=self.top.font_Text)
-        #lblProbeSpace.pack(side=RIGHT, anchor=SE)
-                
-
+        fList.pack_propagate(0)
+        
         self.Table = tkTable.Table(fList, 3,
                                    [ 'Cleft Name', 'Estimated', 'Volume' ],
                                    [ 180, 70, 130 ],
-                                   [ 1, 4, 10 ],
+                                   [ 1, 6, 13 ],
                                    [ True, True, True ],
                                    self.top.font_Text,
                                    self.top.Color_Blue)
 
         self.Table.Draw()
         
-        self.Selected = self.Table.Columns['Cleft Name']['StringVar']
+        self.SelectedCleft = self.Table.Columns['Cleft Name']['StringVar']
         
-        # Quit the advanced options menu
-        Btn_Back = Button(self.fVolume, text='Back', font=self.top.font_Text, command=self.Btn_Back_Clicked)
-        Btn_Back.pack(side=BOTTOM, anchor=E)
+        
+        fButtons2 = Frame(self.fVolume)
+        fButtons2.pack(side=TOP, fill=X, padx=5, pady=5)
+        fButtons2Line1 = Frame(fButtons2)
+        fButtons2Line1.pack(side=TOP, fill=X)
 
+        Button(fButtons2Line1, text='Save volumes', font=self.top.font_Text).pack(side=RIGHT, padx=2)
+        Button(fButtons2Line1, text='Refresh clefts', font=self.top.font_Text, command=self.Init_Table).pack(side=RIGHT, padx=2)
+        
+        
+        
     ''' ==================================================================================
-    FUNCTION Validate_Precision: Validates the value in Entry before starting Grid
+    FUNCTION Validate_Iterations: Validates the value in Entry before starting Grid
     ==================================================================================  '''                 
-    def Validate_Precision(self):
+    def Validate_Iterations(self):
         
         self.fVolume.focus_set()
         self.fVolume.update_idletasks()
 
-        if self.ValidPrecision[0]:
+        if self.ValidIterations[0]:
             return 0
         
         return 1
-
-    ''' ==================================================================================
-    FUNCTION Btn_Back_Clicked: Goes back to default frame
-    ==================================================================================  '''                 
-    def Btn_Back_Clicked(self):
-        
-        #self.fVolume.focus_set()
-        #self.fVolume.update_idletasks()
-        
-        self.top.SetActiveFrame(self.top.Default)
-
 
     ''' ==================================================================================
     FUNCTION Calculates the volume of the selected cleft only 
     ==================================================================================  '''    
     def Btn_Selected_Clicked(self):
 
-        if not self.Validate_Precision():
+        if not self.Validate_Iterations():
 
-            Selected = self.Selected.get()
+            Selected = self.SelectedCleft.get()
 
             if Selected != '':
-                self.Cleft = Selected
+                self.Cleft = self.top.Default.TempBindingSite.Get_CleftName(Selected)
+                
+                self.VolumeRunning(True)
 
-                try:
-                    CleftFile = self.dictTempClefts[self.Cleft][2]
+                if self.Cleft != None:            
+                    try:
+                        Process = RunVolume(self,self.Cleft, self.Iterations.get())
+                        Process.join(30.0)
 
-                    self.top.ProcessRunning = True
-                    self.GenGridRunning(True)
-
-                    Process = Grid.Grid(self, CleftFile, '', self.Precision.get(), True)
-
-                except:
-                    self.DisplayMessage("The cleft '" + self.Cleft + "' no longer exists", 2)
-                    return
+                        self.Init_Table()
+                        
+                    except:
+                        self.DisplayMessage("The cleft file for '" + self.Cleft + "' no longer exists", 2)
+                else:
+                    self.DisplayMessage("The cleft object '" + Selected + "' no longer exists", 2)                    
+                
+            
+                self.VolumeRunning(False)
             
     ''' ==================================================================================
-    FUNCTION Calculates the volume of all clefts in the list
+    FUNCTION Calculates the volume of remaining clefts (volume=0) in the list
     ==================================================================================  '''    
     def Btn_Remaining_Clicked(self):
 
-        if not self.Validate_Precision():
+        if not self.Validate_Iterations():
+
+            self.VolumeRunning(True)
 
             for item in self.Table.Columns['Cleft Name']['List'].get(0, END):
 
-                self.Cleft = item.lstrip()
+                self.Cleft = self.top.Default.TempBindingSite.Get_CleftName(item.lstrip())
+                
+                if self.Cleft != None:            
+                    try:
+                        Process = RunVolume(self,self.Cleft, self.Iterations.get())
+                        Process.join(30.0)
+                        
+                        self.Init_Table()
 
-                # skip already Estimated
-                if self.dictTempClefts[self.Cleft][6]:
-                    continue
-
-                #if not already Estimated
-                try:
-                    CleftFile = self.dictTempClefts[self.Cleft][2]
-
-                    self.top.ProcessRunning = True
-                    self.GenGridRunning(True)
-
-                    self.DisplayMessage("Calculating volume of " + self.Cleft + "...", 0)
-                    Process = Grid.Grid(self, CleftFile, '', self.Precision.get(), True)
-                    Process.join()
-
-                except:
-                    self.DisplayMessage("The cleft '" + self.Cleft + "' no longer exists", 2)
-                    continue
+                    except:
+                        self.DisplayMessage("The cleft file for '" + self.Cleft.CleftName + "' no longer exists", 2)
+                else:
+                    self.DisplayMessage("The cleft object '" + item.lstrip() + "' no longer exists", 2)                    
+                
+            self.VolumeRunning(False)
 
     ''' ==================================================================================
     FUNCTION Calculates the volume of all clefts in the list
     ==================================================================================  '''    
     def Btn_ALL_Clicked(self):
 
-        if not self.Validate_Precision():
+        if not self.Validate_Iterations():
 
+            self.VolumeRunning(True)
+            
             for item in self.Table.Columns['Cleft Name']['List'].get(0, END):
 
-                self.Cleft = item.lstrip()
-
-                #if not already Estimated
-                try:
-                    CleftFile = self.dictTempClefts[self.Cleft][2]
-
-                    self.top.ProcessRunning = True
-                    self.GenGridRunning(True)
-
-                    self.DisplayMessage("Calculating volume of " + self.Cleft + "...", 0)
-                    Process = Grid.Grid(self, CleftFile, '', self.Precision.get(), True)
-                    Process.join()
-
-                except:
-                    self.DisplayMessage("The cleft '" + self.Cleft + "' no longer exists", 2)
-                    continue
+                self.Cleft = self.top.Default.TempBindingSite.Get_CleftName(item.lstrip())
+                
+                if self.Cleft != None:            
+                    try:
+                        Process = RunVolume(self,self.Cleft, self.Iterations.get())
+                        Process.join(30.0)
+                        
+                        self.Init_Table()
+                        
+                    except:
+                        self.DisplayMessage("The cleft file for '" + self.Cleft.CleftName + "' no longer exists", 2)
+                else:
+                    self.DisplayMessage("The cleft object '" + item.lstrip() + "' no longer exists", 2)
+                                        
+            self.VolumeRunning(False)
 
     ''' ==================================================================================
     FUNCTION Init_Table: updates the list of cleft in the table
     ==================================================================================  '''    
     def Init_Table(self):
 
-        for Cleft in iter(self.TempBindingSite.listClefts):
+        self.Table.Clear()
+        
+        for Cleft in sorted(self.top.Default.TempBindingSite.listClefts):
             
             self.Table.Add( [ Cleft.CleftName, 'False', Cleft.Volume ],
                             [ None, None, None ] )
 
     ''' ==================================================================================
-    FUNCTION GenGridRunning: Actives/Deactives controls when a process is running
+    FUNCTION VolumeRunning: Actives/Deactives controls when a process is running
     ==================================================================================  '''    
-    def GenGridRunning(self, boolRun):
-
+    def VolumeRunning(self, boolRun):
+                
         if boolRun:
             self.Btn_Selected.config(state='disabled')
             self.Btn_Remaining.config(state='disabled')
@@ -294,15 +347,5 @@ class EstimateVolume:
 
             # Catch errors
             if not self.ProcessError:
-
                 return
                 
-            #self.dictTempClefts[self.Cleft][6] = True
-            #    self.dictTempClefts[self.Cleft][7] = '%.3f' % self.CleftVolume.get()
-
-            #    self.Table.Set(self.Cleft, 'Cleft Name', True, 'Estimated')
-            #    self.Table.Set(self.Cleft, 'Cleft Name', 
-            #                   self.dictTempClefts[self.Cleft][7], 'Volume')
-                            
-            self.top.ProcessRunning = False
-

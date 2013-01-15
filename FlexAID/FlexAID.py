@@ -87,6 +87,7 @@ class displayFlexAID:
         self.GetCleftProject_Dir = os.path.join(self.Project_Dir,'GetCleft')
         self.GetCleftSaveProject_Dir = os.path.join(self.GetCleftProject_Dir,'Save')
 
+        self.CleftProject_Dir = os.path.join(self.Project_Dir,'Cleft')
         self.ProteinProject_Dir = os.path.join(self.Project_Dir,'Target')
         self.BindingSiteProject_Dir = os.path.join(self.Project_Dir,'Binding_Site')
 

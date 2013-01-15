@@ -76,12 +76,15 @@ class displayGetCleft:
 
         if self.OSid == 'WIN':
             self.GetCleftExecutable = os.path.join(self.GetCleftInstall_Dir,'WRK','GetCleft.exe')
+            self.VolumeExecutable = os.path.join(self.GetCleftInstall_Dir,'WRK','volume_calc.exe')
         else:
             self.GetCleftExecutable = os.path.join(self.GetCleftInstall_Dir,'WRK','GetCleft')
+            self.VolumeExecutable = os.path.join(self.GetCleftInstall_Dir,'WRK','volume_calc')
 
         self.Project_Dir = Project_Dir
         self.GetCleftProject_Dir = os.path.join(self.Project_Dir,'GetCleft')
         self.TargetProject_Dir = os.path.join(self.Project_Dir,'Target')
+        self.CleftProject_Dir = os.path.join(self.Project_Dir,'Cleft')
 
         self.GetCleftSaveProject_Dir = os.path.join(self.GetCleftProject_Dir,'Save')
         self.GetCleftTempProject_Dir = os.path.join(self.GetCleftProject_Dir,'Temp')
@@ -145,7 +148,7 @@ class displayGetCleft:
         self.Manage = ManageFiles2.Manage(self)
         #self.AdvOptions = AdvOptions.AdvOptions(self)        
         self.Crop = CropCleft.CropCleft(self, self.PyMOL)
-        self.Volume = Volume.EstimateVolume(self)        
+        self.Volume = Volume.EstimateVolume(self)
         
         self.MakeMenuBar()
 
@@ -171,7 +174,7 @@ class displayGetCleft:
 
         savemenu = Menu(menubar, tearoff=0)        
         savemenu.add_command(label="Save Clefts", command=self.Default.Btn_Save_Clefts)
-        savemenu.add_command(label="Save Binding-site", command=self.Default.Btn_Save_BindingSite)
+        savemenu.add_command(label="Save as Binding-site", command=self.Default.Btn_Save_BindingSite)
         menubar.add_cascade(label="Save", menu=savemenu)
         
         self.top.config(menu=menubar)
@@ -193,7 +196,7 @@ class displayGetCleft:
         self.Btn_Config.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Config.config(state='normal')
 
-        self.Btn_CropCleft = Button(fTop, text='Cropping', bg=self.Color_Grey, command=self.Btn_CropCleft_Clicked, font=self.font_Text)
+        self.Btn_CropCleft = Button(fTop, text='Partition', bg=self.Color_Grey, command=self.Btn_CropCleft_Clicked, font=self.font_Text)
         self.Btn_CropCleft.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_CropCleft.config(state='disabled')
 
@@ -301,6 +304,9 @@ class displayGetCleft:
             
         if not os.path.isdir(self.TargetProject_Dir):
             os.makedirs(self.TargetProject_Dir)
+
+        if not os.path.isdir(self.CleftProject_Dir):
+            os.makedirs(self.CleftProject_Dir)
 
         if not os.path.isdir(self.BindingSiteProject_Dir):
             os.makedirs(self.BindingSiteProject_Dir)

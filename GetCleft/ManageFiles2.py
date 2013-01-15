@@ -50,7 +50,7 @@ class Manage:
             except:
                 pass
 
-
+    """
     # Rename the pdb files to nrgclf format
     def rename_Temp(self):
 
@@ -61,16 +61,18 @@ class Manage:
                 shutil.move(CleftFile,Filename)
             except:
                 pass
-            
+    """
+    
     # Store the temporary clefts
-    def store_Temp(self):
+    def store_Temp(self, Target):
         
-        for CleftFile in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*.nrgclf')):
+        for CleftFile in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*_sph_*')):
             CleftName = os.path.splitext(os.path.basename(CleftFile))[0]
             
             Cleft = CleftObj.CleftObj()
             Cleft.CleftFile = CleftFile
             Cleft.CleftName = CleftName
+            Cleft.UTarget = Target.upper()
             Cleft.Set_CleftMD5()
 
             self.top.Default.TempBindingSite.Add_Cleft(Cleft)
@@ -84,19 +86,17 @@ class Manage:
             self.top.DisplayMessage("  ERROR: Could not copy temporary partition file.", 1)
     
     # Copy files from the Temp to the Save directory
-    def save_Temp(self, folderName):
-
-        SavePath = os.path.join(self.top.GetCleftSaveProject_Dir, folderName)
-        
-        if not os.path.isdir(SavePath):
-            os.makedirs(SavePath)
+    def save_Temp(self):
             
         nCopy = 0
         for Cleft in iter(self.top.Default.TempBindingSite.listClefts):
 
+            SavePath = os.path.join(self.top.GetCleftSaveProject_Dir, Cleft.UTarget)
+            
+            if not os.path.isdir(SavePath):
+                os.makedirs(SavePath)
+                
             DestFile = os.path.join(SavePath,os.path.basename(Cleft.CleftFile))
-            print Cleft.CleftFile
-            print DestFile
             try:
                 shutil.copy(Cleft.CleftFile, DestFile)
                 nCopy = nCopy + 1
@@ -124,9 +124,10 @@ class Manage:
     # Clean temporary directories and bindingsite
     def Clean(self):
 
-        for file in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*')):
+        for file in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*.pdb')):
             try:
                 os.remove(file)
             except OSError:
                 self.top.DisplayMessage("  ERROR: Could not remove temporary file(s)", 1)
+                pass
 

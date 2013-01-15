@@ -240,7 +240,7 @@ class IOFile:
         fPDB_optionsLine2.pack(side=TOP, fill=X)
 
         # Header Get PDB
-        Label(fPDB_optionsLine1, text='Retrieve a file', font=self.font_Title).pack(side=LEFT)
+        Label(fPDB_optionsLine1, text='Retrieve a molecule', font=self.font_Title).pack(side=LEFT)
         
         # Get a PDB File from a file on your harddrive
         Button(fPDB_optionsLine2, text='Open file', command=self.Btn_OpenPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=5)

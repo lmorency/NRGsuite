@@ -101,7 +101,7 @@ class CropCleft:
 
         self.Color_Default = '#d9d9d9'
         self.Color_Green = self.top.Color_Green
-        self.TempPartition = os.path.join(self.top.GetCleftProject_Dir,'tmppart.nrgclf')
+        self.TempPartition = os.path.join(self.top.GetCleftProject_Dir,'tmppart.pdb')
  
         self.ScaleResolution = 0.25
         self.PartitionDisplay = 'PARTITION_AREA__'
@@ -172,6 +172,8 @@ class CropCleft:
         fCropStep1Line1.pack(fill=X, expand=True, side=TOP)
         fCropStep1Line2 = Frame(self.fCropStep1, relief=SUNKEN, border=0, pady=3, padx=10)
         fCropStep1Line2.pack(fill=X, expand=True, side=TOP)
+        fCropStep1Line3 = Frame(self.fCropStep1, relief=SUNKEN, border=0, pady=3, padx=10)
+        fCropStep1Line3.pack(fill=X, expand=True, side=TOP)
         
         Label(fCropStep1Line1, text = 'STEP 1: Select a parent cleft to partition', font=self.top.font_Title).pack(side=LEFT)
         Label(fCropStep1Line2, text = 'Cleft objects:', width=15, font=self.top.font_Text).pack(side=LEFT)
@@ -180,8 +182,10 @@ class CropCleft:
         self.OptCleftStep1 = apply(OptionMenu, (fCropStep1Line2, self.Step1Selection) + optionTuple)
         self.OptCleftStep1.config(width=20, bg=self.top.Color_White)
         self.OptCleftStep1.pack(side=LEFT, anchor=W)
+
+        Button(fCropStep1Line2, text='Refresh', command=self.update_Step1_DDL).pack(side=RIGHT, anchor=E)
                         
-        self.Step1bBtn = Button(fCropStep1Line2, width=20, height=20, image=self.Img_Button[1], command=self.Step1_Next)
+        self.Step1bBtn = Button(fCropStep1Line3, width=20, height=20, image=self.Img_Button[1], command=self.Step1_Next)
         self.Step1bBtn.pack(side=RIGHT, anchor=E, padx=2)
         self.Step1bBtn.config(state='disabled')
                 
@@ -374,6 +378,8 @@ class CropCleft:
             else:
                 self.DisplayMessage("The cleft '" + Sel + "'no longer exists.", 2)
                 self.Step1bBtn.config(state='disabled')
+                
+                self.update_Step1_DDL()                
                 self.Step1Selection.set('')
 
         else:
@@ -455,13 +461,13 @@ class CropCleft:
                 return
             
             if General_cmd.object_Exists(Output):
-                if tkMessageBox.askquestion(   "Question", message="An object with that name already exists. Would you like to overwrite it?",icon='warning') == 'no':
+                if tkMessageBox.askquestion("Question", message="An object with that name already exists. Would you like to overwrite it?",icon='warning') == 'no':
                     return
                     
             try:
                 View = cmd.get_view()
                 
-                DestFile = os.path.join(self.top.GetCleftTempProject_Dir, Output + '.nrgclf')
+                DestFile = os.path.join(self.top.GetCleftTempProject_Dir, Output + '.pdb')
                 self.top.Manage.copy_TempPartition(self.TempPartition, DestFile)
                 
                 cmd.load(DestFile, Output, format='pdb', state=1)
@@ -492,7 +498,7 @@ class CropCleft:
                 
         self.top.Default.TempBindingSite.Add_Cleft(Cleft)
         # Put the partition cleft over its parent
-        General_cmd.Oscillate(self.Step1Selection.get(), 0.0)
+        General_cmd.Oscillate(self.Cleft.CleftName, 0.0)
         
         # reset everything
         self.dictSpheres.clear()
@@ -527,6 +533,8 @@ class CropCleft:
     ==========================================================='''           
     def update_Step1_DDL(self):
 
+        self.top.Default.Update_TempBindingSite()
+        
         self.OptCleftStep1['menu'].delete(0, 'end')
         
         for Cleft in sorted(self.top.Default.TempBindingSite.listClefts):

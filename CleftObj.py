@@ -10,11 +10,14 @@ class CleftObj:
         # Name of object in PyMOL
         self.CleftName = ''
 
+        # Name of the target it was generated from
+        self.UTarget = ''
+
         # Partition flag
         self.Partition = False
         # Reference to a cleft object
         self.PartitionParent = None
-        
+                
         # Allows to not calculate volume twice
         self.Volume = 0.000
 

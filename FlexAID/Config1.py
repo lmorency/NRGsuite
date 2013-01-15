@@ -843,7 +843,7 @@ class Config1:
     def Get_CleftPath(self):
 
         TARGETNAME = self.top.IOFile.ProtName.get().upper()
-        CleftPath = os.path.join(self.top.GetCleftSaveProject_Dir,TARGETNAME)
+        CleftPath = os.path.join(self.top.CleftProject_Dir,TARGETNAME)
         
         return CleftPath
 
@@ -858,21 +858,19 @@ class Config1:
             self.DisplayMessage("  Could not find a Cleft folder for your target:", 2)
             self.DisplayMessage("  The default Cleft folder is used.", 2)
         
-            CleftPath = self.top.GetCleftSaveProject_Dir
+            CleftPath = self.top.CleftProject_Dir
 
-        LoadFiles = tkFileDialog.askopenfilename(filetypes=[('PDB Cleft file','*.pdb')],
+        LoadFiles = tkFileDialog.askopenfilename(filetypes=[('NRG Cleft files','*.nrgclf')],
                                                  initialdir=CleftPath, title='Select cleft file(s) to load',
                                                  multiple=1)
         
         if len(LoadFiles) > 0:
             
             for LoadFile in iter(LoadFiles):
-                CleftName = os.path.splitext(os.path.basename(LoadFile))[0]
-
-                Cleft = CleftObj.CleftObj()
-                Cleft.CleftFile = LoadFile
-                Cleft.CleftName = CleftName
-                Cleft.Set_CleftMD5()
+            
+                in_ = open(LoadFile, 'r')
+                Cleft = pickle.load(in_)
+                in_.close()
 
                 self.BindingSite.Add_Cleft(Cleft)
                 

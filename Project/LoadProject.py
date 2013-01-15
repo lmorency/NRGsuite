@@ -137,7 +137,7 @@ class displayLoadProject:
         fTitle.pack(fill=X, expand=True)
         fTitle.pack_propagate(0)        
         
-        Title = Label(fTitle, text='Load an existing NRG suite Project.', bg=self.Color_White, font=self.font_Title)
+        Title = Label(fTitle, text='Load an existing NRG suite project.', bg=self.Color_White, font=self.font_Title)
         Title.pack(padx=10, side=LEFT, anchor=W)        
         
         self.fTop = Frame(self.frame, relief=RIDGE, border=0, width=460, height=240)        
