@@ -432,14 +432,11 @@ class Manage():
         # Store file content
         inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'r')
         lines = inpFile.readlines()
-        print lines
         inpFile.close()
 
         # Re-write file
         inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'w')
         for line in lines:
-            print line
-
             if line.startswith('HETTYP'):
                 index = line[6:11].strip()
                 newline = line[:11] + self.Config2.dictAtomTypes[index][1].rjust(2, ' ') +  line[13:]

@@ -89,10 +89,10 @@ class displayFlexAID:
 
         self.CleftProject_Dir = os.path.join(self.Project_Dir,'Cleft')
         self.ProteinProject_Dir = os.path.join(self.Project_Dir,'Target')
-        self.BindingSiteProject_Dir = os.path.join(self.Project_Dir,'Binding_Site')
 
         self.FlexAIDLigandProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Ligand')
         self.FlexAIDSimulationProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Simulation')
+        self.FlexAIDBindingSiteProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Binding_Site')
         self.FlexAIDTargetFlexProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Target_Flexibility')
 
         self.LOGFILE = os.path.join(self.FlexAIDProject_Dir,'logfile.txt')
@@ -530,8 +530,8 @@ class displayFlexAID:
         if not(os.path.isdir(self.FlexAIDSimulationProject_Dir)):
             os.makedirs(self.FlexAIDSimulationProject_Dir)
             
-        if not(os.path.isdir(self.BindingSiteProject_Dir)):
-            os.makedirs(self.BindingSiteProject_Dir)
+        if not(os.path.isdir(self.FlexAIDBindingSiteProject_Dir)):
+            os.makedirs(self.FlexAIDBindingSiteProject_Dir)
             
         if not(os.path.isdir(self.FlexAIDTargetFlexProject_Dir)):
             os.makedirs(self.FlexAIDTargetFlexProject_Dir)

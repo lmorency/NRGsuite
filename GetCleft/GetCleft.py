@@ -169,12 +169,12 @@ class displayGetCleft:
         
         loadmenu = Menu(menubar, tearoff=0)
         loadmenu.add_command(label="Load Clefts", command=self.Default.Btn_Load_Clefts)
-        loadmenu.add_command(label="Load Binding-site", command=self.Default.Btn_Load_BindingSite)
+        #loadmenu.add_command(label="Load Binding-site", command=self.Default.Btn_Load_BindingSite)
         menubar.add_cascade(label="Load", menu=loadmenu)
 
         savemenu = Menu(menubar, tearoff=0)        
         savemenu.add_command(label="Save Clefts", command=self.Default.Btn_Save_Clefts)
-        savemenu.add_command(label="Save as Binding-site", command=self.Default.Btn_Save_BindingSite)
+        #savemenu.add_command(label="Save as Binding-site", command=self.Default.Btn_Save_BindingSite)
         menubar.add_cascade(label="Save", menu=savemenu)
         
         self.top.config(menu=menubar)

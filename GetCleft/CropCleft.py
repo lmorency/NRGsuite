@@ -494,6 +494,7 @@ class CropCleft:
         Cleft.CleftName = self.Step3Output.get()
         Cleft.PartitionParent = self.Cleft
         Cleft.Partition = True
+        Cleft.UTarget = self.Cleft.UTarget
         Cleft.Set_CleftMD5()
                 
         self.top.Default.TempBindingSite.Add_Cleft(Cleft)
@@ -537,7 +538,7 @@ class CropCleft:
         
         self.OptCleftStep1['menu'].delete(0, 'end')
         
-        for Cleft in sorted(self.top.Default.TempBindingSite.listClefts):
+        for Cleft in sorted(iter(self.top.Default.TempBindingSite.listClefts)):
             self.OptCleftStep1['menu'].add_command(label=Cleft.CleftName, command=lambda temp = Cleft.CleftName: self.OptCleftStep1.setvar(self.OptCleftStep1.cget("textvariable"), value = temp))
 
     ''' ==========================================================
@@ -548,7 +549,7 @@ class CropCleft:
         self.OptCleftStep2['menu'].delete(0, 'end')
 
         self.Step2Selection.set('')
-        for key in sorted(self.dictSpheres.keys()):
+        for key in sorted(iter(self.dictSpheres.keys())):
             self.OptCleftStep2['menu'].add_command(label=key, command=lambda temp = key: self.OptCleftStep2.setvar(self.OptCleftStep2.cget("textvariable"), value = temp))
             self.Step2Selection.set(key)
         

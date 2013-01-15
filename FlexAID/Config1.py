@@ -101,7 +101,7 @@ class Config1:
         self.FlexSideChainPath = ''        
         self.ResiduValue.set('')
 
-        self.CleftPath = os.path.join(self.top.BindingSiteProject_Dir,'tmp.pdb')
+        self.CleftPath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,'tmp.pdb')
         self.TargetFlexName.set('')
         self.BindingSiteName.set('')
 
@@ -575,7 +575,7 @@ class Config1:
             self.DisplayMessage("  Could not find a BindingSite folder for your target:", 2)
             self.DisplayMessage("  The default BindingSite folder is used.", 2)
             
-            BindingSitePath = self.top.BindingSiteProject_Dir
+            BindingSitePath = self.top.FlexAIDBindingSiteProject_Dir
         
         LoadPath = tkFileDialog.askopenfilename(filetypes=[('NRG BindingSite','*.nrgbs')],
                                                 initialdir=BindingSitePath, title='Select a BindingSite file to load')
@@ -833,7 +833,7 @@ class Config1:
     def Get_BindingSitePath(self):
 
         TARGETNAME = self.top.IOFile.ProtName.get().upper()
-        BindingSitePath = os.path.join(self.top.BindingSiteProject_Dir,TARGETNAME)
+        BindingSitePath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,TARGETNAME)
         
         return BindingSitePath
 
@@ -907,8 +907,10 @@ class Config1:
 
                 cmd.load(self.CleftPath, self.BindingSiteDisplay, state=1)
                 cmd.hide('everything', self.BindingSiteDisplay)
-                cmd.show('surface', self.BindingSiteDisplay)
-                cmd.set('transparency', 0.7, self.BindingSiteDisplay)
+                #cmd.show('surface', self.BindingSiteDisplay)
+                cmd.show('mesh', self.BindingSiteDisplay)
+                cmd.alter(self.BindingSiteDisplay,'vdw=2.0')
+                #cmd.set('transparency', 0.7, self.BindingSiteDisplay)
 
             cmd.color('purpleblue', self.BindingSiteDisplay)
 
@@ -931,11 +933,19 @@ class Config1:
             lines = in_.readlines()
             in_.close()
 
+            #0         1         2         3         4         5         6         7         
+            #0123456789012345678901234567890123456789012345678901234567890123456789
+            #ATOM     16  C   SPH Z   1      11.271   0.268  -8.282  1.00  2.17 
             for line in lines:
-                out.write(line[0:22])
-                out.write('%4d' % Cleft.Index)
-                out.write(line[26:])
-            
+                if line.startswith('ATOM  '):
+                    outline = line[0:22]
+                    outline += '%4d' % Cleft.Index
+                    outline += line[26:]
+                else:
+                    outline = line
+
+                out.write(outline)
+                
         out.close()
 
     ''' ==================================================================================

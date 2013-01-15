@@ -50,7 +50,7 @@ class Start(threading.Thread):
         threading.Thread.__init__(self)
 
         self.commandline = commandline
-        print self.commandline
+        #print self.commandline
 
         self.top = top
         self.FlexAID = self.top.top
@@ -304,12 +304,6 @@ class Parse(threading.Thread):
 
                                 if (self.TOP+1) == self.NBLineGEN:
                                     self.State = self.CurrentState
-
-                                    try:
-                                        # append range object to next state
-                                        cmd.create(self.BindingSiteDisplay, self.BindingSiteDisplay, 1, self.CurrentState)
-                                    except:
-                                        self.FlexAID.DisplayMessage("ERROR: Could not display binding-site. Object no longer exists", 1)
 
                                     # Update energy/fitness table
                                     self.top.update_DataList()

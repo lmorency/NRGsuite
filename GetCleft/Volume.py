@@ -321,7 +321,7 @@ class EstimateVolume:
 
         self.Table.Clear()
         
-        for Cleft in sorted(self.top.Default.TempBindingSite.listClefts):
+        for Cleft in sorted(iter(self.top.Default.TempBindingSite.listClefts)):
             
             self.Table.Add( [ Cleft.CleftName, 'False', Cleft.Volume ],
                             [ None, None, None ] )
