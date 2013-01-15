@@ -198,30 +198,30 @@ class Manage():
             order.sort()
             self.Add_FlexBonds(config_file,order)
         
-        if self.IOFile.TargetRNA.get():
-            config_file.write('NUCLEA\n')
+        #if self.IOFile.TargetRNA.get():
+        #    config_file.write('NUCLEA\n')
 
         if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
-            if self.IOFile.TargetRNA.get():
-                config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','NUCLEOTIDES8.def') + '\n')
-            else:
-                config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO8.def') + '\n')
+            #if self.IOFile.TargetRNA.get():
+            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','NUCLEOTIDES8.def') + '\n')
+            #else:
+            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO8.def') + '\n')
 
             config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','scr_bin.dat') + '\n')
 
         elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
-            if self.IOFile.TargetRNA.get():
-                config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','NUCLEOTIDES12.def') + '\n')
-            else:
-                config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO12.def') + '\n')
+            #if self.IOFile.TargetRNA.get():
+            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','NUCLEOTIDES12.def') + '\n')
+            #else:
+            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO12.def') + '\n')
 
             config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','M6_cons_3.dat') + '\n')
 
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
-            if self.IOFile.TargetRNA.get():
-                config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','NUCLEOTIDES26.def') + '\n')
-            else:
-                config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO26.def') + '\n')
+            #if self.IOFile.TargetRNA.get():
+            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','NUCLEOTIDES26.def') + '\n')
+            #else:
+            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO26.def') + '\n')
 
             config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','SYBYL_emat.dat') + '\n')
 

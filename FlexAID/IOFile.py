@@ -79,7 +79,7 @@ class IOFile:
         self.ProtName = StringVar()
         self.LigandName = StringVar()
         self.AtomTypes = StringVar()
-        self.TargetRNA = IntVar()
+        #self.TargetRNA = IntVar()
         self.Anchor = IntVar()
 
         self.Translation = list()
@@ -103,7 +103,7 @@ class IOFile:
         self.ProtName.set('')
         self.LigandName.set('')
         self.AtomTypes.set('Sybyl')
-        self.TargetRNA.set(0)
+        #self.TargetRNA.set(0)
         self.Anchor.set(-1)
 
         self.Translation = [1000.000, 1000.000, 1000.000]
@@ -295,8 +295,11 @@ class IOFile:
         #==================================================================================
         #                                SET TARGET
         #==================================================================================                
-        fPDBprotein = Frame(self.fIOFile, border=1, relief=RAISED)
+        fPDBsep = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=3)
+
+        fPDBprotein = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=70)
         fPDBprotein.pack(side=TOP, pady=10)
+        fPDBprotein.pack_propagate(0)
 
         fPDBproteinLine1 = Frame(fPDBprotein)
         fPDBproteinLine1.pack(side=TOP, fill=X, padx=3, pady=3)
@@ -315,14 +318,15 @@ class IOFile:
         EntProtein = Entry(fPDBproteinLine2, textvariable=self.ProtName, disabledbackground=self.Color_White, disabledforeground=self.Color_Black, font=self.font_Text)
         EntProtein.pack(side=LEFT, fill=X)
         EntProtein.config(state='disabled')
-        Checkbutton(fPDBproteinLine2, variable=self.TargetRNA, width=10, text='RNA', font=self.font_Text, justify=LEFT).pack(side=LEFT)
+        #Checkbutton(fPDBproteinLine2, variable=self.TargetRNA, width=10, text='RNA', font=self.font_Text, justify=LEFT).pack(side=LEFT)
         
         #==================================================================================
         #                               SET LIGAND
         #==================================================================================   
 
-        fPDBligand = Frame(self.fIOFile, border=1, relief=RAISED)
+        fPDBligand = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=70)
         fPDBligand.pack(side=TOP, pady=10)
+        fPDBligand.pack_propagate(0)
 
         fPDBligandLine1 = Frame(fPDBligand)
         fPDBligandLine1.pack(side=TOP, fill=X, padx=3, pady=3)

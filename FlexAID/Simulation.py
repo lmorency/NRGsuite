@@ -50,7 +50,7 @@ class Start(threading.Thread):
         threading.Thread.__init__(self)
 
         self.commandline = commandline
-        #print self.commandline
+        print self.commandline
 
         self.top = top
         self.FlexAID = self.top.top
