@@ -207,7 +207,7 @@ class Manage():
             #else:
             #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO8.def') + '\n')
 
-            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','scr_bin.dat') + '\n')
+            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','scr_bin.dat') + '\n')
 
         elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
             #if self.IOFile.TargetRNA.get():
@@ -215,7 +215,7 @@ class Manage():
             #else:
             #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO12.def') + '\n')
 
-            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','M6_cons_3.dat') + '\n')
+            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n')
 
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
             #if self.IOFile.TargetRNA.get():
@@ -223,7 +223,7 @@ class Manage():
             #else:
             #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO26.def') + '\n')
 
-            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','SYBYL_emat.dat') + '\n')
+            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','SYBYL_emat.dat') + '\n')
 
 
         # radius file
@@ -252,7 +252,7 @@ class Manage():
 
         config_file.write('STATEP ' + self.FlexAID.FlexAIDSimulationProject_Dir  + '\n')
 
-        config_file.write('DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps') + '\n')
+        config_file.write('DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n')
 
         config_file.write('MAXRES 30'  + '\n')
 
@@ -325,7 +325,7 @@ class Manage():
             Line = 'RESIDU ' + str(ResSeq).rjust(4) + ' ' + ChainID + ' ' + ResName + '\n'
             FlexFile.write(Line)
                 
-        if os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','rotobs.lst')):
+        if os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','rotobs.lst')):
             FlexFile.write('ROTOBS\n')
 
         FlexFile.close()
