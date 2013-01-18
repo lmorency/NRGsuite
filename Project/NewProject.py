@@ -83,7 +83,7 @@ class displayNewProject:
         #                        Initialize the window
         #================================================================================== 
         top = self.top = Toplevel(parent)
-        top.title('NRG suite - Project')
+        top.title('NRGsuite - Project')
         #top.geometry('')   # Interface DIMENSIONS
         General.CenterWindow(self.top,self.WINDOWWIDTH,self.WINDOWHEIGHT)
         top.maxsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
@@ -144,7 +144,6 @@ class displayNewProject:
         self.NameVal.pack(side=LEFT, anchor=W)
         self.NameVal['font'] = self.font_Text
         self.NameVal.focus_set()
-        self.NameVal.bind('<KeyRelease>', self.ValidateProjectName)
         
         fProjName.pack(fill=X, expand=True, padx=10)
         fProjName.pack_propagate(0)
@@ -204,7 +203,7 @@ class displayNewProject:
         self.Btn_Create = Button(fButtons, text='Create', width=7, command=self.Btn_Create_Clicked)
         self.Btn_Create.pack(side=RIGHT, anchor=SE, padx=4, pady=3)
         self.Btn_Create['font'] = self.font_Text
-        self.Btn_Create.config(state='disabled')
+        self.Btn_Create.config(state='normal')
         
         fButtons.pack(fill=X, expand=True, padx=10)
         fButtons.pack_propagate(0)
@@ -282,21 +281,29 @@ class displayNewProject:
         
         name = self.ProjName.get().strip()
         
-        print('   Created the Project: ' + name)        
+        if name != '':
         
-        userPath = os.path.join(self.ActualDirPath,name)
-        os.makedirs(userPath)
-        
-        self.Update_ProjectFile(userPath, name)
-        
-        self.inThread.EnableMenu = True
-        self.inThread.StopThread = True
-        self.inThread.UserPath = userPath
-        self.inThread.ProjectName = name       
-        
-        self.Delete_RunFile()
-        
-        self.top.destroy()
+            words = name.split()
+            for word in words:
+                if not word.isalnum():
+                    print('  ERROR: Invalid name for project. You can only use alphanumeric characters and spaces')
+                    return
+            
+            print('  Successfully created the Project: \'' + name + '\'')
+            
+            userPath = os.path.join(self.ActualDirPath,name)
+            os.makedirs(userPath)
+            
+            self.Update_ProjectFile(userPath, name)
+            
+            self.inThread.EnableMenu = True
+            self.inThread.StopThread = True
+            self.inThread.UserPath = userPath
+            self.inThread.ProjectName = name       
+            
+            self.Delete_RunFile()
+            
+            self.top.destroy()
         
 
     ''' ==================================================================================
@@ -410,70 +417,6 @@ class displayNewProject:
                 
             
     ''' ==================================================================================
-    FUNCTION ValidateProjectName: Validate the name the user entered to be sure its unique.
-    ==================================================================================  '''    
-    def ValidateProjectName(self, event):
-        
-         term = self.ProjName.get()
-         
-         if len(term) > 0:
-
-             term = term.replace(' ','')
-             self.ProjName.set(term)    # Remove the white spaces
-             RemMin = term.replace('_','')
-             RemMin = RemMin.replace('-','')
-             
-             if (RemMin.isalnum()):         
-                      
-                 tempDirPath = os.path.join(self.ActualDirPath,term)
-                 
-                 if os.path.isdir(tempDirPath):                      
-                     
-                     if self.ClearMsg == False:
-                         self.DisplayMessage('  WARNING: This project name already EXIST!', 1)     
-                         self.NameVal.config(bg=self.Color_Red)
-                         self.ClearMsg = True
-                     
-                     if self.BtnCreateStatus == 'normal':
-                         self.BtnCreateStatus = 'disabled'
-                         self.Btn_Create.config(state='disabled')                 
-                 
-                 else:                 
-                     
-                     if self.ClearMsg:
-                         self.DisplayMessage('', 0)
-                         self.ClearMsg = False
-                         self.NameVal.config(bg=self.Color_White)
-                     
-                     if self.BtnCreateStatus == 'disabled':
-                        self.BtnCreateStatus = 'normal'    
-                        self.Btn_Create.config(state='normal')
-                        
-             else:
-                 if self.ClearMsg:
-                     self.DisplayMessage('', 0)
-                         
-                 self.DisplayMessage('  WARNING: Use ONLY alpha-numeric characters, _ and -', 1)     
-                 self.NameVal.config(bg=self.Color_Red)
-                 self.ClearMsg = True
-                 
-                 if self.BtnCreateStatus == 'normal':
-                     self.BtnCreateStatus = 'disabled'
-                     self.Btn_Create.config(state='disabled')   
-                 
-                                     
-         else:
-             if self.ClearMsg:
-                 self.ClearMsg = False
-                 self.DisplayMessage('', 0)
-                 self.NameVal.config(bg=self.Color_White)
-            
-             if self.BtnCreateStatus == 'normal':
-                 self.BtnCreateStatus = 'disabled'   
-                 self.Btn_Create.config(state='disabled')
-             
-            
-    ''' ==================================================================================
     FUNCTION ValidateBaseDir: Create if didnt exist the based path directory.
     ==================================================================================  '''            
     def ValidateBaseDir(self):
@@ -523,19 +466,5 @@ class displayNewProject:
         
         self.TextMessage.config(state='disabled')
             
-
-#===================================================================================
-# REMOVE THE COMMENTS OF THIS SECTION TO BE ABLE TO SEE THIS INTERFACE IN CONSOLE
-#===================================================================================
-# root = Tk()
-# 
-# root.path_FlexAID = '/home/eugene/FlexAID/'
-# Button(root, text='Hello!').pack()
-# root.update()
-# 
-# d = displayCfgFile(root)
-# 
-# root.wait_window(d.top)
-#===================================================================================
 
 

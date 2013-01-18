@@ -32,6 +32,7 @@
 
 #import threading
 import os
+import time
 import shutil
 import General
 
@@ -63,8 +64,6 @@ class ProcLig():
         self.ResSeq = 0
         self.StartAtomIndex = StartAtomIndex
 
-        self.FlexAID.DisplayMessage("  Executing Process Ligand...",0)
-
         #self.start()
         self.run()
 
@@ -76,11 +75,13 @@ class ProcLig():
     def run(self):
         
         #self.Set_LigandPDB()
-
+        self.FlexAID.ProcessRunning = True
+        
         if not self.Copy_LigandFile():
 
+            self.FlexAID.DisplayMessage("  Executing Process Ligand...",0)
+            
             if not self.process():
-
                 # ligand extraction success
                 self.top.fProcessLigand = True
                 self.top.ResSeq = 9999
@@ -196,35 +197,43 @@ class ProcLig():
         
         if self.AnchorAtom != -1:
             commandline += ' --force_gpa ' + str(self.AnchorAtom)
-            
+        
         # Execute command-line
         try:
             if self.FlexAID.OSid == 'WIN':
                 # Set environment variable here
                 os.putenv('BABEL_DATADIR', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'data') + '"')
-                pipe = Popen(commandline, shell=False, stderr=PIPE, stdout=PIPE)
+                self.FlexAID.Run = Popen(commandline, shell=False, stderr=PIPE, stdout=PIPE)
             elif self.FlexAID.OSid == 'LINUX':
-                os.putenv('LD_LIBRARY_PATH', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'libs') + '"')
-                os.putenv('BABEL_LIBDIR', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'formats') + '"')
-                pipe = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
+                os.putenv('LD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
+                os.putenv('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
+                self.FlexAID.Run = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
             elif self.FlexAID.OSid == 'MAC':
-                os.putenv('DYLD_LIBRARY_PATH', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'libs') + '"')
-                os.putenv('BABEL_LIBDIR', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'formats') + '"')
-                pipe = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
+                os.putenv('DYLD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
+                os.putenv('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
+                self.FlexAID.Run = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
             else:
                 self.FlexAID.DisplayMessage("  ERROR: Your platform is not supported by NRGsuite",1)
                 return 1
+
+            while self.FlexAID.Run.poll() is None:
+                time.sleep(0.25)
+            
+            if self.FlexAID.Run.returncode != 0:
+                self.top.ProcessError = True
+
         except:
             return 1
+        
+        the_outerr = self.FlexAID.Run.stderr.read()
+        the_output = self.FlexAID.Run.stdout.read()
 
-        the_outerr = pipe.stderr.read()
-        the_output = pipe.stdout.read()
-
+        self.FlexAID.Run = None
+        
         if the_output.find('Done.') != -1:
             self.top.ReferencePath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG_ref.pdb')
             return 0
-
-        else:
-            return 1
+        
+        return 1
         
     
