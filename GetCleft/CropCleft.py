@@ -33,7 +33,6 @@ import os
 import General
 import Geometry
 import time
-import tkFileDialog
 import tkMessageBox
 
 if __debug__:

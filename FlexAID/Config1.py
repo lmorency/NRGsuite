@@ -509,6 +509,9 @@ class Config1:
                                                 initialdir=TargetFlexPath, title='Load a TargetFlex file')
 
         if len(LoadPath) > 0:
+
+            LoadPath = os.path.normpath(LoadPath)
+
             try:
                 in_ = open(LoadPath, 'r')
                 TargetFlex = pickle.load(in_)
@@ -543,8 +546,10 @@ class Config1:
             SaveFile = tkFileDialog.asksaveasfilename(initialdir=TargetFlexPath,
                                                       title='Save the TargetFlex file', initialfile='def_targetflex',
                                                       filetypes=[('NRG TargetFlex','*.nrgtf')])
-                
+            
             if len(SaveFile) > 0:
+
+                SaveFile = os.path.normpath(SaveFile)
                 
                 if SaveFile.find('.nrgtf') == -1:
                     SaveFile = SaveFile + '.nrgtf'
@@ -581,6 +586,9 @@ class Config1:
                                                 initialdir=BindingSitePath, title='Select a BindingSite file to load')
         
         if len(LoadPath) > 0:
+            
+            LoadPath = os.path.normpath(LoadPath)
+            
             try:
                 in_ = open(LoadPath, 'r')
                 BindingSite = pickle.load(in_)
@@ -627,6 +635,8 @@ class Config1:
                                                       filetypes=[('NRG BindingSite','*.nrgbs')])
             
             if len(SaveFile) > 0:
+
+                SaveFile = os.path.normpath(SaveFile)
                 
                 if SaveFile.find('.nrgbs') == -1:
                     SaveFile = SaveFile + '.nrgbs'
@@ -867,7 +877,9 @@ class Config1:
         if len(LoadFiles) > 0:
             
             for LoadFile in iter(LoadFiles):
-            
+
+                LoadFile = os.path.normpath(LoadFile)
+                
                 in_ = open(LoadFile, 'r')
                 Cleft = pickle.load(in_)
                 in_.close()

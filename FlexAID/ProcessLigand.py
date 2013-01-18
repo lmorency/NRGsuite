@@ -55,11 +55,11 @@ class ProcLig():
         self.AnchorAtom = AnchorAtom
 
         self.FlexAIDWRKInstall_Dir = os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK')
-        
+
         #Init the INP file path
         self.SimLigInpPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.inp')
         self.SimLigICPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.ic')
-        
+
         self.ResSeq = 0
         self.StartAtomIndex = StartAtomIndex
 
@@ -110,7 +110,6 @@ class ProcLig():
             shutil.copy(self.LigandPath, self.FlexAID.FlexAIDSimulationProject_Dir)
 
             self.SimLigPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, os.path.split(self.LigandPath)[1])
-
         except:
             return 1
 
@@ -121,7 +120,6 @@ class ProcLig():
     '''         
     def Set_LigandPDB(self):
         
-                
         #Replace the index number in the ligand pdb file
         file = open(self.LigandPath, 'r')
         ligFile = file.readlines()
@@ -179,15 +177,15 @@ class ProcLig():
         # Set the command-line arguments to process ligand
 
         if self.FlexAID.OSid == 'WIN':
-            commandline = os.path.join(self.FlexAIDWRKInstall_Dir,'Process_Ligand.exe')
+            commandline = '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'Process_Ligand.exe') + '"'
         else:
-            commandline = os.path.join(self.FlexAIDWRKInstall_Dir,'Process_Ligand')
+            commandline = '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'Process_Ligand') + '"'
 
-        commandline += ' -f ' + self.SimLigPath
+        commandline += ' -f ' + '"' + self.SimLigPath + '"'
         #commandline += ' -rh '
-        commandline += ' -o ' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG') 
+        commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG') + '"' 
         commandline += ' --atom_index ' + str(self.StartAtomIndex)
-        commandline += ' -ref '
+        commandline += ' -ref'
         
         if self.AtomTypes == 'Sobolev':
             commandline += ' --old_types'
@@ -198,33 +196,30 @@ class ProcLig():
         
         if self.AnchorAtom != -1:
             commandline += ' --force_gpa ' + str(self.AnchorAtom)
-        
-        #print commandline
-
+            
         # Execute command-line
         try:
             if self.FlexAID.OSid == 'WIN':
                 # Set environment variable here
-                os.putenv('BABEL_DATADIR', os.path.join(self.FlexAIDWRKInstall_Dir,'data'))
+                os.putenv('BABEL_DATADIR', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'data') + '"')
                 pipe = Popen(commandline, shell=False, stderr=PIPE, stdout=PIPE)
             elif self.FlexAID.OSid == 'LINUX':
-                os.putenv('LD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
-                os.putenv('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
+                os.putenv('LD_LIBRARY_PATH', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'libs') + '"')
+                os.putenv('BABEL_LIBDIR', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'formats') + '"')
                 pipe = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
             elif self.FlexAID.OSid == 'MAC':
-                os.putenv('DYLD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
-                os.putenv('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
+                os.putenv('DYLD_LIBRARY_PATH', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'libs') + '"')
+                os.putenv('BABEL_LIBDIR', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'formats') + '"')
                 pipe = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
             else:
                 self.FlexAID.DisplayMessage("  ERROR: Your platform is not supported by NRGsuite",1)
                 return 1
         except:
             return 1
-            
 
-        the_output = pipe.stdout.read()
         the_outerr = pipe.stderr.read()
-                
+        the_output = pipe.stdout.read()
+
         if the_output.find('Done.') != -1:
             self.top.ReferencePath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG_ref.pdb')
             return 0

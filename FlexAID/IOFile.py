@@ -464,9 +464,11 @@ class IOFile:
             self.DisplayMessage("  ERROR: object/selection '" + ddlSelection + "' does not exist on current state", 1)
             return
 
-        self.LigandPath = tkFileDialog.asksaveasfilename(initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
-
-        if len(self.LigandPath) > 0:
+        LigandPath = tkFileDialog.asksaveasfilename(initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
+        
+        if len(LigandPath) > 0:
+            
+            self.LigandPath = os.path.normpath(LigandPath)
             
             if self.LigandPath.find('.pdb') == -1:
                 self.LigandPath = self.LigandPath + '.pdb'
@@ -501,10 +503,12 @@ class IOFile:
             self.DisplayMessage(  "The object/selection '" + ddlSelection + "' does not exist on current state", 1)
             return
                     
-        self.ProtPath = tkFileDialog.asksaveasfilename(initialdir=self.top.ProteinProject_Dir, title='Save the PDB File', initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
+        ProtPath = tkFileDialog.asksaveasfilename(initialdir=self.top.ProteinProject_Dir, title='Save the PDB File', initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
+        
+        if len(ProtPath) > 0:
 
-        if len(self.ProtPath) > 0:
-
+            self.ProtPath = os.path.normpath(ProtPath)
+            
             if self.ProtPath.find('.pdb') == -1:
                 self.ProtPath = self.ProtPath + '.pdb'
 
@@ -522,8 +526,12 @@ class IOFile:
     def Btn_LoadLigand_Clicked(self):        
         
         LigandPath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb'),('MOL File','*.mol'),('MOL2 File','*.mol2'),('SDF File','*.sdf')], initialdir=self.top.FlexAIDLigandProject_Dir, title='Select a Ligand File to Load')
-        
-        if len(LigandPath) > 0 and LigandPath != self.LigandPath:
+
+        if len(LigandPath) > 0:
+            LigandPath = os.path.normpath(LigandPath)
+
+            if LigandPath == self.LigandPath:
+                return
             
             self.LigandPath = LigandPath
 
@@ -573,7 +581,12 @@ class IOFile:
         
         ProtPath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb'),('MOL File','*.mol'),('MOL2 File','*.mol2'),('SDF File','*.sdf')], initialdir=self.top.ProteinProject_Dir, title='Select a Target File to Load')
         
-        if len(ProtPath) > 0 and ProtPath != self.ProtPath:
+        if len(ProtPath) > 0:
+            ProtPath = os.path.normpath(ProtPath)
+
+            if ProtPath == self.ProtPath:
+                return
+            
             self.ProtPath = ProtPath            
             
             try:
@@ -596,6 +609,9 @@ class IOFile:
         FilePath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb')], initialdir=self.top.Project_Dir, title='Select a PDB File to Import')
         
         if len(FilePath) > 0:
+
+            FilePath = os.path.normpath(FilePath)
+            
             if self.PyMOL:
                 cmd.load(FilePath, state=1)
 

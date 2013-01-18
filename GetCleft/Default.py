@@ -673,6 +673,9 @@ class Default:
             TempBindingSite = BindingSite.BindingSite()
             
             for LoadFile in iter(LoadFiles):
+
+                LoadFile = os.path.normpath(LoadFile)
+                
                 try:
                     in_ = open(LoadFile, 'r')
                     Cleft = pickle.load(in_)
@@ -742,6 +745,8 @@ class Default:
                                                 initialdir=BindingSitePath, title='Select a NRG BindingSite file to load')
         
         if len(LoadPath) > 0:
+            LoadPath = os.path.normpath(LoadPath)
+            
             try:
                 in_ = open(LoadPath, 'r')
                 TempBindingSite = pickle.load(in_)
@@ -775,6 +780,7 @@ class Default:
                                                       filetypes=[('NRG BindingSite','*.nrgbs')])
             
             if len(SaveFile) > 0:
+                SaveFile = os.path.norm(SaveFile)
                 
                 if SaveFile.find('.nrgbs') == -1:
                     SaveFile = SaveFile + '.nrgbs'
@@ -830,10 +836,11 @@ class Default:
     ==================================================================================  '''                 
     def Btn_OpenPDB_Clicked(self):
         
-        FilePath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb')], initialdir=self.top.TargetProject_Dir, title='Select a PDB File to Load')
+        FilePath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb'),('MOL File','*.mol'),('MOL2 File','*.mol2'),('SDF File','*.sdf')], initialdir=self.top.TargetProject_Dir, title='Select a PDB File to Load')
         
         if len(FilePath) > 0:
-        
+            FilePath = os.path.normpath(FilePath)
+            
             Name = os.path.basename(os.path.splitext(FilePath)[0])
         
             if self.PyMOL:
