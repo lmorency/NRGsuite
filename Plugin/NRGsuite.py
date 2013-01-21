@@ -52,7 +52,11 @@ else:
 
 
 if OSid == 'WIN':
-    RootDir = os.path.join('C:\\','Program Files','NRGsuite')
+    ProgramFiles = os.getenv('PROGRAMFILES')
+    if ProgramFiles:
+        RootDir = os.path.join(ProgramFiles,'NRGsuite')
+    else:
+        RootDir = os.path.join('C:\\','Program Files','NRGsuite')
 else:
     RootDir = os.path.join('/usr','local','NRGsuite')
 
