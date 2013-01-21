@@ -42,7 +42,7 @@ import Config1
 import Config2
 import Config3
 import GAParam
-import Simulate        
+import Simulate
 
 if __debug__:
 	from pymol import cmd
@@ -152,9 +152,8 @@ class displayFlexAID:
         self.frame = Frame(top)
         self.frame.pack(expand=True)
         self.curCursor = self.frame['cursor']
-
-        self.Frame_Main()
-	#self.DisplayMessage = self.MessageBox.add_message
+        
+        #self.DisplayMessage = self.MessageBox.add_message
 
         #print "Main frame generated"
 
@@ -166,24 +165,52 @@ class displayFlexAID:
         self.ProcessRunning = False
         self.Run = None
 
+        self.Frame_Main()
+        
         # Build class objects of each tab
-        self.IOFile = IOFile.IOFile(self, self.PyMOL)        
+        self.IOFile = IOFile.IOFile(self, self.PyMOL)
         self.Config1 = Config1.Config1(self, self.PyMOL)
         self.Config2 = Config2.Config2(self, self.PyMOL)
         self.Config3 = Config3.Config3(self, self.PyMOL)
         self.GAParam = GAParam.GAParam(self, self.PyMOL)
         self.Simulate = Simulate.Simulate(self, self.PyMOL)
 
-        self.listBtnTabs = [self.Btn_IOFiles,self.Btn_Config1,self.Btn_Config2,self.Btn_Config3,self.Btn_GAParam,self.Btn_Simulate]
+        self.MakeMenuBar()
+
+        self.listBtnTabs = [self.Btn_IOFiles, self.Btn_Config1, self.Btn_Config2, self.Btn_Config3, self.Btn_GAParam, self.Btn_Simulate]
 
         #print "Created instances of all tab classes"
 
         # default Tab (IOFile)
         self.Btn_IOFiles_Clicked()
 
+        # By default hide advanced tabs
+        self.bAdvancedView = False
+        self.Btn_Toggle_AdvView()
+
     #=====================================================================================
     '''                     --- FRAME DISPLAY SETTINGS ---                             '''
     #=====================================================================================
+    
+    ''' ==================================================================================
+    FUNCTION Btn_Toggle_AdvView: Hides/shows the advanced tabs (scoring + ga)
+    ==================================================================================  '''  
+    def Btn_Toggle_AdvView(self):
+    
+        if not self.bAdvancedView:
+            self.Btn_Config3.pack_forget()
+            self.Btn_GAParam.pack_forget()
+            self.bAdvancedView = True
+            
+            if self.ActiveFrame == self.Config3 or self.ActiveFrame == self.GAParam:
+                self.Btn_IOFiles_Clicked()
+            
+        else:
+            self.Btn_Simulate.pack_forget()
+            self.Btn_Config3.pack(side=LEFT, fill=BOTH, expand=True)
+            self.Btn_GAParam.pack(side=LEFT, fill=BOTH, expand=True)
+            self.Btn_Simulate.pack(side=LEFT, fill=BOTH, expand=True)
+            self.bAdvancedView = False
     
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
@@ -194,34 +221,34 @@ class displayFlexAID:
         '''                  --- TOP MENU OF THE INTERFACE ---                          '''
         #==================================================================================
 
-        fTop = Frame(self.frame, relief=RIDGE, border=4, height=50)
-        fTop.pack(fill=BOTH, expand=True)#, padx=10, pady=10, ipady=10, ipadx=10, side=TOP)
-        fTop.pack_propagate(0)
-        
-        self.Btn_IOFiles = Button(fTop, text='Input Files', bg=self.Color_White, command=self.Btn_IOFiles_Clicked, font=self.font_Text)
+        self.fTop = Frame(self.frame, relief=RIDGE, border=4, height=50)
+        self.fTop.pack(fill=BOTH, expand=True)#, padx=10, pady=10, ipady=10, ipadx=10, side=TOP)
+        self.fTop.pack_propagate(0)
+
+        self.Btn_IOFiles = Button(self.fTop, text='Input Files', bg=self.Color_White, command=self.Btn_IOFiles_Clicked, font=self.font_Text)
         self.Btn_IOFiles.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_IOFiles.config(state='normal')
 
-        self.Btn_Config1 = Button(fTop, text='Target Cfg', bg=self.Color_Grey, command=self.Btn_Config1_Clicked, font=self.font_Text)
+        self.Btn_Config1 = Button(self.fTop, text='Target Cfg', bg=self.Color_Grey, command=self.Btn_Config1_Clicked, font=self.font_Text)
         self.Btn_Config1.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Config1.config(state='disabled')
 
-        self.Btn_Config2 = Button(fTop, text='Ligand Cfg', bg=self.Color_Grey, command=self.Btn_Config2_Clicked, font=self.font_Text)
+        self.Btn_Config2 = Button(self.fTop, text='Ligand Cfg', bg=self.Color_Grey, command=self.Btn_Config2_Clicked, font=self.font_Text)
         self.Btn_Config2.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Config2.config(state='disabled')
 
-        self.Btn_Config3 = Button(fTop, text='Scoring Cfg', bg=self.Color_Grey, command=self.Btn_Config3_Clicked, font=self.font_Text)
+        self.Btn_Config3 = Button(self.fTop, text='Scoring Cfg', bg=self.Color_Grey, command=self.Btn_Config3_Clicked, font=self.font_Text)
         self.Btn_Config3.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Config3.config(state='disabled')
         
-        self.Btn_GAParam = Button(fTop, text='GA Param', bg=self.Color_Grey, command=self.Btn_GAParam_Clicked, font=self.font_Text)
+        self.Btn_GAParam = Button(self.fTop, text='GA Param', bg=self.Color_Grey, command=self.Btn_GAParam_Clicked, font=self.font_Text)
         self.Btn_GAParam.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_GAParam.config(state='disabled')    
 
-        self.Btn_Simulate = Button(fTop, text='Simulate', bg=self.Color_Grey, command=self.Btn_Simulate_Clicked, font=self.font_Text)
+        self.Btn_Simulate = Button(self.fTop, text='Simulate', bg=self.Color_Grey, command=self.Btn_Simulate_Clicked, font=self.font_Text)
         self.Btn_Simulate.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Simulate.config(state='disabled') 
-        
+                
         #==================================================================================
         '''                MIDDLE DISPLAY SECTION OF THE INTERFACE                      '''
         #==================================================================================
@@ -271,6 +298,28 @@ class displayFlexAID:
         scrollBar.config(command=self.TextMessage.yview)
         self.TextMessage.config(state='disabled', yscrollcommand=scrollBar.set)                                       
     
+    ''' ==================================================================================
+    FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
+    ==================================================================================  '''        
+    def MakeMenuBar(self):
+        
+        menubar = Menu(self.top)
+        
+        loadmenu = Menu(menubar, tearoff=0)
+        loadmenu.add_command(label="Load Simulation")#, command=self.Default.Btn_Load_Simulation)
+        menubar.add_cascade(label="Load", menu=loadmenu)
+
+        savemenu = Menu(menubar, tearoff=0)        
+        savemenu.add_command(label="Save Simulation")#, command=self.Default.Btn_Save_Simulation)
+        menubar.add_cascade(label="Save", menu=savemenu)
+
+        savemenu = Menu(menubar, tearoff=0)        
+        self.advview = savemenu.add_command(label="Show/Hide Advanced view", command=self.Btn_Toggle_AdvView)
+        menubar.add_cascade(label="View", menu=savemenu)
+        
+        self.top.config(menu=menubar)
+        
+
     ''' ==================================================================================
     FUNCTION FlexAIDIsRunning: Update or Create the Running File to BLOCK multiple GUI 
     ==================================================================================  '''       
