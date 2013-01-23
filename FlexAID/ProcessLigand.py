@@ -176,7 +176,7 @@ class ProcLig():
         self.FlexAID.Run = None
         
         if the_output.find('Done.') != -1:
-            self.top.ReferencePath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG_ref.pdb')
+            self.top.ReferencePath.set(os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG_ref.pdb'))
             return 0
         
         return 1

@@ -338,11 +338,11 @@ class displayFlexAID:
                     LoadFile = os.path.normpath(LoadFile)
                     
                     try:
-                        print LoadFile
                         in_ = open(LoadFile, 'r')
-                        print self.IOFile.Vars
                         self.IOFile.Vars = pickle.load(in_)
-                        print self.IOFile.Vars
+                        #self.Config1.Vars = pickle.load(in_)
+                        #self.Config1.BindingSite = pickle.load(in_)
+                        #self.Config1.TargetFlex = pickle.load(in_)
                         in_.close()
                     except:
                         self.DisplayMessage("  ERROR: Could not properly load the session", 2)
@@ -374,14 +374,12 @@ class displayFlexAID:
                     if SaveFile.find('.nrgfs') == -1:
                         SaveFile = SaveFile + '.nrgfs'
 
-                    print SaveFile
                     try:
                         out = open(SaveFile, 'w')
-                        print "IOFileVars"
-                        print self.IOFile.Vars
                         pickle.dump(self.IOFile.Vars, out)
-                        #print "Config1"
-                        #pickle.dump(self.Config1, out)
+                        #pickle.dump(self.Config1.Vars, out)
+                        #pickle.dump(self.Config1.BindingSite, out)
+                        #pickle.dump(self.Config1.TargetFlex, out)
                         #print "Config2"
                         #pickle.dump(self.Config2, out)
                         #print "Config3"

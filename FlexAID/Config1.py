@@ -36,9 +36,49 @@ if __debug__:
     import Sphere
     import FlexSideChain
     import General_cmd
-            
+           
+
+class Config1Vars:
+
+    RngOpt = StringVar()
+    ResiduValue = StringVar()
+    defOptSphere = StringVar()
+    defOptCleft = StringVar()
+    defOptResidue = StringVar()
+    SphereSize = DoubleVar()
+    TargetFlexName = StringVar()
+    BindingSiteName = StringVar()
+    
+    def __getstate__(self):
+                
+        return {    
+                    '_RngOpt': self.RngOpt.get(),
+                    '_ResiduValue': self.ResiduValue.get(),
+                    '_defOptSphere': self.defOptSphere.get(),
+                    '_defOptCleft': self.defOptCleft.get(),
+                    '_defOptResidue': self.defOptResidue.get(),
+                    '_SphereSize': self.SphereSize.get(),
+                    '_TargetFlexName': self.TargetFlexName.get(),
+                    '_BindingSiteName': self.BindingSiteName.get(),
+                }
+        
+    def __setstate__(self, state):
+        
+        self.RngOpt.set(state.get('_RngOpt'))
+        self.ResiduValue.set(state.get('_ResiduValue'))
+        self.defOptSphere.set(state.get('_defOptSphere'))
+        self.defOptCleft.set(state.get('_defOptCleft'))
+        self.defOptResidue.set(state.get('_defOptResidue'))
+        self.SphereSize.set(state.get('_SphereSize'))
+        self.TargetFlexName.set(state.get('_TargetFlexName'))
+        self.BindingSiteName.set(state.get('_BindingSiteName'))
+        
 
 class Config1:
+
+    Vars = Config1Vars()
+    BindingSite = BindingSite.BindingSite()
+    TargetFlex = TargetFlex.TargetFlex()
 
     def __init__(self,top,PyMOL):
         
@@ -58,27 +98,21 @@ class Config1:
         self.Trace()
 
     def Def_Vars(self):
-        
-        self.RngOpt = StringVar()
 
-        self.ResiduValue = StringVar()
-        self.defOptSphere = StringVar()
-        self.defOptCleft = StringVar()
-        self.defOptResidue = StringVar()
-        self.SphereSize = DoubleVar()
-
+        # class instance objects
         self.StateList = list()
+        self.Validator = list()
         self.listResidues = list()
 
-        self.TargetFlexName = StringVar()
-        self.BindingSiteName = StringVar()
-
-        self.BindingSite = BindingSite.BindingSite()
-        self.TargetFlex = TargetFlex.TargetFlex()
-
-        self.ValidCleft = list()
-        self.Validator = list()
-
+        # vars class objects
+        self.RngOpt = self.Vars.RngOpt
+        self.ResiduValue = self.Vars.ResiduValue
+        self.defOptSphere = self.Vars.defOptSphere
+        self.defOptCleft = self.Vars.defOptCleft
+        self.defOptResidue = self.Vars.defOptResidue
+        self.SphereSize = self.Vars.SphereSize
+        self.TargetFlexName = self.Vars.TargetFlexName
+        self.BindingSiteName = self.Vars.BindingSiteName
 
     def Init_Vars(self):
 
@@ -88,29 +122,27 @@ class Config1:
         self.defOptCleft.set('')
         self.defOptResidue.set('')
         self.SphereSize.set(0.0)
-                
-        self.ProcessError = False
-        self.BindingSiteDisplay = 'BINDINGSITE_AREA__'
-        self.SphereDisplay = 'SPHERE__'
-        self.ScaleResolution = 0.25
-        
-        self.HIGHLIGHT_RELIEF = RAISED
-        self.HIGHLIGHT_RELIEF = SUNKEN
-        self.HIGHLIGHT_WIDTH = 2
-        
+                                
         self.FlexSideChainPath = ''        
         self.ResiduValue.set('')
 
-        self.CleftPath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,'tmp.pdb')
         self.TargetFlexName.set('')
         self.BindingSiteName.set('')
 
         self.TargetFlex.Clear_SideChain()
         self.BindingSite.Clear()
 
-        self.ValidCleft = [True, 2, 0, None]
-        self.ValidGridDistance = [True, 1, 0, None]
-        self.Validator = [self.ValidCleft]
+        self.CleftTmpPath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,'tmp.pdb')
+
+        self.HIGHLIGHT_RELIEF = RAISED
+        self.HIGHLIGHT_RELIEF = SUNKEN
+        self.HIGHLIGHT_WIDTH = 2
+
+        self.BindingSiteDisplay = 'BINDINGSITE_AREA__'
+        self.SphereDisplay = 'SPHERE__'
+        self.ScaleResolution = 0.25
+
+        self.ProcessError = False
 
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
@@ -139,20 +171,6 @@ class Config1:
         self.Highlight_SelectedCleft('')
 
         return True
-
-    ''' ==================================================================================
-    FUNCTION Validator_Fail: Triggers visual events upon validation failure
-    =================================================================================  '''    
-    def Validator_Fail(self):
-        
-        if self.BindingSite.Type == 2 and self.BindingSite.Count_Cleft() == 0:
-
-            self.Btn_Import_Cleft.flash()
-            self.Btn_Import_Cleft.flash()
-
-            self.top.DisplayMessage("  You cannot proceed further until you:", 2)
-            self.top.DisplayMessage("          1) Import clefts generated from GetCleft", 2)
-            self.top.DisplayMessage("          2) Load a previously configured binding-site", 2)
 
     ''' ==================================================================================
     FUNCTION Show: Displays the frame onto the middle main frame
@@ -591,11 +609,11 @@ class Config1:
             
             try:
                 in_ = open(LoadPath, 'r')
-                BindingSite = pickle.load(in_)
+                TmpBindingSite = pickle.load(in_)
                 in_.close()
                 
-                if BindingSite.Count_Cleft() > 0 or BindingSite.Sphere != None:
-                    self.BindingSite = BindingSite
+                if BTmpindingSite.Count_Cleft() > 0 or TmpBindingSite.Sphere != None:
+                    self.BindingSite = TmpBindingSite
 
                     if self.BindingSite.Type == 1:
                         self.sclResizeSphere.config(from_=0.0,to=self.BindingSite.Sphere.MaxRadius)
@@ -917,7 +935,7 @@ class Config1:
                 
                 self.Generate_CleftBindingSite()
 
-                cmd.load(self.CleftPath, self.BindingSiteDisplay, state=1)
+                cmd.load(self.CleftTmpPath, self.BindingSiteDisplay, state=1)
                 cmd.hide('everything', self.BindingSiteDisplay)
                 #cmd.show('surface', self.BindingSiteDisplay)
                 cmd.show('mesh', self.BindingSiteDisplay)
@@ -938,7 +956,7 @@ class Config1:
     ================================================================================== '''        
     def Generate_CleftBindingSite(self):
         
-        out = file(self.CleftPath, 'w')
+        out = file(self.CleftTmpPath, 'w')
 
         for Cleft in iter(self.BindingSite.listClefts):
             in_ = open(Cleft.CleftFile, 'r')

@@ -47,13 +47,15 @@ class IOFileVars:
 
     ProtPath = StringVar()
     ProtName = StringVar()
-    
     LigandPath = StringVar()
     LigandName = StringVar()
-    
     AtomTypes = StringVar()
     Anchor = IntVar()
-                    
+    
+    def __init__(self):
+    
+        return
+    
     def __getstate__(self):
     
         return {    
@@ -77,6 +79,8 @@ class IOFileVars:
     
 class IOFile:
 
+    Vars = IOFileVars()
+
     def __init__(self, top, PyMOL):
 
         #print "New instance of IOFile"
@@ -95,8 +99,6 @@ class IOFile:
 
         self.DisplayMessage = self.top.DisplayMessage
 
-        self.Vars = IOFileVars()
-        
         self.Def_Vars()
         self.Init_Vars()
 
@@ -105,8 +107,10 @@ class IOFile:
 
     def Def_Vars(self):
 
-        # class objects
+        # class instance objects
         self.StateList = list()
+        self.Validator = list()
+        
         self.defaultOption = StringVar()
         self.FetchPDB = StringVar()
         self.ReferencePath = StringVar()
@@ -118,9 +122,7 @@ class IOFile:
         self.LigandPath = self.Vars.LigandPath
         self.LigandName = self.Vars.LigandName
         self.AtomTypes = self.Vars.AtomTypes
-        self.Anchor = self.Vars.Anchor
-    
-        self.Validator = list()
+        self.Anchor = self.Vars.Anchor    
 
 
     def Init_Vars(self):
