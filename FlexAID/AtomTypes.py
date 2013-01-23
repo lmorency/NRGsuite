@@ -54,7 +54,7 @@ class setType(Wizard):
         self.State = cmd.get_state()
                 
         #self.pdbPath = self.FlexAID.SimPath + 'tmp.pdb'
-        self.pdbPath = self.FlexAID.IOFile.ReferencePath
+        self.pdbPath = self.FlexAID.IOFile.ReferencePath.get()
 
         self.AtomDisplay = 'HIGHLIGHT_ATOM__'
         self.LigDisplay = 'ATOM_TYPES_LIGAND__'
@@ -69,7 +69,7 @@ class setType(Wizard):
         smm = []
         smm.append([ 2, 'Type Selection', '' ])
         for a in self.types:
-            smm.append([ 1, self.type_name[a], 'cmd.get_wizard().set_AtomType("'+a+'")'])
+            smm.append([ 1, self.type_name[a], 'cmd.get_wizard().set_AtomType("' + a + '")'])
         self.menu['type']=smm
        
         self.atom = list()

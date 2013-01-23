@@ -138,7 +138,7 @@ class Parse(threading.Thread):
         self.ParseGA = False
         self.FixedAngle = {}
 
-        self.ReferencePath = self.FlexAID.IOFile.ReferencePath
+        self.ReferencePath = self.FlexAID.IOFile.ReferencePath.get()
 
         self.listSideChain = self.FlexAID.Config1.TargetFlex.listSideChain
         self.dictSideChainNRot = {}
@@ -202,22 +202,6 @@ class Parse(threading.Thread):
         except:
             self.FlexAID.DisplayMessage("Could not read ligand PDB File",1)
             return
-
-    
-        #self.FlexAID.DisplayMessage("Waiting for the simulation to start...",1)
-    
-        # Wait for the simulation to start...
-        #while TIMEOUT:
-        #    if not self.FlexAID.Run is None:
-                #print "FlexAID is running..."
-        #        break
-        #    elif self.top.ProcessError:
-        #        self.FlexAID.DisplayMessage("An error occured while trying to run FlexAID", 1)
-        #        self.top.ErrorStatus()
-        #        break
-                
-        #    time.sleep(INTERVAL)
-        #    TIMEOUT -= INTERVAL
 
         
         self.top.progressBarHandler(0,self.NbTotalGen)

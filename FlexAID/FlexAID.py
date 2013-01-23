@@ -29,7 +29,8 @@
 
 from Tkinter import *
 
-import os
+import os, sys
+import pickle
 import time
 import tkFont
 import tkFileDialog
@@ -92,6 +93,7 @@ class displayFlexAID:
 
         self.FlexAIDLigandProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Ligand')
         self.FlexAIDSimulationProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Simulation')
+        self.FlexAIDSessionProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Session')
         self.FlexAIDBindingSiteProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Binding_Site')
         self.FlexAIDTargetFlexProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Target_Flexibility')
 
@@ -306,11 +308,11 @@ class displayFlexAID:
         menubar = Menu(self.top)
         
         loadmenu = Menu(menubar, tearoff=0)
-        loadmenu.add_command(label="Load Simulation")#, command=self.Default.Btn_Load_Simulation)
+        loadmenu.add_command(label="Load Session", command=self.Btn_Load_Session)
         menubar.add_cascade(label="Load", menu=loadmenu)
 
         savemenu = Menu(menubar, tearoff=0)        
-        savemenu.add_command(label="Save Simulation")#, command=self.Default.Btn_Save_Simulation)
+        savemenu.add_command(label="Save Session", command=self.Btn_Save_Session)
         menubar.add_cascade(label="Save", menu=savemenu)
 
         savemenu = Menu(menubar, tearoff=0)        
@@ -319,7 +321,85 @@ class displayFlexAID:
         
         self.top.config(menu=menubar)
         
+    ''' ==================================================================================
+    FUNCTION Btn_Load_Session: Loads a previously saved session
+    ==================================================================================  '''        
+    def Btn_Load_Session(self):
 
+        if self.Run is None and not self.ProcessRunning:
+            if self.ActiveWizard is None:
+
+                LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDSessionProject_Dir,
+                                                        filetypes=[('NRG FlexAID Session','*.nrgfs')],
+                                                        title='Select the Session to load')
+
+                if len(LoadFile) > 0:
+                    
+                    LoadFile = os.path.normpath(LoadFile)
+                    
+                    try:
+                        print LoadFile
+                        in_ = open(LoadFile, 'r')
+                        print self.IOFile.Vars
+                        self.IOFile.Vars = pickle.load(in_)
+                        print self.IOFile.Vars
+                        in_.close()
+                    except:
+                        self.DisplayMessage("  ERROR: Could not properly load the session", 2)
+                        print "Unexpected error:", sys.exc_info()
+                        #print raise()
+
+
+            else:
+                self.DisplayMessage("  Cannot save session while a wizard is active", 2)            
+        else:
+            self.DisplayMessage("  Cannot save session while a process is active", 2)
+        
+    ''' ==================================================================================
+    FUNCTION Btn_Save_Session: Saves the current session
+    ==================================================================================  '''        
+    def Btn_Save_Session(self):
+
+        if self.Run is None and not self.ProcessRunning:
+            if self.ActiveWizard is None:
+                
+                SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDSessionProject_Dir,
+                                          title='Save the Session file', initialfile='default_session',
+                                          filetypes=[('NRG FlexAID Session','*.nrgfs')])
+            
+                if len(SaveFile) > 0:
+
+                    SaveFile = os.path.normpath(SaveFile)
+                    
+                    if SaveFile.find('.nrgfs') == -1:
+                        SaveFile = SaveFile + '.nrgfs'
+
+                    print SaveFile
+                    try:
+                        out = open(SaveFile, 'w')
+                        print "IOFileVars"
+                        print self.IOFile.Vars
+                        pickle.dump(self.IOFile.Vars, out)
+                        #print "Config1"
+                        #pickle.dump(self.Config1, out)
+                        #print "Config2"
+                        #pickle.dump(self.Config2, out)
+                        #print "Config3"
+                        #pickle.dump(self.Config3, out)
+                        #print "GAParam"
+                        #pickle.dump(self.GAParam, out)
+                        #print "Simulate"
+                        #pickle.dump(self.Simulate, out)
+                        out.close()
+                    except:
+                        self.DisplayMessage("  ERROR: Could not properly save the session", 2)
+                        print "Unexpected error:", sys.exc_info()
+                        #print raise()
+            else:
+                self.DisplayMessage("  Cannot save session while a wizard is active", 2)
+        else:
+            self.DisplayMessage("  Cannot save session while a process is active", 2)
+            
     ''' ==================================================================================
     FUNCTION FlexAIDIsRunning: Update or Create the Running File to BLOCK multiple GUI 
     ==================================================================================  '''       
@@ -579,6 +659,9 @@ class displayFlexAID:
         if not(os.path.isdir(self.FlexAIDSimulationProject_Dir)):
             os.makedirs(self.FlexAIDSimulationProject_Dir)
             
+        if not(os.path.isdir(self.FlexAIDSessionProject_Dir)):
+            os.makedirs(self.FlexAIDSessionProject_Dir)
+
         if not(os.path.isdir(self.FlexAIDBindingSiteProject_Dir)):
             os.makedirs(self.FlexAIDBindingSiteProject_Dir)
             

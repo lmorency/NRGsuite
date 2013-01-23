@@ -21,7 +21,9 @@ from subprocess import Popen, PIPE
 from datetime import datetime
 
 import os
-import Constraint
+
+if __debug__:
+    import Constraint
 
 class Manage():
 

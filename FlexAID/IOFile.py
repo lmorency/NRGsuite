@@ -43,6 +43,38 @@ if __debug__:
 @creation date:  Nov. 24 2011
 '''
 
+class IOFileVars:
+
+    ProtPath = StringVar()
+    ProtName = StringVar()
+    
+    LigandPath = StringVar()
+    LigandName = StringVar()
+    
+    AtomTypes = StringVar()
+    Anchor = IntVar()
+                    
+    def __getstate__(self):
+    
+        return {    
+                    '_ProtPath': self.ProtPath.get(),
+                    '_ProtName': self.ProtName.get(),
+                    '_LigandPath': self.LigandPath.get(),
+                    '_LigandName': self.LigandName.get(),
+                    '_AtomTypes': self.AtomTypes.get(),
+                    '_Anchor': self.Anchor.get()
+                }
+        
+    def __setstate__(self, state):
+        
+        self.ProtPath.set(state.get('_ProtPath'))
+        self.ProtName.set(state.get('_ProtName'))
+        self.LigandPath.set(state.get('_LigandPath'))
+        self.LigandName.set(state.get('_LigandName'))
+        self.AtomTypes.set(state.get('_AtomTypes'))
+        self.Anchor.set(state.get('_Anchor'))
+
+    
 class IOFile:
 
     def __init__(self, top, PyMOL):
@@ -63,6 +95,8 @@ class IOFile:
 
         self.DisplayMessage = self.top.DisplayMessage
 
+        self.Vars = IOFileVars()
+        
         self.Def_Vars()
         self.Init_Vars()
 
@@ -71,51 +105,47 @@ class IOFile:
 
     def Def_Vars(self):
 
-        self.listConn = list()
+        # class objects
         self.StateList = list()
-
         self.defaultOption = StringVar()
         self.FetchPDB = StringVar()
-        self.ProtName = StringVar()
-        self.LigandName = StringVar()
-        self.AtomTypes = StringVar()
-        #self.TargetRNA = IntVar()
-        self.Anchor = IntVar()
-
-        self.Translation = list()
+        self.ReferencePath = StringVar()
+        self.ResSeq = IntVar()
         
+        # vars class objects
+        self.ProtPath = self.Vars.ProtPath
+        self.ProtName = self.Vars.ProtName
+        self.LigandPath = self.Vars.LigandPath
+        self.LigandName = self.Vars.LigandName
+        self.AtomTypes = self.Vars.AtomTypes
+        self.Anchor = self.Vars.Anchor
+    
         self.Validator = list()
+
 
     def Init_Vars(self):
 
         #print("Init Vars for IOFile")
-        self.ProtPath = ''
-        self.LigandPath = ''
-        self.ReferencePath = ''
+        self.ProtPath.set('')
+        self.ProtName.set('')
+        self.LigandPath.set('')
+        self.LigandName.set('')
 
-        self.NbListAtom = 0
-        self.ResSeq = 0
-
-        self.listConn = []
-
+        self.ReferencePath.set('')
         self.defaultOption.set('')
         self.FetchPDB.set('')
-        self.ProtName.set('')
-        self.LigandName.set('')
         self.AtomTypes.set('Sybyl')
+        
         #self.TargetRNA.set(0)
+        self.ResSeq.set(0)
         self.Anchor.set(-1)
 
-        self.Translation = [1000.000, 1000.000, 1000.000]
-
-        self.fProcessLigand = False
         self.ProcessError = False
-
+        
+        # flags
+        self.fProcessLigand = False
         self.fStoreInfo = False
         self.fLoadProcessed = False
-
-        self.LIGAND = 'NRG_LIGAND__'
-        self.PROTEIN = 'NRG_TARGET__'
         
     ''' ==================================================================================
     FUNCTION Kill_Frame: Kills the main frame window
@@ -127,7 +157,7 @@ class IOFile:
         # Process ligand
         if not self.fProcessLigand:
 
-            AtomIndex = General.store_Residues(self.top.Config1.listResidues, self.top.IOFile.ProtPath, 0)
+            AtomIndex = General.store_Residues(self.top.Config1.listResidues, self.ProtPath.get(), 0)
             if AtomIndex == -1:
                 return False
 
@@ -165,7 +195,7 @@ class IOFile:
 
         if boolRun:
 
-            self.StateList = []
+            del self.StateList[:]
 
             General.saveState(self.fIOFile, self.StateList)
             General.setState(self.fIOFile)
@@ -372,11 +402,11 @@ class IOFile:
     FUNCTIONS Reset Ligand and Protein textbox fields
     ================================================================================== '''
     def Btn_ResetProt_Clicked(self):
-        self.ProtPath = ''
+        self.ProtPath.set('')
         self.ProtName.set('')
 
     def Btn_ResetLigand_Clicked(self):
-        self.LigandPath = ''
+        self.LigandPath.set('')
         self.LigandName.set('')
 
     ''' ==================================================================================
@@ -387,11 +417,11 @@ class IOFile:
         if not self.PyMOL:
             return
 
-        if len(self.LigandPath) > 0:
+        if len(self.LigandPath.get()) > 0:
             
             if self.top.ActiveWizard is None:
             
-                self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath, self.Anchor.get())
+                self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath.get(), self.Anchor.get())
                 
                 cmd.set_wizard(self.top.ActiveWizard)
                 self.top.ActiveWizard.Start()
@@ -468,14 +498,14 @@ class IOFile:
         
         if len(LigandPath) > 0:
             
-            self.LigandPath = os.path.normpath(LigandPath)
+            self.LigandPath.set(os.path.normpath(LigandPath))
             
-            if self.LigandPath.find('.pdb') == -1:
-                self.LigandPath = self.LigandPath + '.pdb'
+            if self.LigandPath.get().find('.pdb') == -1:
+                self.LigandPath.set(self.LigandPath.get() + '.pdb')
 
-            cmd.save(self.LigandPath, ddlSelection, state, 'pdb') # Save the Selection
-            self.LigandName.set(os.path.basename(os.path.splitext(self.LigandPath)[0]))
-            cmd.load(self.LigandPath, state=1)
+            cmd.save(self.LigandPath.get(), ddlSelection, state, 'pdb') # Save the Selection
+            self.LigandName.set(os.path.basename(os.path.splitext(self.LigandPath.get())[0]))
+            cmd.load(self.LigandPath.get(), state=1)
 
             self.DisplayMessage('  Successfully saved and loaded the ligand:  ' + self.LigandName.get() + "'", 0)
     
@@ -507,14 +537,14 @@ class IOFile:
         
         if len(ProtPath) > 0:
 
-            self.ProtPath = os.path.normpath(ProtPath)
+            self.ProtPath.set(os.path.normpath(ProtPath))
             
-            if self.ProtPath.find('.pdb') == -1:
-                self.ProtPath = self.ProtPath + '.pdb'
+            if self.ProtPath.get().find('.pdb') == -1:
+                self.ProtPath.set(self.ProtPath.get() + '.pdb')
 
-            cmd.save(self.ProtPath, ddlSelection, state, 'pdb') # Save the Selection
-            self.ProtName.set(os.path.basename(os.path.splitext(self.ProtPath)[0]))
-            cmd.load(self.ProtPath, state=1)
+            cmd.save(self.ProtPath.get(), ddlSelection, state, 'pdb') # Save the Selection
+            self.ProtName.set(os.path.basename(os.path.splitext(self.ProtPath.get())[0]))
+            cmd.load(self.ProtPath.get(), state=1)
             
             self.DisplayMessage('  Successfully saved and loaded the target: ' + self.ProtName.get(), 0)                                    
                 
@@ -530,17 +560,17 @@ class IOFile:
         if len(LigandPath) > 0:
             LigandPath = os.path.normpath(LigandPath)
 
-            if LigandPath == self.LigandPath:
+            if LigandPath == self.LigandPath.get():
                 return
             
-            self.LigandPath = LigandPath
+            self.LigandPath.set(LigandPath)
 
             try:
 
-                Name = os.path.basename(os.path.splitext(self.LigandPath)[0])
+                Name = os.path.basename(os.path.splitext(self.LigandPath.get())[0])
 
                 if self.PyMOL:
-                    cmd.load(self.LigandPath, Name, state=1)
+                    cmd.load(self.LigandPath.get(), Name, state=1)
                     n = cmd.count_atoms(Name, state=1)
                 else:
                     # For testing purposes only
@@ -567,7 +597,7 @@ class IOFile:
         
         try:
             if self.PyMOL:
-                cmd.load(self.ReferencePath, self.LigandName.get(), state=1)
+                cmd.load(self.ReferencePath.get(), self.LigandName.get(), state=1)
         except:
             self.DisplayMessage('  ERROR: Could not load the PDB of the processed ligand', 1)
             return 1
@@ -584,15 +614,15 @@ class IOFile:
         if len(ProtPath) > 0:
             ProtPath = os.path.normpath(ProtPath)
 
-            if ProtPath == self.ProtPath:
+            if ProtPath == self.ProtPath.get():
                 return
             
-            self.ProtPath = ProtPath            
+            self.ProtPath.set(ProtPath)
             
             try:
-                Name = os.path.basename(os.path.splitext(self.ProtPath)[0])
+                Name = os.path.basename(os.path.splitext(self.ProtPath.get())[0])
                 if self.PyMOL:
-                    cmd.load(self.ProtPath, Name, state=1)
+                    cmd.load(self.ProtPath.get(), Name, state=1)
 
             except:
                 self.top.DisplayMessage("  ERROR for object '" + ProtPath + "': Could not load the target file", 1)
@@ -654,7 +684,7 @@ class IOFile:
         if self.LigandName.get() != '':
 
             if not General_cmd.object_Exists(self.LigandName.get()):
-                cmd.load(self.LigandPath, state=1)                      # Load the pdb file in Pymol                     
+                cmd.load(self.LigandPath.get(), state=1)                      # Load the pdb file in Pymol                     
             else:
                 cmd.center(self.LigandName.get())
                 cmd.zoom(self.LigandName.get())    
@@ -668,7 +698,7 @@ class IOFile:
         if self.ProtName.get() != '':
 
             if not General_cmd.object_Exists(self.ProtName.get()):
-                cmd.load(self.ProtPath, state=1)                        # Load the pdb file in Pymol                     
+                cmd.load(self.ProtPath.get(), state=1)                        # Load the pdb file in Pymol                     
             else:
                 cmd.center(self.ProtName.get())
                 cmd.zoom(self.ProtName.get())        

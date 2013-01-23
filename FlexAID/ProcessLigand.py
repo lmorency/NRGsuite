@@ -49,8 +49,8 @@ class ProcLig():
         self.top = top
         self.FlexAID = self.top.top
 
-        self.ProtPath = self.FlexAID.IOFile.ProtPath
-        self.LigandPath = self.FlexAID.IOFile.LigandPath
+        self.ProtPath = self.FlexAID.IOFile.ProtPath.get()
+        self.LigandPath = self.FlexAID.IOFile.LigandPath.get()
 
         self.AtomTypes = AtomTypes
         self.AnchorAtom = AnchorAtom
@@ -61,7 +61,6 @@ class ProcLig():
         self.SimLigInpPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.inp')
         self.SimLigICPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.ic')
 
-        self.ResSeq = 0
         self.StartAtomIndex = StartAtomIndex
 
         #self.start()
@@ -74,7 +73,6 @@ class ProcLig():
     '''
     def run(self):
         
-        #self.Set_LigandPDB()
         self.FlexAID.ProcessRunning = True
         
         if not self.Copy_LigandFile():
@@ -84,7 +82,7 @@ class ProcLig():
             if not self.process():
                 # ligand extraction success
                 self.top.fProcessLigand = True
-                self.top.ResSeq = 9999
+                self.top.ResSeq.set(9999)
 
                 self.FlexAID.DisplayMessage("  The ligand '" + self.FlexAID.IOFile.LigandName.get() + "' was processed successfully",0)
 
@@ -116,59 +114,6 @@ class ProcLig():
 
         return 0
 
-    '''
-    @summary: Set_LigandPDB: Prepare the ligand PDB file for the ligand_extractor  
-    '''         
-    def Set_LigandPDB(self):
-        
-        #Replace the index number in the ligand pdb file
-        file = open(self.LigandPath, 'r')
-        ligFile = file.readlines()
-        file.close()
-        
-        modif_file = open(self.SimLigPath, 'w')
-        
-        for line in ligFile:
-            
-            if line.startswith('ATOM') or line.startswith('HETATM'):
-                tmpLine = ""
-                if line.startswith('ATOM'):
-                    #Change the Atom for HetAtm
-                    tmpLine = 'HETATM'
-                else:
-                    #Change the Atom Index no
-                    tmpLine = line[0:6]
-                    
-                NoAtom = int(line[7:11]) + self.INDEXoffset                
-                tmpLine += str(NoAtom).rjust(5, ' ')
-                tmpLine += line[11:17]
-                tmpLine += 'LIG A'
-                tmpLine += str(self.ResSeq).rjust(4, ' ')
-                tmpLine += line[26:]
-                
-                modif_file.write(tmpLine)
-                
-            elif line.startswith('CONECT'):
-                #Change the Atom Index no
-                tmpLine = line[0:6]
-                NbConnect = ((len(line) - 7)/5) - 1
-                AtomNo = int(line[7:11]) + self.INDEXoffset
-                tmpLine += str(AtomNo).rjust(5, ' ')
-                
-                colNo = 12
-                for i in range(0,NbConnect):
-                    AtomNo = int(line[colNo:colNo+4]) + self.INDEXoffset
-                    tmpLine += str(AtomNo).rjust(5, ' ')
-                    colNo += 5
-                
-                tmpLine += '\n'   
-                modif_file.write(tmpLine)
-                
-            else:                                       
-                modif_file.write(line)                                    
-        
-        modif_file.close()      
-        
        
     '''
     @summary: process: Processes the ligand (generates input files)

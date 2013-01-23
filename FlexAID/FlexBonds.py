@@ -50,7 +50,7 @@ class flexbond(Wizard):
         self.FlexAID = self.top.top
         self.FlexAID.WizardError = False
         
-        self.RefLigand = self.FlexAID.IOFile.ReferencePath
+        self.RefLigand = self.FlexAID.IOFile.ReferencePath.get()
 
         self.View = cmd.get_view()
         self.State = cmd.get_state()
