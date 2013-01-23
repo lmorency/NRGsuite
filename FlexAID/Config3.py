@@ -22,6 +22,7 @@ from Tkinter import *
 import os
 import functools
 import General
+import Vars
 
 if __debug__:
     from pymol import cmd
@@ -121,20 +122,26 @@ class Config3:
     =================================================================================  '''    
     def Trace(self):
 
-        self.IncludeHETTrace = self.IncludeHET.trace('w',self.IncludeHET_Toggle)
-        self.AtomTypesTrace = self.AtomTypes.trace('w',self.AtomTypes_Toggle)
-        self.SolventTypeTrace = self.SolventType.trace('w',self.SolventType_Toggle)
-        self.DEETrace = self.UseDEE.trace('w',self.DEE_Toggle)
-
+        try:
+            self.IncludeHETTrace = self.IncludeHET.trace('w',self.IncludeHET_Toggle)
+            self.AtomTypesTrace = self.AtomTypes.trace('w',self.AtomTypes_Toggle)
+            self.SolventTypeTrace = self.SolventType.trace('w',self.SolventType_Toggle)
+            self.DEETrace = self.UseDEE.trace('w',self.DEE_Toggle)
+        except:
+            pass
+        
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     =================================================================================  '''
     def Del_Trace(self):
 
-        self.IncludeHET.trace_vdelete('w',self.IncludeHETTrace)
-        self.AtomTypes.trace_vdelete('w',self.AtomTypesTrace)
-        self.SolventType.trace_vdelete('w',self.SolventTypeTrace)
-        self.UseDEE.trace_vdelete('w',self.DEETrace)
+        try:
+            self.IncludeHET.trace_vdelete('w',self.IncludeHETTrace)
+            self.AtomTypes.trace_vdelete('w',self.AtomTypesTrace)
+            self.SolventType.trace_vdelete('w',self.SolventTypeTrace)
+            self.UseDEE.trace_vdelete('w',self.DEETrace)
+        except:
+            pass        
 
     ''' ==================================================================================
     FUNCTION Kill_Frame: Kills the main frame window

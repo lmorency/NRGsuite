@@ -21,6 +21,7 @@ from Tkinter import *
 
 import General
 import functools
+import Vars
 
 class GAParam:
 
@@ -164,18 +165,24 @@ class GAParam:
     =================================================================================  '''    
     def Trace(self):
 
-        self.AGATrace = self.UseAGA.trace('w',self.AGA_Toggle)
-        self.RepModelTrace = self.RepModel.trace('w',self.RepModel_Toggle)
-        self.FitModelTrace = self.FitModel.trace('w',self.FitModel_Toggle)
+        try:
+            self.AGATrace = self.UseAGA.trace('w',self.AGA_Toggle)
+            self.RepModelTrace = self.RepModel.trace('w',self.RepModel_Toggle)
+            self.FitModelTrace = self.FitModel.trace('w',self.FitModel_Toggle)
+        except:
+            pass
 
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     =================================================================================  '''    
     def Del_Trace(self):
 
-        self.UseAGA.trace_vdelete('w',self.AGATrace)
-        self.RepModel.trace_vdelete('w',self.RepModelTrace)
-        self.FitModel.trace_vdelete('w',self.FitModelTrace)
+        try:
+            self.UseAGA.trace_vdelete('w',self.AGATrace)
+            self.RepModel.trace_vdelete('w',self.RepModelTrace)
+            self.FitModel.trace_vdelete('w',self.FitModelTrace)
+        except:
+            pass
 
     ''' ==================================================================================
     FUNCTION Frame: Generate the Parameter Options frame in the the middle 

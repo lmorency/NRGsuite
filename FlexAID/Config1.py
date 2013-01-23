@@ -22,6 +22,7 @@ from Tkinter import *
 import os
 import functools
 import tkFileDialog
+import Vars
 import General
 import SphereObj
 import CleftObj
@@ -38,7 +39,7 @@ if __debug__:
     import General_cmd
            
 
-class Config1Vars:
+class Config1Vars(Vars.Vars):
 
     RngOpt = StringVar()
     ResiduValue = StringVar()
@@ -48,37 +49,11 @@ class Config1Vars:
     SphereSize = DoubleVar()
     TargetFlexName = StringVar()
     BindingSiteName = StringVar()
-    
-    def __getstate__(self):
-                
-        return {    
-                    '_RngOpt': self.RngOpt.get(),
-                    '_ResiduValue': self.ResiduValue.get(),
-                    '_defOptSphere': self.defOptSphere.get(),
-                    '_defOptCleft': self.defOptCleft.get(),
-                    '_defOptResidue': self.defOptResidue.get(),
-                    '_SphereSize': self.SphereSize.get(),
-                    '_TargetFlexName': self.TargetFlexName.get(),
-                    '_BindingSiteName': self.BindingSiteName.get(),
-                }
-        
-    def __setstate__(self, state):
-        
-        self.RngOpt.set(state.get('_RngOpt'))
-        self.ResiduValue.set(state.get('_ResiduValue'))
-        self.defOptSphere.set(state.get('_defOptSphere'))
-        self.defOptCleft.set(state.get('_defOptCleft'))
-        self.defOptResidue.set(state.get('_defOptResidue'))
-        self.SphereSize.set(state.get('_SphereSize'))
-        self.TargetFlexName.set(state.get('_TargetFlexName'))
-        self.BindingSiteName.set(state.get('_BindingSiteName'))
-        
-
-class Config1:
-
-    Vars = Config1Vars()
     BindingSite = BindingSite.BindingSite()
     TargetFlex = TargetFlex.TargetFlex()
+                
+
+class Config1:
 
     def __init__(self,top,PyMOL):
         
@@ -91,6 +66,7 @@ class Config1:
 
         self.DisplayMessage = self.top.DisplayMessage
 
+        self.Vars = Config1Vars()
         self.Def_Vars()
         self.Init_Vars()
 
@@ -113,6 +89,9 @@ class Config1:
         self.SphereSize = self.Vars.SphereSize
         self.TargetFlexName = self.Vars.TargetFlexName
         self.BindingSiteName = self.Vars.BindingSiteName
+        self.BindingSite = self.Vars.BindingSite
+        self.TargetFlex = self.Vars.TargetFlex
+        
 
     def Init_Vars(self):
 
@@ -149,19 +128,23 @@ class Config1:
     =================================================================================  '''    
     def Trace(self):
 
-        self.RngOptTrace = self.RngOpt.trace('w',self.RngOpt_Toggle)
-        self.defOptCleftTrace = self.defOptCleft.trace('w',self.defOptCleft_Toggle)
-        #self.BindingSiteNameTrace = self.BindingSiteName.trace('w',self.BindingSiteName_Toggle)
-
+        try:
+            self.RngOptTrace = self.RngOpt.trace('w',self.RngOpt_Toggle)
+            self.defOptCleftTrace = self.defOptCleft.trace('w',self.defOptCleft_Toggle)
+        except:
+            pass
+        
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     =================================================================================  '''    
     def Del_Trace(self):
 
-        self.RngOpt.trace_vdelete('w',self.RngOptTrace)
-        self.defOptCleft.trace_vdelete('w',self.defOptCleftTrace)
-        #self.BindingSiteName.trace_vdelete('w',self.BindingSiteNameTrace)
-
+        try:
+            self.RngOpt.trace_vdelete('w',self.RngOptTrace)
+            self.defOptCleft.trace_vdelete('w',self.defOptCleftTrace)
+        except:
+            pass
+            
     ''' ==================================================================================
     FUNCTION Kill_Frame: Kills the main frame window
     =================================================================================  '''    

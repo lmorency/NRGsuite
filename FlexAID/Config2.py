@@ -22,6 +22,7 @@ from Tkinter import *
 import os
 import functools
 import General
+import Vars
 
 if __debug__:
     from pymol import cmd
@@ -30,6 +31,28 @@ if __debug__:
     import Constraint
     import AtomTypes
     import FlexBonds
+
+class Config2Vars:
+
+    RngOpt = StringVar()
+    ResiduValue = StringVar()
+    defOptSphere = StringVar()
+    defOptCleft = StringVar()
+    defOptResidue = StringVar()
+    SphereSize = DoubleVar()
+    TargetFlexName = StringVar()
+    BindingSiteName = StringVar()
+    
+    def __getstate__(self):
+                
+        return {    
+                    '_RngOpt': self.RngOpt.get()
+                }
+        
+    def __setstate__(self, state):
+        
+        self.RngOpt.set(state.get('_RngOpt'))
+
 
 class Config2:
 
@@ -50,6 +73,9 @@ class Config2:
         self.Trace()
 
     def Def_Vars(self):
+
+        self.Validator = list()
+        self.StateList = list()
 
         self.dictCovConstraints = dict()
         self.dictIntConstraints = dict()
@@ -74,9 +100,6 @@ class Config2:
         self.dictFlexBonds = dict()
         self.dictNeighbours = dict()
 
-        self.Translation = list()
-        self.Validator = list()
-        self.StateList = list()
 
     def Init_Vars(self):
         
@@ -99,9 +122,6 @@ class Config2:
         self.FlexStatus.set('')
         self.SATStatus.set('')
 
-        self.Translation = [1000.000, 1000.000, 1000.000]
-        self.StateList = []
-
         self.DefaultCovDist = 1.5
         self.DefaultIntFactor = 5.0
 
@@ -113,17 +133,23 @@ class Config2:
     FUNCTION Trace: Adds a callback to StringVars
     =================================================================================  '''    
     def Trace(self):
-
-        self.FlexTrace = self.FlexBondsPar.trace('w',self.Flex_Toggle)
-        self.SATTrace = self.SetAtmTypeOpt.trace('w',self.SAT_Toggle)
+        
+        try:
+            self.FlexTrace = self.FlexBondsPar.trace('w',self.Flex_Toggle)
+            self.SATTrace = self.SetAtmTypeOpt.trace('w',self.SAT_Toggle)
+        except:
+            pass
 
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     =================================================================================  '''    
     def Del_Trace(self):
 
-        self.FlexBondsPar.trace_vdelete('w',self.FlexTrace)
-        self.SetAtmTypeOpt.trace_vdelete('w',self.SATTrace)
+        try:
+            self.FlexBondsPar.trace_vdelete('w',self.FlexTrace)
+            self.SetAtmTypeOpt.trace_vdelete('w',self.SATTrace)
+        except:
+            pass
 
     ''' ==================================================================================
     FUNCTION Kill_Frame: Kills the main frame window
@@ -274,7 +300,7 @@ class Config2:
     def ConsRunning(self, dictCons, optCons, selection, boolRun):
         
         if boolRun:
-            self.StateList = []
+            del self.StateList[:]
 
             General.saveState(self.fBonds,self.StateList)
             General.saveState(self.fSAT,self.StateList)
@@ -321,7 +347,7 @@ class Config2:
     =================================================================================  '''    
     def Disable_Frame(self):
 
-        self.StateList = []
+        del self.StateList[:]
         General.saveState(self.fConfig2, self.StateList)
         General.setState(self.fConfig2)
 

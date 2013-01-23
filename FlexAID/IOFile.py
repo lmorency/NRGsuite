@@ -22,6 +22,7 @@ from Tkinter import *
 import functools
 import math
 import os
+import Vars
 import tkFileDialog
 import General
 import Constants
@@ -43,7 +44,7 @@ if __debug__:
 @creation date:  Nov. 24 2011
 '''
 
-class IOFileVars:
+class IOFileVarTmp:
 
     ProtPath = StringVar()
     ProtName = StringVar()
@@ -76,10 +77,18 @@ class IOFileVars:
         self.AtomTypes.set(state.get('_AtomTypes'))
         self.Anchor.set(state.get('_Anchor'))
 
+
+class IOFileVars(Vars.Vars):
+
+    ProtPath = StringVar()
+    ProtName = StringVar()
+    LigandPath = StringVar()
+    LigandName = StringVar()
+    AtomTypes = StringVar()
+    Anchor = IntVar()
+    
     
 class IOFile:
-
-    Vars = IOFileVars()
 
     def __init__(self, top, PyMOL):
 
@@ -99,6 +108,7 @@ class IOFile:
 
         self.DisplayMessage = self.top.DisplayMessage
 
+        self.Vars = IOFileVars()
         self.Def_Vars()
         self.Init_Vars()
 
@@ -165,7 +175,7 @@ class IOFile:
 
             self.ProcessLigand(True, AtomIndex + 1)
 
-            if self.ProcessError:
+            if self.ProTcessError:
                 return False
 
         # Store content of ligand input files
@@ -241,17 +251,23 @@ class IOFile:
     ==================================================================================  '''  
     def Trace(self):
 
-        self.ProtNameTrace = self.ProtName.trace('w',self.ValidateLigProt)
-        self.LigandNameTrace = self.LigandName.trace('w',self.ValidateLigProt)
+        try:
+            self.ProtNameTrace = self.ProtName.trace('w',self.ValidateLigProt)
+            self.LigandNameTrace = self.LigandName.trace('w',self.ValidateLigProt)
+        except:
+            pass
 
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     ==================================================================================  '''  
     def Del_Trace(self):
 
-        self.ProtName.trace_vdelete('w',self.ProtNameTrace)
-        self.LigandName.trace_vdelete('w',self.LigandNameTrace)
-
+        try:
+            self.ProtName.trace_vdelete('w',self.ProtNameTrace)
+            self.LigandName.trace_vdelete('w',self.LigandNameTrace)
+        except:
+            pass
+            
     ''' ==================================================================================
     FUNCTION Frame: Generate the Input / Output Files frame in the the middle 
                     frame section    

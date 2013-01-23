@@ -25,6 +25,7 @@ import tkTable
 import General
 import Color
 import ManageFiles
+import Vars
 
 if __debug__:
     from pymol import *

@@ -190,6 +190,16 @@ class displayFlexAID:
         self.bAdvancedView = False
         self.Btn_Toggle_AdvView()
 
+
+    def Del_Trace(self):
+    
+        self.IOFile.Del_Trace()
+        self.Config1.Del_Trace()
+        self.Config2.Del_Trace()
+        self.Config3.Del_Trace()
+        self.GAParam.Del_Trace()
+        self.Simulate.Del_Trace()
+
     #=====================================================================================
     '''                     --- FRAME DISPLAY SETTINGS ---                             '''
     #=====================================================================================
@@ -340,9 +350,7 @@ class displayFlexAID:
                     try:
                         in_ = open(LoadFile, 'r')
                         self.IOFile.Vars = pickle.load(in_)
-                        #self.Config1.Vars = pickle.load(in_)
-                        #self.Config1.BindingSite = pickle.load(in_)
-                        #self.Config1.TargetFlex = pickle.load(in_)
+                        self.Config1.Vars = pickle.load(in_)
                         in_.close()
                     except:
                         self.DisplayMessage("  ERROR: Could not properly load the session", 2)
@@ -377,9 +385,7 @@ class displayFlexAID:
                     try:
                         out = open(SaveFile, 'w')
                         pickle.dump(self.IOFile.Vars, out)
-                        #pickle.dump(self.Config1.Vars, out)
-                        #pickle.dump(self.Config1.BindingSite, out)
-                        #pickle.dump(self.Config1.TargetFlex, out)
+                        pickle.dump(self.Config1.Vars, out)
                         #print "Config2"
                         #pickle.dump(self.Config2, out)
                         #print "Config3"
@@ -593,6 +599,8 @@ class displayFlexAID:
         if self.PyMOL:
             cmd.set_wizard()
             cmd.set_wizard()
+        
+        self.Del_Trace()
         
         # Kill main application window
         self.top.destroy()
