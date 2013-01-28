@@ -37,6 +37,13 @@ import Geometry
 
 class flexbond(Wizard):
     
+    LigDisplay = 'FLEXIBLE_LIGAND__'
+    PossFlexDisplay = 'POSS_FLEX_BONDS__'
+    SelFlexDisplay = 'SELECTED_BONDS__'
+    AtomDisplay = 'HIGHLIGHT_ATOM__'
+
+    Translation = [1000,1000,1000]
+    
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
@@ -55,17 +62,8 @@ class flexbond(Wizard):
         self.View = cmd.get_view()
         self.State = cmd.get_state()
         
-        # PDB Original File
-        self.LigDisplay = 'FLEXIBLE_LIGAND__'
-        self.PossFlexDisplay = 'POSS_FLEX_BONDS__'
-        self.SelFlexDisplay = 'SELECTED_BONDS__'
-        self.AtomDisplay = 'HIGHLIGHT_ATOM__'
-
         self.pick_count = 0
         
-        self.panelForceBond = 'Adv.: Force bond OFF'
-        self.Force = False
-
         self.point1 = list()
         self.point2 = list()
 
@@ -155,7 +153,6 @@ class flexbond(Wizard):
         
         try:
             cmd.load(self.RefLigand, self.LigDisplay, state=self.State)
-            #print self.RefLigand
             
             # Display the atoms spheres
             cmd.show('spheres', self.LigDisplay)
@@ -163,7 +160,7 @@ class flexbond(Wizard):
             cmd.rebuild()
         
             util.cbag(self.LigDisplay)
-            cmd.translate(self.top.Translation,self.LigDisplay)
+            cmd.translate(self.Translation,self.LigDisplay)
             cmd.zoom(self.LigDisplay)
 
         except:
@@ -182,15 +179,6 @@ class flexbond(Wizard):
         for index in iter(self.top.dictFlexBonds):
             self.top.dictFlexBonds[index][0] = 0 
             
-            if self.top.dictFlexBonds[index][1]:
-                if Del_Down2 == 0 or index < Del_Down2:
-                    Del_Down2 = index
-            
-        # Remove forced bond(s) from dict
-        if Del_Down2:
-            for i in range(Del_Down2, len(self.top.dictFlexBonds)+1):
-                del self.top.dictFlexBonds[i]
-    
         self.show_SelectedBonds()
 
     #=======================================================================
@@ -203,11 +191,8 @@ class flexbond(Wizard):
         # Have to store the User Flexible bond selection...
         nBonds = 0
         nPoss = 0
-        nBondsForced = 0
         for index in iter(self.top.dictFlexBonds):
             if self.top.dictFlexBonds[index][0]:
-                #if self.top.dictFlexBonds[index][1]:
-                #    nBondsForced += 1
                 nBonds += 1
             if not self.top.dictFlexBonds[index][1]:
                 nPoss += 1
@@ -216,22 +201,6 @@ class flexbond(Wizard):
         
         self.Quit_Wizard()
   
-    #=======================================================================
-    ''' Button Force Clicked: Force the selection of a NONE recognized bond '''
-    #=======================================================================    
-    def btn_Force(self):
-        
-        if self.Force:
-            self.Force = False
-            self.panelForceBond = 'Adv.: Force Bond OFF'
-        else:
-            #self.FlexAID.DisplayMessage('  FORCE the bond selection...',0)
-            self.Force = True
-            self.panelForceBond = 'Adv.: Force bond ON!'
-        
-        cmd.refresh_wizard()
-        
-          
      #=======================================================================
     ''' Show the possible flexible bonds '''
     #=======================================================================        
@@ -250,24 +219,21 @@ class flexbond(Wizard):
                 point1 = []
                 point2 = []
 
-                #print self.top.dictFlexBonds[index]
+                print self.top.dictFlexBonds[index]
                 #print self.top.dictNeighbours[self.top.dictFlexBonds[index][3]]
 
-                # if bond is not Forced
-                if not self.top.dictFlexBonds[index][1]:
-                    # Get coordinates of 1st and 2nd neighbours
-                    if int(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0]) != 0 and \
-                       int(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1]) != 0 and \
-                       int(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][2]) != 0:
+                # Get coordinates of 1st and 2nd neighbours
+                if int(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0]) != 0 and \
+                   int(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1]) != 0 and \
+                   int(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][2]) != 0:
 
-                        if self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0], point1) or \
-                           self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1], point2):
-                            return 1
-
-                    PossFlexBonds.extend(self.highlight_Possible(point1, point2))
-                    #print PossFlexBonds
-                    
-            cmd.load_cgo(PossFlexBonds, self.PossFlexDisplay, state=self.State)   
+                    if self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0], point1) or \
+                       self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1], point2):
+                        return 1
+                
+                PossFlexBonds.extend(self.highlight_Possible(point1, point2))
+            
+            cmd.load_cgo(PossFlexBonds, self.PossFlexDisplay, state=self.State) 
             cmd.set_view(View)
 
         except:
@@ -293,20 +259,21 @@ class flexbond(Wizard):
 
                 point1 = []
                 point2 = []
+                
+                print self.top.dictFlexBonds[index]
+                
+                # Get coordinates of 1st and 2nd neighbours
+                if self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0] != 0 and \
+                   self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1] != 0 and \
+                   self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][2] != 0:
 
-                # if bond is not Forced
-                if self.top.dictFlexBonds[index][0]:
-                    # Get coordinates of 1st and 2nd neighbours
-                    if self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0] != 0 and \
-                       self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1] != 0 and \
-                       self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][2] != 0:
+                    if self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0], point1) or \
+                       self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1], point2):
+                        return 1
 
-                        if self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0], point1) or \
-                           self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1], point2):
-                            return 1
-
-                    SelFlexBonds.extend(self.highlight_Selected(point1, point2))
-
+                SelFlexBonds.extend(self.highlight_Selected(point1, point2))
+                print SelFlexBonds
+                
             cmd.load_cgo(SelFlexBonds, self.SelFlexDisplay, state=self.State)   
             cmd.set_view(View)
 
@@ -343,7 +310,6 @@ class flexbond(Wizard):
          [ 2, 'Show atom names','cmd.get_wizard().show_AtomsName()'],
          [ 2, 'Show atom IDs','cmd.get_wizard().show_AtomsNumber()'],
          [ 2, 'Hide labels','cmd.get_wizard().hide_Labels()'],
-         #[ 2, self.panelForceBond,'cmd.get_wizard().btn_Force()'],        
          [ 2, 'Done','cmd.get_wizard().btn_Done()'],         
          ]
     
@@ -468,41 +434,6 @@ class flexbond(Wizard):
         # necessary to force update of the prompt
         cmd.refresh_wizard()
 
-    #=======================================================================   
-    ''' Checks if a force bond was already added '''
-    #=======================================================================    
-    def is_Already_Forced(self, atom_id):
-        
-        for index in iter(self.top.dictFlexBonds):
-            if self.top.dictFlexBonds[index][1]:
-                if atom_id in self.top.dictFlexBonds[index][3:]:
-                    return index
-
-        return 0
-
-    #=======================================================================   
-    ''' Forces a new bond in the dictionary'''
-    #=======================================================================    
-    def Force_NewBond(self, atom_id1, atom_id2):
-
-        list = []
-        list.extend([1, 1, 0])
-
-        for atom in iter(self.top.dictNeighbours):
-            
-            if (atom_id1 == int(self.top.dictNeighbours[atom][0]) and \
-                atom_id2 == int(self.top.dictNeighbours[atom][1])) or \
-               (atom_id2 == int(self.top.dictNeighbours[atom][0]) and \
-                atom_id1 == int(self.top.dictNeighbours[atom][1])):
-
-                list[2] += 1
-                list.append(atom)
-
-        if not self.is_Already_Forced(list[3]):      
-            Index = len(self.top.dictFlexBonds) + 1
-            self.top.dictFlexBonds[Index] = list
-        else:
-            self.top.dictFlexBonds[self.is_Already_Forced(list[3])][0] = 0
             
     #=======================================================================   
     ''' Check if bond can be flexible using the neighbours'''
@@ -561,7 +492,7 @@ class flexbond(Wizard):
         if self.FlexIndex == -1:
             return 0
         # The bond can only be defined using force
-        elif self.FlexIndex == 0 and not self.Force:
+        elif self.FlexIndex == 0:
             return 0
 
         return 1
@@ -575,20 +506,20 @@ class flexbond(Wizard):
             self.atom1 = self.get_Atom(name)
             
             if len(self.atom1) > 0:
-                if int(self.atom1[2]) == self.FlexAID.IOFile.ResSeq and \
+                if int(self.atom1[2]) == self.FlexAID.IOFile.ResSeq.get() and \
                         self.atom1[1] == 'LIG':
                     self.pickNextAtom()
                     self.highlight_Atom(self.atom1)
                 else:
-                    self.FlexAID.DisplayMessage("You can only select atoms in the object " + self.LigDisplay)
+                    self.FlexAID.DisplayMessage("You can only select atoms in the object " + self.LigDisplay, 2)
             else:
-                self.FlexAID.DisplayMessage("No atom could be selected in " + self.LigDisplay)
+                self.FlexAID.DisplayMessage("No atom could be selected in " + self.LigDisplay, 2)
 
         else:
             self.atom2 = self.get_Atom(name)
 
             if len(self.atom2) > 0:
-                if int(self.atom2[2]) == self.FlexAID.IOFile.ResSeq and \
+                if int(self.atom2[2]) == self.FlexAID.IOFile.ResSeq.get() and \
                         self.atom2[1] == 'LIG':
                     self.pickNextAtom()
                     self.highlight_Atom(self.atom2)
@@ -603,11 +534,6 @@ class flexbond(Wizard):
                             else:
                                 self.top.dictFlexBonds[self.FlexIndex][0] = 1
 
-                        # Force new bond
-                        else:
-                            self.Force_NewBond(General_cmd.get_ID(self.atom1[0], self.LigDisplay), 
-                                               General_cmd.get_ID(self.atom2[0], self.LigDisplay))
-
                     self.show_SelectedBonds()
                     self.pick_count = 0
 
@@ -615,10 +541,10 @@ class flexbond(Wizard):
                     cmd.delete(self.AtomDisplay)                    
 
                 else:
-                    self.FlexAID.DisplayMessage("No atom could be selected in " + self.LigDisplay)
+                    self.FlexAID.DisplayMessage("No atom could be selected in " + self.LigDisplay, 2)
             
             else:
-                self.FlexAID.DisplayMessage("You can only select atoms in the object " + self.LigDisplay)
+                self.FlexAID.DisplayMessage("You can only select atoms in the object " + self.LigDisplay, 2)
                 
     #=======================================================================
     ''' Display a message in the interface '''

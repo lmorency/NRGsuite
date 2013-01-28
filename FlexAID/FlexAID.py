@@ -179,6 +179,7 @@ class displayFlexAID:
 
         self.MakeMenuBar()
 
+        self.listTabs = [self.IOFile, self.Config1, self.Config2, self.Config3, self.GAParam, self.Simulate]
         self.listBtnTabs = [self.Btn_IOFiles, self.Btn_Config1, self.Btn_Config2, self.Btn_Config3, self.Btn_GAParam, self.Btn_Simulate]
 
         #print "Created instances of all tab classes"
@@ -193,12 +194,8 @@ class displayFlexAID:
 
     def Del_Trace(self):
     
-        self.IOFile.Del_Trace()
-        self.Config1.Del_Trace()
-        self.Config2.Del_Trace()
-        self.Config3.Del_Trace()
-        self.GAParam.Del_Trace()
-        self.Simulate.Del_Trace()
+        for Tab in self.listTabs:
+            Tab.Del_Trace()
 
     #=====================================================================================
     '''                     --- FRAME DISPLAY SETTINGS ---                             '''
@@ -349,14 +346,18 @@ class displayFlexAID:
                     
                     try:
                         in_ = open(LoadFile, 'r')
-                        self.IOFile.Vars = pickle.load(in_)
-                        self.Config1.Vars = pickle.load(in_)
+                        for Tab in self.listTabs:
+                            try:
+                                Tab.Vars = pickle.load(in_)
+                                Tab.Update_Vars()
+                                Tab.Vars.refresh()
+                                Tab.Load_Session()
+                            except:
+                                pass
                         in_.close()
                     except:
                         self.DisplayMessage("  ERROR: Could not properly load the session", 2)
-                        print "Unexpected error:", sys.exc_info()
-                        #print raise()
-
+                        self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
 
             else:
                 self.DisplayMessage("  Cannot save session while a wizard is active", 2)            
@@ -384,21 +385,15 @@ class displayFlexAID:
 
                     try:
                         out = open(SaveFile, 'w')
-                        pickle.dump(self.IOFile.Vars, out)
-                        pickle.dump(self.Config1.Vars, out)
-                        #print "Config2"
-                        #pickle.dump(self.Config2, out)
-                        #print "Config3"
-                        #pickle.dump(self.Config3, out)
-                        #print "GAParam"
-                        #pickle.dump(self.GAParam, out)
-                        #print "Simulate"
-                        #pickle.dump(self.Simulate, out)
+                        for Tab in self.listTabs:
+                            try:
+                                pickle.dump(Tab.Vars, out)
+                            except:
+                                pass
                         out.close()
                     except:
-                        self.DisplayMessage("  ERROR: Could not properly save the session", 2)
-                        print "Unexpected error:", sys.exc_info()
-                        #print raise()
+                        self.DisplayMessage("  ERROR: Could not properly save the session:", 2)
+                        self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
             else:
                 self.DisplayMessage("  Cannot save session while a wizard is active", 2)
         else:
@@ -547,12 +542,9 @@ class displayFlexAID:
     ==================================================================================  '''    
     def Reset_Step2(self):
         
-        self.Config1.Init_Vars()
-        self.Config2.Init_Vars()
-        self.Config3.Init_Vars()
-        self.GAParam.Init_Vars()
-        self.Simulate.Init_Vars()        
-
+        for Tab in self.listTabs:
+            if Tab != self.IOFile:
+                Tab.Init_Vars()
 
     #=====================================================================================
     '''                            --- BUTTONS EVENT ---                               '''

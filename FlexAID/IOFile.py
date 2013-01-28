@@ -44,42 +44,9 @@ if __debug__:
 @creation date:  Nov. 24 2011
 '''
 
-class IOFileVarTmp:
-
-    ProtPath = StringVar()
-    ProtName = StringVar()
-    LigandPath = StringVar()
-    LigandName = StringVar()
-    AtomTypes = StringVar()
-    Anchor = IntVar()
-    
-    def __init__(self):
-    
-        return
-    
-    def __getstate__(self):
-    
-        return {    
-                    '_ProtPath': self.ProtPath.get(),
-                    '_ProtName': self.ProtName.get(),
-                    '_LigandPath': self.LigandPath.get(),
-                    '_LigandName': self.LigandName.get(),
-                    '_AtomTypes': self.AtomTypes.get(),
-                    '_Anchor': self.Anchor.get()
-                }
-        
-    def __setstate__(self, state):
-        
-        self.ProtPath.set(state.get('_ProtPath'))
-        self.ProtName.set(state.get('_ProtName'))
-        self.LigandPath.set(state.get('_LigandPath'))
-        self.LigandName.set(state.get('_LigandName'))
-        self.AtomTypes.set(state.get('_AtomTypes'))
-        self.Anchor.set(state.get('_Anchor'))
-
 
 class IOFileVars(Vars.Vars):
-
+    
     ProtPath = StringVar()
     ProtName = StringVar()
     LigandPath = StringVar()
@@ -90,6 +57,15 @@ class IOFileVars(Vars.Vars):
     
 class IOFile:
 
+    ProcessError = False
+    
+    # flags
+    fProcessLigand = False
+    fStoreInfo = False
+    fLoadProcessed = False
+
+    FrameName = 'IOFile'
+        
     def __init__(self, top, PyMOL):
 
         #print "New instance of IOFile"
@@ -98,7 +74,6 @@ class IOFile:
 
         self.top = top
         self.Tab = self.top.Btn_IOFiles
-        self.FrameName = 'IOFile'
 
         self.font_Text = self.top.font_Text
         self.font_Title = self.top.font_Title
@@ -151,14 +126,16 @@ class IOFile:
         #self.TargetRNA.set(0)
         self.ResSeq.set(0)
         self.Anchor.set(-1)
+        
+    
+    ''' ==================================================================================
+    FUNCTION Load_Session: Actions related to when a new session is loaded
+    =================================================================================  '''    
+    def Load_Session(self):
 
-        self.ProcessError = False
-        
-        # flags
-        self.fProcessLigand = False
-        self.fStoreInfo = False
-        self.fLoadProcessed = False
-        
+        self.Btn_DisplayLigand_Clicked()
+        self.Btn_DisplayProtein_Clicked()
+
     ''' ==================================================================================
     FUNCTION Kill_Frame: Kills the main frame window
     =================================================================================  '''    
@@ -193,6 +170,13 @@ class IOFile:
 
         return True
 
+    ''' ==================================================================================
+    FUNCTION Update_Vars: Update session variables when a session is loaded
+    =================================================================================  '''    
+    def Update_Vars(self):
+
+        return
+        
     ''' ==================================================================================
     FUNCTION Validator_Fail: Triggers visual events upon validation failure
     =================================================================================  '''    
@@ -363,7 +347,8 @@ class IOFile:
 
         # Second line
         Label(fPDBproteinLine2, width=30, text='', font=self.font_Title).pack(side=LEFT)
-        EntProtein = Entry(fPDBproteinLine2, textvariable=self.ProtName, disabledbackground=self.Color_White, disabledforeground=self.Color_Black, font=self.font_Text)
+        EntProtein = Entry(fPDBproteinLine2, textvariable=self.ProtName, disabledbackground=self.Color_White, 
+                            disabledforeground=self.Color_Black, font=self.font_Text, justify=CENTER)
         EntProtein.pack(side=LEFT, fill=X)
         EntProtein.config(state='disabled')
         #Checkbutton(fPDBproteinLine2, variable=self.TargetRNA, width=10, text='RNA', font=self.font_Text, justify=LEFT).pack(side=LEFT)
@@ -391,7 +376,8 @@ class IOFile:
         
         # Second line
         Label(fPDBligandLine2, width=30, text='', font=self.font_Title).pack(side=LEFT)
-        EntLigand = Entry(fPDBligandLine2, disabledbackground=self.Color_White, disabledforeground=self.Color_Black, textvariable=self.LigandName, font=self.font_Text)
+        EntLigand = Entry(fPDBligandLine2, disabledbackground=self.Color_White, disabledforeground=self.Color_Black, 
+                            textvariable=self.LigandName, font=self.font_Text, justify=CENTER)
         EntLigand.pack(side=LEFT, fill=X)
         EntLigand.config(state='disabled')
         Label(fPDBligandLine2, width=10, text='', font=self.font_Text).pack(side=LEFT)

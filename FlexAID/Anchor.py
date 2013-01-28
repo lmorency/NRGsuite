@@ -27,6 +27,11 @@ import General_cmd
 
 class anchor(Wizard):
     
+    LigDisplay = 'ANCHOR_LIGAND__'
+    AtomDisplay = 'ANCHOR_ATOM__'
+
+    Translation = [1000,1000,1000]
+    
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
@@ -48,10 +53,6 @@ class anchor(Wizard):
         self.View = cmd.get_view()
         self.State = cmd.get_state()
         
-        # PDB Original File
-        self.LigDisplay = 'ANCHOR_LIGAND__'
-        self.AtomDisplay = 'ANCHOR_ATOM__'
-
     #=======================================================================
     ''' Executes the first steps of the Wizard'''
     #=======================================================================    
@@ -118,7 +119,7 @@ class anchor(Wizard):
         
         try:
             cmd.load(self.LigandPath, self.LigDisplay, state=self.State)
-            cmd.translate(self.top.Translation,self.LigDisplay)
+            cmd.translate(self.Translation,self.LigDisplay)
             cmd.zoom(self.LigDisplay)
 
         except:

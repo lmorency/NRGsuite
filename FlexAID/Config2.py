@@ -32,30 +32,36 @@ if __debug__:
     import AtomTypes
     import FlexBonds
 
-class Config2Vars:
 
-    RngOpt = StringVar()
-    ResiduValue = StringVar()
-    defOptSphere = StringVar()
-    defOptCleft = StringVar()
-    defOptResidue = StringVar()
-    SphereSize = DoubleVar()
-    TargetFlexName = StringVar()
-    BindingSiteName = StringVar()
+class Config2Vars(Vars.Vars):
+
+    SetAtmTypeOpt = StringVar()
+    FlexBondsPar = StringVar()
+    SATStatus = StringVar()
+    FlexStatus = StringVar()
+    UseReference = IntVar()
+    CovDist = DoubleVar() 
+    CovConsSelection = StringVar()
+    IntTranslation = IntVar()
+    IntRotation = IntVar()
     
-    def __getstate__(self):
-                
-        return {    
-                    '_RngOpt': self.RngOpt.get()
-                }
-        
-    def __setstate__(self, state):
-        
-        self.RngOpt.set(state.get('_RngOpt'))
-
+    def __init__(self):
+    
+        self.dictCovConstraints = dict()
+        self.dictAtomTypes = dict()
+        self.dictFlexBonds = dict()
+        self.dictNeighbours = dict()
+    
 
 class Config2:
 
+    DefaultCovDist = 1.5
+
+    HIGHLIGHT = 'HIGHLIGHTCONS'
+    COVCONS = 'COVCONS'
+
+    FrameName = 'Config2'
+    
     def __init__(self,top,PyMOL):
         
         #print "New instance of Config2"
@@ -64,8 +70,9 @@ class Config2:
         
         self.top = top
         self.Tab = self.top.Btn_Config2
-        self.FrameName = 'Config2'
 
+        self.Vars = Config2Vars()
+        self.Update_Vars()
         self.Def_Vars()
         self.Init_Vars()
 
@@ -77,34 +84,20 @@ class Config2:
         self.Validator = list()
         self.StateList = list()
 
-        self.dictCovConstraints = dict()
-        self.dictIntConstraints = dict()
-
-        self.SetAtmTypeOpt = StringVar()
-        self.FlexBondsPar = StringVar()
-
-        self.SATStatus = StringVar()
-        self.FlexStatus = StringVar()
-        self.UseReference = IntVar()
-
-        self.CovDist = DoubleVar() 
-        self.CovConsSelection = StringVar()
-        self.IntFactor = DoubleVar()
-        self.IntConsSelection = StringVar()
-        self.IntForced = IntVar()
-
-        self.IntTranslation = IntVar()
-        self.IntRotation = IntVar()
+        self.SetAtmTypeOpt = self.Vars.SetAtmTypeOpt
+        self.FlexBondsPar = self.Vars.FlexBondsPar
+        self.SATStatus = self.Vars.SATStatus
+        self.FlexStatus = self.Vars.FlexStatus
+        self.UseReference = self.Vars.UseReference
+        self.CovDist = self.Vars.CovDist
+        self.CovConsSelection = self.Vars.CovConsSelection
+        self.IntTranslation = self.Vars.IntTranslation
+        self.IntRotation = self.Vars.IntRotation
         
-        self.dictAtomTypes = dict()
-        self.dictFlexBonds = dict()
-        self.dictNeighbours = dict()
-
 
     def Init_Vars(self):
         
         self.dictCovConstraints.clear()
-        self.dictIntConstraints.clear()
 
         self.SetAtmTypeOpt.set('DEFAULT')
         self.FlexBondsPar.set('RIGID')
@@ -112,9 +105,6 @@ class Config2:
 
         self.CovDist.set(0.0)
         self.CovConsSelection.set('')
-        self.IntFactor.set(0.0)
-        self.IntConsSelection.set('')
-        self.IntForced.set(0)
 
         self.IntTranslation.set(1)
         self.IntRotation.set(1)
@@ -122,13 +112,20 @@ class Config2:
         self.FlexStatus.set('')
         self.SATStatus.set('')
 
-        self.DefaultCovDist = 1.5
-        self.DefaultIntFactor = 5.0
+    def Update_Vars(self):
+    
+        self.dictCovConstraints = self.Vars.dictCovConstraints
+        self.dictAtomTypes = self.Vars.dictAtomTypes
+        self.dictFlexBonds = self.Vars.dictFlexBonds
+        self.dictNeighbours = self.Vars.dictNeighbours
+        print "dictAtomTypes", self.dictAtomTypes
+        print "dictNeighbours", self.dictNeighbours
+        print "dictFlexBonds", self.dictFlexBonds
 
-        self.HIGHLIGHT = 'HIGHLIGHTCONS'
-        self.COVCONS = 'COVCONS'
-        self.INTCONS = 'INTCONS'
-
+    def Load_Session(self):
+    
+        return
+        
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
     =================================================================================  '''    
@@ -481,53 +478,6 @@ class Config2:
         self.sclCovDist.pack(side=LEFT)
         self.sclCovDist.config(state='disabled')
 
-        """
-        #************************************************#
-        #*                  INTERACTION                 *#
-        #************************************************#        
-        
-        fIntConstraint = Frame(fC2Right)#,bd=1,bg="orange")
-        fIntConstraint.pack(fill=X, side=TOP, padx=5, pady=5)
-        fIntConstraintLine1 = Frame(fIntConstraint)
-        fIntConstraintLine1.pack(fill=X, side=TOP)
-        fIntConstraintLine2 = Frame(fIntConstraint)
-        fIntConstraintLine2.pack(fill=X, side=TOP)
-        fIntConstraintLine3 = Frame(fIntConstraint)
-        fIntConstraintLine3.pack(fill=X, side=TOP)
-        fIntConstraintLine4 = Frame(fIntConstraint)
-        fIntConstraintLine4.pack(fill=X, side=TOP)
-        fIntConstraintLine5 = Frame(fIntConstraint)
-        fIntConstraintLine5.pack(fill=X, side=TOP)
- 
-        Label(fIntConstraintLine1, text = 'Interaction Constraints', font=self.top.font_Title, justify=LEFT).pack(side=LEFT, anchor=W)
-
-        Label(fIntConstraintLine2, text = 'Name:', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT, anchor=E)
-        optionTuple = '',
-        self.optIntCons = apply(OptionMenu, (fIntConstraintLine2, self.IntConsSelection) + optionTuple)
-        self.optIntCons.config(bg=self.top.Color_White, font=self.top.font_Text)
-        self.optIntCons.pack(side=LEFT, fill=X, expand=True)
-
-        Label(fIntConstraintLine3, text = '', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT)
-        self.btnAddIntConstraint = Button(fIntConstraintLine3, text = 'Add/Edit',font=self.top.font_Text,command=lambda: self.Add_Constraint('Interaction'))
-        self.btnAddIntConstraint.pack(side=LEFT)
-        self.btnDelIntConstraint = Button(fIntConstraintLine3, text = 'Delete', font=self.top.font_Text,
-                                          command=lambda: self.Del_Constraint(self.dictIntConstraints,self.optIntCons,self.IntConsSelection))
-        self.btnDelIntConstraint.pack(side=LEFT)
-        self.btnClearIntConstraint = Button(fIntConstraintLine3, text = 'Clear',font=self.top.font_Text,
-                                           command=lambda: self.Clear_Constraints(self.dictIntConstraints,self.optIntCons,self.IntConsSelection))
-        self.btnClearIntConstraint.pack(side=LEFT)
-
-        Label(fIntConstraintLine4, text = '', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT)
-        Label(fIntConstraintLine4, text = 'Multiplier:', width=10, font=self.top.font_Text).pack(side=LEFT, anchor=S)
-        self.sclIntFactor = Scale(fIntConstraintLine4, from_ = -10.0, to = 10.0, orient=HORIZONTAL, length=120, resolution=1.0, variable=self.IntFactor)
-        self.sclIntFactor.pack(side=LEFT)
-        self.sclIntFactor.config(state='disabled')
-
-        #Label(fIntConstraintLine5, text = '', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT)
-        #Label(fIntConstraintLine5, text = '', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT)
-        #self.chkIntForced = Checkbutton(fIntConstraintLine5, text = 'Force', font=self.top.font_Text, variable=self.IntForced)
-        #self.chkIntForced.pack(side=LEFT)
-        """
 
     ''' ==================================================================================
     FUNCTION MenuLoadMessage: Display the message based on the menu selected

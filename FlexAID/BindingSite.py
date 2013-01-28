@@ -1,3 +1,4 @@
+import copy
 import CleftObj
 import SphereObj
 
@@ -128,3 +129,10 @@ class BindingSite:
         self.Clear_Cleft()
         self.Clear_Sphere()
         self.Unset()
+
+    ''' ==================================================================================
+    FUNCTION Copy: Copies an instance of a class
+    =================================================================================  '''    
+    def Copy(self):
+        
+        return copy.deepcopy(self)

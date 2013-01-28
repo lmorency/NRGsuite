@@ -1,3 +1,5 @@
+import copy
+
 class SphereObj:
 
     ''' ==================================================================================
@@ -43,7 +45,7 @@ class SphereObj:
     =================================================================================  '''    
     def Copy(self):
         
-        return SphereObj(self.Radius,self.MaxRadius,self.Center)
+        return copy.deepcopy(self)
 
     ''' ==================================================================================
     FUNCTION Print: Prints the instance of a class

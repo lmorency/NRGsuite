@@ -49,12 +49,27 @@ class Config1Vars(Vars.Vars):
     SphereSize = DoubleVar()
     TargetFlexName = StringVar()
     BindingSiteName = StringVar()
-    BindingSite = BindingSite.BindingSite()
-    TargetFlex = TargetFlex.TargetFlex()
-                
+
+    def __init__(self):
+        
+        self.BindingSite = BindingSite.BindingSite()
+        self.TargetFlex = TargetFlex.TargetFlex()
+    
 
 class Config1:
 
+    HIGHLIGHT_RELIEF = RAISED
+    HIGHLIGHT_RELIEF = SUNKEN
+    HIGHLIGHT_WIDTH = 2
+
+    BindingSiteDisplay = 'BINDINGSITE_AREA__'
+    SphereDisplay = 'SPHERE__'
+    ScaleResolution = 0.25
+
+    ProcessError = False
+
+    FrameName = 'Config1'
+    
     def __init__(self,top,PyMOL):
         
         #print "New instance of Config1"
@@ -62,11 +77,11 @@ class Config1:
 
         self.top = top
         self.Tab = self.top.Btn_Config1
-        self.FrameName = 'Config1'
 
         self.DisplayMessage = self.top.DisplayMessage
-
+        
         self.Vars = Config1Vars()
+        self.Update_Vars()
         self.Def_Vars()
         self.Init_Vars()
 
@@ -89,9 +104,6 @@ class Config1:
         self.SphereSize = self.Vars.SphereSize
         self.TargetFlexName = self.Vars.TargetFlexName
         self.BindingSiteName = self.Vars.BindingSiteName
-        self.BindingSite = self.Vars.BindingSite
-        self.TargetFlex = self.Vars.TargetFlex
-        
 
     def Init_Vars(self):
 
@@ -101,28 +113,31 @@ class Config1:
         self.defOptCleft.set('')
         self.defOptResidue.set('')
         self.SphereSize.set(0.0)
-                                
-        self.FlexSideChainPath = ''        
         self.ResiduValue.set('')
-
+        
         self.TargetFlexName.set('')
         self.BindingSiteName.set('')
 
         self.TargetFlex.Clear_SideChain()
         self.BindingSite.Clear()
-
+        
         self.CleftTmpPath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,'tmp.pdb')
 
-        self.HIGHLIGHT_RELIEF = RAISED
-        self.HIGHLIGHT_RELIEF = SUNKEN
-        self.HIGHLIGHT_WIDTH = 2
+    ''' ==================================================================================
+    FUNCTION Load_Session: Actions related to when a new session is loaded
+    =================================================================================  '''    
+    def Load_Session(self):
 
-        self.BindingSiteDisplay = 'BINDINGSITE_AREA__'
-        self.SphereDisplay = 'SPHERE__'
-        self.ScaleResolution = 0.25
+        return
+        
+    ''' ==================================================================================
+    FUNCTION Update_Vars: Update session variables when a session is loaded
+    =================================================================================  '''    
+    def Update_Vars(self):
 
-        self.ProcessError = False
-
+        self.BindingSite = self.Vars.BindingSite
+        self.TargetFlex = self.Vars.TargetFlex
+    
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
     =================================================================================  '''    
@@ -165,11 +180,8 @@ class Config1:
         self.fConfig.pack(fill=BOTH, expand=True)
 
         self.Btn_OptSphRefresh_Clicked()
-
         self.Update_FlexSideChain_DDL()
         self.Update_Clefts_DDL()
-
-        #self.Highlight_RngOpt()
 
     ''' ==================================================================================
     FUNCTION Frame: Generate the Configuration Options frame in the the middle 
@@ -194,7 +206,8 @@ class Config1:
         Label(fConfBS, text='Pre-configured binding-site:', width=30, font=self.top.font_Text).pack(side=LEFT)
         Button(fConfBS, text='Load', command=self.Btn_LoadConfBS_Clicked, font=self.top.font_Text).pack(side=LEFT)
         Button(fConfBS, text='Save', command=self.Btn_SaveConfBS_Clicked, font=self.top.font_Text).pack(side=LEFT)
-        Entry(fConfBS, textvariable=self.BindingSiteName, font=self.top.font_Text, state='disabled', disabledbackground=self.top.Color_White, disabledforeground=self.top.Color_Black).pack(side=LEFT, fill=X, expand=True)
+        Entry(fConfBS, textvariable=self.BindingSiteName, font=self.top.font_Text, state='disabled', disabledbackground=self.top.Color_White,
+                        disabledforeground=self.top.Color_Black, justify=CENTER).pack(side=LEFT, fill=X, expand=True)
         
         #=================================================================================
         # Range Optimization fields
@@ -292,7 +305,8 @@ class Config1:
         Label(fConfFlex, text='Pre-configured target flexibility:', width=30, font=self.top.font_Text).pack(side=LEFT)
         Button(fConfFlex, text='Load', command=self.Btn_LoadConfFlex_Clicked, font=self.top.font_Text).pack(side=LEFT)
         Button(fConfFlex, text='Save', command=self.Btn_SaveConfFlex_Clicked, font=self.top.font_Text).pack(side=LEFT)
-        Entry(fConfFlex, textvariable=self.TargetFlexName, font=self.top.font_Text, state='disabled', disabledbackground=self.top.Color_White, disabledforeground=self.top.Color_Black).pack(side=LEFT, fill=X, expand=True)
+        Entry(fConfFlex, textvariable=self.TargetFlexName, font=self.top.font_Text, state='disabled', disabledbackground=self.top.Color_White, 
+                        disabledforeground=self.top.Color_Black, justify=CENTER).pack(side=LEFT, fill=X, expand=True)
 
         #==================================================================================
         # Flexible Side-Chains
@@ -355,7 +369,7 @@ class Config1:
     =================================================================================  '''                            
     def Highlight_SelectedCleft(self, CleftName):
 
-        if self.BindingSite.Type == 2:
+        if self.top.ActiveFrame == self and self.BindingSite.Type == 2:
             
             cmd.color('purpleblue', self.BindingSiteDisplay)
             
@@ -375,7 +389,7 @@ class Config1:
     FUNCTION RngOpt_Toggle: Changes the optimization range
     =================================================================================  '''    
     def RngOpt_Toggle(self,*args):
-        
+                
         if self.RngOpt.get() == 'LOCCLF':
             self.Btn_ImportCleft.config(state='normal')
             self.Btn_DeleteCleft.config(state='normal')        

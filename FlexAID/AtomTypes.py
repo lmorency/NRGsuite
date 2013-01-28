@@ -37,6 +37,11 @@ import General
 
 class setType(Wizard):
     
+    AtomDisplay = 'HIGHLIGHT_ATOM__'
+    LigDisplay = 'ATOM_TYPES_LIGAND__'
+
+    Translation = [1000,1000,1000]
+    
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
@@ -55,9 +60,6 @@ class setType(Wizard):
                 
         #self.pdbPath = self.FlexAID.SimPath + 'tmp.pdb'
         self.pdbPath = self.FlexAID.IOFile.ReferencePath.get()
-
-        self.AtomDisplay = 'HIGHLIGHT_ATOM__'
-        self.LigDisplay = 'ATOM_TYPES_LIGAND__'
         
         self.ErrorCode = 1
 
@@ -230,7 +232,7 @@ class setType(Wizard):
             cmd.rebuild()
         
             util.cbag(self.LigDisplay)
-            cmd.translate(self.top.Translation,self.LigDisplay)
+            cmd.translate(self.Translation,self.LigDisplay)
             cmd.zoom(self.LigDisplay)
 
         except:

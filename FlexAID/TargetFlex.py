@@ -1,3 +1,5 @@
+import copy
+
 class TargetFlex:
 
     def __init__(self):
@@ -33,3 +35,10 @@ class TargetFlex:
     def Count_SideChain(self):
 
         return len(self.listSideChain)
+
+    ''' ==================================================================================
+    FUNCTION Copy: Copies an instance of a class
+    =================================================================================  '''    
+    def Copy(self):
+        
+        return copy.deepcopy(self)
