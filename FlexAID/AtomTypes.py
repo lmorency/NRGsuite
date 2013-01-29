@@ -269,8 +269,6 @@ class setType(Wizard):
                 self.top.SATStatus.set(' ALL atom types changed')
             else:
                 self.top.SATStatus.set(' ' + str(Changed) + ' atom type(s) changed')
-        else:
-            self.top.SetAtmTypeOpt.set('DEFAULT')        
 
         self.Quit_Wizard(0)
 

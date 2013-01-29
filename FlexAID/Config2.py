@@ -36,8 +36,6 @@ if __debug__:
 
 class Config2Vars(Vars.Vars):
 
-    SetAtmTypeOpt = StringVar()
-    FlexBondsPar = StringVar()
     SATStatus = StringVar()
     FlexStatus = StringVar()
     UseReference = IntVar()
@@ -65,8 +63,6 @@ class Config2(Tabs.Tab):
     
     def Def_Vars(self):
 
-        self.SetAtmTypeOpt = self.Vars.SetAtmTypeOpt
-        self.FlexBondsPar = self.Vars.FlexBondsPar
         self.SATStatus = self.Vars.SATStatus
         self.FlexStatus = self.Vars.FlexStatus
         self.UseReference = self.Vars.UseReference
@@ -80,8 +76,6 @@ class Config2(Tabs.Tab):
         
         self.dictCovConstraints.clear()
 
-        self.SetAtmTypeOpt.set('DEFAULT')
-        self.FlexBondsPar.set('RIGID')
         self.UseReference.set(0)
 
         self.CovDist.set(0.0)
@@ -92,8 +86,6 @@ class Config2(Tabs.Tab):
 
         self.FlexStatus.set('')
         self.SATStatus.set('')
-
-        self.Anchor.set(-1)
         
 
     def Update_Vars(self):
@@ -103,51 +95,24 @@ class Config2(Tabs.Tab):
         self.dictFlexBonds = self.Vars.dictFlexBonds
         self.dictNeighbours = self.Vars.dictNeighbours
         
-        
+    
     ''' ==================================================================================
-    FUNCTION Trace: Adds a callback to StringVars
+    FUNCTION Btn_AddRemove_FlexBonds: Enables wizard to set flexible bond
     =================================================================================  '''    
-    def Trace(self):
-        
-        try:
-            self.FlexTrace = self.FlexBondsPar.trace('w',self.Flex_Toggle)
-            self.SATTrace = self.SetAtmTypeOpt.trace('w',self.SAT_Toggle)
-        except:
-            pass
-
-    ''' ==================================================================================
-    FUNCTION Del_Trace: Deletes observer callbacks
-    =================================================================================  '''    
-    def Del_Trace(self):
-
-        try:
-            self.FlexBondsPar.trace_vdelete('w',self.FlexTrace)
-            self.SetAtmTypeOpt.trace_vdelete('w',self.SATTrace)
-        except:
-            pass
-
-    ''' ==================================================================================
-    FUNCTION Flex_Toggle: Enables wizard to set flexible bond
-    =================================================================================  '''    
-    def Flex_Toggle(self,*args):
+    def Btn_AddRemove_FlexBonds(self):
         
         if not self.PyMOL:
             return
 
         if self.top.ActiveWizard is None:
 
-            if self.FlexBondsPar.get() == 'CUSTOM':
-                self.FlexStatus.set('')
-                self.FlexBondsRunning(True)
+            self.FlexStatus.set('')
+            self.FlexBondsRunning(True)
 
-                self.top.ActiveWizard = FlexBonds.flexbond(self)
-                
-                cmd.set_wizard(self.top.ActiveWizard)
-                self.top.ActiveWizard.Start()
-                
-            elif self.FlexBondsPar.get() == 'RIGID':
-                # Clear the data in the text box
-                self.FlexStatus.set('')
+            self.top.ActiveWizard = FlexBonds.flexbond(self)
+            
+            cmd.set_wizard(self.top.ActiveWizard)
+            self.top.ActiveWizard.Start()
                 
         else:
             self.top.DisplayMessage("A wizard is currently active", 2)
@@ -162,11 +127,12 @@ class Config2(Tabs.Tab):
         else:
             self.Enable_Frame()
             
+            #print "WizardResult=",self.top.WizardResult
             if self.top.WizardError or self.top.WizardResult == 0:
-                self.FlexBondsPar.set('RIGID')
                 self.FlexStatus.set('')
             
             elif self.top.WizardResult > 0:
+                #print "IM HERE FUCK!"
                 Status = ' (' + str(self.top.WizardResult) + ') flexible bond(s) set'
                 self.FlexStatus.set(Status)
 
@@ -174,25 +140,20 @@ class Config2(Tabs.Tab):
     ''' ==================================================================================
     FUNCTION SAT_Toggle: Enables wizard to set atom types
     =================================================================================  '''    
-    def SAT_Toggle(self,*args):
+    def Btn_Edit_AtomTypes(self):
         
         if not self.PyMOL:
             return
 
         if self.top.ActiveWizard is None:
 
-            if self.SetAtmTypeOpt.get() == 'CUSTOM':
-                self.SATStatus.set('')
+            self.SATStatus.set('')
 
-                self.SATRunning(True)
-                self.top.ActiveWizard = AtomTypes.setType(self, self.top.IOFile.OldTypes.get())
+            self.SATRunning(True)
+            self.top.ActiveWizard = AtomTypes.setType(self, self.top.IOFile.OldTypes.get())
 
-                cmd.set_wizard(self.top.ActiveWizard)
-                self.top.ActiveWizard.Start()
-
-            elif self.SetAtmTypeOpt.get() == 'DEFAULT':
-                # Clear the data in the text box
-                self.SATStatus.set('')
+            cmd.set_wizard(self.top.ActiveWizard)
+            self.top.ActiveWizard.Start()
             
         else:
             self.top.DisplayMessage("A wizard is currently active", 2)
@@ -336,9 +297,9 @@ class Config2(Tabs.Tab):
         fBondsLine3.pack(side=TOP, fill=X, padx=5, pady=2)
         
         Label(fBondsLine1, text='Ligand flexibility', font=self.top.font_Title).pack(side=TOP, anchor=W)
-        Radiobutton(fBondsLine2, text='Rigid bonds', value='RIGID', variable=self.FlexBondsPar, font=self.top.font_Text).pack(side=LEFT, anchor=W)
-        Radiobutton(fBondsLine3, text='Customize:', value='CUSTOM', variable=self.FlexBondsPar, font=self.top.font_Text).pack(side=LEFT, anchor=W)
-        Entry(fBondsLine3, text='', state='disabled', textvariable=self.FlexStatus, font=self.top.font_Text, disabledforeground=self.top.Color_Black, disabledbackground=self.top.Color_White).pack(side=LEFT)
+        Button(fBondsLine2, text='Add/Remove flexible bonds', font=self.top.font_Text,command=self.Btn_AddRemove_FlexBonds, width=40).pack(side=LEFT, anchor=W)
+        Entry(fBondsLine3, text='', state='disabled', textvariable=self.FlexStatus, font=self.top.font_Text, 
+                disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT)
 
         #************************************************#
         #*             Set atom types                   *#
@@ -353,10 +314,10 @@ class Config2(Tabs.Tab):
         fSATLine3 = Frame(self.fSAT)
         fSATLine3.pack(side=TOP, fill=X, padx=5, pady=2)
 
-        Label(fSATLine1, text='Ligand atom types', font=self.top.font_Title, state='disabled').pack(side=TOP,anchor=W)
-        Radiobutton(fSATLine2, text='Default types', value='DEFAULT', variable=self.SetAtmTypeOpt, font=self.top.font_Text, state='disabled', justify=LEFT).pack(side=LEFT, anchor=W)
-        Radiobutton(fSATLine3, text='Customize:', value='CUSTOM', variable=self.SetAtmTypeOpt, font=self.top.font_Text, state='disabled').pack(side=LEFT, anchor=W)
-        Entry(fSATLine3, text='', state='disabled',textvariable=self.SATStatus, font=self.top.font_Text, disabledforeground=self.top.Color_Black, disabledbackground=self.top.Color_White).pack(side=LEFT)
+        Label(fSATLine1, text='Ligand atom typing', font=self.top.font_Title, state='disabled').pack(side=TOP,anchor=W)
+        Button(fSATLine2, text='Edit atom types', font=self.top.font_Text,command=self.Btn_Edit_AtomTypes, width=40, state='disabled').pack(side=LEFT, anchor=W)
+        Entry(fSATLine3, text='', state='disabled', textvariable=self.SATStatus, font=self.top.font_Text,
+                disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT)
 
         #************************************************#
         #*                Reference pose (RMSD)         *#

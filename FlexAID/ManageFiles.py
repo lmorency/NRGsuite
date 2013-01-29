@@ -195,10 +195,8 @@ class Manage():
             config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq)  + ' - 0\n')
         
         # Ligand flexibility
-        if self.Config2.FlexBondsPar.get() == 'CUSTOM':
-            order = self.Config2.dictFlexBonds.keys()
-            order.sort()
-            self.Add_FlexBonds(config_file,order)
+        order = sorted(self.Config2.dictFlexBonds.keys())
+        self.Add_FlexBonds(config_file,order)
         
         #if self.IOFile.TargetRNA.get():
         #    config_file.write('NUCLEA\n')

@@ -153,7 +153,6 @@ class Config3(Tabs.Tab):
         self.top.IOFile.fProcessLigand = False
 
         # Reset atom type definition
-        self.top.Config2.SetAtmTypeOpt.set('DEFAULT')
         self.top.Config2.SATStatus.set('')
 
     ''' ==================================================================================
