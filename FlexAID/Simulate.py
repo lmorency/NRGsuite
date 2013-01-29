@@ -26,6 +26,7 @@ import General
 import Color
 import ManageFiles
 import Vars
+import Tabs 
 
 if __debug__:
     from pymol import *
@@ -35,24 +36,11 @@ if __debug__:
     import Simulation
 
 
-class Simulate:
+class SimulateVars(Vars.Vars):
+    
+    pass
 
-    def __init__(self,top,PyMOL):
-	        
-        self.PyMOL = PyMOL
-        self.top = top
-
-        self.Tab = self.top.Btn_Simulate
-        self.FrameName = 'Simulate'
-
-        self.Def_Vars()
-        self.Init_Vars()
-
-        self.Frame()
-        self.Trace()
-
-        self.IdleStatus()
-
+class Simulate(Tabs.Tab):
 
     def Def_Vars(self):
         
@@ -63,12 +51,10 @@ class Simulate:
         self.SimLinesDisplay = IntVar()
         self.SimCartoonDisplay = IntVar()
         self.dictSimData = dict()
-        self.Validator = list()
-
 
     def Init_Vars(self):
 
-        self.currentClick = None
+        self.Manage = None
         self.ProcessError = False
 
         self.ProgBarText.set('... / ...')
@@ -82,50 +68,14 @@ class Simulate:
 
         self.dictSimData = {}
 
-        self.Manage = None
-
     ''' ==================================================================================
-    FUNCTION Kill_Frame: Kills the main frame window
-    =================================================================================  '''    
-    def Kill_Frame(self):
-        
-        self.fSimulate.pack_forget()
-        #self.fSimulate.destroy()
-
-        return True
-
-    ''' ==================================================================================
-    FUNCTION Validator_Fail: Triggers visual events upon validation failure
-    =================================================================================  '''    
-    def Validator_Fail(self):
-        
-        pass
-
-    ''' ==================================================================================
-    FUNCTION Show: Displays the frame onto the middle main frame
+    FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
-    def Show(self):
+    def After_Show(self):
 
-        self.LoadMessage()
-
-        self.fSimulate.pack(fill=BOTH, expand=True)
         self.IdleStatus()
-
         self.Reset_Buttons()
 
-    ''' ==================================================================================
-    FUNCTION Trace: Adds a callback to StringVars
-    =================================================================================  '''    
-    def Trace(self):
-
-        return
-
-    ''' ==================================================================================
-    FUNCTION Del_Trace: Deletes observer callbacks
-    =================================================================================  '''    
-    def Del_Trace(self):
-
-        return
     ''' =============================================================================== 
     FUNCTION Frame: Generate the CSimulation frame in the the middle frame 
                     section.   
@@ -228,7 +178,8 @@ class Simulate:
         Checkbutton(fSim_DisplayLine3, text='Mesh', variable=self.SimMeshDisplay, command=self.Check_MeshSIM,font=self.top.font_Text).pack(side=RIGHT)
         Checkbutton(fSim_DisplayLine3, text=' Cartoon', variable=self.SimCartoonDisplay, command=self.Check_CartoonSIM, font=self.top.font_Text).pack(side=RIGHT)
                 
-                       
+        return self.fSimulate
+                              
     ''' =============================================================================== 
     FUNCTION Btn_StartSim: Start the simulation (If requirements are meet...)   
     ===============================================================================  '''     
@@ -237,36 +188,36 @@ class Simulate:
         self.Manage = ManageFiles.Manage(self)
 
         if not self.Manage.Clean():
-            self.top.DisplayMessage('   Fatal error: Could not clean files before the simulation',1)
-            self.top.DisplayMessage('   Please contact the developers of the NRGsuite',1)
+            self.DisplayMessage('   Fatal error: Could not clean files before the simulation',1)
+            self.DisplayMessage('   Please contact the developers of the NRGsuite',1)
             return
         
         if not self.Manage.Create_Folders():
-            self.top.DisplayMessage('   Fatal error: Could not create RESULT folder',1)
-            self.top.DisplayMessage('   Please contact the developers of the NRGsuite',1)
+            self.DisplayMessage('   Fatal error: Could not create RESULT folder',1)
+            self.DisplayMessage('   Please contact the developers of the NRGsuite',1)
             return
 
         if not self.Manage.Move_Files():
-            self.top.DisplayMessage('   Fatal error: Could not move input files to RESULT folder',1)
-            self.top.DisplayMessage('   Please contact the developers of the NRGsuite',1)
+            self.DisplayMessage('   Fatal error: Could not move input files to RESULT folder',1)
+            self.DisplayMessage('   Please contact the developers of the NRGsuite',1)
             return
 
         if not self.Manage.Executable_Exists():
-            self.top.DisplayMessage('   Fatal error: Could not find FlexAID executable',1)
-            self.top.DisplayMessage('   Please contact the developers of the NRGsuite',1)
+            self.DisplayMessage('   Fatal error: Could not find FlexAID executable',1)
+            self.DisplayMessage('   Please contact the developers of the NRGsuite',1)
             return
 
                 
-        self.top.DisplayMessage('   Will create input files...', 2)
+        self.DisplayMessage('   Will create input files...', 2)
         self.Manage.Create_CONFIG()
 
-        self.top.DisplayMessage('   CONFIG.inp file created.', 2)
+        self.DisplayMessage('   CONFIG.inp file created.', 2)
         self.Manage.Create_ga_inp()
-        self.top.DisplayMessage('   ga_inp.dat file created.', 2)
+        self.DisplayMessage('   ga_inp.dat file created.', 2)
         self.Manage.Modify_Input()
 
-        self.top.DisplayMessage('   RESULT file(s) will be saved in: ', 0)
-        self.top.DisplayMessage(self.Manage.FlexAIDRunSimulationProject_Dir, 0)
+        self.DisplayMessage('   RESULT file(s) will be saved in: ', 0)
+        self.DisplayMessage(self.Manage.FlexAIDRunSimulationProject_Dir, 0)
 
         # Start the simulation
         self.Btn_Start.config(state='disabled') 
@@ -281,14 +232,14 @@ class Simulate:
                                                     self.Manage.FlexAIDRunSimulationProject_Dir )
         
         # START SIMULATION
-        self.top.DisplayMessage('   Starting executable thread.', 2)
+        self.DisplayMessage('   Starting executable thread.', 2)
         Start = Simulation.Start(self, commandline)
         
         # START PARSING AS THREAD
-        self.top.DisplayMessage('   Starting parsing thread.', 2)
+        self.DisplayMessage('   Starting parsing thread.', 2)
         Parse = Simulation.Parse(self)
 
-        self.top.DisplayMessage("For better performance you can disable object BINDINGSITE_AREA__", 0)
+        self.DisplayMessage("For better performance you can disable object BINDINGSITE_AREA__", 0)
     
     
 
@@ -423,7 +374,7 @@ class Simulate:
             pause_file = open(self.Manage.PAUSE, 'w')
             pause_file.close()
 
-            self.top.DisplayMessage('   the simulation...', 0)
+            self.DisplayMessage('   the simulation...', 0)
           
         elif self.SimStatus.get() == 'Paused.':
         
@@ -439,7 +390,7 @@ class Simulate:
                 except OSError:
                     pass
           
-            self.top.DisplayMessage('  Resuming the simulation...', 0)
+            self.DisplayMessage('  Resuming the simulation...', 0)
         
     ''' =============================================================================== 
     FUNCTION Btn_AbortSim: Abort the simulation 
@@ -458,7 +409,7 @@ class Simulate:
             abort_file = open(self.Manage.ABORT, 'w')
             abort_file.close()
             
-            self.top.DisplayMessage('  Abort the simulation.', 0)
+            self.DisplayMessage('  Abort the simulation.', 0)
             
 
     ''' =============================================================================== 
@@ -478,7 +429,7 @@ class Simulate:
             stop_file = open(self.Manage.STOP, 'w')
             stop_file.close()
             
-            self.top.DisplayMessage('  Stop the simulation.', 0)
+            self.DisplayMessage('  Stop the simulation.', 0)
                
         
     ''' ==================================================================================
@@ -492,14 +443,14 @@ class Simulate:
                 cmd.show('spheres', 'TOP_*__ & resn LIG')
                 cmd.hide('sticks', 'TOP_*__ & resn LIG')
             except:
-                self.top.DisplayMessage("Could not find object to modify", 1)
+                self.DisplayMessage("Could not find object to modify", 1)
         
         elif self.SimDefDisplay.get() == 'sticks':
             try:
                 cmd.hide('spheres', 'TOP_*__ & resn LIG')
                 cmd.show('sticks', 'TOP_*__ & resn LIG')
             except:
-                self.top.DisplayMessage("Could not find object to modify", 1)
+                self.DisplayMessage("Could not find object to modify", 1)
         
 
     ''' ==================================================================================
@@ -513,14 +464,14 @@ class Simulate:
                 cmd.show('mesh', 'TOP_*__ & ! resn LIG')
                 #cmd.set('mesh_color', 'gray30')
             except:
-                self.top.DisplayMessage("Could not find object to modify", 1)
+                self.DisplayMessage("Could not find object to modify", 1)
             
         else:   
             # Remove the MESH
             try:
                 cmd.hide('mesh', 'TOP_*__ & ! resn LIG')
             except:
-                self.top.DisplayMessage("Could not find object to modify", 1)
+                self.DisplayMessage("Could not find object to modify", 1)
        
     ''' ==================================================================================
     FUNCTION Check_LinesSIM: Change the protein display adding or removing the lines
@@ -532,14 +483,14 @@ class Simulate:
             try:
                 cmd.show('lines', 'TOP_*__ & ! resn LIG')
             except:
-                self.top.DisplayMessage("Could not find object to modify", 1)
+                self.DisplayMessage("Could not find object to modify", 1)
             
         else:   
             # Remove the Lines
             try:
                 cmd.hide('lines', 'TOP_*__ & ! resn LIG')
             except:
-                self.top.DisplayMessage("Could not find object to modify", 1)
+                self.DisplayMessage("Could not find object to modify", 1)
          
     ''' ==================================================================================
     FUNCTION Check_CartoonSIM: Change the protein display adding or removing the cartoon
@@ -551,14 +502,14 @@ class Simulate:
             try:
                 cmd.show('cartoon', 'TOP_*__ & ! resn LIG')
             except:
-                self.top.DisplayMessage("Could not find object to modify", 1)
+                self.DisplayMessage("Could not find object to modify", 1)
             
         else:   
             # Remove the Cartoon
             try:
                 cmd.hide('cartoon', 'TOP_*__ & ! resn LIG')
             except:
-                self.top.DisplayMessage("Could not find object to modify", 1)
+                self.DisplayMessage("Could not find object to modify", 1)
                 
     
 
@@ -592,11 +543,11 @@ class Simulate:
         return
 
     ''' ==================================================================================
-    FUNCTION LoadMessage: Display the message based on the menu selected
+    FUNCTION Load_Message: Display the message based on the menu selected
     ================================================================================== '''        
-    def LoadMessage(self):
+    def Load_Message(self):
         
-        self.top.DisplayMessage('', 0)
-        self.top.DisplayMessage('  FlexAID < Simulate > Menu.', 2)
-        self.top.DisplayMessage('  INFO:   Press the < Start > button to begin the simulation.', 2)
-        self.top.DisplayMessage('           After a simulation is started, you can press the < Pause > or the < Stop > button.', 2)
+        self.DisplayMessage('', 0)
+        self.DisplayMessage('  FlexAID < Simulate > Menu.', 2)
+        self.DisplayMessage('  INFO:   Press the < Start > button to begin the simulation.', 2)
+        self.DisplayMessage('           After a simulation is started, you can press the < Pause > or the < Stop > button.', 2)

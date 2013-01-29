@@ -23,32 +23,19 @@ import os
 import functools
 import General
 import Vars
+import Tabs 
 
 if __debug__:
     from pymol import cmd
 
-class Config3:
+class Config3Vars(Vars.Vars):
 
-    def __init__(self,top,PyMOL):
+    pass
 
-        #print "New instance of Config3"
-        self.PyMOL = PyMOL
-
-        self.top = top
-        self.AtomTypes = self.top.IOFile.AtomTypes
-        self.Tab = self.top.Btn_Config3
-        
-        self.FrameName = 'Config3'
-
-        self.Def_Vars()
-        self.Init_Vars()
-
-        self.Frame()
-        self.Trace()
+class Config3(Tabs.Tab):
 
     def Def_Vars(self):
 
-        self.StateList = list()
         self.CompFct = StringVar()
 
         self.UseDEE = IntVar()
@@ -72,13 +59,10 @@ class Config3:
         self.ValidDeltaAngle = list()
         self.ValidDeltaDihedral = list()
         self.ValidDeltaDihedralFlex = list()
-        self.Validator = list()
 
 
     def Init_Vars(self):
         
-        self.StateList = []
-
         self.CompFct.set('VCT')
 
         self.UseDEE.set(0)
@@ -88,13 +72,13 @@ class Config3:
         self.DEE_Clash_Threshold.set('0.50')
         self.Permeability.set('0.1')
         
-        if self.AtomTypes.get() == 'Sobolev':
+        if self.top.IOFile.AtomTypes.get() == 'Sobolev':
             self.SolventType.set('< No type >')
             self.SolventTypeIndex.set(0)
-        elif self.AtomTypes.get() == 'Gaudreault':
+        elif self.top.IOFile.AtomTypes.get() == 'Gaudreault':
             self.SolventType.set('< Type-based >')
             self.SolventTypeIndex.set(13)
-        elif self.AtomTypes.get() == 'Sybyl':
+        elif self.top.IOFile.AtomTypes.get() == 'Sybyl':
             self.SolventType.set('< No type >')
             self.SolventTypeIndex.set(0)
 
@@ -124,7 +108,7 @@ class Config3:
 
         try:
             self.IncludeHETTrace = self.IncludeHET.trace('w',self.IncludeHET_Toggle)
-            self.AtomTypesTrace = self.AtomTypes.trace('w',self.AtomTypes_Toggle)
+            self.top.IOFile.AtomTypesTrace = self.top.IOFile.AtomTypes.trace('w',self.AtomTypes_Toggle)
             self.SolventTypeTrace = self.SolventType.trace('w',self.SolventType_Toggle)
             self.DEETrace = self.UseDEE.trace('w',self.DEE_Toggle)
         except:
@@ -137,53 +121,11 @@ class Config3:
 
         try:
             self.IncludeHET.trace_vdelete('w',self.IncludeHETTrace)
-            self.AtomTypes.trace_vdelete('w',self.AtomTypesTrace)
+            self.top.IOFile.AtomTypes.trace_vdelete('w',self.top.IOFile.AtomTypesTrace)
             self.SolventType.trace_vdelete('w',self.SolventTypeTrace)
             self.UseDEE.trace_vdelete('w',self.DEETrace)
         except:
             pass        
-
-    ''' ==================================================================================
-    FUNCTION Kill_Frame: Kills the main frame window
-    =================================================================================  '''
-    def Kill_Frame(self):
-        
-        self.fConfig3.pack_forget()
-        #self.fConfig3.destroy()
-
-        return True
-
-    ''' ==================================================================================
-    FUNCTION Validator_Fail: Triggers visual events upon validation failure
-    =================================================================================  '''    
-    def Validator_Fail(self):
-
-        return
-
-    ''' ==================================================================================
-    FUNCTION Show: Displays the frame onto the middle main frame
-    ==================================================================================  '''  
-    def Show(self):
-        
-        self.LoadMessage()
-
-        self.fConfig3.pack(fill=BOTH, expand=True)
-
-    ''' ==================================================================================
-    FUNCTION Disable_Frame: Disables all controls on main frame
-    =================================================================================  '''    
-    def Disable_Frame(self):
-
-        self.StateList = []
-        General.saveState(self.fConfig3, self.StateList)
-        General.setState(self.fConfig3)
-
-    ''' ==================================================================================
-    FUNCTION Enable_Frame: Enables all controls on main frame
-    =================================================================================  '''    
-    def Enable_Frame(self):
-
-        General.backState(self.fConfig3, self.StateList)
 
     ''' ==================================================================================
     FUNCTION IncludeHET_Toggle: Toggle the controls related to Including HET Groups
@@ -200,7 +142,7 @@ class Config3:
     =================================================================================  '''    
     def AtomTypes_Toggle(self, *args):
         
-        if self.AtomTypes.get() != 'Gaudreault':
+        if self.top.IOFile.AtomTypes.get() != 'Gaudreault':
             self.optSolventType.config(state='normal')
             self.SolventType.set('< No type >')
         else:
@@ -225,9 +167,9 @@ class Config3:
 
         elif self.SolventType.get() == '< Type-based >':
             self.entSolventTerm.config(state='disabled')
-            if self.AtomTypes.get() == 'Gaudreault':
+            if self.top.IOFile.AtomTypes.get() == 'Gaudreault':
                 self.SolventTypeIndex.set(13)
-            elif self.AtomTypes.get() == 'Sybyl':
+            elif self.top.IOFile.AtomTypes.get() == 'Sybyl':
                 self.SolventTypeIndex.set(27)
             
     ''' ==================================================================================
@@ -287,7 +229,7 @@ class Config3:
         entPermea = Entry(fPermeaLine2, textvariable=self.Permeability, font=self.top.font_Text, justify=CENTER, width=4)
         entPermea.pack(side=RIGHT)
         args_list = [entPermea, self.Permeability, 0.00, 1.00, 2, self.ValidPermeability,'VDW Permeability','float']
-        entPermea.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        entPermea.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidPermeability[3] = entPermea
 
 
@@ -317,7 +259,7 @@ class Config3:
         entDAng = Entry(fDeltaLine2, textvariable=self.DeltaAngle, font=self.top.font_Text, justify=CENTER, width=5)
         entDAng.pack(side=RIGHT, anchor=W)
         args_list = [entDAng, self.DeltaAngle, 1.0, 10.0, 2, self.ValidDeltaAngle,'DELTA Angle','float']
-        entDAng.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        entDAng.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidDeltaAngle[3] = entDAng
 
         # Dihedrals
@@ -325,7 +267,7 @@ class Config3:
         entDDih = Entry(fDeltaLine3, textvariable=self.DeltaDihedral, font=self.top.font_Text, justify=CENTER, width=5)
         entDDih.pack(side=RIGHT, anchor=W)
         args_list = [entDDih, self.DeltaDihedral, 1.0, 10.0, 2, self.ValidDeltaDihedral,'DELTA Dihedral','float']
-        entDDih.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        entDDih.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidDeltaDihedral[3] = entDDih
 
         # Dihedrals (Flex Bonds)
@@ -333,7 +275,7 @@ class Config3:
         entDDihFlex = Entry(fDeltaLine4, textvariable=self.DeltaDihedralFlex, font=self.top.font_Text, width=5, justify=CENTER)
         entDDihFlex.pack(side=RIGHT, anchor=W)
         args_list = [entDDihFlex, self.DeltaDihedralFlex, 1.0, 30.0, 2, self.ValidDeltaDihedralFlex,'DELTA Dihedral Flexible Bonds','float']
-        entDDihFlex.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        entDDihFlex.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidDeltaDihedralFlex[3] = entDDihFlex
 
         #==================================================================================
@@ -357,7 +299,7 @@ class Config3:
         self.entDEE = Entry(fDEELine3, width=5, font=self.top.font_Text, textvariable=self.DEE_Clash_Threshold, state='disabled', justify=CENTER)
         self.entDEE.pack(side=RIGHT)
         args_list = [self.entDEE, self.DEE_Clash_Threshold, 0.01, 1.00, 2, self.ValidDEE,'DEE Clash Threshold','float']
-        self.entDEE.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entDEE.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidDEE[3] = self.entDEE
 
         #==================================================================================
@@ -385,16 +327,18 @@ class Config3:
         self.entSolventTerm = Entry(fSolventLine3, textvariable=self.SolventTerm, font=self.top.font_Text, width=4, justify=CENTER)
         self.entSolventTerm.pack(side=RIGHT)
         args_list = [self.entSolventTerm, self.SolventTerm, -10.0, 10.0, 1, self.ValidSolventTerm,'Solvent Term','float']
-        self.entSolventTerm.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entSolventTerm.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidSolventTerm[3] = self.entSolventTerm
 
-    ''' ==================================================================================
-    FUNCTION MenuLoadMessage: Display the message based on the menu selected
-    ================================================================================== '''        
-    def LoadMessage(self):
+        return self.fConfig3
         
-        self.top.DisplayMessage('', 0)
-        self.top.DisplayMessage('  FlexAID < Scoring Cfg > Menu.', 2)
-        self.top.DisplayMessage('  INFO:   Set different options of the scoring function.', 2)
+    ''' ==================================================================================
+    FUNCTION Load_Message: Display the message based on the menu selected
+    ================================================================================== '''        
+    def Load_Message(self):
+        
+        self.DisplayMessage('', 0)
+        self.DisplayMessage('  FlexAID < Scoring Cfg > Menu.', 2)
+        self.DisplayMessage('  INFO:   Set different options of the scoring function.', 2)
 
 

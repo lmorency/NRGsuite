@@ -38,6 +38,9 @@ class Vars:
         # Copy instance variables
         dict_data = dict(dict_data.items() + self.__dict__.items())
         
+        print "__getstate__"
+        print "dict_data", dict_data
+        
         return dict_data
     
         
@@ -58,9 +61,7 @@ class Vars:
                 
                 del dict_data[k]
 
-        print "dict_data", dict_data
         self.__dict__.update(dict_data)
-        print "dict_vars", Vars.dict_vars
         
         return
     

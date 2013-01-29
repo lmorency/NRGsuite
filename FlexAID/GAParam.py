@@ -22,66 +22,54 @@ from Tkinter import *
 import General
 import functools
 import Vars
+import Tabs 
 
-class GAParam:
+class GAParamVars(Vars.Vars):
+    
+    NbTopChrom = StringVar()
+    NbGenFreq = StringVar()
+    NbGen = StringVar()
+    NbChrom = StringVar()
+    CrossRate = StringVar()
+    MutaRate = StringVar()
+    FitModel = StringVar()
+    FitAlpha = StringVar()
+    FitPeak = StringVar()
+    FitScale = StringVar()
+    RepModel = StringVar()
+    RepSS = StringVar()
+    RepB = StringVar()
+    RepDup = IntVar()
+    UseAGA = IntVar()
+    AGAk1 = StringVar()
+    AGAk2 = StringVar()
+    AGAk3 = StringVar()
+    AGAk4 = StringVar()
 
-    def __init__(self,top,PyMOL):
-        
-        #print "New instance of GAParam Class"
-        self.PyMOL = PyMOL
-        
-        self.top = top
-        self.Tab = self.top.Btn_GAParam
-        self.FrameName = 'GAParam'
 
-        self.Def_Vars()
-        self.Init_Vars()
-
-        self.Frame()
-        self.Trace()
+class GAParam(Tabs.Tab):
 
     def Def_Vars(self):
         
-        self.NbTopChrom = StringVar()
-        self.NbGenFreq = StringVar()
-        self.NbGen = StringVar()
-        self.NbChrom = StringVar()
-        self.CrossRate = StringVar()
-        self.MutaRate = StringVar()
-        self.FitModel = StringVar()
-        self.LastFitModel = StringVar()
-        self.FitAlpha = StringVar()
-        self.FitPeak = StringVar()
-        self.FitScale = StringVar()
-        self.RepModel = StringVar()
-        self.LastRepModel = StringVar()
-        self.RepSS = StringVar()
-        self.RepB = StringVar()
-        self.RepDup = IntVar()
-        self.UseAGA = IntVar()
-        self.LastUseAGA = IntVar()
-        self.AGAk1 = StringVar()
-        self.AGAk2 = StringVar()
-        self.AGAk3 = StringVar()
-        self.AGAk4 = StringVar()
-
-        self.ValidNbGen = list()
-        self.ValidNbGenFreq = list()
-        self.ValidNbChrom = list()
-        self.ValidNbTopChrom = list()
-        self.ValidCrossRate = list()
-        self.ValidMutaRate = list()
-        self.ValidFitAlpha = list()
-        self.ValidFitPeak = list()
-        self.ValidFitScale = list()
-        self.ValidRepSS = list()
-        self.ValidRepB = list()
-        self.ValidAGAk1 = list()
-        self.ValidAGAk2 = list()
-        self.ValidAGAk3 = list()
-        self.ValidAGAk4 = list()
-
-        self.Validator = list()
+        self.NbTopChrom = self.Vars.NbTopChrom
+        self.NbGenFreq = self.Vars.NbGenFreq
+        self.NbGen = self.Vars.NbGen
+        self.NbChrom = self.Vars.NbChrom
+        self.CrossRate = self.Vars.CrossRate
+        self.MutaRate = self.Vars.MutaRate
+        self.FitModel = self.Vars.FitModel
+        self.FitAlpha = self.Vars.FitAlpha
+        self.FitPeak = self.Vars.FitPeak
+        self.FitScale = self.Vars.FitScale
+        self.RepModel = self.Vars.RepModel
+        self.RepSS = self.Vars.RepSS
+        self.RepB = self.Vars.RepB
+        self.RepDup = self.Vars.RepDup
+        self.UseAGA = self.Vars.UseAGA
+        self.AGAk1 = self.Vars.AGAk1
+        self.AGAk2 = self.Vars.AGAk2
+        self.AGAk3 = self.Vars.AGAk3
+        self.AGAk4 = self.Vars.AGAk4
 
 
     def Init_Vars(self):
@@ -129,9 +117,9 @@ class GAParam:
                           self.ValidAGAk1, self.ValidAGAk2, self.ValidAGAk3, self.ValidAGAk4]
 
     ''' ==================================================================================
-    FUNCTION Kill_Frame: Kills the main frame window
+    FUNCTION Before_Kill_Frame: Actions related before killing a frame
     =================================================================================  '''    
-    def Kill_Frame(self):
+    def Before_Kill_Frame(self):
         
         if int(self.NbTopChrom.get()) > int(self.NbChrom.get()):
             self.NbTopChrom.set(self.NbChrom.get())
@@ -139,26 +127,7 @@ class GAParam:
         if int(self.NbGenFreq.get()) > int(self.NbGen.get()):
             self.NbGenFreq.set(self.NbGen.get())
 
-        self.fParam.pack_forget()
-        #self.fParam.destroy()
-
         return True
-
-    ''' ==================================================================================
-    FUNCTION Validator_Fail: Triggers visual events upon validation failure
-    =================================================================================  '''    
-    def Validator_Fail(self):
-
-        pass
-
-    ''' ==================================================================================
-    FUNCTION Show: Displays the frame onto the middle main frame
-    ==================================================================================  '''  
-    def Show(self):
-        
-        self.LoadMessage()
-
-        self.fParam.pack(fill=BOTH, expand=True)
 
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
@@ -190,10 +159,11 @@ class GAParam:
     =================================================================================  '''    
     def Frame(self):
         
-        self.fParam = Frame(self.top.fMiddle)
-        fPLeft = Frame(self.fParam)
+        self.fGAParam = Frame(self.top.fMiddle)
+        
+        fPLeft = Frame(self.fGAParam)
         fPLeft.pack(side=LEFT, fill=BOTH, expand=True)
-        fPRight = Frame(self.fParam)
+        fPRight = Frame(self.fGAParam)
         fPRight.pack(side=RIGHT, fill=BOTH, expand=True)
         
         ''' ========================================================================== '''
@@ -212,14 +182,14 @@ class GAParam:
         inputNbChr = Entry(fGeneticLine2, width=5, background='white', justify=CENTER, textvariable=self.NbChrom, font=self.top.font_Text)
         inputNbChr.pack(side=RIGHT, anchor=NW)
         args_list = [inputNbChr, self.NbChrom, 1, 100000, -1, self.ValidNbChrom,'Chromosomes','int']
-        inputNbChr.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        inputNbChr.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidNbChrom[3] = inputNbChr
 
         Label(fGeneticLine3, text='Number of generations:', font=self.top.font_Text).pack(side=LEFT)
         inputNbGen = Entry(fGeneticLine3, width=5, background='white', justify=CENTER, textvariable=self.NbGen, font=self.top.font_Text)
         inputNbGen.pack(side=RIGHT, anchor=NW)
         args_list = [inputNbGen, self.NbGen, 1, 100000, -1, self.ValidNbGen,'Generations','int']
-        inputNbGen.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        inputNbGen.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidNbGen[3] = inputNbGen
 
         ''' ========================================================================== '''
@@ -238,14 +208,14 @@ class GAParam:
         self.inputCR = Entry(fOperatorsLine2, width=5, background='white', justify=CENTER, textvariable=self.CrossRate, font=self.top.font_Text)
         self.inputCR.pack(side=RIGHT, anchor=NW)
         args_list = [self.inputCR, self.CrossRate, 0.000, 1.000, 3, self.ValidCrossRate,'Crossover Rate','float']
-        self.inputCR.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.inputCR.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidCrossRate[3] = self.inputCR
         
         Label(fOperatorsLine3, text='Mutation rate:', font=self.top.font_Text).pack(side=LEFT, anchor=W) 
         self.inputMR = Entry(fOperatorsLine3, width=5, background='white', justify=CENTER, textvariable=self.MutaRate, font=self.top.font_Text)
         self.inputMR.pack(side=RIGHT, anchor=W)
         args_list = [self.inputMR, self.MutaRate, 0.001, 1.000, 3, self.ValidMutaRate,'Mutation Rate','float']
-        self.inputMR.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.inputMR.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidMutaRate[3] = self.inputMR
 
         ''' ========================================================================== '''
@@ -263,28 +233,28 @@ class GAParam:
         self.entAGAk4 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk4, font=self.top.font_Text)
         self.entAGAk4.pack(side=RIGHT, anchor=W)
         args_list = [self.entAGAk4, self.AGAk4, 0.001, 1.000, 3, self.ValidAGAk4,'Adative GA Constant k4','float']
-        self.entAGAk4.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entAGAk4.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidAGAk4[3] = self.entAGAk4
         Label(fAGALine2, text='k4:',font=self.top.font_Text).pack(side=RIGHT)
 
         self.entAGAk3 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk3, font=self.top.font_Text)
         self.entAGAk3.pack(side=RIGHT, anchor=W)
         args_list = [self.entAGAk3, self.AGAk3, 0.001, 1.000, 3, self.ValidAGAk3,'Adative GA Constant k3','float']
-        self.entAGAk3.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entAGAk3.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidAGAk3[3] = self.entAGAk3
         Label(fAGALine2, text='k3:',font=self.top.font_Text).pack(side=RIGHT)
         
         self.entAGAk2 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk2, font=self.top.font_Text)
         self.entAGAk2.pack(side=RIGHT, anchor=W)
         args_list = [self.entAGAk2, self.AGAk2, 0.001, 1.000, 3, self.ValidAGAk2,'Adative GA Constant k2','float']
-        self.entAGAk2.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entAGAk2.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidAGAk2[3] = self.entAGAk2
         Label(fAGALine2, text='k2:',font=self.top.font_Text).pack(side=RIGHT)
 
         self.entAGAk1 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk1, font=self.top.font_Text)
         self.entAGAk1.pack(side=RIGHT, anchor=W)
         args_list = [self.entAGAk1, self.AGAk1, 0.001, 1.000, 3, self.ValidAGAk1,'Adative GA Constant k1','float']
-        self.entAGAk1.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entAGAk1.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidAGAk1[3] = self.entAGAk1
         Label(fAGALine2, text='k1:',font=self.top.font_Text).pack(side=RIGHT)
 
@@ -304,14 +274,14 @@ class GAParam:
         inputTopChr = Entry(fVisualLine2, width=5, background='white', justify=CENTER, textvariable=self.NbTopChrom, font=self.top.font_Text)
         inputTopChr.pack(side=RIGHT)
         args_list = [inputTopChr, self.NbTopChrom, 0, inputNbChr, -1, self.ValidNbTopChrom,'TOP Complexes','int']
-        inputTopChr.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        inputTopChr.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidNbTopChrom[3] = inputTopChr
 
         Label(fVisualLine3, text='Refresh interval:', font=self.top.font_Text).pack(side=LEFT)
         inputGenFq = Entry(fVisualLine3, width=5, background='white', justify=CENTER, textvariable=self.NbGenFreq, font=self.top.font_Text)
         inputGenFq.pack(side=RIGHT)
         args_list = [inputGenFq, self.NbGenFreq, 1, inputNbGen, -1, self.ValidNbGenFreq,'Generations Interval','int']
-        inputGenFq.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        inputGenFq.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidNbGenFreq[3] = inputGenFq
 
         ''' ========================================================================== '''        
@@ -332,21 +302,21 @@ class GAParam:
         self.entScale = Entry(fFitnessLine3, width=4, background='white', justify=CENTER, textvariable=self.FitScale, font=self.top.font_Text)
         self.entScale.pack(side=RIGHT)
         args_list = [self.entScale, self.FitScale, 0.0, 100.0, 2, self.ValidFitScale,'Fitness scale','float']
-        self.entScale.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entScale.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidFitScale[3] = self.entScale
         Label(fFitnessLine3, text='Scale:', font=self.top.font_Text).pack(side=RIGHT)
 
         self.entPeak = Entry(fFitnessLine3, width=4, background='white', justify=CENTER, textvariable=self.FitPeak, font=self.top.font_Text)
         self.entPeak.pack(side=RIGHT)
         args_list = [self.entPeak, self.FitPeak, 0.0, 100.0, 2, self.ValidFitPeak,'Fitness peak','float']
-        self.entPeak.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entPeak.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidFitPeak[3] = self.entPeak
         Label(fFitnessLine3, text='Peak:', font=self.top.font_Text).pack(side=RIGHT)
 
         self.entAlpha = Entry(fFitnessLine3, width=4, background='white', justify=CENTER, textvariable=self.FitAlpha, font=self.top.font_Text)
         self.entAlpha.pack(side=RIGHT)
         args_list = [self.entAlpha, self.FitAlpha, 0.0, 100.0, 2, self.ValidFitAlpha,'Fitness alpha','float']
-        self.entAlpha.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entAlpha.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidFitAlpha[3] = self.entAlpha
         Label(fFitnessLine3, text='alpha:', font=self.top.font_Text).pack(side=RIGHT)
         
@@ -368,7 +338,7 @@ class GAParam:
         self.entSS = Entry(fRepModelLine2, width=5, background='white', justify=CENTER, textvariable=self.RepSS, font=self.top.font_Text)
         self.entSS.pack(side=RIGHT)
         args_list = [self.entSS, self.RepSS, 1, 1000, -1, self.ValidRepSS,'Reproduction Steady-State','int']
-        self.entSS.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entSS.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidRepSS[3] = self.entSS
         Label(fRepModelLine2, text='Chr.:', font=self.top.font_Text).pack(side=RIGHT)
 
@@ -376,11 +346,13 @@ class GAParam:
         self.entB = Entry(fRepModelLine3, width=5, background='white', justify=CENTER, textvariable=self.RepB, font=self.top.font_Text)
         self.entB.pack(side=RIGHT)
         args_list = [self.entB, self.RepB, 0.01, 5.00, 2, self.ValidRepB,'Reproduction PopBoom','float']
-        self.entB.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        self.entB.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidRepB[3] = self.entB
         Label(fRepModelLine3, text='Ratio.:', font=self.top.font_Text).pack(side=RIGHT)
         
         Checkbutton(fRepModelLine4, text='Allow duplicates', variable=self.RepDup, font=self.top.font_Text).pack(side=LEFT)
+
+        return self.fGAParam
 
     ''' ==================================================================================
     FUNCTION RepModel_Toggle: Disables/enables the edit box according to checkstate
@@ -433,12 +405,12 @@ class GAParam:
             self.entAGAk4.config(state='disabled')
 
     ''' ==================================================================================
-    FUNCTION MenuLoadMessage: Display the message based on the menu selected
+    FUNCTION Load_Message: Display the message based on the menu selected
     ================================================================================== '''        
-    def LoadMessage(self):
+    def Load_Message(self):
         
-        self.top.DisplayMessage('', 0)
-        self.top.DisplayMessage('  FlexAID < GA Parameters > Menu.', 2)
-        self.top.DisplayMessage('  INFO:   Set the different options of the Genetic Algorithm.', 2)
+        self.DisplayMessage('', 0)
+        self.DisplayMessage('  FlexAID < GA Parameters > Menu.', 2)
+        self.DisplayMessage('  INFO:   Set the different options of the Genetic Algorithm.', 2)
 
     

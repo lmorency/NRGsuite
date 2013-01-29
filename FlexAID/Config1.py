@@ -23,6 +23,7 @@ import os
 import functools
 import tkFileDialog
 import Vars
+import Tabs
 import General
 import SphereObj
 import CleftObj
@@ -56,7 +57,7 @@ class Config1Vars(Vars.Vars):
         self.TargetFlex = TargetFlex.TargetFlex()
     
 
-class Config1:
+class Config1(Tabs.Tab):
 
     HIGHLIGHT_RELIEF = RAISED
     HIGHLIGHT_RELIEF = SUNKEN
@@ -67,32 +68,10 @@ class Config1:
     ScaleResolution = 0.25
 
     ProcessError = False
-
-    FrameName = 'Config1'
     
-    def __init__(self,top,PyMOL):
-        
-        #print "New instance of Config1"
-        self.PyMOL = PyMOL
-
-        self.top = top
-        self.Tab = self.top.Btn_Config1
-
-        self.DisplayMessage = self.top.DisplayMessage
-        
-        self.Vars = Config1Vars()
-        self.Update_Vars()
-        self.Def_Vars()
-        self.Init_Vars()
-
-        self.Frame()
-        self.Trace()
-
     def Def_Vars(self):
 
         # class instance objects
-        self.StateList = list()
-        self.Validator = list()
         self.listResidues = list()
 
         # vars class objects
@@ -122,14 +101,7 @@ class Config1:
         self.BindingSite.Clear()
         
         self.CleftTmpPath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,'tmp.pdb')
-
-    ''' ==================================================================================
-    FUNCTION Load_Session: Actions related to when a new session is loaded
-    =================================================================================  '''    
-    def Load_Session(self):
-
-        return
-        
+                
     ''' ==================================================================================
     FUNCTION Update_Vars: Update session variables when a session is loaded
     =================================================================================  '''    
@@ -161,24 +133,19 @@ class Config1:
             pass
             
     ''' ==================================================================================
-    FUNCTION Kill_Frame: Kills the main frame window
+    FUNCTION Before_Kill_Frame: Kills the main frame window
     =================================================================================  '''    
-    def Kill_Frame(self):
+    def Before_Kill_Frame(self):
         
-        self.fConfig.pack_forget()
         self.Highlight_SelectedCleft('')
 
         return True
-
+        
     ''' ==================================================================================
-    FUNCTION Show: Displays the frame onto the middle main frame
+    FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
-    def Show(self):
+    def After_Show(self):
         
-        self.LoadMessage()
-        
-        self.fConfig.pack(fill=BOTH, expand=True)
-
         self.Btn_OptSphRefresh_Clicked()
         self.Update_FlexSideChain_DDL()
         self.Update_Clefts_DDL()
@@ -353,7 +320,9 @@ class Config1:
         
         Label(fNMrow1, text='Normal Modes', font=self.top.font_Title).pack(side=LEFT)
         Label(fNMrow2, text='Upcoming feature...', width=30, font=self.top.font_Text_I).pack(side=LEFT, anchor=W)
-                           
+        
+        return self.fConfig
+        
     ''' ==================================================================================
     FUNCTION Get_TargetFlexPath: Returns the default path of target flexibility
     =================================================================================  '''    
@@ -464,7 +433,7 @@ class Config1:
             self.top.ActiveWizard.Start()
             
         else:
-            self.top.DisplayMessage("  ERROR: Could not open Wizard because one is already active", 2)
+            self.DisplayMessage("  ERROR: Could not open Wizard because one is already active", 2)
 
     ''' ==================================================================================
     FUNCTION FlexSCRunning: Disables/Enables controls related to Flexible side-chains
@@ -472,11 +441,10 @@ class Config1:
     def FlexSCRunning(self, boolRun):
         
         if boolRun:
-            del self.StateList[:]
-            General.saveState(self.fFlexSC, self.StateList)
-            General.setState(self.fFlexSC)
+            self.Disable_Frame()
         else:
-            General.backState(self.fFlexSC, self.StateList)
+            self.Enable_Frame()
+            
             self.Update_FlexSideChain_DDL()
 
     ''' ==================================================================================
@@ -576,9 +544,9 @@ class Config1:
 
                     self.TargetFlexName.set(os.path.basename(os.path.splitext(SaveFile)[0]))
 
-                    self.top.DisplayMessage("  Successfully saved '" + SaveFile + "'", 0)
+                    self.DisplayMessage("  Successfully saved '" + SaveFile + "'", 0)
                 except:
-                    self.top.DisplayMessage("  Could not save target flexibility configuration", 0)
+                    self.DisplayMessage("  Could not save target flexibility configuration", 0)
 
     ''' ==================================================================================
     FUNCTION Btn_LoadConfBS_Clicked: Asks for user to load binding-site
@@ -663,13 +631,13 @@ class Config1:
 
                     self.BindingSiteName.set(os.path.basename(os.path.splitext(SaveFile)[0]))
 
-                    self.top.DisplayMessage("  Successfully saved '" + SaveFile + "'", 0)
+                    self.DisplayMessage("  Successfully saved '" + SaveFile + "'", 0)
 
                 except:
-                    self.top.DisplayMessage("  ERROR: Could not save binding-site configuration", 1)
+                    self.DisplayMessage("  ERROR: Could not save binding-site configuration", 1)
 
         else:
-            self.top.DisplayMessage("  No clefts or sphere to save as 'binding-site'", 2)
+            self.DisplayMessage("  No clefts or sphere to save as 'binding-site'", 2)
 
     ''' ==================================================================================
     FUNCTION Btn_AddResidu_Clicked: Add a residue name in the Flexible side chain ddl.
@@ -690,11 +658,11 @@ class Config1:
                 self.EntryResidu.config(bg=self.top.Color_White)
 
             else:
-                self.top.DisplayMessage("Invalid residue entered (ALA/GLY/PRO do not have flexible bonds)", 2)
+                self.DisplayMessage("Invalid residue entered (ALA/GLY/PRO do not have flexible bonds)", 2)
                 self.EntryResidu.config(bg=self.top.Color_Red)                
 
         else:
-            self.top.DisplayMessage("Invalid residue entered (you need a '-' chain identifier when no chain is provided)", 2)
+            self.DisplayMessage("Invalid residue entered (you need a '-' chain identifier when no chain is provided)", 2)
             self.EntryResidu.config(bg=self.top.Color_Red)
         
     
@@ -782,7 +750,7 @@ class Config1:
             self.top.ActiveWizard.Start()
 
         else:
-            self.top.DisplayMessage("  ERROR: Could not open Wizard because one is already active", 1)
+            self.DisplayMessage("  ERROR: Could not open Wizard because one is already active", 1)
 
     # Deletes the binding-site object
     def Delete_BindingSite(self):
@@ -841,7 +809,7 @@ class Config1:
                 self.top.ActiveWizard.DisplaySphere()
                 self.defOptSphere.set(sel)
         else:
-            self.top.DisplayMessage(  "ERROR: Could not open Wizard because one is already active", 1)
+            self.DisplayMessage(  "ERROR: Could not open Wizard because one is already active", 1)
      
     # Listbox Menu Refresh values  
     def Btn_OptSphRefresh_Clicked(self):
@@ -945,7 +913,7 @@ class Config1:
             cmd.set_view(View)
 
         except:
-            self.top.DisplayMessage("  ERROR: while displaying the binding-site", 2)
+            self.DisplayMessage("  ERROR: while displaying the binding-site", 2)
 
 
     ''' ==================================================================================
@@ -976,13 +944,13 @@ class Config1:
         out.close()
 
     ''' ==================================================================================
-    FUNCTION MenuLoadMessage: Display the message based on the menu selected
+    FUNCTION Load_Message: Display the message based on the menu selected
     ================================================================================== '''        
-    def LoadMessage(self):
+    def Load_Message(self):
         
-        self.top.DisplayMessage('', 0)
-        self.top.DisplayMessage('  FlexAID < Target Cfg > Menu.', 2)
-        self.top.DisplayMessage('  INFO: Configure the target molecule', 2)
-        self.top.DisplayMessage('          1) Define the binding-site using a sphere or one or more cleft(s)', 2)
-        self.top.DisplayMessage('          2) Include flexibility in the target, if necessary', 2)
+        self.DisplayMessage('', 0)
+        self.DisplayMessage('  FlexAID < Target Cfg > Menu.', 2)
+        self.DisplayMessage('  INFO: Configure the target molecule', 2)
+        self.DisplayMessage('          1) Define the binding-site using a sphere or one or more cleft(s)', 2)
+        self.DisplayMessage('          2) Include flexibility in the target, if necessary', 2)
 

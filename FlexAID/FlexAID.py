@@ -170,12 +170,12 @@ class displayFlexAID:
         self.Frame_Main()
         
         # Build class objects of each tab
-        self.IOFile = IOFile.IOFile(self, self.PyMOL)
-        self.Config1 = Config1.Config1(self, self.PyMOL)
-        self.Config2 = Config2.Config2(self, self.PyMOL)
-        self.Config3 = Config3.Config3(self, self.PyMOL)
-        self.GAParam = GAParam.GAParam(self, self.PyMOL)
-        self.Simulate = Simulate.Simulate(self, self.PyMOL)
+        self.IOFile = IOFile.IOFile(self, self.PyMOL, self.Btn_IOFiles, 'IOFile', IOFile.IOFileVars())
+        self.Config1 = Config1.Config1(self, self.PyMOL, self.Btn_Config1, 'Config1', Config1.Config1Vars())
+        self.Config2 = Config2.Config2(self, self.PyMOL, self.Btn_Config2, 'Config2', Config2.Config2Vars())
+        self.Config3 = Config3.Config3(self, self.PyMOL, self.Btn_Config3, 'Config3', Config3.Config3Vars())
+        self.GAParam = GAParam.GAParam(self, self.PyMOL, self.Btn_GAParam, 'GAParam', GAParam.GAParamVars())
+        self.Simulate = Simulate.Simulate(self, self.PyMOL, self.Btn_Simulate, 'Simulate', Simulate.SimulateVars())
 
         self.MakeMenuBar()
 
@@ -388,6 +388,7 @@ class displayFlexAID:
                         for Tab in self.listTabs:
                             try:
                                 pickle.dump(Tab.Vars, out)
+                                print Tab.dictFlexBonds
                             except:
                                 pass
                         out.close()
@@ -490,7 +491,7 @@ class displayFlexAID:
                 self.fMiddle.focus_set()
                 self.fMiddle.update_idletasks()
 
-                rv = self.Validate_Entries(self.ActiveFrame.Validator)
+                rv = self.ActiveFrame.Validate_Entries(self.ActiveFrame.Validator)
                 if rv > 0:
                     if rv == 1:
                         self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
@@ -498,7 +499,7 @@ class displayFlexAID:
                         self.ActiveFrame.Validator_Fail()
                     return
 
-                if not self.ActiveFrame.Kill_Frame():
+                if not self.ActiveFrame.Before_Kill_Frame() or not self.ActiveFrame.Kill_Frame():
                     self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
                     return
 
@@ -506,12 +507,13 @@ class displayFlexAID:
 
                 #self.ActiveFrame.Del_Trace()
                 self.ActiveFrame.Tab.config(bg=self.Color_White)
-                #print "Killed Frame " + self.ActiveFrame.FrameName
+                print "Killed Frame " + self.ActiveFrame.FrameName
 
 
             self.ActiveFrame = Frame
             #print "New active frame " + self.ActiveFrame.FrameName
             self.ActiveFrame.Show()
+            self.ActiveFrame.After_Show()
             self.ActiveFrame.Tab.config(bg=self.Color_Blue)
 
 	    self.fMiddle.update_idletasks()
@@ -645,129 +647,27 @@ class displayFlexAID:
     ==================================================================================  '''    
     def ValidateFolders(self):
        
-        if not(os.path.isdir(self.FlexAIDProject_Dir)):
+        if not os.path.isdir(self.FlexAIDProject_Dir):
             os.makedirs(self.FlexAIDProject_Dir)
             
-        if not(os.path.isdir(self.FlexAIDLigandProject_Dir)):
+        if not os.path.isdir(self.FlexAIDLigandProject_Dir):
             os.makedirs(self.FlexAIDLigandProject_Dir)
             
-        if not(os.path.isdir(self.ProteinProject_Dir)):
+        if not os.path.isdir(self.ProteinProject_Dir):
             os.makedirs(self.ProteinProject_Dir)
             
-        if not(os.path.isdir(self.FlexAIDSimulationProject_Dir)):
+        if not os.path.isdir(self.FlexAIDSimulationProject_Dir):
             os.makedirs(self.FlexAIDSimulationProject_Dir)
             
-        if not(os.path.isdir(self.FlexAIDSessionProject_Dir)):
+        if not os.path.isdir(self.FlexAIDSessionProject_Dir):
             os.makedirs(self.FlexAIDSessionProject_Dir)
 
-        if not(os.path.isdir(self.FlexAIDBindingSiteProject_Dir)):
+        if not os.path.isdir(self.FlexAIDBindingSiteProject_Dir):
             os.makedirs(self.FlexAIDBindingSiteProject_Dir)
             
-        if not(os.path.isdir(self.FlexAIDTargetFlexProject_Dir)):
+        if not os.path.isdir(self.FlexAIDTargetFlexProject_Dir):
             os.makedirs(self.FlexAIDTargetFlexProject_Dir)
-                                      
-    ''' ==================================================================================
-    FUNCTION Lost_Focus: Draws a red square in box if field was not validated
-    ==================================================================================  '''    
-    def Lost_Focus(self, event, args):
-
-        self.Validate_Field(args)
-
-        Entry = args[0]
-        Validator = args[5]
-        
-        if not Validator[0]:
-            Entry.config(bg=self.Color_Red)
-
-        return "break"
-
-    ''' ==================================================================================
-    FUNCTION Validate_Field: Validates an Entry Field in the FlexAID interface
-    ==================================================================================  '''    
-    def Validate_Field(self, args):
-
-        Entry = args[0]
-        StringVar = args[1]
-        Min = args[2]
-        Max = args[3]
-        nDec = args[4]
-        Validator = args[5]
-        Label = args[6]
-        Type = args[7]
-
-        rv = -1
-
-        if Type == 'float':
-            # If the min-max value depends on another Widget Entry value
-            if type(Min) != float:
-                try:
-                    Min = float(Min.get())
-                except:
-                    Min = 0.0
-
-            if type(Max) != float:
-                try:
-                    Max = float(Max.get())
-                except:
-                    Max = 1.0
-
-            rv = General.validate_Float(StringVar.get(), Min, Max, nDec)
-
-        elif Type == 'int':
-            # If the min-max value depends on another Widget Entry value
-            if type(Min) != int:
-                try:
-                    Min = int(Min.get())
-                except: 
-                    Min = 1
-
-            if type(Max) != int:
-                try:
-                    Max = int(Max.get())
-                except:
-                    Max = 100
-        
-            rv = General.validate_Integer(StringVar.get(), Min, Max)
-                
-        elif Type == 'str':
-            rv = General.validate_String(StringVar.get())
-
-        # Return-value testing
-        if rv == 0:
-            Entry.config(bg=self.Color_White)
-            Validator[0] = True
- 
-        elif rv == 1:
-            self.DisplayMessage("Value has erroneus format for field " + Label, 1)
-            Validator[0] = False
-
-        elif rv == 2:
-            self.DisplayMessage("The number of decimals cannot exceed (" + str(nDec) + ") for field " + Label, 1)
-            Validator[0] = False
-
-        elif rv == 3:
-            self.DisplayMessage("Value must be within the range[" + str(Min) + "," + str(Max) + "] for field " + Label, 1)
-            Validator[0] = False
-
-        elif rv == -1:
-            print "Unknown data format"
-
-    ''' ==================================================================================
-    FUNCTION Validate_Entries: Validate all entries of a frame before switching
-    ==================================================================================  '''    
-    def Validate_Entries(self, list):
-        
-        #print list
-        for valid in list:
-            if not valid[2] and valid[0] == False:
-
-                if valid[3] != None:
-                    valid[3].config(bg=self.Color_Red)
-
-                return valid[1]
-
-        return 0
-
+    
     ''' ==================================================================================
     FUNCTION DisplayMessage: Display the message  
     ==================================================================================  '''    

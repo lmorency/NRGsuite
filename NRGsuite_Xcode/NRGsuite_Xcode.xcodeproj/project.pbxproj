@@ -75,6 +75,7 @@
 		15F34EAC16A9051A00BED5DE /* scr_bin.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = scr_bin.dat; sourceTree = "<group>"; };
 		15F34EAD16A9051A00BED5DE /* scr_mat.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = scr_mat.dat; sourceTree = "<group>"; };
 		15F34EAE16A9051A00BED5DE /* SYBYL_emat.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SYBYL_emat.dat; sourceTree = "<group>"; };
+		15FC340216B782290003EE33 /* Tabs.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = Tabs.py; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -123,6 +124,7 @@
 				158C85AA16A5C19C00E07CFF /* RunFlexAID.py */,
 				158C85AB16A5C19C00E07CFF /* Simulate.py */,
 				158C85AC16A5C19C00E07CFF /* Simulation.py */,
+				15FC340216B782290003EE33 /* Tabs.py */,
 				158C85AD16A5C19C00E07CFF /* TargetFlex.py */,
 				158C85AE16A5C19C00E07CFF /* UpdateScreen.py */,
 				15544AD116B05B0F0065181C /* Vars.py */,

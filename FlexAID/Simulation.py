@@ -78,8 +78,8 @@ class Start(threading.Thread):
 
         except:
 
-            self.FlexAID.DisplayMessage('   Fatal error: Could not run the executable FlexAID', 1)
-            self.FlexAID.DisplayMessage('   Make sure you downloaded NRGsuite for the right platform', 1)
+            self.top.DisplayMessage('   Fatal error: Could not run the executable FlexAID', 1)
+            self.top.DisplayMessage('   Make sure you downloaded NRGsuite for the right platform', 1)
             self.top.ProcessError = True
 
         #print "FlexAID starting thread has ended."
@@ -200,7 +200,7 @@ class Parse(threading.Thread):
                 self.dictCoordRef = self.Get_CoordRef()
 
         except:
-            self.FlexAID.DisplayMessage("Could not read ligand PDB File",1)
+            self.top.DisplayMessage("Could not read ligand PDB File",1)
             return
 
         
@@ -228,7 +228,7 @@ class Parse(threading.Thread):
                 
                 # track errors
                 if Line.startswith('ERROR'):
-                    self.FlexAID.DisplayMessage(str("A critical error occured\n" + Line), 1)
+                    self.top.DisplayMessage(str("A critical error occured\n" + Line), 1)
                     self.top.ErrorStatus()
                     try:
                         self.FlexAID.Run.terminate()

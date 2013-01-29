@@ -22,7 +22,9 @@ from Tkinter import *
 import functools
 import math
 import os
+import hashlib
 import Vars
+import Tabs
 import tkFileDialog
 import General
 import Constants
@@ -52,10 +54,13 @@ class IOFileVars(Vars.Vars):
     LigandPath = StringVar()
     LigandName = StringVar()
     AtomTypes = StringVar()
-    Anchor = IntVar()
+
+    def __init__(self):
+        
+        self.LigandPathMD5 = ''
     
     
-class IOFile:
+class IOFile(Tabs.Tab):
 
     ProcessError = False
     
@@ -63,38 +68,8 @@ class IOFile:
     fProcessLigand = False
     fStoreInfo = False
     fLoadProcessed = False
-
-    FrameName = 'IOFile'
         
-    def __init__(self, top, PyMOL):
-
-        #print "New instance of IOFile"
-
-        self.PyMOL = PyMOL
-
-        self.top = top
-        self.Tab = self.top.Btn_IOFiles
-
-        self.font_Text = self.top.font_Text
-        self.font_Title = self.top.font_Title
-
-        self.Color_Black = self.top.Color_Black
-        self.Color_White = self.top.Color_White
-
-        self.DisplayMessage = self.top.DisplayMessage
-
-        self.Vars = IOFileVars()
-        self.Def_Vars()
-        self.Init_Vars()
-
-        self.Frame()
-        self.Trace()
-
     def Def_Vars(self):
-
-        # class instance objects
-        self.StateList = list()
-        self.Validator = list()
         
         self.defaultOption = StringVar()
         self.FetchPDB = StringVar()
@@ -107,8 +82,7 @@ class IOFile:
         self.LigandPath = self.Vars.LigandPath
         self.LigandName = self.Vars.LigandName
         self.AtomTypes = self.Vars.AtomTypes
-        self.Anchor = self.Vars.Anchor    
-
+        
 
     def Init_Vars(self):
 
@@ -125,8 +99,8 @@ class IOFile:
         
         #self.TargetRNA.set(0)
         self.ResSeq.set(0)
-        self.Anchor.set(-1)
-        
+        self.Vars.LigandPathMD5 = ''
+    
     
     ''' ==================================================================================
     FUNCTION Load_Session: Actions related to when a new session is loaded
@@ -137,22 +111,22 @@ class IOFile:
         self.Btn_DisplayProtein_Clicked()
 
     ''' ==================================================================================
-    FUNCTION Kill_Frame: Kills the main frame window
+    FUNCTION Before_Kill_Frame: Actions related before killing the frame
     =================================================================================  '''    
-    def Kill_Frame(self):
+    def Before_Kill_Frame(self):
         
         self.ProcessError = False
         
         # Process ligand
         if not self.fProcessLigand:
-
+            
             AtomIndex = General.store_Residues(self.top.Config1.listResidues, self.ProtPath.get(), 0)
             if AtomIndex == -1:
                 return False
 
             self.ProcessLigand(True, AtomIndex + 1)
 
-            if self.ProTcessError:
+            if self.ProcessError:
                 return False
 
         # Store content of ligand input files
@@ -165,70 +139,42 @@ class IOFile:
             if self.Load_ProcessedLigand():
                 return False
 
-        self.fIOFile.pack_forget()
-        #self.fIOFile.destroy()
-
         return True
-
-    ''' ==================================================================================
-    FUNCTION Update_Vars: Update session variables when a session is loaded
-    =================================================================================  '''    
-    def Update_Vars(self):
-
-        return
-        
-    ''' ==================================================================================
-    FUNCTION Validator_Fail: Triggers visual events upon validation failure
-    =================================================================================  '''    
-    def Validator_Fail(self):
-
-        return
-
+    
     ''' ==================================================================================
     FUNCTION ProcessLigand: Processes ligand PDB file using lig_extractor
     ================================================================================== '''    
     def ProcessLigand(self, boolRun, StartAtomIndex):
 
         if boolRun:
-
-            del self.StateList[:]
-
-            General.saveState(self.fIOFile, self.StateList)
-            General.setState(self.fIOFile)
-
+            self.Disable_Frame()
+            
             self.top.ProcessRunning = True
-            p = ProcessLigand.ProcLig(self, StartAtomIndex, self.AtomTypes.get(), self.Anchor.get())
+            p = ProcessLigand.ProcLig(self, StartAtomIndex, self.AtomTypes.get(), self.top.Config2.Anchor.get())
 
         else:
-
-            General.backState(self.fIOFile, self.StateList)
-
+            self.Enable_Frame()
 
     ''' ==================================================================================
                          ENABLE / DISABLE - Buttons
     ================================================================================== '''             
     def ValidateLigProt(self,*args):
 
-        if len(self.ProtName.get()) > 0 and len(self.LigandName.get()) > 0:
+        if self.ProtName.get() and self.LigandName.get():
             self.top.Go_Step2()
         else:
             self.top.Go_Step1()
-
+        
         self.fProcessLigand = False
         self.top.Reset_Step2()
-        self.Anchor.set(-1)
 
     ''' ==================================================================================
-    FUNCTION Show: Displays the frame onto the middle main frame
+    FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
-    def Show(self):
-        
-        self.LoadMessage()
-        
+    def After_Show(self):
+                
         #Show the list of selection/objects in case the user already worked in PyMOL
         self.Btn_RefreshOptMenu_Clicked()
-
-        self.fIOFile.pack(fill=BOTH, expand=True)
         
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
@@ -402,14 +348,18 @@ class IOFile:
         Radiobutton(fProcessingLine2, text='Gaudreault', variable=self.AtomTypes, value="Gaudreault", font=self.font_Text).pack(side=LEFT, padx=10)
         Radiobutton(fProcessingLine2, text='Sybyl', variable=self.AtomTypes, value="Sybyl", font=self.font_Text).pack(side=LEFT)
 
+        return self.fIOFile
+        
     ''' ==================================================================================
     FUNCTIONS Reset Ligand and Protein textbox fields
     ================================================================================== '''
     def Btn_ResetProt_Clicked(self):
+    
         self.ProtPath.set('')
         self.ProtName.set('')
 
     def Btn_ResetLigand_Clicked(self):
+
         self.LigandPath.set('')
         self.LigandName.set('')
 
@@ -421,51 +371,18 @@ class IOFile:
         if not self.PyMOL:
             return
 
-        if len(self.LigandPath.get()) > 0:
+        if self.LigandPath.get():
             
             if self.top.ActiveWizard is None:
             
-                self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath.get(), self.Anchor.get())
+                self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath.get(), self.top.Config2.Anchor.get())
                 
                 cmd.set_wizard(self.top.ActiveWizard)
                 self.top.ActiveWizard.Start()
                 
             else:
-                self.top.DisplayMessage("A wizard is currently active", 2)
+                self.DisplayMessage("A wizard is currently active", 2)
 
-    """
-    ''' ==================================================================================
-    FUNCTION Btn_Set : Sets the object or selection as the target or ligand
-    ==================================================================================  '''    
-    def Btn_SetLigand_Clicked(self):
-
-        if not self.PyMOL:
-            return
-
-        # Get the Drop Down List Selection Name
-        ddlSelection = self.defaultOption.get()
-
-        if ddlSelection == '':
-            return
-
-        try:
-            state = cmd.get_state()
-            n = cmd.count_atoms(ddlSelection, state=state)
-
-            if n < 3:
-                self.DisplayMessage("  ERROR for object/selection '" + ddlSelection + "': The ligand must have at least (3) atoms)", 1)
-                return
-
-            elif n > Constants.MAX_LIGAND_ATOMS:
-                self.DisplayMessage("  ERROR for object/selection '" + ddlSelection + "': The ligand must have a maximum of (" + 
-                                    Constants.MAX_LIGAND_ATOMS + ') atoms', 1)
-                return
-        
-        except:
-            self.DisplayMessage("  ERROR: object/selection '" + ddlSelection + "' does not exist on current state", 1)
-            return
-
-    """
         
     ''' ==================================================================================
     FUNCTION Btn_Save : Save Ligand and Protein objects, object is reloaded automatically
@@ -629,7 +546,7 @@ class IOFile:
                     cmd.load(self.ProtPath.get(), Name, state=1)
 
             except:
-                self.top.DisplayMessage("  ERROR for object '" + ProtPath + "': Could not load the target file", 1)
+                self.DisplayMessage("  ERROR for object '" + ProtPath + "': Could not load the target file", 1)
                 return
 
             self.ProtName.set(Name)
@@ -708,14 +625,6 @@ class IOFile:
                 cmd.zoom(self.ProtName.get())        
             
 
-    # Welcome menu message
-    def LoadMessage(self):
-
-        self.DisplayMessage('' ,0)
-        self.DisplayMessage('  FlexAID < Input Files > Menu', 2)
-        self.DisplayMessage('  INFO:   Select a < TARGET > and a < LIGAND > by:', 2)
-        self.DisplayMessage('          1) Saving a PyMOL object/selection to your project directory', 2)
-        self.DisplayMessage('          2) Loading an existing object file from your project directory', 2)
 
     #=======================================================================
     ''' Store inp file information (flexible bonds, atom types)  '''
@@ -729,7 +638,7 @@ class IOFile:
 
         #Read the inp file and get the flexible bonds
         try:
-            file = open(inpFilePath)
+            file = open(inpFilePath, 'r')
             inpFile = file.readlines()
             file.close()
 
@@ -759,13 +668,15 @@ class IOFile:
                     flexInfo[INDEX] = list
                     
         except:
-            self.top.DisplayMessage('  ERROR: Could not retrieve ligand input file', 1)
+            self.DisplayMessage('  ERROR: Could not retrieve ligand input file', 1)
             return 1
 
-        self.store_Neighbours(inpInfo)
-        self.store_AtomTypes(inpInfo)
-        self.store_FlexBonds(flexInfo)
-
+        if not self.Check_LigandPathMD5(inpFilePath):
+            self.store_Neighbours(inpInfo)
+            self.store_AtomTypes(inpInfo)
+            self.store_FlexBonds(flexInfo)
+        
+        self.Vars.LigandPathMD5 = self._LigandPathMD5
         self.fStoreInfo = True
 
         return 0
@@ -776,18 +687,17 @@ class IOFile:
     def store_Neighbours(self, inpInfo):
         
         self.top.Config2.dictNeighbours.clear()
-
+        
         for atom in iter(inpInfo):
-
             self.top.Config2.dictNeighbours[atom] = inpInfo[atom][1:]
-
+                    
     #=======================================================================
     ''' Store Flexible Bonds Dictionary'''
     #=======================================================================   
     def store_FlexBonds(self, flexInfo):
         
         self.top.Config2.dictFlexBonds.clear()
-
+        
         for index in iter(flexInfo):
             
             ''' [ Selected as flexible,
@@ -807,11 +717,31 @@ class IOFile:
     def store_AtomTypes(self, inpInfo):
         
         self.top.Config2.dictAtomTypes.clear()
-
+        
         for atom in iter(inpInfo):
-
             self.top.Config2.dictAtomTypes[atom] = [inpInfo[atom][0], inpInfo[atom][0]]
 
+    
+    #=======================================================================
+    ''' Compares the file content of the ligand when the session was saved '''
+    #=======================================================================   
+    def Check_LigandPathMD5(self, fname):
+        
+        self._LigandPathMD5 = self.hashfile(open(fname, 'r'), hashlib.md5())
+        
+        return self.Vars.LigandPathMD5 == self._LigandPathMD5
+
+    #=======================================================================
+    ''' Returns the Signature of a file contents '''
+    #=======================================================================   
+    def hashfile(self, afile, hasher, blocksize=65536):
+    
+        buf = afile.read(blocksize)
+        while len(buf) > 0:
+            hasher.update(buf)
+            buf = afile.read(blocksize)
+        
+        return hasher.digest()
 
     #=======================================================================
     ''' Enables/disables controls related to AnchorWizard  '''
@@ -819,8 +749,21 @@ class IOFile:
     def AnchorRunning(self, boolRun):
         
         if boolRun:
-           pass
-           
+            self.Disable_Frame()
         else:
-            self.Anchor.set(self.top.WizardResult)
-            self.fProcessLigand = False
+            self.Enable_Frame()
+
+            if self.top.Config2.Anchor.get() != self.top.WizardResult:
+                self.fProcessLigand = False
+
+            self.top.Config2.Anchor.set(self.top.WizardResult)
+
+
+    # Welcome menu message
+    def Load_Message(self):
+
+        self.DisplayMessage('' ,0)
+        self.DisplayMessage('  FlexAID < Input Files > Menu', 2)
+        self.DisplayMessage('  INFO:   Select a < TARGET > and a < LIGAND > by:', 2)
+        self.DisplayMessage('          1) Saving a PyMOL object/selection to your project directory', 2)
+        self.DisplayMessage('          2) Loading an existing object file from your project directory', 2)

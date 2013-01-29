@@ -23,6 +23,7 @@ import os
 import functools
 import General
 import Vars
+import Tabs
 
 if __debug__:
     from pymol import cmd
@@ -44,6 +45,7 @@ class Config2Vars(Vars.Vars):
     CovConsSelection = StringVar()
     IntTranslation = IntVar()
     IntRotation = IntVar()
+    Anchor = IntVar()
     
     def __init__(self):
     
@@ -53,36 +55,15 @@ class Config2Vars(Vars.Vars):
         self.dictNeighbours = dict()
     
 
-class Config2:
+class Config2(Tabs.Tab):
 
     DefaultCovDist = 1.5
 
     HIGHLIGHT = 'HIGHLIGHTCONS'
     COVCONS = 'COVCONS'
 
-    FrameName = 'Config2'
     
-    def __init__(self,top,PyMOL):
-        
-        #print "New instance of Config2"
-        
-        self.PyMOL = PyMOL
-        
-        self.top = top
-        self.Tab = self.top.Btn_Config2
-
-        self.Vars = Config2Vars()
-        self.Update_Vars()
-        self.Def_Vars()
-        self.Init_Vars()
-
-        self.Frame()
-        self.Trace()
-
     def Def_Vars(self):
-
-        self.Validator = list()
-        self.StateList = list()
 
         self.SetAtmTypeOpt = self.Vars.SetAtmTypeOpt
         self.FlexBondsPar = self.Vars.FlexBondsPar
@@ -93,7 +74,7 @@ class Config2:
         self.CovConsSelection = self.Vars.CovConsSelection
         self.IntTranslation = self.Vars.IntTranslation
         self.IntRotation = self.Vars.IntRotation
-        
+        self.Anchor = self.Vars.Anchor
 
     def Init_Vars(self):
         
@@ -112,19 +93,16 @@ class Config2:
         self.FlexStatus.set('')
         self.SATStatus.set('')
 
+        self.Anchor.set(-1)
+        
+
     def Update_Vars(self):
     
         self.dictCovConstraints = self.Vars.dictCovConstraints
         self.dictAtomTypes = self.Vars.dictAtomTypes
         self.dictFlexBonds = self.Vars.dictFlexBonds
         self.dictNeighbours = self.Vars.dictNeighbours
-        print "dictAtomTypes", self.dictAtomTypes
-        print "dictNeighbours", self.dictNeighbours
-        print "dictFlexBonds", self.dictFlexBonds
-
-    def Load_Session(self):
-    
-        return
+        
         
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
@@ -147,32 +125,6 @@ class Config2:
             self.SetAtmTypeOpt.trace_vdelete('w',self.SATTrace)
         except:
             pass
-
-    ''' ==================================================================================
-    FUNCTION Kill_Frame: Kills the main frame window
-    =================================================================================  '''    
-    def Kill_Frame(self):
-        
-        self.fConfig2.pack_forget()
-        #self.fConfig2.destroy()
-
-        return True
-
-    ''' ==================================================================================
-    FUNCTION Validator_Fail: Triggers visual events upon validation failure
-    =================================================================================  '''    
-    def Validator_Fail(self):
-
-        return
-
-    ''' ==================================================================================
-    FUNCTION Show: Displays the frame onto the middle main frame
-    ==================================================================================  '''  
-    def Show(self):
-        
-        self.LoadMessage()
-
-        self.fConfig2.pack(fill=BOTH, expand=True)
 
     ''' ==================================================================================
     FUNCTION Flex_Toggle: Enables wizard to set flexible bond
@@ -340,22 +292,6 @@ class Config2:
         self.Update_Constraints(dictCons,optCons,selection)
 
     ''' ==================================================================================
-    FUNCTION Disable_Frame: Disables all controls on main frame
-    =================================================================================  '''    
-    def Disable_Frame(self):
-
-        del self.StateList[:]
-        General.saveState(self.fConfig2, self.StateList)
-        General.setState(self.fConfig2)
-
-    ''' ==================================================================================
-    FUNCTION Enable_Frame: Enables all controls on main frame
-    =================================================================================  '''    
-    def Enable_Frame(self):
-
-        General.backState(self.fConfig2, self.StateList)
-
-    ''' ==================================================================================
     FUNCTION Frame: Generate the Configuration Options frame in the the middle 
                     frame section
     =================================================================================  '''    
@@ -478,16 +414,17 @@ class Config2:
         self.sclCovDist.pack(side=LEFT)
         self.sclCovDist.config(state='disabled')
 
-
-    ''' ==================================================================================
-    FUNCTION MenuLoadMessage: Display the message based on the menu selected
-    ================================================================================== '''        
-    def LoadMessage(self):
+        return self.fConfig2
         
-        self.top.DisplayMessage('', 0)
-        self.top.DisplayMessage('  FlexAID < Ligand Cfg > Menu.', 2)
-        self.top.DisplayMessage('  INFO:   Set different options for the Ligand.', 2)
-        self.top.DisplayMessage('          1) Include flexibility in the ligand, if necessary.', 2)
-        self.top.DisplayMessage('          2) Alter definition of atom types, if necessary.', 2)
-        self.top.DisplayMessage('          3) Add contraints of optimization, if necessary.', 2)
+    ''' ==================================================================================
+    FUNCTION Load_Message: Display the message based on the menu selected
+    ================================================================================== '''        
+    def Load_Message(self):
+        
+        self.DisplayMessage('', 0)
+        self.DisplayMessage('  FlexAID < Ligand Cfg > Menu.', 2)
+        self.DisplayMessage('  INFO:   Set different options for the Ligand.', 2)
+        self.DisplayMessage('          1) Include flexibility in the ligand, if necessary.', 2)
+        self.DisplayMessage('          2) Alter definition of atom types, if necessary.', 2)
+        self.DisplayMessage('          3) Add contraints of optimization, if necessary.', 2)
 
