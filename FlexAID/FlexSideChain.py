@@ -89,6 +89,8 @@ class flexSC(Wizard):
             self.Quit_Wizard()
             return
 
+        cmd.refresh()
+
         #self.selection_mode = cmd.get_setting_legacy("mouse_selection_mode")
         self.selection_mode = cmd.get("mouse_selection_mode")
         cmd.set("mouse_selection_mode", 1) # set selection mode to residue
@@ -233,6 +235,7 @@ class flexSC(Wizard):
             cmd.delete(self.FlexSCDisplay)
             cmd.delete(self.ResidueDisplay)
             cmd.delete(self.BackboneDisplay)
+            cmd.refresh()
 
             if self.ErrorCode != 1:
                 General_cmd.unmask_Objects(self.exc)

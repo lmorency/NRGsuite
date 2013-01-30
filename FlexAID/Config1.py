@@ -237,7 +237,7 @@ class Config1(Tabs.Tab):
                 
         #Label(fRangeOptRightLine2, text='Clefts:', width=10, font=self.top.font_Text).pack(side=LEFT)
         
-        self.Btn_ImportCleft = Button(fRangeOptRightLine2, text='Import clefts', command=self.Btn_Import_Clefts, font=self.top.font_Text)
+        self.Btn_ImportCleft = Button(fRangeOptRightLine2, text='Import clefts', command=self.Btn_Import_Clefts, font=self.top.font_Text, width=47)
         self.Btn_ImportCleft.pack(side=RIGHT)
         self.Btn_ImportCleft.config(state='disabled')
 
@@ -245,9 +245,13 @@ class Config1(Tabs.Tab):
         self.Btn_ClearCleft.pack(side=RIGHT)
         self.Btn_ClearCleft.config(state='disabled')
 
-        self.Btn_DeleteCleft = Button(fRangeOptRightLine3, text='Delete', command=self.Btn_DeleteCleft_Clicked, font=self.top.font_Text)
+        self.Btn_DeleteCleft = Button(fRangeOptRightLine3, text='Del.', command=self.Btn_DeleteCleft_Clicked, font=self.top.font_Text)
         self.Btn_DeleteCleft.pack(side=RIGHT)
         self.Btn_DeleteCleft.config(state='disabled')
+
+        self.Btn_DeleteOthersCleft = Button(fRangeOptRightLine3, text='Del. others', command=self.Btn_DeleteOthersCleft_Clicked, font=self.top.font_Text)
+        self.Btn_DeleteOthersCleft.pack(side=RIGHT)
+        self.Btn_DeleteOthersCleft.config(state='disabled')
 
         optionTuple = '',
         self.OptMenuCleft = apply(OptionMenu, (fRangeOptRightLine3, self.defOptCleft) + optionTuple)
@@ -361,8 +365,9 @@ class Config1(Tabs.Tab):
                 
         if self.RngOpt.get() == 'LOCCLF':
             self.Btn_ImportCleft.config(state='normal')
-            self.Btn_DeleteCleft.config(state='normal')        
-            self.Btn_ClearCleft.config(state='normal')        
+            self.Btn_DeleteCleft.config(state='normal')
+            self.Btn_DeleteOthersCleft.config(state='normal')
+            self.Btn_ClearCleft.config(state='normal')
             self.OptMenuCleft.config(state='normal')
 
             self.Btn_EditSphere.config(state='disabled')
@@ -373,6 +378,7 @@ class Config1(Tabs.Tab):
         elif self.RngOpt.get() == 'LOCCEN':
             self.Btn_ImportCleft.config(state='disabled')
             self.Btn_DeleteCleft.config(state='disabled')
+            self.Btn_DeleteOthersCleft.config(state='disabled')
             self.Btn_ClearCleft.config(state='disabled')
             self.OptMenuCleft.config(state='disabled')
 
@@ -387,6 +393,7 @@ class Config1(Tabs.Tab):
         else:
             self.Btn_ImportCleft.config(state='disabled')
             self.Btn_DeleteCleft.config(state='disabled')        
+            self.Btn_DeleteOthersCleft.config(state='disabled')
             self.Btn_ClearCleft.config(state='disabled')        
             self.OptMenuCleft.config(state='disabled')
                     
@@ -713,6 +720,18 @@ class Config1(Tabs.Tab):
 
         if self.defOptCleft.get() != '':
             self.BindingSite.Remove_CleftName(self.defOptCleft.get())
+
+            self.Display_BindingSite()
+            self.Update_Clefts_DDL()
+
+    ''' ==================================================================================
+    FUNCTION Btn_DeleteOthersCleft_Clicked: Deletes all clefts except the selected one
+    ==================================================================================  '''   
+    def Btn_DeleteOthersCleft_Clicked(self):
+
+        if self.defOptCleft.get() != '':
+        
+            self.BindingSite.listClefts = [ Cleft for Cleft in self.BindingSite.listClefts if Cleft.CleftName == self.defOptCleft.get() ]
 
             self.Display_BindingSite()
             self.Update_Clefts_DDL()

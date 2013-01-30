@@ -140,6 +140,8 @@ class flexbond(Wizard):
         except:
             pass
       
+        cmd.refresh()
+        
         if self.ErrorCode > 0:
             self.FlexAID.WizardError = True
         
@@ -162,6 +164,7 @@ class flexbond(Wizard):
             cmd.show('spheres', self.LigDisplay)
             cmd.alter(self.LigDisplay,'vdw=0.25')
             cmd.rebuild()
+            cmd.refresh()
         
             util.cbag(self.LigDisplay)
             cmd.translate(self.Translation,self.LigDisplay)
@@ -269,6 +272,7 @@ class flexbond(Wizard):
                     #print PossFlexBonds
                     
             cmd.load_cgo(PossFlexBonds, self.PossFlexDisplay, state=self.State)   
+            cmd.refresh()
             cmd.set_view(View)
 
         except:

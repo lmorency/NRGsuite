@@ -372,6 +372,7 @@ class displayFlexAID:
     def Btn_Save_Session(self):
 
         if self.Run is None and not self.ProcessRunning:
+        
             if self.ActiveWizard is None:
                 
                 SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDSessionProject_Dir,

@@ -83,6 +83,7 @@ class UpdateScreen():
         try:
             # Copy the initial protein (Frame 1) into the working state
             cmd.create(self.ProteinObj, self.ProtName, 1, self.State)
+            cmd.refresh()
 
             # Display the last frame
             cmd.frame(self.State)
@@ -183,6 +184,7 @@ class UpdateScreen():
                 cmd.show("sticks", self.selSideChains.replace(self.ProteinObj,SolutionObj))
 
             cmd.delete(self.LigandObj)                        
+            cmd.refresh()
 
         except:
             self.CriticalError("  ERROR: while editing view")

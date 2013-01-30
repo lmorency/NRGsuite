@@ -92,6 +92,8 @@ class Sphere(Wizard):
         except:
             pass
 
+        cmd.refresh()
+
         # Catch error in App
         if self.ErrorCode > 0:
             self.App.WizardError = True
@@ -124,6 +126,7 @@ class Sphere(Wizard):
             cmd.show('spheres', self.SphereDisplay)
         
             cmd.rebuild()
+            cmd.refresh()
  
         except:
             self.ErrorCode = 1
@@ -140,6 +143,7 @@ class Sphere(Wizard):
         try:
             cmd.alter(self.SphereDisplay,'vdw=' + str(self.SphereView.Radius))
             cmd.rebuild()
+            cmd.refresh()
         except:
             self.App.DisplayMessage("  ERROR: Could not resize the Sphere", 1)
             self.App.DisplayMessage("         The wizard will abort prematurely", 1)
