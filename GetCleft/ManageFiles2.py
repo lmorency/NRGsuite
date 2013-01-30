@@ -49,19 +49,6 @@ class Manage:
                 os.remove(CleftFile)
             except:
                 pass
-
-    """
-    # Rename the pdb files to nrgclf format
-    def rename_Temp(self):
-
-        for CleftFile in glob.glob(os.path.join(self.top.GetCleftTempProject_Dir,'*_sph_*')):
-            Filename = os.path.splitext(CleftFile)[0] + '.nrgclf'
-
-            try:
-                shutil.move(CleftFile,Filename)
-            except:
-                pass
-    """
     
     # Store the temporary clefts
     def store_Temp(self, Target):
@@ -111,6 +98,10 @@ class Manage:
         else:
             self.top.DisplayMessage("  No cleft object file(s) were copied", 0)
 
+        self.top.CopySession = True
+        
+        return
+        
 
     # Copies the temporary Partition file
     def copy_TempPartition(self, PartitionFile, OutputFile):

@@ -140,6 +140,7 @@ class displayGetCleft:
 
         self.ProcessRunning = False
         self.Run = None
+        self.CopySession = True
 
         self.Frame_Main()
 
@@ -168,12 +169,10 @@ class displayGetCleft:
         
         loadmenu = Menu(menubar, tearoff=0)
         loadmenu.add_command(label="Load Clefts", command=self.Default.Btn_Load_Clefts)
-        #loadmenu.add_command(label="Load Binding-site", command=self.Default.Btn_Load_BindingSite)
         menubar.add_cascade(label="Load", menu=loadmenu)
 
         savemenu = Menu(menubar, tearoff=0)        
         savemenu.add_command(label="Save Clefts", command=self.Default.Btn_Save_Clefts)
-        #savemenu.add_command(label="Save as Binding-site", command=self.Default.Btn_Save_BindingSite)
         menubar.add_cascade(label="Save", menu=savemenu)
         
         self.top.config(menu=menubar)
@@ -231,7 +230,6 @@ class displayGetCleft:
         Btn_Restore.pack(side=TOP, fill=X)
 
         Btn_Quit = Button(fBottomRight, text='Close', command=self.Btn_Quit_Clicked, font=self.font_Text)
-
         Btn_Quit.pack(side=BOTTOM, fill=X)
 
         fBottomLeft = Frame(fBottom)
@@ -316,12 +314,6 @@ class displayGetCleft:
         if not os.path.isdir(self.GetCleftTempProject_Dir):
             os.makedirs(self.GetCleftTempProject_Dir)
             
-        #if not os.path.isdir(self.GetCleftTempCleftsProject_Dir):
-        #    os.makedirs(self.GetCleftTempCleftsProject_Dir)
-            
-        #if not os.path.isdir(self.GetCleftTempAtomsProject_Dir):
-        #    os.makedirs(self.GetCleftTempAtomsProject_Dir)
-
     
     ''' ==================================================================================
     FUNCTION DisplayMessage: Display the message  
@@ -346,6 +338,11 @@ class displayGetCleft:
     ==================================================================================  '''
     def Btn_Quit_Clicked(self):
         
+        if not self.CopySession:
+            if tkMessageBox.askquestion("Question", message="One or more cleft(s) are unsaved. Would you like to save them before leaving?",
+                                        icon='warning') == 'yes':
+                self.Default.Btn_Save_Clefts()
+            
         #Delete the .run file
         RunPath = os.path.join(self.AlreadyRunning_Dir,'.grun')
         if os.path.isfile(RunPath):

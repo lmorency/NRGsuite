@@ -63,8 +63,6 @@ class RunThread(threading.Thread):
         self.GetCleft = self.top.top
 
         self.cmdline = cmdline
-
-        self.StateList = list()
         self.top.GetCleftRunning(True)
 
         # Start the thread
@@ -82,9 +80,7 @@ class RunThread(threading.Thread):
             self.GetCleft.Run = Popen(self.cmdline, shell=True, stderr=PIPE)
         self.GetCleft.Run.wait()
 
-        
         if self.GetCleft.Run.returncode != 0:
-
             self.top.DisplayMessage("  ERROR: An error occured while executing GetCleft:", 1)
             self.top.DisplayMessage(self.GetCleft.Run.stderr.read(), 1)
             
@@ -110,6 +106,8 @@ class RunThread(threading.Thread):
 
             self.top.Display_Temp()
             self.GetCleft.Go_Step2()
+            self.GetCleft.CopySession = False
+
         else:
             self.top.DisplayMessage("  No clefts found for object/selection '" +
                                     self.Selection + "'", 0)
@@ -389,8 +387,8 @@ class Default(Tabs.Tab):
             # Trigger lost_focus event for validation
             self.top.fMiddle.focus_set()
             self.top.fMiddle.update_idletasks()
-
-            rv = self.top.Validate_Entries(self.Validator)
+            
+            rv = self.Validate_Entries(self.Validator)
             if rv > 0:
                 self.DisplayMessage("  Cannot run GetCleft: Not all fields are validated", 2)
                 return
@@ -402,7 +400,7 @@ class Default(Tabs.Tab):
                     if cmd.count_atoms(self.defaultOption.get()) == 0:
                         self.DisplayMessage("  ERROR: No atoms found for object/selection '" + self.defaultOption.get() + "'", 2)
                         return
-
+                    
                     cmd.save(TmpFile, self.defaultOption.get())
 
             except:
@@ -547,13 +545,10 @@ class Default(Tabs.Tab):
     def GetCleftRunning(self, boolRun):
         
         if boolRun:
-            self.StateList = []
-            General.saveState(self.fDefault, self.StateList)
-            General.setState(self.fDefault)
-
+            self.Disable_Frame()
         else:
-            General.backState(self.fDefault, self.StateList)
-
+            self.Enable_Frame()
+    
     ''' ==================================================================================
     FUNCTION DisplayColorChart: Display the color chart in the GetCleft application 
     ================================================================================== '''   
@@ -653,6 +648,8 @@ class Default(Tabs.Tab):
                 
                 self.Display_Temp()
                 self.top.Go_Step2()
+                
+                self.top.CopySession = True
 
     ''' ==================================================================================
     FUNCTION Btn_Save_Clefts: Asks for user to save clefts

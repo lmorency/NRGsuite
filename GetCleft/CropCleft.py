@@ -474,6 +474,8 @@ class CropCleft(Tabs.Tab):
         Cleft.Set_CleftMD5()
                 
         self.top.Default.TempBindingSite.Add_Cleft(Cleft)
+        self.top.CopySession = False
+
         # Put the partition cleft over its parent
         General_cmd.Oscillate(self.Cleft.CleftName, 0.0)
         
