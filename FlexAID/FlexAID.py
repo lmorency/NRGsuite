@@ -390,7 +390,6 @@ class displayFlexAID:
                         for Tab in self.listTabs:
                             try:
                                 pickle.dump(Tab.Vars, out)
-                                print Tab.dictFlexBonds
                             except:
                                 pass
                         out.close()

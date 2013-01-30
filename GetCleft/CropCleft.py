@@ -514,8 +514,8 @@ class CropCleft(Tabs.Tab):
         
         self.OptCleftStep1['menu'].delete(0, 'end')
         
-        for Cleft in sorted(iter(self.top.Default.TempBindingSite.listClefts)):
-            self.OptCleftStep1['menu'].add_command(label=Cleft.CleftName, command=lambda temp = Cleft.CleftName: self.OptCleftStep1.setvar(self.OptCleftStep1.cget("textvariable"), value = temp))
+        for CleftName in self.top.Default.TempBindingSite.Get_SortedCleftNames():
+            self.OptCleftStep1['menu'].add_command(label=CleftName, command=lambda temp = CleftName: self.OptCleftStep1.setvar(self.OptCleftStep1.cget("textvariable"), value = temp))
 
     ''' ==========================================================
     update_Spheres: Updates the Drop-Down-List of Spheres
@@ -525,7 +525,7 @@ class CropCleft(Tabs.Tab):
         self.OptCleftStep2['menu'].delete(0, 'end')
 
         self.Step2Selection.set('')
-        for key in sorted(iter(self.dictSpheres.keys())):
+        for key in sorted(self.dictSpheres.keys(), key=str.lower):
             self.OptCleftStep2['menu'].add_command(label=key, command=lambda temp = key: self.OptCleftStep2.setvar(self.OptCleftStep2.cget("textvariable"), value = temp))
             self.Step2Selection.set(key)
         
@@ -699,7 +699,7 @@ class CropCleft(Tabs.Tab):
                     
                 if listNoAtom.count(index) == 0:
                     
-                    for sph in sorted(iter(self.dictSpheres)):
+                    for sph in sorted(self.dictSpheres, key=str.lower):
                         
                         sqrrad  = self.dictSpheres[sph].Radius ** 2
                         sqrdist = Geometry.sqrdistance( [ coordX, coordY, coordZ ], self.dictSpheres[sph].Center )

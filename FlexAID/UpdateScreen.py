@@ -243,11 +243,10 @@ class UpdateScreen():
     def UpdateLigandFlexibility(self):
 
         # Flexible bond(s) selected?
-        # LOOK for ALL the EXTRA column (1 par Flexbond SELECTED)
         try:
             if self.top.FlexStatus != '':
 
-                for k in sorted(iter(self.dictFlexBonds)):
+                for k in sorted(self.dictFlexBonds.keys()):
 
                     # k: Represent the FLEDIH number 
                     # Which is the key of the dictionary

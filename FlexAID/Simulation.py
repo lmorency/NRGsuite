@@ -275,17 +275,6 @@ class Parse(threading.Thread):
                                 Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
                                                                     self.Translation, self.Rotation )
 
-                                    
-                                #Update.join()
-
-                                #while(self.Updating):
-                                    #print "is already updating..."
-                                #    time.sleep(INTERVAL)
-                                
-                                    
-                                #    while(self.Updating):
-                                #        time.sleep(INTERVAL)
-
                                 if (self.TOP+1) == self.NBLineGEN:
                                     self.State = self.CurrentState
 

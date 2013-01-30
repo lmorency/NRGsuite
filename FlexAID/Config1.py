@@ -455,7 +455,7 @@ class Config1(Tabs.Tab):
         self.optMenuWidgetRES["menu"].delete(0, END)
 
         Residue = ''
-        for res in sorted(self.TargetFlex.listSideChain):
+        for res in sorted(self.TargetFlex.listSideChain, key=str.lower):
             self.optMenuWidgetRES["menu"].add_command(label=res, command=lambda temp = res: self.optMenuWidgetRES.setvar(self.optMenuWidgetRES.cget("textvariable"), value = temp))
             Residue = res
 

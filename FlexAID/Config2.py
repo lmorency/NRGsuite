@@ -197,7 +197,7 @@ class Config2(Tabs.Tab):
         optCons["menu"].delete(0, END)
 
         Cons = ''
-        for key in sorted(dictCons):
+        for key in sorted(dictCons): # odd sorting !
             optCons["menu"].add_command(label=key, command=lambda temp = key: optCons.setvar(optCons.cget("textvariable"), value = temp))
             Cons = key
 

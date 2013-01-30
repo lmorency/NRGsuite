@@ -281,9 +281,9 @@ class EstimateVolume(Tabs.Tab):
 
         self.Table.Clear()
         
-        for Cleft in sorted(iter(self.top.Default.TempBindingSite.listClefts)):
+        for CleftName in self.top.Default.TempBindingSite.Get_SortedCleftNames():
             
-            self.Table.Add( [ Cleft.CleftName, 'False', Cleft.Volume ],
+            self.Table.Add( [ CleftName, 'False', self.top.Default.TempBindingSite.Get_CleftName(CleftName).Volume ],
                             [ None, None, None ] )
 
     ''' ==================================================================================

@@ -74,7 +74,7 @@ class BindingSite:
         for Cleft in self.listClefts:
             CleftNames.append(Cleft.CleftName)
 
-        return sorted(CleftNames)
+        return sorted(CleftNames, key=str.lower)
 
     ''' ==================================================================================
     FUNCTION Remove_Cleft: Remove a cleft only if it exists in the list
