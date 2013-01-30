@@ -281,6 +281,9 @@ class Parse(threading.Thread):
                                     # Update energy/fitness table
                                     self.top.update_DataList()
 
+                                    self.top.Refresh_LigDisplay()
+                                    self.top.Refresh_CartoonDisplay()
+
                         continue
 
 
@@ -541,13 +544,6 @@ class Parse(threading.Thread):
                 RecAtom[noLine] = [int(line[22:26]), int(line[27:31]), int(line[32:36])]
                 
         return RecAtom
-
-
-    def printDictDisAngDih(self):
-        
-        print("******************************************")
-        for k, v in self.DisAngDih.items():
-            print("ATOM: " + str(k) + "  " + str(self.DisAngDih[k][0]) + " " + str(self.DisAngDih[k][1]) + " " + str(self.DisAngDih[k][2]))
 
     '''
     @summary: SUBROUTINE dictRecAtom: Create a dictionary containing the neighbors of

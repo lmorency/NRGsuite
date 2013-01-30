@@ -499,7 +499,7 @@ class displayFlexAID:
                     elif rv == 2:
                         self.ActiveFrame.Validator_Fail()
                     return
-
+                
                 if not self.ActiveFrame.Before_Kill_Frame() or not self.ActiveFrame.Kill_Frame():
                     self.DisplayMessage("  Cannot switch tab: Not all fields are validated", 2)
                     return

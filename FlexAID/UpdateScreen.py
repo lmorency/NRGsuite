@@ -272,12 +272,12 @@ class UpdateScreen():
                             # Example: [1 ,2 ,3] will give [1], [1, 2], [2, 3]
 
                             # SET the 1st ATOM Dihedral Angle...
-                            self.top.DisAngDih[int(self.dictFlexBonds[k][3])][2] = ColValue                                               
+                            self.top.DisAngDih[int(self.dictFlexBonds[k][3])][2] = ColValue
 
-                            for flexA in range(1, self.dictFlexBonds[k][2]):                 
+                            for flexA in range(1, self.dictFlexBonds[k][2]):
 
                                 ATflex_A = self.dictFlexBonds[k][flexA + 2]
-                                ATflex_B = self.dictFlexBonds[k][flexA + 3]                                                                 
+                                ATflex_B = self.dictFlexBonds[k][flexA + 3]
 
                                 #print("*****************************************")
                                 ATmerge = ATflex_A + ATflex_B
@@ -288,18 +288,18 @@ class UpdateScreen():
                                 # Be sure the key exist before calling the value
                                 if self.top.FixedAngle.has_key(ATmerge):
 
-                                    #print("1st Atom: " + str(ATflex_A))  
+                                    #print("1st Atom: " + str(ATflex_A))
                                     #print("2nd Atom: " + str(ATflex_B))
-                                    #print("ShiftVal: " + str(ATmerge))                                                        
+                                    #print("ShiftVal: " + str(ATmerge))
 
                                     # Get the constant angle IN SHIFTVAL
-                                    ConstAngle = float(self.top.FixedAngle[ATmerge])                                                                     
+                                    ConstAngle = float(self.top.FixedAngle[ATmerge])
 
                                     # ADD the constant Angle WITH the Column value in the LOGFILE
                                     ColValue = ColValue + ConstAngle
 
                                     # SET the 2nd ATOM Dihedral Angle...
-                                    self.top.DisAngDih[int(ATflex_B)][2] = ColValue                                                                   
+                                    self.top.DisAngDih[int(ATflex_B)][2] = ColValue
         except:
             self.CriticalError("  ERROR: while updating ligand flexibility")
             return 0

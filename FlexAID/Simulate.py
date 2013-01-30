@@ -47,20 +47,16 @@ class Simulate(Tabs.Tab):
         self.SimStatus = StringVar()
         self.ProgBarText = StringVar()
         self.SimDefDisplay = StringVar()
-        self.SimMeshDisplay = IntVar()
-        self.SimLinesDisplay = IntVar()
         self.SimCartoonDisplay = IntVar()
         self.dictSimData = dict()
 
     def Init_Vars(self):
 
-        self.Manage = None
+        self.Manage = ManageFiles.Manage(self)
         self.ProcessError = False
 
         self.ProgBarText.set('... / ...')
         self.SimDefDisplay.set('sticks')
-        self.SimMeshDisplay.set(0)
-        self.SimLinesDisplay.set(1)
         self.SimCartoonDisplay.set(0)
 
         self.BarWidth = 0
@@ -168,24 +164,22 @@ class Simulate(Tabs.Tab):
         fSim_DisplayLine3 = Frame(fSim_Display)
         fSim_DisplayLine3.pack(side=TOP, fill=X)
         
-        Label(fSim_DisplayLine1, text='PyMOL display options', font=self.top.font_Title).pack(side=LEFT)
+        Label(fSim_DisplayLine1, text='Display options of TOP solutions', font=self.top.font_Title).pack(side=LEFT)
         
         Label(fSim_DisplayLine2, text='Ligand:', font=self.top.font_Text).pack(side=LEFT)
         Radiobutton(fSim_DisplayLine2, text='Sticks', variable=self.SimDefDisplay, value='sticks', command=self.Click_RadioSIM, font=self.top.font_Text).pack(side=RIGHT)
         Radiobutton(fSim_DisplayLine2, text='Spheres', variable=self.SimDefDisplay, value='spheres', command=self.Click_RadioSIM, font=self.top.font_Text).pack(side=RIGHT)
                         
         Label(fSim_DisplayLine3, text='Target:', font=self.top.font_Text).pack(side=LEFT)
-        Checkbutton(fSim_DisplayLine3, text='Mesh', variable=self.SimMeshDisplay, command=self.Check_MeshSIM,font=self.top.font_Text).pack(side=RIGHT)
+        #Checkbutton(fSim_DisplayLine3, text='Mesh', variable=self.SimMeshDisplay, command=self.Check_MeshSIM,font=self.top.font_Text).pack(side=RIGHT)
         Checkbutton(fSim_DisplayLine3, text=' Cartoon', variable=self.SimCartoonDisplay, command=self.Check_CartoonSIM, font=self.top.font_Text).pack(side=RIGHT)
                 
         return self.fSimulate
-                              
+    
     ''' =============================================================================== 
     FUNCTION Btn_StartSim: Start the simulation (If requirements are meet...)   
     ===============================================================================  '''     
     def Btn_StartSim(self):
-
-        self.Manage = ManageFiles.Manage(self)
 
         if not self.Manage.Clean():
             self.DisplayMessage('   Fatal error: Could not clean files before the simulation',1)
@@ -229,7 +223,7 @@ class Simulate(Tabs.Tab):
         commandline =   '"%s" "%s" "%s" "%s"' % (   self.top.FlexAIDExecutable,
                                                     self.Manage.CONFIG,
                                                     self.Manage.ga_inp,
-                                                    self.Manage.FlexAIDRunSimulationProject_Dir )
+                                                    os.path.join(self.Manage.FlexAIDRunSimulationProject_Dir,'RESULT') )
         
         # START SIMULATION
         self.DisplayMessage('   Starting executable thread.', 2)
@@ -239,9 +233,29 @@ class Simulate(Tabs.Tab):
         self.DisplayMessage('   Starting parsing thread.', 2)
         Parse = Simulation.Parse(self)
 
-        self.DisplayMessage("For better performance you can disable object BINDINGSITE_AREA__", 0)
+        self.DisplayMessage("  *** For better performance you can disable object BINDINGSITE_AREA__", 0)
     
-    
+    ''' ==================================================================================
+    FUNCTION Trace: Adds a callback function to StringVars
+    ==================================================================================  '''  
+    def Trace(self):
+
+        try:
+            self.SimDefDisplayTrace = self.SimDefDisplay.trace('w',self.Click_RadioSIM)
+            self.SimCartoonDisplayTrace = self.SimCartoonDisplay.trace('w',Check_CartoonSIM)
+        except:
+            pass    
+
+    ''' ==================================================================================
+    FUNCTION Del_Trace: Deletes observer callbacks
+    ==================================================================================  '''  
+    def Del_Trace(self):
+
+        try:
+            self.SimDefDisplay.trace_vdelete('w',self.SimDefDisplayTrace)
+            self.SimCartoonDisplay.trace_vdelete('w',self.SimCartoonDisplayTrace)
+        except:
+            pass
 
     ''' =============================================================================== 
     FUNCTION IdleSim: Simulation was not started yet
@@ -436,82 +450,55 @@ class Simulate(Tabs.Tab):
     FUNCTION Click_RadioSIM: Change the way the ligand is displayed in Pymol
                              during a Simulation
     ==================================================================================  '''               
-    def Click_RadioSIM(self):
+    def Click_RadioSIM(self, *args):
         
+        self.Refresh_LigDisplay()
+
+    ''' ==================================================================================
+    FUNCTION Refresh_LigDisplay: Refreshes the visual appearance of the ligand in TOP_* objects
+    ==================================================================================  '''               
+    def Refresh_LigDisplay(self):
+    
         if self.SimDefDisplay.get() == 'spheres':
             try:
                 cmd.show('spheres', 'TOP_*__ & resn LIG')
                 cmd.hide('sticks', 'TOP_*__ & resn LIG')
             except:
-                self.DisplayMessage("Could not find object to modify", 1)
+                self.DisplayMessage("  ERROR: Could not find object to modify", 1)
         
         elif self.SimDefDisplay.get() == 'sticks':
             try:
                 cmd.hide('spheres', 'TOP_*__ & resn LIG')
                 cmd.show('sticks', 'TOP_*__ & resn LIG')
             except:
-                self.DisplayMessage("Could not find object to modify", 1)
-        
+                self.DisplayMessage("  ERROR: Could not find object to modify", 1)
 
-    ''' ==================================================================================
-    FUNCTION Check_MeshSIM: Change the protein display adding or removing the mesh.
-    ==================================================================================  '''
-    def Check_MeshSIM(self):
-
-        # Display the MESH
-        if self.SimMeshDisplay.get():
-            try:
-                cmd.show('mesh', 'TOP_*__ & ! resn LIG')
-                #cmd.set('mesh_color', 'gray30')
-            except:
-                self.DisplayMessage("Could not find object to modify", 1)
-            
-        else:   
-            # Remove the MESH
-            try:
-                cmd.hide('mesh', 'TOP_*__ & ! resn LIG')
-            except:
-                self.DisplayMessage("Could not find object to modify", 1)
-       
-    ''' ==================================================================================
-    FUNCTION Check_LinesSIM: Change the protein display adding or removing the lines
-    ==================================================================================  '''
-    def Check_LinesSIM(self):
-
-        # Display the Lines
-        if self.SimLinesDisplay.get():
-            try:
-                cmd.show('lines', 'TOP_*__ & ! resn LIG')
-            except:
-                self.DisplayMessage("Could not find object to modify", 1)
-            
-        else:   
-            # Remove the Lines
-            try:
-                cmd.hide('lines', 'TOP_*__ & ! resn LIG')
-            except:
-                self.DisplayMessage("Could not find object to modify", 1)
-         
     ''' ==================================================================================
     FUNCTION Check_CartoonSIM: Change the protein display adding or removing the cartoon
     ==================================================================================  '''
-    def Check_CartoonSIM(self):
+    def Check_CartoonSIM(self, *args):
+
+        self.Refresh_CartoonDisplay()
+        
+    ''' ==================================================================================
+    FUNCTION Refresh_CartoonDisplay: Refreshes the visual appearance of the protein
+    ==================================================================================  '''               
+    def Refresh_CartoonDisplay(self):
 
         # Display the Cartoon
         if self.SimCartoonDisplay.get():
             try:
                 cmd.show('cartoon', 'TOP_*__ & ! resn LIG')
             except:
-                self.DisplayMessage("Could not find object to modify", 1)
-            
+                self.DisplayMessage("  ERROR: Could not find object to modify", 1)
         else:   
             # Remove the Cartoon
             try:
                 cmd.hide('cartoon', 'TOP_*__ & ! resn LIG')
             except:
-                self.DisplayMessage("Could not find object to modify", 1)
+                self.DisplayMessage("  ERROR: Could not find object to modify", 1)
                 
-    
+
 
     '''
     @summary: SUBROUTINE progressBarHandler: Update the progression bar in the interface                  
