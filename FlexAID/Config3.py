@@ -30,32 +30,39 @@ if __debug__:
 
 class Config3Vars(Vars.Vars):
 
-    pass
+    CompFct = StringVar()
+    UseDEE = IntVar()
+    IncludeHET = IntVar()
+    ExcludeHOH = IntVar()
+    DEE_Clash_Threshold = StringVar()
+    Permeability = StringVar()
+    SolventType = StringVar()
+    SolventTypeIndex = IntVar()        
+    SolventTerm = StringVar()
+    DeltaAngle = StringVar()
+    DeltaDihedral = StringVar()
+    DeltaDihedralFlex = StringVar()
+
 
 class Config3(Tabs.Tab):
 
     def Def_Vars(self):
 
-        self.CompFct = StringVar()
-
-        self.UseDEE = IntVar()
-        self.IncludeHET = IntVar()
-        self.ExcludeHOH = IntVar()
-
-        self.DEE_Clash_Threshold = StringVar()
-        self.Permeability = StringVar()
-
-        self.SolventType = StringVar()
-        self.SolventTypeIndex = IntVar()        
-        self.SolventTerm = StringVar()
-
-        self.DeltaAngle = StringVar()
-        self.DeltaDihedral = StringVar()
-        self.DeltaDihedralFlex = StringVar()
+        self.CompFct = self.Vars.CompFct
+        self.UseDEE = self.Vars.UseDEE
+        self.IncludeHET = self.Vars.IncludeHET
+        self.ExcludeHOH = self.Vars.ExcludeHOH
+        self.DEE_Clash_Threshold = self.Vars.DEE_Clash_Threshold
+        self.Permeability = self.Vars.Permeability
+        self.SolventType = self.Vars.SolventType
+        self.SolventTypeIndex = self.Vars.SolventTypeIndex
+        self.SolventTerm = self.Vars.SolventTerm
+        self.DeltaAngle = self.Vars.DeltaAngle
+        self.DeltaDihedral = self.Vars.DeltaDihedral
+        self.DeltaDihedralFlex = self.Vars.DeltaDihedralFlex
 
         self.ValidDEE = list()
         self.ValidSolventTerm = list()
-
         self.ValidDeltaAngle = list()
         self.ValidDeltaDihedral = list()
         self.ValidDeltaDihedralFlex = list()
@@ -66,7 +73,7 @@ class Config3(Tabs.Tab):
         self.CompFct.set('VCT')
 
         self.UseDEE.set(0)
-        self.IncludeHET.set(1)
+        self.IncludeHET.set(0)
         self.ExcludeHOH.set(1)
 
         self.DEE_Clash_Threshold.set('0.50')

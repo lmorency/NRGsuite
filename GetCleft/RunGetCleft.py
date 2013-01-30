@@ -16,5 +16,5 @@ root = Tk()
 
 import GetCleft
 
-GetCleft = GetCleft.displayGetCleft(root, None, Project_Dir, Install_Dir, AlreadyRunning_Dir, 'Mac', 0)
+GetCleft = GetCleft.displayGetCleft(root, None, Project_Dir, Install_Dir, AlreadyRunning_Dir, 'MAC', 0)
 root.mainloop()

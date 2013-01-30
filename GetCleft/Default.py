@@ -33,6 +33,7 @@ from subprocess import Popen, PIPE
 from time import time
 
 import os
+import Tabs
 import tkFileDialog
 import General
 import CleftObj
@@ -118,33 +119,7 @@ class RunThread(threading.Thread):
 #=========================================================================================
 '''                        ---  GETCLEFT's DEFAULT FRAME  ---                          '''
 #=========================================================================================     
-class Default:
-
-    def __init__(self,top, PyMOL):
-
-        #print "New instance of Default"
-
-        self.PyMOL = PyMOL
-
-        self.top = top
-        self.FrameName = 'Default'
-        self.Tab = self.top.Btn_Config
-
-        self.font_Text = self.top.font_Text
-        self.font_Title = self.top.font_Title
-
-        self.Color_Black = self.top.Color_Black
-        self.Color_Blue = self.top.Color_Blue
-        self.Color_White = self.top.Color_White
-
-        self.DisplayMessage = self.top.DisplayMessage
-
-        self.Def_Vars()
-        self.Init_Vars()
-        
-        self.Frame()
-        self.Trace()
-
+class Default(Tabs.Tab):
 
     def Def_Vars(self):
 
@@ -167,7 +142,6 @@ class Default:
 
         self.ValidNbCleft = list()
         self.ValidOutput = list()
-        self.Validator = list()
 
 
     def Init_Vars(self):
@@ -194,45 +168,30 @@ class Default:
         
     
     ''' ==================================================================================
-    FUNCTION Kill_Frame: Kills the main frame window
-    =================================================================================  '''    
-    def Kill_Frame(self):
-                
-        self.fDefault.pack_forget()
-        #self.fDefault.destroy()
-
-        return True
-
-    ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
     ==================================================================================  '''  
     def Trace(self):
 
-        #self.intChkAtomsTrace = self.intChkAtoms.trace('w',self.Check_Atoms)
-        #self.intChkCleftsTrace = self.intChkClefts.trace('w',self.Check_Spheres)
-        #self.RadioCLFTrace = self.RadioCLF.trace('w',self.Toggle_CleftView)
-
-        self.defaultOptionTrace = self.defaultOption.trace('w',self.Toggle_defaultOption)
+        try:
+            self.defaultOptionTrace = self.defaultOption.trace('w',self.Toggle_defaultOption)
+        except:
+            pass
 
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     ==================================================================================  '''  
     def Del_Trace(self):
 
-        #self.intChkAtoms.trace_vdelete('w',self.intChkAtomsTrace)
-        #self.intChkClefts.trace_vdelete('w',self.intChkCleftsTrace)
-        #self.RadioCLF.trace_vdelete('w',self.RadioCLFTrace)
-
-        self.defaultOption.trace_vdelete('w',self.defaultOptionTrace)
+        try:
+            self.defaultOption.trace_vdelete('w',self.defaultOptionTrace)
+        except:
+            pass
 
     ''' ==================================================================================
-    FUNCTION Show: Displays the frame onto the middle main frame
+    FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
-    def Show(self):
-        
-        self.fDefault.pack(fill=BOTH, expand=True)
-        self.LoadMessage()
-                
+    def After_Show(self):
+                        
         self.Btn_RefreshOptMenu_Clicked()
         
         if self.LastdefaultOption != '' and General_cmd.object_Exists(self.LastdefaultOption):
@@ -316,11 +275,11 @@ class Default:
         Label(fBasicLine2, text='Min:', font=self.top.font_Text).pack(side=RIGHT, padx=2)
 
         args_list = [EntryMaxRadius, self.MaxRadius, EntryMinRadius, 10.00, 2, self.ValidMaxRadius, 'Maximum radius', 'float']
-        EntryMaxRadius.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        EntryMaxRadius.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidMaxRadius[3] = EntryMaxRadius
 
         args_list = [EntryMinRadius, self.MinRadius, 0.25, EntryMaxRadius, 2, self.ValidMinRadius, 'Minimum radius', 'float']
-        EntryMinRadius.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        EntryMinRadius.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidMinRadius[3] = EntryMinRadius
         
         Label(fBasicLine3, text='Residue in contact (e.g. ALA13A):', font=self.top.font_Text).pack(side=LEFT)
@@ -331,14 +290,14 @@ class Default:
         EntryNbCleft = Entry(fBasicLine4, width=8, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
         EntryNbCleft.pack(side=RIGHT)
         args_list = [EntryNbCleft, self.NbCleft, 1, 100, -1, self.ValidNbCleft, 'Number of clefts', 'int']
-        EntryNbCleft.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        EntryNbCleft.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidNbCleft[3] = EntryNbCleft
 
         Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
         EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
         EntryOutput.pack(side=RIGHT)
         args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, self.ValidOutput, 'Output filename', 'str']
-        EntryOutput.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        EntryOutput.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidOutput[3] = EntryOutput
 
         #Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, width=20, relief=RIDGE, command=self.Btn_AdvancedOptions).pack(side=RIGHT)
@@ -397,6 +356,8 @@ class Default:
         #Radiobutton(fDisplayLine2, text='Surface', variable=self.RadioCLF, value='surface', font=self.top.font_Text).pack(side=LEFT)
         #Checkbutton(fDisplayLine3, text='Clefts', width=20, variable=self.intChkClefts, font=self.top.font_Text, justify=LEFT).pack(side=LEFT)
        
+        return self.fDefault
+        
     ''' ==================================================================================
     FUNCTION Btn_Clear_Clicked: Clear the temp dir of clefts and delete associated clefts 
     ==================================================================================  '''
@@ -576,7 +537,7 @@ class Default:
     ''' ========================================================
                   Welcome message upon frame built
     ========================================================='''
-    def LoadMessage(self):
+    def Load_Message(self):
 
         self.DisplayMessage('', 0)
         self.DisplayMessage('  Opened the default menu... ',0)        

@@ -378,7 +378,9 @@ class Parse(threading.Thread):
                         index = int(m.group(1))
                         
                         strcoor = Line[(Line.find('=')+1):]
-                        self.GridVertex[index] = [float(strcoor[0:8]), float(strcoor[8:16]), float(strcoor[16:24])]
+                        self.GridVertex[index] = [  float(strcoor[0:8].strip()), 
+                                                    float(strcoor[8:16].strip()),
+                                                    float(strcoor[16:24].strip())]
                         continue
                         
                     m = re.match("SIGMA_SHARE", Line)

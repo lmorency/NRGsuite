@@ -279,16 +279,16 @@ class displayFlexAID:
         fBottomRight = Frame(fBottom)
         fBottomRight.pack(fill=Y, side=RIGHT)
 
-        Btn_Default = Button(fBottomRight, text='Default', command=self.Btn_Default_Clicked, font=self.font_Text)
+        Btn_Default = Button(fBottomRight, text='Default', width=15, command=self.Btn_Default_Clicked, font=self.font_Text)
         Btn_Default.pack(side=TOP, fill=X)
 
-        Btn_SaveDefault = Button(fBottomRight, text='Save as default', command=self.Btn_SaveDefault_Clicked, font=self.font_Text)
-        Btn_SaveDefault.pack(side=TOP, fill=X)
+        #Btn_SaveDefault = Button(fBottomRight, text='Save as default', command=self.Btn_SaveDefault_Clicked, font=self.font_Text)
+        #Btn_SaveDefault.pack(side=TOP, fill=X)
 
-        Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=self.font_Text)
-        Btn_Restore.pack(side=TOP, fill=X)
+        #Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=self.font_Text)
+        #Btn_Restore.pack(side=TOP, fill=X)
 
-        Btn_Quit = Button(fBottomRight, text='Close', command=self.Btn_Quit_Clicked, font=self.font_Text)
+        Btn_Quit = Button(fBottomRight, text='Close', width=15, command=self.Btn_Quit_Clicked, font=self.font_Text)
 
         Btn_Quit.pack(side=BOTTOM, fill=X)
 
@@ -341,6 +341,8 @@ class displayFlexAID:
                                                         title='Select the Session to load')
 
                 if len(LoadFile) > 0:
+                    
+                    self.Btn_IOFiles_Clicked()
                     
                     LoadFile = os.path.normpath(LoadFile)
                     
@@ -494,20 +496,20 @@ class displayFlexAID:
                 rv = self.ActiveFrame.Validate_Entries(self.ActiveFrame.Validator)
                 if rv > 0:
                     if rv == 1:
-                        self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
+                        self.DisplayMessage("  Cannot switch tab: Not all fields are validated", 2)
                     elif rv == 2:
                         self.ActiveFrame.Validator_Fail()
                     return
 
                 if not self.ActiveFrame.Before_Kill_Frame() or not self.ActiveFrame.Kill_Frame():
-                    self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
+                    self.DisplayMessage("  Cannot switch tab: Not all fields are validated", 2)
                     return
 
                 self.fMiddle.update_idletasks()
 
                 #self.ActiveFrame.Del_Trace()
                 self.ActiveFrame.Tab.config(bg=self.Color_White)
-                print "Killed Frame " + self.ActiveFrame.FrameName
+                #print "Killed Frame " + self.ActiveFrame.FrameName
 
 
             self.ActiveFrame = Frame

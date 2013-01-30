@@ -149,7 +149,7 @@ class Manage():
         # Save the data to the configuration file
         config_file = open(self.CONFIG, 'w')
 
-        config_file.write('PDBNAM ' + self.IOFile.ProtPath + '\n')
+        config_file.write('PDBNAM ' + self.IOFile.ProtPath.get() + '\n')
         
         config_file.write('INPLIG ' + os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.inp') + '\n')
         config_file.write('METOPT GA\n')
@@ -158,9 +158,6 @@ class Manage():
         config_file.write('COMPLF ' + self.Config3.CompFct.get() + '\n')
         
         rngOpt = self.Config1.RngOpt.get()
-        
-        #if rngOpt == 'GLOBAL':
-        #    config_file.write('RNGOPT GLOBAL\n')
 
         config_file.write('SPACER 0.375\n')
         
@@ -175,59 +172,38 @@ class Manage():
         elif rngOpt == 'LOCCLF':
             self.Config1.Generate_CleftBindingSite()
             line = 'RNGOPT LOCCLF '
-            line += self.Config1.CleftPath + '\n'
+            line += self.Config1.CleftTmpPath + '\n'
             config_file.write(line)        
+
         
         if self.Config1.TargetFlex.Count_SideChain() > 0:
             FlexSCFile = os.path.join(self.FlexAIDRunSimulationProject_Dir,'flexSC.lst')
             self.Create_FlexFile(FlexSCFile)
             config_file.write('FLEXSC ' + FlexSCFile + '\n')
 
-        if len(self.Config2.dictCovConstraints) or len(self.Config2.dictIntConstraints):
+        if len(self.Config2.dictCovConstraints): # or len(self.Config2.dictIntConstraints):
             ConsFile = os.path.join(self.self.FlexAIDRunSimulationProject_Dir,'cons.lst')
             self.Create_ConsFile(ConsFile)
             config_file.write('CONSTR ' + ConsFile + '\n')
 
         if self.Config2.IntTranslation.get():
-            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq)  + ' - -1\n')
+            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - -1\n')
             
         if self.Config2.IntRotation.get():
-            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq)  + ' - 0\n')
+            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n')
         
         # Ligand flexibility
         order = sorted(self.Config2.dictFlexBonds.keys())
         self.Add_FlexBonds(config_file,order)
-        
-        #if self.IOFile.TargetRNA.get():
-        #    config_file.write('NUCLEA\n')
 
         if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
-            #if self.IOFile.TargetRNA.get():
-            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','NUCLEOTIDES8.def') + '\n')
-            #else:
-            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO8.def') + '\n')
-
             config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','scr_bin.dat') + '\n')
 
         elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
-            #if self.IOFile.TargetRNA.get():
-            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','NUCLEOTIDES12.def') + '\n')
-            #else:
-            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO12.def') + '\n')
-
             config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n')
 
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
-            #if self.IOFile.TargetRNA.get():
-            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','NUCLEOTIDES26.def') + '\n')
-            #else:
-            #    config_file.write('DEFTYP ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','AMINO26.def') + '\n')
-
             config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','SYBYL_emat.dat') + '\n')
-
-
-        # radius file
-        #config_file.write('VDWRAD ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK','deps','radii.dat') + '\n')
 
         # permeability of atoms
         Permea = 1.00 - float(self.Config3.Permeability.get())
@@ -389,7 +365,7 @@ class Manage():
 
             # If bond is flexible
             if self.Config2.dictFlexBonds[k][0]:
-                FilePtr.write('OPTIMZ ' + str(self.IOFile.ResSeq) + ' - ' + strk + '\n')
+                FilePtr.write('OPTIMZ ' + str(self.IOFile.ResSeq.get()) + ' - ' + strk + '\n')
                             
                 # If the bond is forced
                 if self.Config2.dictFlexBonds[k][1]:

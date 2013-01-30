@@ -290,13 +290,10 @@ class flexbond(Wizard):
 
             SelFlexBonds = []
 
-            print self.top.dictFlexBonds
             for index in iter(self.top.dictFlexBonds):
 
                 point1 = []
                 point2 = []
-
-                print self.top.dictFlexBonds[index]
                 
                 # if bond is flexible
                 if self.top.dictFlexBonds[index][0]:
@@ -308,9 +305,6 @@ class flexbond(Wizard):
                         if self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0], point1) or \
                            self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1], point2):
                             return 1
-
-                    print "point1", point1
-                    print "point2", point2
                     
                     SelFlexBonds.extend(self.highlight_Selected(point1, point2))
                     

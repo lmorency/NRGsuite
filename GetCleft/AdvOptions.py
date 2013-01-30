@@ -296,7 +296,7 @@ class AdvOptions:
     ''' ========================================================
                   Welcome message upon frame built
     ========================================================='''
-    def LoadMessage(self):
+    def Load_Message(self):
 
         self.DisplayMessage('', 0)
         self.DisplayMessage('  Opened the advanced options menu... ',0)        

@@ -32,6 +32,7 @@ from Tkinter import *
 import os
 import General
 import Geometry
+import Tabs
 import time
 import tkMessageBox
 
@@ -47,23 +48,7 @@ if __debug__:
 #=========================================================================================
 '''                        ---  GETCLEFT's CROPCLEFT FRAME  ---                        '''
 #=========================================================================================     
-class CropCleft:
-
-    def __init__(self, top, PyMOL):
-        
-        self.PyMOL = PyMOL
-
-        self.top = top
-        self.FrameName = 'CropCleft'
-        self.Tab = self.top.Btn_CropCleft
-
-        self.DisplayMessage = self.top.DisplayMessage
-
-        self.Def_Vars()
-        self.Init_Vars()
-
-        self.Frame()        
-        self.Trace()
+class CropCleft(Tabs.Tab):
 
     def Def_Vars(self):
         
@@ -78,8 +63,6 @@ class CropCleft:
         self.dictSpheres = dict()
         self.SphereSize = DoubleVar()
         self.SphereCoord = list()
-
-        self.Validator = list()
 
     def Init_Vars(self):
         
@@ -109,41 +92,34 @@ class CropCleft:
         self.SphereCoord = []
         self.SphereSize.set(0.0)
 
-        self.Validator = []
     
-    ''' ==================================================================================
-    FUNCTION Kill_Frame: Kills the main frame window
-    =================================================================================  '''    
-    def Kill_Frame(self):
-                
-        self.fCrop.pack_forget()
-
-        return True
-
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
     ==================================================================================  '''  
     def Trace(self):
 
-        self.Step1SelectionTrace = self.Step1Selection.trace('w', self.Toggle_Step1)
-        self.Step2SelectionTrace = self.Step2Selection.trace('w', self.Toggle_Step2)
+        try:
+            self.Step1SelectionTrace = self.Step1Selection.trace('w', self.Toggle_Step1)
+            self.Step2SelectionTrace = self.Step2Selection.trace('w', self.Toggle_Step2)
+        except:
+            pass
         
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     ==================================================================================  '''  
     def Del_Trace(self):
 
-        self.Step1Selection.trace_vdelete('w',self.Step1SelectionTrace)
-        self.Step2Selection.trace_vdelete('w',self.Step2SelectionTrace)
+        try:
+            self.Step1Selection.trace_vdelete('w',self.Step1SelectionTrace)
+            self.Step2Selection.trace_vdelete('w',self.Step2SelectionTrace)
+        except:
+            pass
 
     ''' ==================================================================================
-    FUNCTION Show: Displays the frame
+    FUNCTION After_Show: Displays the frame
     ==================================================================================  '''  
-    def Show(self):
+    def After_Show(self):
         
-        self.fCrop.pack(fill=BOTH, expand=True)
-        #self.LoadMessage()
-                
         # Highlight
         self.activate_Step(self.Step)
         self.highlight_Step(self.Step)
@@ -261,6 +237,7 @@ class CropCleft:
         self.Step3bBtnCreate = Button(fCropStep3Line2, disabledforeground = 'black', text='Create', justify=CENTER, font=self.top.font_Text, command=self.Btn_CreatePartition)
         self.Step3bBtnCreate.pack(side=RIGHT, anchor=E)
 
+        return self.fCrop
 
     ''' ==================================================================================
     FUNCTION SphereRunning: Disables/Enables controls related to Sphere Wizard

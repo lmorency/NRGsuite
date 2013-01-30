@@ -140,7 +140,7 @@ class UpdateScreen():
 
 
         except:
-            self.CriticalError("ERROR: while updating data list")
+            self.CriticalError("  ERROR: while updating data list")
             return 0
 
         return 1
@@ -185,7 +185,7 @@ class UpdateScreen():
             cmd.delete(self.LigandObj)                        
 
         except:
-            self.CriticalError("ERROR: while editing view")
+            self.CriticalError("  ERROR: while editing view")
             return 0
 
         return 1
@@ -232,7 +232,7 @@ class UpdateScreen():
 
 
         except IOError:
-            self.CriticalError("ERROR: while writing PDB ligand file.")
+            self.CriticalError("  ERROR: while writing PDB ligand file.")
             return 0
 
         return 1
@@ -302,7 +302,7 @@ class UpdateScreen():
                                     # SET the 2nd ATOM Dihedral Angle...
                                     self.top.DisAngDih[int(ATflex_B)][2] = ColValue                                                                   
         except:
-            self.CriticalError("ERROR: while updating ligand flexibility")
+            self.CriticalError("  ERROR: while updating ligand flexibility")
             return 0
 
         return 1
@@ -325,7 +325,7 @@ class UpdateScreen():
                 pointB = [self.top.OriX[0], self.top.OriX[1], self.top.OriX[2]]
                 pointC = [self.top.Ori[0], self.top.Ori[1], self.top.Ori[2]]
                 pointD = [self.top.OriY[0], self.top.OriY[1], self.top.OriY[2]]
-                
+
                 self.top.DisAngDih[self.top.VarAtoms[0]][0] = Geometry.distance(pointA, pointB)                             
                 self.top.DisAngDih[self.top.VarAtoms[0]][1] = Geometry.angle(pointA, pointB, pointC)
                 self.top.DisAngDih[self.top.VarAtoms[0]][2] = Geometry.dihedralAngle(pointA, pointB, pointC, pointD)
@@ -333,13 +333,14 @@ class UpdateScreen():
                 self.colNo += 11
             
             if self.Rotation:
+                            
                 self.top.DisAngDih[self.top.VarAtoms[1]][1] = float(self.Line[self.colNo:self.colNo+10])
                 self.top.DisAngDih[self.top.VarAtoms[1]][2] = float(self.Line[self.colNo+11:self.colNo+21])
                 self.top.DisAngDih[self.top.VarAtoms[2]][2] = float(self.Line[self.colNo+22:self.colNo+32])
                 self.colNo += 33
 
         except:
-            self.CriticalError("ERROR: while updating ligand anchor point")
+            self.CriticalError("  ERROR: while updating ligand anchor point")
             return 0
 
         return 1
@@ -403,7 +404,7 @@ class UpdateScreen():
 
         except:
 
-            self.CriticalError("ERROR: while updating side-chain conformations")
+            self.CriticalError("  ERROR: while updating side-chain conformations")
     
     '''=========================================================================
       Get_AtomString: Retrives the PyMOL atom selection string
@@ -424,7 +425,7 @@ class UpdateScreen():
     ========================================================================='''
     def CriticalError(self, text):
 
-        self.top.FlexAID.DisplayMessage("CRITICAL ERROR: " + text, 1)
+        self.top.FlexAID.DisplayMessage("  CRITICAL ERROR: " + text, 1)
     
         #Create the .abort file
         abort_file = open(self.top.top.Manage.ABORT, 'w')

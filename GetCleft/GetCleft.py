@@ -144,11 +144,10 @@ class displayGetCleft:
         self.Frame_Main()
 
         # Build class objects of each tab
-        self.Default = Default.Default(self, self.PyMOL)
+        self.Default = Default.Default(self, self.PyMOL, self.Btn_Config, 'Default', None)
         self.Manage = ManageFiles2.Manage(self)
-        #self.AdvOptions = AdvOptions.AdvOptions(self)        
-        self.Crop = CropCleft.CropCleft(self, self.PyMOL)
-        self.Volume = Volume.EstimateVolume(self)
+        self.Crop = CropCleft.CropCleft(self, self.PyMOL, self.Btn_CropCleft, 'Partition', None)
+        self.Volume = Volume.EstimateVolume(self, self.PyMOL, self.Btn_Volume, 'Volume', None)
         
         self.MakeMenuBar()
 
@@ -373,110 +372,6 @@ class displayGetCleft:
         RunFile.close()
 
     ''' ==================================================================================
-    FUNCTION Lost_Focus: Draws a red square in box if field was not validated
-    ==================================================================================  '''    
-    def Lost_Focus(self, event, args):
-
-        self.Validate_Field(args)
-
-        Entry = args[0]
-        Validator = args[5]
-        
-        if not Validator[0]:
-            Entry.config(bg=self.Color_Red)
-
-        return "break"
-
-    ''' ==================================================================================
-    FUNCTION Validate_Field: Validates an Entry Field in the GetCleft interface
-    ==================================================================================  '''    
-    def Validate_Field(self, args):
-
-        Entry = args[0]
-        StringVar = args[1]
-        Min = args[2]
-        Max = args[3]
-        nDec = args[4]
-        Validator = args[5]
-        Label = args[6]
-        Type = args[7]
-
-        rv = -1
-
-        if Type == 'float':
-            # If the min-max value depends on another Widget Entry value
-            if type(Min) != float:
-                try:
-                    Min = float(Min.get())
-                except:
-                    Min = 0.0
-
-            if type(Max) != float:
-                try:
-                    Max = float(Max.get())
-                except:
-                    Max = 1.0
-
-            rv = General.validate_Float(StringVar.get(), Min, Max, nDec)
-
-        elif Type == 'int':
-            # If the min-max value depends on another Widget Entry value
-            if type(Min) != int:
-                try:
-                    Min = int(Min.get())
-                except: 
-                    Min = 1
-
-            if type(Max) != int:
-                try:
-                    Max = int(Max.get())
-                except:
-                    Max = 100
-        
-            rv = General.validate_Integer(StringVar.get(), Min, Max)
-
-        elif Type == 'str':
-            rv = General.validate_String(StringVar.get())
-
-        # Return-value testing
-        if rv == 0:
-            Entry.config(bg=self.Color_White)
-            Validator[0] = True
- 
-        elif rv == 1:
-            self.DisplayMessage("Value has erroneus format for field " + Label, 1)
-            Validator[0] = False
-
-        elif rv == 2:
-            self.DisplayMessage("The number of decimals cannot exceed (" + str(nDec) + ") for field " + Label, 1)
-            Validator[0] = False
-
-        elif rv == 3:
-            self.DisplayMessage("Value must be within the range[" + str(Min) + "," + str(Max) + "] for field " + Label, 1)
-            Validator[0] = False
-
-        elif rv == -1:
-            print "Unknown data format"
-
-
-    ''' ==================================================================================
-    FUNCTION Validate_Entries: Validate all entries of a frame before switching
-    ==================================================================================  '''    
-    def Validate_Entries(self, list):
-        
-        #print list
-        for valid in list:
-            if not valid[2] and valid[0] == False:
-
-                if valid[3] != None:
-                    valid[3].config(bg=self.Color_Red)
-
-                return valid[1]
-
-        return 0
-
-
-    ''' ==================================================================================
     FUNCTION SetActiveFrame: Switch up tabs in the uppper menu
     ================================================================================== '''    
     def SetActiveFrame(self, Frame):
@@ -497,7 +392,7 @@ class displayGetCleft:
                 self.fMiddle.focus_set()
                 self.fMiddle.update_idletasks()
 
-                rv = self.Validate_Entries(self.ActiveFrame.Validator)
+                rv = self.ActiveFrame.Validate_Entries(self.ActiveFrame.Validator)
                 if rv > 0:
                     if rv == 1:
                         self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
@@ -505,7 +400,7 @@ class displayGetCleft:
                         self.ActiveFrame.Validator_Fail()
                     return
 
-                if not self.ActiveFrame.Kill_Frame():
+                if not self.ActiveFrame.Before_Kill_Frame() or not self.ActiveFrame.Kill_Frame():
                     self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
                     return
 
@@ -519,6 +414,7 @@ class displayGetCleft:
             #print "New active frame " + self.ActiveFrame.FrameName
 
             self.ActiveFrame.Show()
+            self.ActiveFrame.After_Show()
             self.ActiveFrame.Tab.config(bg=self.Color_Blue)
 
             self.fMiddle.update_idletasks()

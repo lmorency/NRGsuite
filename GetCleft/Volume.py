@@ -20,6 +20,7 @@
 from Tkinter import *
 from subprocess import Popen, PIPE
 
+import Tabs
 import tkTable
 import functools
 import threading
@@ -77,21 +78,7 @@ class RunVolume(threading.Thread):
         
         
 
-class EstimateVolume:
-
-    def __init__(self, top):
-
-        self.top = top
-        self.FrameName = 'Estimate Volume'
-        self.Tab = self.top.Btn_Volume
-
-        self.DisplayMessage = self.top.DisplayMessage
-
-        self.Def_Vars()
-        self.Init_Vars()
-
-        self.Frame()
-        self.Trace()
+class EstimateVolume(Tabs.Tab):
 
     def Def_Vars(self):
 
@@ -107,40 +94,13 @@ class EstimateVolume:
         self.Iterations.set('3')
 
         self.ValidIterations = [True, 1, 0, None]
-        self.Validator = [ ]
+        self.Validator = [ self.ValidIterations ]
 
     ''' ==================================================================================
-    FUNCTION Kill_Frame: Kills the main frame window
-    =================================================================================  '''    
-    def Kill_Frame(self):
-                
-        self.fVolume.pack_forget()
-
-        return True
-
-    ''' ==================================================================================
-    FUNCTION Trace: Adds a callback function to StringVars
+    FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
-    def Trace(self):
+    def After_Show(self):
 
-        return
-
-    ''' ==================================================================================
-    FUNCTION Del_Trace: Deletes observer callbacks
-    ==================================================================================  '''  
-    def Del_Trace(self):
-
-        return
-
-    ''' ==================================================================================
-    FUNCTION Show: Displays the frame onto the middle main frame
-    ==================================================================================  '''  
-    def Show(self):
-        
-        self.fVolume.pack(fill=BOTH, expand=True)
-
-        #self.LoadMessage()
-        
         self.top.Default.Update_TempBindingSite()
         
         self.Init_Table()
@@ -161,7 +121,7 @@ class EstimateVolume:
         EntryIterations = Entry(fIterations, width=6, background='white', justify=CENTER, font=self.top.font_Text, textvariable=self.Iterations)
         EntryIterations.pack(side=RIGHT, anchor=SE, padx=5)
         args_list = [EntryIterations, self.Iterations, 1, 5, -1, self.ValidIterations,'Iterations','int']
-        EntryIterations.bind('<FocusOut>', functools.partial(self.top.Lost_Focus,args=args_list))
+        EntryIterations.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
         self.ValidIterations[3] = EntryIterations
 
         lblIterations = Label(fIterations, text='Iterations:', font=self.top.font_Text)
@@ -216,7 +176,7 @@ class EstimateVolume:
         Button(fButtons2Line1, text='Save volumes', font=self.top.font_Text).pack(side=RIGHT, padx=2)
         Button(fButtons2Line1, text='Refresh clefts', font=self.top.font_Text, command=self.Init_Table).pack(side=RIGHT, padx=2)
         
-        
+        return self.fVolume
         
     ''' ==================================================================================
     FUNCTION Validate_Iterations: Validates the value in Entry before starting Grid

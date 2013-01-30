@@ -344,7 +344,7 @@ class setType(Wizard):
         self.atom = self.get_Atom(name)
             
         if len(self.atom) > 0:
-            if int(self.atom[2]) == self.FlexAID.IOFile.ResSeq and \
+            if int(self.atom[2]) == self.FlexAID.IOFile.ResSeq.get() and \
                     self.atom[1] == 'LIG':
 
                 cmd.delete(self.AtomDisplay)                    
