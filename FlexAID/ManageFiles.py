@@ -325,20 +325,6 @@ class Manage():
     #        ConsFile.write(':')
     #        ConsFile.write('%.2f' % float(self.Config2.dictCovConstraints[key][5]))
     #        ConsFile.write('\n')
-    #
-    #    for key in iter(self.Config2.dictIntConstraints):
-    #        atom1 = Constraint.parse_cons(self.Config2.dictIntConstraints[key][0])
-    #        atom2 = Constraint.parse_cons(self.Config2.dictIntConstraints[key][1])
-    #        
-    #        ConsFile.write('INTERACT ')
-    #        self.Print_Constraint(ConsFile,atom1)
-    #        ConsFile.write(':')
-    #        self.Print_Constraint(ConsFile,atom2)
-    #        ConsFile.write(':')
-    #        ConsFile.write('%.2f' % float(self.Config2.dictIntConstraints[key][5]))
-    #        if self.Config2.dictIntConstraints[key][6]:
-    #            ConsFile.write('f')
-    #        ConsFile.write('\n')
     #        
     #    ConsFile.close()            
 

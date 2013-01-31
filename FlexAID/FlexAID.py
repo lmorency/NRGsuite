@@ -94,6 +94,7 @@ class displayFlexAID:
         self.FlexAIDLigandProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Ligand')
         self.FlexAIDSimulationProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Simulation')
         self.FlexAIDSessionProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Session')
+        self.FlexAIDResultsProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Results')
         self.FlexAIDBindingSiteProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Binding_Site')
         self.FlexAIDTargetFlexProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Target_Flexibility')
 
@@ -213,6 +214,8 @@ class displayFlexAID:
             
             if self.ActiveFrame == self.Config3 or self.ActiveFrame == self.GAParam:
                 self.Btn_IOFiles_Clicked()
+
+            self.menubar.entryconfig(3,label="Show")
             
         else:
             self.Btn_Simulate.pack_forget()
@@ -220,6 +223,9 @@ class displayFlexAID:
             self.Btn_GAParam.pack(side=LEFT, fill=BOTH, expand=True)
             self.Btn_Simulate.pack(side=LEFT, fill=BOTH, expand=True)
             self.bAdvancedView = False
+            
+            self.menubar.entryconfig(3,label="Hide")
+            
     
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
@@ -312,21 +318,25 @@ class displayFlexAID:
     ==================================================================================  '''        
     def MakeMenuBar(self):
         
-        menubar = Menu(self.top)
+        self.menubar = Menu(self.top)
         
-        loadmenu = Menu(menubar, tearoff=0)
+        loadmenu = Menu(self.menubar, tearoff=0)
         loadmenu.add_command(label="Load Session", command=self.Btn_Load_Session)
-        menubar.add_cascade(label="Load", menu=loadmenu)
+        loadmenu.add_separator()
+        loadmenu.add_command(label="Load Results", command=self.Btn_Load_Results)
+        self.menubar.add_cascade(label="Load", menu=loadmenu)
 
-        savemenu = Menu(menubar, tearoff=0)        
+        savemenu = Menu(self.menubar, tearoff=0)        
         savemenu.add_command(label="Save Session", command=self.Btn_Save_Session)
-        menubar.add_cascade(label="Save", menu=savemenu)
+        savemenu.add_separator()
+        savemenu.add_command(label="Save Results", command=self.Btn_Save_Results)
+        self.menubar.add_cascade(label="Save", menu=savemenu)
 
-        savemenu = Menu(menubar, tearoff=0)        
-        self.advview = savemenu.add_command(label="Show/Hide Advanced view", command=self.Btn_Toggle_AdvView)
-        menubar.add_cascade(label="View", menu=savemenu)
+        viewmenu = Menu(self.menubar, tearoff=0)
+        viewmenu.add_command(label="Advanced view", command=self.Btn_Toggle_AdvView)
+        self.menubar.add_cascade(label="View", menu=viewmenu)
         
-        self.top.config(menu=menubar)
+        self.top.config(menu=self.menubar)
         
     ''' ==================================================================================
     FUNCTION Btn_Load_Session: Loads a previously saved session
@@ -366,6 +376,51 @@ class displayFlexAID:
         else:
             self.DisplayMessage("  Cannot save session while a process is active", 2)
         
+    ''' ==================================================================================
+    FUNCTION Btn_Load_Results: Loads a previously saved results
+    ==================================================================================  '''        
+    def Btn_Load_Results(self):
+
+        if self.Run is None and not self.ProcessRunning:
+
+            if self.ActiveWizard is None:
+
+                LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDResultsProject_Dir,
+                                                        filetypes=[('NRG FlexAID Results','*.nrgfr')],
+                                                        title='Select the Results to load')
+
+                if len(LoadFile) > 0:
+                                        
+                    LoadFile = os.path.normpath(LoadFile)
+                    
+            else:
+                self.DisplayMessage("  Cannot save session while a wizard is active", 2)            
+        else:
+            self.DisplayMessage("  Cannot save session while a process is active", 2)
+        
+    ''' ==================================================================================
+    FUNCTION Btn_Save_Results: Saves the current results
+    ==================================================================================  '''        
+    def Btn_Save_Results(self):
+
+        if self.Run is None and not self.ProcessRunning:
+        
+            if self.ActiveWizard is None:
+                
+                SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDResultsProject_Dir,
+                                          title='Save the Results file', initialfile='default_results',
+                                          filetypes=[('NRG FlexAID Results','*.nrgfr')])
+            
+                if len(SaveFile) > 0:
+
+                    SaveFile = os.path.normpath(SaveFile)
+            
+            else:
+                self.DisplayMessage("  Cannot save results while a wizard is active", 2)
+        else:
+            self.DisplayMessage("  Cannot save results while a process is active", 2)
+            
+
     ''' ==================================================================================
     FUNCTION Btn_Save_Session: Saves the current session
     ==================================================================================  '''        
@@ -663,6 +718,9 @@ class displayFlexAID:
             
         if not os.path.isdir(self.FlexAIDSessionProject_Dir):
             os.makedirs(self.FlexAIDSessionProject_Dir)
+
+        if not os.path.isdir(self.FlexAIDResultsProject_Dir):
+            os.makedirs(self.FlexAIDResultsProject_Dir)
 
         if not os.path.isdir(self.FlexAIDBindingSiteProject_Dir):
             os.makedirs(self.FlexAIDBindingSiteProject_Dir)

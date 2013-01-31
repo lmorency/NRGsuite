@@ -39,7 +39,7 @@ import General
 from subprocess import Popen, PIPE
 
 
-class ProcLig():
+class ProcLig:
 
 
     def __init__(self, top, StartAtomIndex, AtomTypes, AnchorAtom):

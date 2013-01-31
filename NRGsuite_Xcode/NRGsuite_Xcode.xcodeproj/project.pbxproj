@@ -64,6 +64,7 @@
 		15BDCF2D16B8E418000F45F7 /* BindingSite.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = BindingSite.py; path = ../BindingSite.py; sourceTree = SOURCE_ROOT; };
 		15BDCF4916B8E7A3000F45F7 /* Vars.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Vars.py; path = ../Vars.py; sourceTree = SOURCE_ROOT; };
 		15BDCF4A16B8E7BF000F45F7 /* Tabs.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Tabs.py; path = ../Tabs.py; sourceTree = SOURCE_ROOT; };
+		15BDD04116B98BD0000F45F7 /* Result.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = Result.py; sourceTree = "<group>"; };
 		15F34EA316A9051A00BED5DE /* AMINO12.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AMINO12.def; sourceTree = "<group>"; };
 		15F34EA416A9051A00BED5DE /* AMINO26.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AMINO26.def; sourceTree = "<group>"; };
 		15F34EA516A9051A00BED5DE /* AMINO8.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AMINO8.def; sourceTree = "<group>"; };
@@ -123,6 +124,7 @@
 				158C85A716A5C19C00E07CFF /* IOFile.py */,
 				158C85A816A5C19C00E07CFF /* ManageFiles.py */,
 				158C85A916A5C19C00E07CFF /* ProcessLigand.py */,
+				15BDD04116B98BD0000F45F7 /* Result.py */,
 				158C85AA16A5C19C00E07CFF /* RunFlexAID.py */,
 				158C85AB16A5C19C00E07CFF /* Simulate.py */,
 				158C85AC16A5C19C00E07CFF /* Simulation.py */,
