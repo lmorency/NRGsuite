@@ -38,7 +38,6 @@ import Prefs
 import CleftObj
 import ManageFiles2
 import Default
-#import AdvOptions
 import CropCleft
 import Volume
 
@@ -423,15 +422,15 @@ class displayGetCleft:
     FUNCTION Btn_Restore_Clicked: Restore the original default configuration
     ================================================================================== '''    
     def Btn_Restore_Clicked(self):
-
-	    return
+        
+        return
 
     ''' ==================================================================================
     FUNCTION Btn_SaveDefault_Clicked: Saves the current configuration as default
     ================================================================================== '''    
     def Btn_SaveDefault_Clicked(self):
-
-	    return
+        
+        return
 
     ''' ==================================================================================
     FUNCTION Btn_Default_Clicked: Sets back the default config

@@ -43,7 +43,7 @@ class UpdateScreen():
         self.TOP = TOP
 
         # Starting index of line
-    	self.colNo = colNo
+        self.colNo = colNo
 
         # input line to parse
         self.Line = Line

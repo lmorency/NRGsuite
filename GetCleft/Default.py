@@ -785,9 +785,9 @@ class Default(Tabs.Tab):
         if not self.PyMOL:
             return
 
-        for Cleft in iter(self.TempBindingSite.listClefts):
-            if not General_cmd.object_Exists(Cleft.CleftName):
-                self.TempBindingSite.Remove_Cleft(Cleft)
+        self.TempBindingSite.listClefts = \
+            [ Cleft for Cleft in self.TempBindingSite.listClefts \
+                if General_cmd.object_Exists(Cleft.CleftName) ]
 
     ''' ==================================================================================
     FUNCTION Btn_OpenPDB_Clicked: Open a PDB file and display it in PyMOL 

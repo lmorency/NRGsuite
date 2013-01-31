@@ -17,7 +17,7 @@
 
 '''
 
-from Tkinter import
+from Tkinter import *
 
 class Result:
     

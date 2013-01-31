@@ -37,7 +37,7 @@ class anchor(Wizard):
     #=======================================================================
     def __init__(self, top, LigandPath, AnchorAtom):
         
-        print "New instance of anchor Class.\n"
+        print("New instance of anchor Class.\n")
 
         Wizard.__init__(self)
 

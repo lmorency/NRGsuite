@@ -208,7 +208,7 @@ class Tab:
             Validator[0] = False
 
         elif rv == -1:
-            print "Unknown data format"
+            print("Unknown data format")
 
         return
         

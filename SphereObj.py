@@ -52,7 +52,7 @@ class SphereObj:
     =================================================================================  '''    
     def Print(self):
         
-        print self
-        print "Radius:", self.Radius
-        print "MaxRadius:", self.MaxRadius
-        print "Center:", self.Center
+        print(self)
+        print("Radius:", self.Radius)
+        print("MaxRadius:", self.MaxRadius)
+        print("Center:", self.Center)
