@@ -212,7 +212,7 @@ class IOFile(Tabs.Tab):
         #                              PDB Options
         #==================================================================================
         fPDB_options = Frame(self.fIOFile)#, border=1, relief=SUNKEN)
-        fPDB_options.pack(fill=X, side=TOP, padx=5, pady=5)
+        #fPDB_options.pack(fill=X, side=TOP, padx=5, pady=5)
 
         fPDB_optionsLine1 = Frame(fPDB_options)#, border=1, relief=SUNKEN)
         fPDB_optionsLine1.pack(side=TOP, fill=X)
@@ -668,7 +668,7 @@ class IOFile(Tabs.Tab):
                     for i in range(0,len(inpFile[line][10:])/5):
                         list.append(inpFile[line][(10+i*5):(10+5+i*5)].strip())
                     flexInfo[INDEX] = list
-                    
+                
         except:
             self.DisplayMessage('  ERROR: Could not retrieve ligand input file', 1)
             return 1

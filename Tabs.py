@@ -208,7 +208,7 @@ class Tab:
             Validator[0] = False
 
         elif rv == -1:
-            print "Unknown data format"
+            print("Unknown data format")
 
         return
         
@@ -245,11 +245,14 @@ class Tab:
     ''' ==================================================================================
     FUNCTION Disable_Frame: Disables all controls on main frame
     =================================================================================  '''    
-    def Disable_Frame(self):
+    def Disable_Frame(self, *args):
 
         del self.StateList[:]
         General.saveState(self.fFrame, self.StateList)
         General.setState(self.fFrame)
+
+        for arg in args:
+            General.setState(arg,'normal')
 
     ''' ==================================================================================
     FUNCTION Enable_Frame: Enables all controls on main frame

@@ -66,6 +66,8 @@ class displayFlexAID:
         #print("New instance of FlexAID")
         self.PyMOL = PyMOL
 
+        self.Name = 'FlexAID'
+
         self.WINDOWWIDTH = 700
         self.WINDOWHEIGHT = 600
 
@@ -502,15 +504,15 @@ class displayFlexAID:
     FUNCTION Btn_Restore_Clicked: Restore the original default configuration
     ================================================================================== '''    
     def Btn_Restore_Clicked(self):
-
-	    return
+        
+        return
 
     ''' ==================================================================================
     FUNCTION Btn_SaveDefault_Clicked: Saves the current configuration as default
     ================================================================================== '''    
     def Btn_SaveDefault_Clicked(self):
-
-	    return
+        
+        return
 
     ''' ==================================================================================
     FUNCTION Btn_Default_Clicked: Sets back the default config
@@ -573,7 +575,7 @@ class displayFlexAID:
             self.ActiveFrame.After_Show()
             self.ActiveFrame.Tab.config(bg=self.Color_Blue)
 
-	    self.fMiddle.update_idletasks()
+        self.fMiddle.update_idletasks()
 
 
     ''' ==================================================================================

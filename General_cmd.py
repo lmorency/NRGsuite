@@ -233,8 +233,7 @@ def Get_CenterOfMass2(selection, state):
                      (MinMax[1][2]+MinMax[0][2])/2.0 ]
 
     except:
-        
-	return []
+        return []
 
 ''' ==================================================================================
 FUNCTION Get_MaxWidth: Returns the max width from the center of an object
@@ -255,5 +254,4 @@ def Get_MaxWidth(selection,state):
             return MaxWidth
 
     except:
-        
-	return -1
+        return -1

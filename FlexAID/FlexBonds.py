@@ -631,8 +631,7 @@ class flexbond(Wizard):
     def get_prompt(self):
 
         if self.pick_count == 0:
-            return ['Please click on the FIRST atom that defines the flexible bond']
+            return ["Flexible bonds of the ligand are shown in orange.",
+                    "Please click on the FIRST atom that defines the flexible bond." ]
         elif self.pick_count == 1:
-            return ['Please click on the SECOND atom that defines the flexible bond']
-        elif self.pick_count == 2:
-            return ['Analyzing bond...']
+            return ["Please click on the SECOND atom that defines the flexible bond." ]

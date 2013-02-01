@@ -33,6 +33,7 @@ from pymol import cmd
 import General
 import tkFileDialog
 import tkFont
+import re
 import os
 import time
 import Prefs
@@ -285,7 +286,7 @@ class displayNewProject:
         
             words = name.split()
             for word in words:
-                if not word.isalnum():
+                if not re.match("^[A-Za-z0-9_-]*$", word):
                     print('  ERROR: Invalid name for project. You can only use alphanumeric characters and spaces')
                     return
             

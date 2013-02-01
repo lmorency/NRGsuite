@@ -37,7 +37,7 @@ class anchor(Wizard):
     #=======================================================================
     def __init__(self, top, LigandPath, AnchorAtom):
         
-        print "New instance of anchor Class.\n"
+        print("New instance of anchor Class.\n")
 
         Wizard.__init__(self)
 
@@ -215,7 +215,7 @@ class anchor(Wizard):
     #=======================================================================
     def get_prompt(self):
 
-        return ['Please click on a non-Hydrogen atom to define it as anchor']
+        return ['Please click on a non-Hydrogen atom to define it as anchor.']
 
     #=======================================================================
     ''' Pick an anchor atom then highlight it '''

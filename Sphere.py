@@ -153,7 +153,8 @@ class Sphere(Wizard):
         
         
     def get_prompt(self):
-        return ['Press Shift+Mouse3(Wheel Click) to Move the sphere...']
+        return ["Press Shift + Mouse3 (Wheel Click) to move the sphere.",
+                "Use the scaler in the " + self.App.Name + " interface to edit its radius." ]
 
 
     def reset(self):

@@ -43,7 +43,7 @@ class UpdateScreen():
         self.TOP = TOP
 
         # Starting index of line
-    	self.colNo = colNo
+        self.colNo = colNo
 
         # input line to parse
         self.Line = Line
@@ -227,11 +227,10 @@ class UpdateScreen():
                     
                     text_file.write(tmpLine)
 
-            else:                                        
-                text_file.write(pdbLine)                                    
+                else:                                        
+                    text_file.write(pdbLine)                                    
 
             text_file.close()                               
-
 
         except IOError:
             self.CriticalError("  ERROR: while writing PDB ligand file.")

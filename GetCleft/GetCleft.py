@@ -38,7 +38,6 @@ import Prefs
 import CleftObj
 import ManageFiles2
 import Default
-#import AdvOptions
 import CropCleft
 import Volume
 
@@ -58,6 +57,7 @@ class displayGetCleft:
             from pymol import cmd
             import General_cmd
 
+        self.Name = 'GetCleft'
         self.OSid = OSid
         
         self.WINDOWWIDTH = 500
@@ -141,6 +141,7 @@ class displayGetCleft:
         self.ProcessRunning = False
         self.Run = None
         self.CopySession = True
+        self.EditSession = True
 
         self.Frame_Main()
 
@@ -408,11 +409,14 @@ class displayGetCleft:
                 #self.ActiveFrame.Del_Trace()
 
             self.ActiveFrame = Frame
-            #print "New active frame " + self.ActiveFrame.FrameName
+            print("New active frame " + self.ActiveFrame.FrameName)
 
             self.ActiveFrame.Show()
+            print("Done showing")
             self.ActiveFrame.After_Show()
+            print("Done after showing")
             self.ActiveFrame.Tab.config(bg=self.Color_Blue)
+            print("Done switching color")
 
             self.fMiddle.update_idletasks()
 
@@ -423,15 +427,15 @@ class displayGetCleft:
     FUNCTION Btn_Restore_Clicked: Restore the original default configuration
     ================================================================================== '''    
     def Btn_Restore_Clicked(self):
-
-	    return
+        
+        return
 
     ''' ==================================================================================
     FUNCTION Btn_SaveDefault_Clicked: Saves the current configuration as default
     ================================================================================== '''    
     def Btn_SaveDefault_Clicked(self):
-
-	    return
+        
+        return
 
     ''' ==================================================================================
     FUNCTION Btn_Default_Clicked: Sets back the default config
