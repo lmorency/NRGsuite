@@ -27,17 +27,7 @@
 @creation date:  Aug. 25, 2010
 '''
 
-from Tkinter import *
-
-import os, sys
-import pickle
-import time
-import tkFont
-import tkFileDialog
-
-import Prefs
-import General
-import MessageBox
+import Base
 import IOFile
 import Config1
 import Config2
@@ -45,18 +35,11 @@ import Config3
 import GAParam
 import Simulate
 
-if __debug__:
-	from pymol import cmd
-	from pymol.cgo import *
-	from pymol.vfont import plain
-
-	import General_cmd
-
 #=========================================================================================
 '''                           ---   PARENT WINDOW  ---                                 '''
 #========================================================================================= 
 
-class displayFlexAID:
+class displayFlexAID(Base):
     
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
@@ -113,7 +96,7 @@ class displayFlexAID:
         self.BindingSiteDisplay = 'BINDING_SITE_AREA'
         self.SphereDisplay = 'SPHERE_AREA'
                 
-        self.FlexAIDIsRunning()
+        self.AppIsRunning()
         
         #self.MsgLineCounter = 2
         
@@ -158,8 +141,6 @@ class displayFlexAID:
         self.frame.pack(expand=True)
         self.curCursor = self.frame['cursor']
         
-        #self.DisplayMessage = self.MessageBox.add_message
-
         #print "Main frame generated"
 
         self.ActiveFrame = None
@@ -194,11 +175,6 @@ class displayFlexAID:
         self.bAdvancedView = False
         self.Btn_Toggle_AdvView()
 
-
-    def Del_Trace(self):
-    
-        for Tab in self.listTabs:
-            Tab.Del_Trace()
 
     #=====================================================================================
     '''                     --- FRAME DISPLAY SETTINGS ---                             '''
@@ -302,9 +278,6 @@ class displayFlexAID:
 
         fBottomLeft = Frame(fBottom)
         fBottomLeft.pack(side=LEFT, fill=Y, ipadx=20, ipady=20)
-
-        #self.MessageBox = MessageBox.scrollableContainer(fBottomLeft, bd=2, bg="black")
-        #self.MessageBox.pack(fill=BOTH, expand=True)
 
         scrollBar = Scrollbar(fBottomLeft)
         scrollBar.pack(side=RIGHT, fill=Y)
@@ -458,19 +431,7 @@ class displayFlexAID:
                 self.DisplayMessage("  Cannot save session while a wizard is active", 2)
         else:
             self.DisplayMessage("  Cannot save session while a process is active", 2)
-            
-    ''' ==================================================================================
-    FUNCTION FlexAIDIsRunning: Update or Create the Running File to BLOCK multiple GUI 
-    ==================================================================================  '''       
-    def FlexAIDIsRunning(self):
-        
-        #Create the .run fileBtn_DelResidu_Clicked
-        RunPath = os.path.join(self.AlreadyRunning_Dir,'.frun')
-        RunFile = open(RunPath, 'w')
-        RunFile.write(str(os.getpid()))
-        RunFile.close()
-        
-                
+                    
     ''' ==================================================================================
     FUNCTION Btn_*_Clicked: Display the Tab options menu
     ================================================================================== '''    
@@ -497,86 +458,6 @@ class displayFlexAID:
     def Btn_Simulate_Clicked(self):
         
         self.SetActiveFrame(self.Simulate)
-
-    ''' ============================================================================= '''
-
-    ''' ==================================================================================
-    FUNCTION Btn_Restore_Clicked: Restore the original default configuration
-    ================================================================================== '''    
-    def Btn_Restore_Clicked(self):
-        
-        return
-
-    ''' ==================================================================================
-    FUNCTION Btn_SaveDefault_Clicked: Saves the current configuration as default
-    ================================================================================== '''    
-    def Btn_SaveDefault_Clicked(self):
-        
-        return
-
-    ''' ==================================================================================
-    FUNCTION Btn_Default_Clicked: Sets back the default config
-    ================================================================================== '''    
-    def Btn_Default_Clicked(self):
-        
-        if self.ActiveWizard != None:
-            self.DisplayMessage("Cannot reset values while a Wizard is active", 2)
-            return
-
-        if self.ProcessRunning is True:
-            self.DisplayMessage("Cannot reset values while a Process is running", 2)
-            return
-            
-        self.ActiveFrame.Init_Vars()
-
-    ''' ==================================================================================
-    FUNCTION SetActiveFrame: Switch up tabs in the uppper menu
-    ================================================================================== '''    
-    def SetActiveFrame(self,Frame):
-
-        if not self.ActiveWizard is None:
-            self.DisplayMessage("Cannot switch tab: A wizard is currently running...", 2)
-            return
-
-        if self.ProcessRunning:
-            self.DisplayMessage("Cannot switch tab: A process is currently running...", 2)
-            return
-
-        if self.ActiveFrame != Frame:
-
-            if not self.ActiveFrame is None:
-
-                # Trigger lost_focus event for validation
-                self.fMiddle.focus_set()
-                self.fMiddle.update_idletasks()
-
-                rv = self.ActiveFrame.Validate_Entries(self.ActiveFrame.Validator)
-                if rv > 0:
-                    if rv == 1:
-                        self.DisplayMessage("  Cannot switch tab: Not all fields are validated", 2)
-                    elif rv == 2:
-                        self.ActiveFrame.Validator_Fail()
-                    return
-                
-                if not self.ActiveFrame.Before_Kill_Frame() or not self.ActiveFrame.Kill_Frame():
-                    self.DisplayMessage("  Cannot switch tab: Not all fields are validated", 2)
-                    return
-
-                self.fMiddle.update_idletasks()
-
-                #self.ActiveFrame.Del_Trace()
-                self.ActiveFrame.Tab.config(bg=self.Color_White)
-                #print "Killed Frame " + self.ActiveFrame.FrameName
-
-
-            self.ActiveFrame = Frame
-            #print "New active frame " + self.ActiveFrame.FrameName
-            self.ActiveFrame.Show()
-            self.ActiveFrame.After_Show()
-            self.ActiveFrame.Tab.config(bg=self.Color_Blue)
-
-        self.fMiddle.update_idletasks()
-
 
     ''' ==================================================================================
     FUNCTION Go_Step1: Enables/Disables buttons for step 1
@@ -730,23 +611,4 @@ class displayFlexAID:
         if not os.path.isdir(self.FlexAIDTargetFlexProject_Dir):
             os.makedirs(self.FlexAIDTargetFlexProject_Dir)
     
-    ''' ==================================================================================
-    FUNCTION DisplayMessage: Display the message  
-    ==================================================================================  '''    
-    def DisplayMessage(self, msg, priority):
-        
-        self.TextMessage.config(state='normal')
- 
-        #self.TextMessage.config(font='red')
-        self.TextMessage.insert(INSERT, '\n' + msg)
-
-        if priority == 1:
-            #self.TextMessage.tag_add('warn', lineNo + '.0', lineNo + '.' + str(NbChar))
-            self.TextMessage.tag_config('warn', foreground='red')
-        elif priority == 2:
-            #self.TextMessage.tag_add('notice', lineNo + '.0', lineNo + '.' + str(NbChar))
-            self.TextMessage.tag_config('notice', foreground='blue')
-
-        self.TextMessage.yview(INSERT)        
-        self.TextMessage.config(state='disabled')
 
