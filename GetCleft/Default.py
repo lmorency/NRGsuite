@@ -210,7 +210,8 @@ class Default(Tabs.Tab):
         #                           SELECTION OF STRUCTURE
         #==================================================================================                
         fStructure = Frame(self.fDefault)
-        fStructure.pack(side=TOP, padx=5, pady=5, fill=X, expand=True)
+        #fStructure.pack(side=TOP, padx=5, pady=5, fill=X, expand=True)
+
         fStructureLine1 = Frame(fStructure)
         fStructureLine1.pack(side=TOP, fill=X, expand=True)
         fStructureLine2 = Frame(fStructure)
@@ -691,80 +692,6 @@ class Default(Tabs.Tab):
         else:
             self.top.DisplayMessage("  No clefts to save as 'clefts'", 2)
 
-    ''' ==================================================================================
-    FUNCTION Btn_Load_BindingSite: Asks for user to load binding-site
-    ==================================================================================  '''        
-    def Btn_Load_BindingSite(self):
-
-        BindingSitePath = self.Get_BindingSitePath()
-
-        if not os.path.isdir(BindingSitePath):
-            self.DisplayMessage("  Could not find a BindingSite folder for your target:", 2)
-            self.DisplayMessage("  The default BindingSite folder is used.", 2)
-            
-            BindingSitePath = self.top.BindingSiteProject_Dir
-        
-        LoadPath = tkFileDialog.askopenfilename(filetypes=[('NRG BindingSite','*.nrgbs')],
-                                                initialdir=BindingSitePath, title='Select a NRG BindingSite file to load')
-        
-        if len(LoadPath) > 0:
-            LoadPath = os.path.normpath(LoadPath)
-            
-            try:
-                in_ = open(LoadPath, 'r')
-                TempBindingSite = pickle.load(in_)
-                in_.close()
-                
-                if TempBindingSite.Count_Cleft() > 0:
-                    self.Btn_Clear_Clicked()
-                    self.TempBindingSite = TempBindingSite
-
-                    self.Display_Temp()
-                    self.top.Go_Step2()
-                    
-            except:
-                self.DisplayMessage("  ERROR: Could not find read the BindingSite", 2)
-
-
-    ''' ==================================================================================
-    FUNCTION Btn_Save_BindingSite: Asks for user to save binding-site
-    ==================================================================================  '''        
-    def Btn_Save_BindingSite(self):
-
-        BindingSitePath = self.Get_BindingSitePath()
-
-        if self.TempBindingSite.Count_Cleft() > 0:
-            
-            if not os.path.isdir(BindingSitePath):
-                os.makedirs(BindingSitePath)
-
-            SaveFile = tkFileDialog.asksaveasfilename(initialdir=BindingSitePath,
-                                                      title='Save the BindingSite file', initialfile='def_cleft_bindingsite',
-                                                      filetypes=[('NRG BindingSite','*.nrgbs')])
-            
-            if len(SaveFile) > 0:
-                SaveFile = os.path.norm(SaveFile)
-                
-                if SaveFile.find('.nrgbs') == -1:
-                    SaveFile = SaveFile + '.nrgbs'
-
-                self.Update_TempBindingSite()
-                self.TempBindingSite.Type = 2
-                
-                # Save all cleft 
-                self.top.Manage.save_Temp()
-
-                try:
-                    out = open(SaveFile, 'w')
-                    pickle.dump(self.TempBindingSite, out)
-                    out.close()
-                    
-                    self.top.DisplayMessage("  Successfully saved '" + SaveFile + "'", 0)
-                except:
-                    self.top.DisplayMessage("  ERROR: Could not save binding-site configuration", 1)
-
-        else:
-            self.top.DisplayMessage("  No clefts to save as 'binding-site'", 2)
     
     ''' ==================================================================================
     FUNCTION Load_Clefts: Loads the list of temp clefts

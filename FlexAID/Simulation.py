@@ -34,6 +34,7 @@ from collections import defaultdict
 from pymol import cmd
 from subprocess import Popen, PIPE, STDOUT
 
+#import psutil
 import math, os, time, re
 import threading
 import Color
@@ -63,6 +64,8 @@ class Start(threading.Thread):
         
         #print "FlexAID starting thread has begun."
         
+        #print("Process list", [psutil.Process(i).name for i in psutil.get_pid_list()])
+
         self.FlexAID.ProcessRunning = True
 
         try:

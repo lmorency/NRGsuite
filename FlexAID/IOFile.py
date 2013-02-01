@@ -212,7 +212,7 @@ class IOFile(Tabs.Tab):
         #                              PDB Options
         #==================================================================================
         fPDB_options = Frame(self.fIOFile)#, border=1, relief=SUNKEN)
-        fPDB_options.pack(fill=X, side=TOP, padx=5, pady=5)
+        #fPDB_options.pack(fill=X, side=TOP, padx=5, pady=5)
 
         fPDB_optionsLine1 = Frame(fPDB_options)#, border=1, relief=SUNKEN)
         fPDB_optionsLine1.pack(side=TOP, fill=X)

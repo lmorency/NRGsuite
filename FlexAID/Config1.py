@@ -586,7 +586,7 @@ class Config1(Tabs.Tab):
                 TmpBindingSite = pickle.load(in_)
                 in_.close()
                 
-                if BTmpindingSite.Count_Cleft() > 0 or TmpBindingSite.Sphere != None:
+                if TmpBindingSite.Count_Cleft() > 0 or TmpBindingSite.Sphere != None:
                     self.BindingSite = TmpBindingSite
 
                     if self.BindingSite.Type == 1:
@@ -639,7 +639,6 @@ class Config1(Tabs.Tab):
                     out.close()
 
                     self.BindingSiteName.set(os.path.basename(os.path.splitext(SaveFile)[0]))
-
                     self.DisplayMessage("  Successfully saved '" + SaveFile + "'", 0)
 
                 except:
@@ -933,7 +932,7 @@ class Config1(Tabs.Tab):
         
         out = file(self.CleftTmpPath, 'w')
 
-        for Cleft in iter(self.BindingSite.listClefts):
+        for Cleft in self.BindingSite.listClefts:
             in_ = open(Cleft.CleftFile, 'r')
             lines = in_.readlines()
             in_.close()
