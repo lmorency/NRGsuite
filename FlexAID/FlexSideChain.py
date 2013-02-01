@@ -172,9 +172,11 @@ class flexSC(Wizard):
     def get_prompt(self):
      
         if self.error == 0:
-            return ['Click on a side-chain of the protein object']
+            return ["Click on a side-chain of the protein.",
+                    "Side-chains shown in white are already set as flexible.",
+                    "Side-chains shown in orange are 'active' and ready to be added." ]
         elif self.error == 1:
-            return ['Invalid side-chain selected. Please try again.']
+            return ["Invalid side-chain selected. Please try again."]
 
     #=======================================================================
     ''' Residue selection, then display the information related to it '''

@@ -85,12 +85,12 @@ class CropCleft(Tabs.Tab):
         self.Color_Green = self.top.Color_Green
         self.TempPartition = os.path.join(self.top.GetCleftProject_Dir,'tmppart.pdb')
  
-        self.ScaleResolution = 0.25
+        self.ScaleResolution = 0.50
         self.PartitionDisplay = 'PARTITION_AREA__'
         
         self.SphereDisplay = 'SPHERE_PT_AREA__'
         self.SphereCoord = []
-        self.SphereSize.set(0.0)
+        self.SphereSize.set(0.5)
 
     
     ''' ==================================================================================
@@ -126,6 +126,7 @@ class CropCleft(Tabs.Tab):
 
         # update list of cleft spheres
         self.update_Step1_DDL()
+
         # update list of spheres added
         self.update_Spheres()
         
@@ -200,8 +201,9 @@ class CropCleft(Tabs.Tab):
 
         #--------------------------------------------------------------------------------
 
-        Label(fCropStep2Line3, text = 'Radius:', width=15, font=self.top.font_Text).pack(side=LEFT)
-        self.ResizeSphere = Scale(fCropStep2Line3, from_=0.0, to=0.0, resolution=self.ScaleResolution, variable=self.SphereSize, orient=HORIZONTAL, length=120, command=self.MoveResizeSphere, highlightthickness=0)
+        self.lblRadius = Label(fCropStep2Line3, text = 'Radius:', width=15, font=self.top.font_Text)
+        self.lblRadius.pack(side=LEFT)
+        self.ResizeSphere = Scale(fCropStep2Line3, from_=0.5, to=0.5, resolution=self.ScaleResolution, variable=self.SphereSize, orient=HORIZONTAL, length=120, command=self.MoveResizeSphere, highlightthickness=0)
         self.ResizeSphere.pack(side=LEFT, anchor=NW)
         self.ResizeSphere.config(state='disabled')
 
@@ -234,7 +236,7 @@ class CropCleft(Tabs.Tab):
         self.Step3bEntry.pack(side=LEFT, anchor=E)
         self.Step3bEntry.config(state='disabled')
 
-        self.Step3bBtnCreate = Button(fCropStep3Line2, disabledforeground = 'black', text='Create', justify=CENTER, font=self.top.font_Text, command=self.Btn_CreatePartition)
+        self.Step3bBtnCreate = Button(fCropStep3Line2, text='Create', justify=CENTER, font=self.top.font_Text, command=self.Btn_CreatePartition)
         self.Step3bBtnCreate.pack(side=RIGHT, anchor=E)
 
         return self.fCrop
@@ -251,13 +253,13 @@ class CropCleft(Tabs.Tab):
             except:
                 pass
 
-            self.ResizeSphere.config(state='normal')
+            self.Disable_Frame(self.ResizeSphere,self.lblRadius)
             
-            self.ResizeSphere.config(from_=0.0,to=self.Sphere.MaxRadius)
+            self.ResizeSphere.config(from_=0.5,to=self.Sphere.MaxRadius)
             self.SphereSize.set(self.Sphere.Radius)
 
         else:
-            self.ResizeSphere.config(state='disabled')
+            self.Enable_Frame()
             
             if not self.top.WizardError and self.top.WizardResult == 2:
                 
@@ -342,7 +344,7 @@ class CropCleft(Tabs.Tab):
         
         Sel = self.Step1Selection.get()
 
-        if Sel != '':
+        if Sel != '' and self.top.ActiveFrame == self:
             if General_cmd.object_Exists(Sel):
                 self.Flash(Sel)
                 self.Step1bBtn.config(state='normal')
@@ -479,6 +481,13 @@ class CropCleft(Tabs.Tab):
         # Put the partition cleft over its parent
         General_cmd.Oscillate(self.Cleft.CleftName, 0.0)
         
+        self.Reset_Step1()
+
+    ''' ==========================================================
+    Reset_Step1: Resets the partition interface
+    ==========================================================='''           
+    def Reset_Step1(self):
+
         # reset everything
         self.dictSpheres.clear()
         self.Step1Selection.set('')
@@ -491,7 +500,7 @@ class CropCleft(Tabs.Tab):
         self.highlight_Step(1)
         
         self.update_Step1_DDL()
-
+        
     ''' ==========================================================
     Step3_Prev: Enables the controls for step 2 and highlight it
     ==========================================================='''           
@@ -516,8 +525,12 @@ class CropCleft(Tabs.Tab):
         
         self.OptCleftStep1['menu'].delete(0, 'end')
         
+        CleftName_ = ''
         for CleftName in self.top.Default.TempBindingSite.Get_SortedCleftNames():
             self.OptCleftStep1['menu'].add_command(label=CleftName, command=lambda temp = CleftName: self.OptCleftStep1.setvar(self.OptCleftStep1.cget("textvariable"), value = temp))
+            CleftName_ = CleftName
+
+        self.Step1Selection.set(CleftName_)
 
     ''' ==========================================================
     update_Spheres: Updates the Drop-Down-List of Spheres

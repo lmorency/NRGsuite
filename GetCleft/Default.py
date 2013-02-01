@@ -107,6 +107,9 @@ class RunThread(threading.Thread):
             self.top.Display_Temp()
             self.GetCleft.Go_Step2()
             self.GetCleft.CopySession = False
+            self.GetCleft.EditSession = False
+
+            self.GetCleft.Crop.Reset_Step1()
 
         else:
             self.top.DisplayMessage("  No clefts found for object/selection '" +
@@ -650,6 +653,8 @@ class Default(Tabs.Tab):
                 self.top.Go_Step2()
                 
                 self.top.CopySession = True
+                self.top.EditSession = True
+                self.top.Crop.Reset_Step1()
 
     ''' ==================================================================================
     FUNCTION Btn_Save_Clefts: Asks for user to save clefts

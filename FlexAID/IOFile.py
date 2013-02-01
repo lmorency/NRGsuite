@@ -668,7 +668,7 @@ class IOFile(Tabs.Tab):
                     for i in range(0,len(inpFile[line][10:])/5):
                         list.append(inpFile[line][(10+i*5):(10+5+i*5)].strip())
                     flexInfo[INDEX] = list
-                    
+                
         except:
             self.DisplayMessage('  ERROR: Could not retrieve ligand input file', 1)
             return 1

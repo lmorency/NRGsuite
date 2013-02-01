@@ -65,7 +65,7 @@ class Config1(Tabs.Tab):
 
     BindingSiteDisplay = 'BINDINGSITE_AREA__'
     SphereDisplay = 'SPHERE__'
-    ScaleResolution = 0.25
+    ScaleResolution = 0.50
 
     ProcessError = False
     
@@ -91,7 +91,7 @@ class Config1(Tabs.Tab):
         self.defOptSphere.set('')
         self.defOptCleft.set('')
         self.defOptResidue.set('')
-        self.SphereSize.set(0.0)
+        self.SphereSize.set(0.5)
         self.ResiduValue.set('')
         
         self.TargetFlexName.set('')
@@ -209,9 +209,10 @@ class Config1(Tabs.Tab):
         self.RadioBtn_Sphere = Radiobutton(fRangeOptLeftLine1, text='SPHERE', variable=self.RngOpt, value='LOCCEN', font=self.top.font_Text, disabledforeground=self.top.Color_White)
         self.RadioBtn_Sphere.pack(side=TOP, anchor=N)
 
-        Label(fRangeOptLeftLine2, text='Radius:', width=10, font=self.top.font_Text).pack(side=LEFT, anchor=SE)
-        
-        self.sclResizeSphere = Scale(fRangeOptLeftLine2, from_ = 0.0, to = 0.0, orient=HORIZONTAL, length=150, resolution=self.ScaleResolution, command=self.ResizeSphere, variable=self.SphereSize)
+        self.lblRadius = Label(fRangeOptLeftLine2, text='Radius:', width=10, font=self.top.font_Text)
+        self.lblRadius.pack(side=LEFT, anchor=SE)
+
+        self.sclResizeSphere = Scale(fRangeOptLeftLine2, from_ = 0.5, to = 0.5, orient=HORIZONTAL, length=150, resolution=self.ScaleResolution, command=self.ResizeSphere, variable=self.SphereSize)
         self.sclResizeSphere.pack(side=LEFT)
         self.sclResizeSphere.config(state='disabled')
 
@@ -219,7 +220,8 @@ class Config1(Tabs.Tab):
         self.Btn_EditSphere.pack(side=LEFT)
         self.Btn_EditSphere.config(state='disabled')            
         
-        Label(fRangeOptLeftLine3, text='Center with:', width=10, font=self.top.font_Text).pack(side=LEFT)
+        self.lblCenter = Label(fRangeOptLeftLine3, text='Center with:', width=10, font=self.top.font_Text)
+        self.lblCenter.pack(side=LEFT)
         optionTuple = '',
         self.OptMenuSphere = apply(OptionMenu, (fRangeOptLeftLine3, self.defOptSphere) + optionTuple)
         self.OptMenuSphere.config(state='disabled', width=15)
@@ -418,7 +420,7 @@ class Config1(Tabs.Tab):
 
         if len(Center) > 0 and Width != -1:
             self.BindingSite.Sphere = SphereObj.SphereObj(Width/4.0,Width/2.0,Center)
-            self.sclResizeSphere.config(from_=0.0,to=self.BindingSite.Sphere.MaxRadius)
+            self.sclResizeSphere.config(from_=0.5,to=self.BindingSite.Sphere.MaxRadius)
             self.SphereSize.set(self.BindingSite.Sphere.Radius)
         else:
             self.DisplayMessage("  ERROR: Could not display the default sphere", 1)
@@ -588,7 +590,7 @@ class Config1(Tabs.Tab):
                     self.BindingSite = TmpBindingSite
 
                     if self.BindingSite.Type == 1:
-                        self.sclResizeSphere.config(from_=0.0,to=self.BindingSite.Sphere.MaxRadius)
+                        self.sclResizeSphere.config(from_=0.5,to=self.BindingSite.Sphere.MaxRadius)
                         self.SphereSize.set(self.BindingSite.Sphere.Radius)
                         self.RngOpt.set('LOCCEN')
                     elif self.BindingSite.Type == 2:
@@ -782,23 +784,12 @@ class Config1(Tabs.Tab):
     def SphereRunning(self, boolRun):
 
         if boolRun:
-            self.RadioBtn_Sphere.config(state='disabled')
-            self.RadioBtn_Cleft.config(state='disabled')
-
-            self.sclResizeSphere.config(state='normal')
-            self.OptMenuSphere.config(state='normal')
-            self.Btn_OptSphRefresh.config(state='normal')
-
+            self.Disable_Frame(self.Btn_OptSphRefresh,self.OptMenuSphere,self.sclResizeSphere,
+                               self.lblCenter,self.lblRadius)
             self.Delete_BindingSite()
 
         else:
-            
-            self.RadioBtn_Sphere.config(state='normal')
-            self.RadioBtn_Cleft.config(state='normal')
-
-            self.sclResizeSphere.config(state='disabled')
-            self.OptMenuSphere.config(state='disabled')
-            self.Btn_OptSphRefresh.config(state='disabled')
+            self.Enable_Frame()
 
             # Reset RngOpt to None if there was an error
             if self.top.WizardError:

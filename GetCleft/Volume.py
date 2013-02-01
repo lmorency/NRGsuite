@@ -103,6 +103,7 @@ class EstimateVolume(Tabs.Tab):
 
         self.top.Default.Update_TempBindingSite()
         
+        print(self.top.Default.TempBindingSite.listClefts)
         self.Init_Table()
 
     ''' ==================================================================================

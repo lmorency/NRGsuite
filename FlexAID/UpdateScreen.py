@@ -227,11 +227,10 @@ class UpdateScreen():
                     
                     text_file.write(tmpLine)
 
-            else:                                        
-                text_file.write(pdbLine)                                    
+                else:                                        
+                    text_file.write(pdbLine)                                    
 
             text_file.close()                               
-
 
         except IOError:
             self.CriticalError("  ERROR: while writing PDB ligand file.")

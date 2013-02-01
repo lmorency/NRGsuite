@@ -57,6 +57,7 @@ class displayGetCleft:
             from pymol import cmd
             import General_cmd
 
+        self.Name = 'GetCleft'
         self.OSid = OSid
         
         self.WINDOWWIDTH = 500
@@ -140,6 +141,7 @@ class displayGetCleft:
         self.ProcessRunning = False
         self.Run = None
         self.CopySession = True
+        self.EditSession = True
 
         self.Frame_Main()
 
@@ -407,11 +409,14 @@ class displayGetCleft:
                 #self.ActiveFrame.Del_Trace()
 
             self.ActiveFrame = Frame
-            #print "New active frame " + self.ActiveFrame.FrameName
+            print("New active frame " + self.ActiveFrame.FrameName)
 
             self.ActiveFrame.Show()
+            print("Done showing")
             self.ActiveFrame.After_Show()
+            print("Done after showing")
             self.ActiveFrame.Tab.config(bg=self.Color_Blue)
+            print("Done switching color")
 
             self.fMiddle.update_idletasks()
 

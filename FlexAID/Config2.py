@@ -78,7 +78,7 @@ class Config2(Tabs.Tab):
 
         self.UseReference.set(0)
 
-        self.CovDist.set(0.0)
+        self.CovDist.set(0.25)
         self.CovConsSelection.set('')
 
         self.IntTranslation.set(1)
@@ -219,11 +219,12 @@ class Config2(Tabs.Tab):
             General.setState(self.fSAT)
             
         else:
-            self.Update_Constraints(dictCons, optCons, selection)
 
             General.backState(self.fBonds,self.StateList)
             General.backState(self.fSAT,self.StateList)
             
+            self.Update_Constraints(dictCons, optCons, selection)
+
 
     ''' ==================================================================================
     FUNCTION Del_Constraint: Deletes a constraint type
@@ -371,7 +372,7 @@ class Config2(Tabs.Tab):
         Label(fCovConstraintLine4, text = '', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT, anchor=E)
         Label(fCovConstraintLine4, text = 'Interaction distance (A):', font=self.top.font_Text).pack(side=LEFT, anchor=S)
 
-        self.sclCovDist = Scale(fCovConstraintLine4, from_ = 0.0, to = 10.0, orient=HORIZONTAL, length=120, resolution=0.05, variable=self.CovDist)
+        self.sclCovDist = Scale(fCovConstraintLine4, from_ = 0.25, to = 10.0, orient=HORIZONTAL, length=120, resolution=0.05, variable=self.CovDist)
         self.sclCovDist.pack(side=LEFT)
         self.sclCovDist.config(state='disabled')
 

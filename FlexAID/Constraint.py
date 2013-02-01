@@ -353,7 +353,7 @@ class constraint(Wizard):
                                               self.CONSTRAINT + str(len(self.dictConstraints) + 1),  # constraint name
                                               [ atom1[5], atom1[6], atom1[7] ],    # coordinates of atom 1
                                               [ atom2[5], atom2[6], atom2[7] ],    # coordinates of atom 2
-                                              0.0,                                 # value of slider
+                                              0.25,                                 # value of slider
                                               0 ]                                  # checkbox value
                 
                 # Set default value of slider
@@ -421,7 +421,7 @@ class constraint(Wizard):
                     return 0
                 
             # Default values of blank item ''
-            self.ScaleVar.set(0.0)
+            self.ScaleVar.set(0.25)
             if self.Check != None:
                 self.CheckVar.set(0)
 

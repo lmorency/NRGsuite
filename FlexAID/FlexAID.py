@@ -66,6 +66,8 @@ class displayFlexAID:
         #print("New instance of FlexAID")
         self.PyMOL = PyMOL
 
+        self.Name = 'FlexAID'
+
         self.WINDOWWIDTH = 700
         self.WINDOWHEIGHT = 600
 
