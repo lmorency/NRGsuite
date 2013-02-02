@@ -67,7 +67,7 @@ class Base:
     ''' ==================================================================================
     FUNCTION SetActiveFrame: Switch up tabs in the uppper menu
     ================================================================================== '''    
-    def SetActiveFrame(self, Frame):
+    def SetActiveFrame(self, event, Frame):
 
         if not self.ActiveWizard is None:
             self.DisplayMessage("Cannot switch tab: A wizard is currently running...", 2)
@@ -80,12 +80,10 @@ class Base:
         if self.ActiveFrame != Frame:
 
             if not self.ActiveFrame is None:
-
-                # Trigger lost_focus event for validation
-                self.fMiddle.focus_set()
-                self.fMiddle.update_idletasks()
-
-                rv = self.ActiveFrame.Validate_Entries(self.ActiveFrame.Validator)
+                
+                print "Validating all entries before switching frame"
+                rv = self.ActiveFrame.Validate_Entries()
+                print "rv=", rv
                 if rv > 0:
                     if rv == 1:
                         self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
@@ -94,21 +92,20 @@ class Base:
                     return
 
                 if not self.ActiveFrame.Before_Kill_Frame() or not self.ActiveFrame.Kill_Frame():
-                    self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
+                    self.DisplayMessage("Cannot switch tab: Could not kill the frame", 2)
                     return
-
-                self.fMiddle.update_idletasks()
 
                 #print "Killed Frame " + self.ActiveFrame.FrameName
                 self.ActiveFrame.Tab.config(bg=self.Color_White)
 
+
+            print "Switching frame..."
             self.ActiveFrame = Frame
             
+            print("Showing the frame", self.ActiveFrame.FrameName)
             self.ActiveFrame.Show()
             self.ActiveFrame.After_Show()
             self.ActiveFrame.Tab.config(bg=self.Color_Blue)
-
-            self.fMiddle.update_idletasks()
 
         return
 

@@ -61,13 +61,6 @@ class Config3(Tabs.Tab):
         self.DeltaDihedral = self.Vars.DeltaDihedral
         self.DeltaDihedralFlex = self.Vars.DeltaDihedralFlex
 
-        self.ValidDEE = list()
-        self.ValidSolventTerm = list()
-        self.ValidDeltaAngle = list()
-        self.ValidDeltaDihedral = list()
-        self.ValidDeltaDihedralFlex = list()
-
-
     def Init_Vars(self):
         
         self.CompFct.set('VCT')
@@ -94,18 +87,6 @@ class Config3(Tabs.Tab):
         self.DeltaAngle.set('2.5')
         self.DeltaDihedral.set('2.5')
         self.DeltaDihedralFlex.set('10.0')
-
-        self.ValidDEE = [True, 1, 0, None]
-        self.ValidPermeability = [True, 1, 0, None]
-        self.ValidSolventTerm = [True, 1, 0, None]
-
-        self.ValidDeltaAngle = [True, 1, 0, None]
-        self.ValidDeltaDihedral = [True, 1, 0, None]
-        self.ValidDeltaDihedralFlex = [True, 1, 0, None]
-
-        self.Validator = [ self.ValidDEE, self.ValidPermeability,
-                           self.ValidDeltaAngle, self.ValidDeltaDihedral, 
-                           self.ValidDeltaDihedralFlex, self.ValidSolventTerm ]
 
 
     ''' ==================================================================================
@@ -234,10 +215,9 @@ class Config3(Tabs.Tab):
         Label(fPermeaLine2, text='Van der Waals ratio: ', font=self.top.font_Text).pack(side=LEFT)
         entPermea = Entry(fPermeaLine2, textvariable=self.Permeability, font=self.top.font_Text, justify=CENTER, width=4)
         entPermea.pack(side=RIGHT)
-        args_list = [entPermea, self.Permeability, 0.00, 1.00, 2, self.ValidPermeability,'VDW Permeability','float']
-        entPermea.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidPermeability[3] = entPermea
-
+        args_list = [entPermea, self.Permeability, 0.00, 1.00, 2, 'VDW Permeability','float']
+        entPermea.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        self.ValidPermeability = [1, 0, entPermea]
 
         #==================================================================================
         # Delta (variations of distances/angles)
@@ -264,25 +244,25 @@ class Config3(Tabs.Tab):
         Label(fDeltaLine2, text='Angle from reference: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         entDAng = Entry(fDeltaLine2, textvariable=self.DeltaAngle, font=self.top.font_Text, justify=CENTER, width=5)
         entDAng.pack(side=RIGHT, anchor=W)
-        args_list = [entDAng, self.DeltaAngle, 1.0, 10.0, 2, self.ValidDeltaAngle,'DELTA Angle','float']
-        entDAng.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidDeltaAngle[3] = entDAng
+        args_list = [entDAng, self.DeltaAngle, 1.0, 10.0, 2, 'DELTA Angle','float']
+        entDAng.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        self.ValidDeltaAngle = [1, 0, entDAng]
 
         # Dihedrals
         Label(fDeltaLine3, text='Dihedrals from reference: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         entDDih = Entry(fDeltaLine3, textvariable=self.DeltaDihedral, font=self.top.font_Text, justify=CENTER, width=5)
         entDDih.pack(side=RIGHT, anchor=W)
-        args_list = [entDDih, self.DeltaDihedral, 1.0, 10.0, 2, self.ValidDeltaDihedral,'DELTA Dihedral','float']
-        entDDih.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidDeltaDihedral[3] = entDDih
+        args_list = [entDDih, self.DeltaDihedral, 1.0, 10.0, 2, 'DELTA Dihedral','float']
+        entDDih.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        self.ValidDeltaDihedral = [1, 0, entDDih]
 
         # Dihedrals (Flex Bonds)
         Label(fDeltaLine4, text='Dihedrals of flexible bonds: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         entDDihFlex = Entry(fDeltaLine4, textvariable=self.DeltaDihedralFlex, font=self.top.font_Text, width=5, justify=CENTER)
         entDDihFlex.pack(side=RIGHT, anchor=W)
-        args_list = [entDDihFlex, self.DeltaDihedralFlex, 1.0, 30.0, 2, self.ValidDeltaDihedralFlex,'DELTA Dihedral Flexible Bonds','float']
-        entDDihFlex.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidDeltaDihedralFlex[3] = entDDihFlex
+        args_list = [entDDihFlex, self.DeltaDihedralFlex, 1.0, 30.0, 2, 'DELTA Dihedral Flexible Bonds','float']
+        entDDihFlex.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        self.ValidDeltaDihedralFlex = [1, 0, entDDihFlex]
 
         #==================================================================================
         # Side-chain optimization (DEE)
@@ -304,9 +284,10 @@ class Config3(Tabs.Tab):
         Label(fDEELine3, text='Clashing Threshold:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entDEE = Entry(fDEELine3, width=5, font=self.top.font_Text, textvariable=self.DEE_Clash_Threshold, state='disabled', justify=CENTER)
         self.entDEE.pack(side=RIGHT)
-        args_list = [self.entDEE, self.DEE_Clash_Threshold, 0.01, 1.00, 2, self.ValidDEE,'DEE Clash Threshold','float']
-        self.entDEE.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidDEE[3] = self.entDEE
+        args_list = [self.entDEE, self.DEE_Clash_Threshold, 0.01, 1.00, 2,'DEE Clash Threshold','float']
+        self.entDEE.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        self.ValidDEE = [1, 0, self.entDEE]
+
 
         #==================================================================================
         # Implicit Solvent Type
@@ -332,9 +313,15 @@ class Config3(Tabs.Tab):
         Label(fSolventLine3, text='Solvent term:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entSolventTerm = Entry(fSolventLine3, textvariable=self.SolventTerm, font=self.top.font_Text, width=4, justify=CENTER)
         self.entSolventTerm.pack(side=RIGHT)
-        args_list = [self.entSolventTerm, self.SolventTerm, -10.0, 10.0, 1, self.ValidSolventTerm,'Solvent Term','float']
-        self.entSolventTerm.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidSolventTerm[3] = self.entSolventTerm
+        args_list = [self.entSolventTerm, self.SolventTerm, -10.0, 10.0, 1, 'Solvent Term','float']
+        self.entSolventTerm.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        self.ValidSolventTerm = [1, 0, self.entSolventTerm]
+
+
+        self.Validator = [ self.ValidDEE, self.ValidPermeability,
+                           self.ValidDeltaAngle, self.ValidDeltaDihedral, 
+                           self.ValidDeltaDihedralFlex, self.ValidSolventTerm ]
+
 
         return self.fConfig3
         

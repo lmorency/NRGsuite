@@ -37,8 +37,12 @@ class Tab:
         self.Color_Black = self.top.Color_Black
         self.Color_Blue = self.top.Color_Blue
         self.Color_White = self.top.Color_White
+        self.Color_Red = self.top.Color_Red
 
         self.DisplayMessage = self.top.DisplayMessage
+
+        self.StateList = []
+        self.Validator = []
 
         self.Vars = Vars
         self.Def_Vars()
@@ -46,10 +50,7 @@ class Tab:
 
         self.fFrame = self.Frame()
         self.Trace()
-        
-        self.StateList = []
-        self.Validator = []
-        
+                
     def Def_Vars(self):
     
         return
@@ -141,9 +142,8 @@ class Tab:
         Min = args[2]
         Max = args[3]
         nDec = args[4]
-        Validator = args[5]
-        Label = args[6]
-        Type = args[7]
+        Label = args[5]
+        Type = args[6]
 
         rv = -1
 
@@ -160,7 +160,7 @@ class Tab:
                     Max = float(Max.get())
                 except:
                     Max = 1.0
-
+            
             rv = General.validate_Float(StringVar.get(), Min, Max, nDec)
 
         elif Type == 'int':
@@ -185,53 +185,79 @@ class Tab:
         # Return-value testing
         if rv == 0:
             Entry.config(bg=self.Color_White)
-            Validator[0] = True
- 
-        elif rv == 1:
-            self.DisplayMessage("Value has erroneus format for field " + Label, 1)
-            Validator[0] = False
-
-        elif rv == 2:
-            self.DisplayMessage("The number of decimals cannot exceed (" + str(nDec) + ") for field " + Label, 1)
-            Validator[0] = False
-
-        elif rv == 3:
-            self.DisplayMessage("Value must be within the range[" + str(Min) + "," + str(Max) + "] for field " + Label, 1)
-            Validator[0] = False
-
+            return True
+            
         elif rv == -1:
             print("Unknown data format")
+            return True
+            
+        else:
+            if rv == 1:
+                self.DisplayMessage("Value has erroneus format for field " + Label, 1)
+            elif rv == 2:
+                self.DisplayMessage("The number of decimals cannot exceed (" + str(nDec) + ") for field " + Label, 1)
+            elif rv == 3:
+                self.DisplayMessage("Value must be within the range[" + str(Min) + "," + str(Max) + "] for field " + Label, 1)
 
-        return
-        
+            print("Switching to RED!")
+            Entry.config(bg=self.Color_Red)
+            
+            return False
+                    
     ''' ==================================================================================
     FUNCTION Lost_Focus: Draws a red square in box if field was not validated
     ==================================================================================  '''    
     def Lost_Focus(self, event, args):
 
-        self.Validate_Field(args)
-
+        print "Lost_Focus"
         Entry = args[0]
-        Validator = args[5]
+        StringVar = args[1]
         
-        if not Validator[0]:
+        print "Entry", Entry.get()
+        print "StringVar", StringVar.get()
+        if not self.Validate_Field(args):
             Entry.config(bg=self.Color_Red)
 
-        return "break"
+        #w = self.fMiddle.focus_get()
+        #self.fMiddle.focus_set()
+        #w.focus_set()
+        Entry.update_idletasks()
+
+#        return "break"
+        return
+
+    ''' ==================================================================================
+    FUNCTION Key_Pressed: Draws a red square in box if field was not validated
+    ==================================================================================  '''    
+    def Key_Pressed(self, event, args):
+
+        print "KeyPressed", event.keysym
+        Entry = args[0]
+        StringVar = args[1]
+        
+        print "Entry", Entry.get()
+        print "StringVar", StringVar.get()
+        if not self.Validate_Field(args):
+            Entry.config(bg=self.Color_Red)
+
+        Entry.update_idletasks()
+
+        return
 
     ''' ==================================================================================
     FUNCTION Validate_Entries: Validate all entries of a frame before switching
     ==================================================================================  '''    
-    def Validate_Entries(self, list):
+    def Validate_Entries(self):
         
-        for valid in list:
-            if not valid[2] and valid[0] == False:
-
-                if valid[3] != None:
-                    valid[3].config(bg=self.Color_Red)
-
-                return valid[1]
-
+        for Validator in self.Validator:
+            
+            if not Validator[1] and \
+                   Validator[2] != None and \
+                   Validator[2]['state'] == 'normal' and \
+                   Validator[2]['bg'] == self.Color_Red:
+                   
+                return Validator[0]
+    
         return 0
 
     ''' ==================================================================================

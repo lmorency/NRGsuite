@@ -54,7 +54,6 @@ def validate_Integer(sVal, Min, Max):
 
     return 0
     
-    
 ''' ==========================================================
   validate_String: validate the entry field (str value)  
 ==========================================================='''

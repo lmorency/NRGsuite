@@ -272,9 +272,9 @@ class displayFlexAID(Base.Base):
                 
         self.fMiddle.pack(fill=X, expand=True, padx=10, side=TOP)
         #self.fMiddle.config(takefocus=1)
-        self.fMiddle.bind('<FocusIn>', lambda e: None)
+        #self.fMiddle.bind('<FocusIn>', lambda e: None)
         #self.fMiddle.pack_propagate(0)
-
+        
         #==================================================================================
         '''                 BOTTOM DISPLAY SECTION OF THE INTERFACE                     '''
         #==================================================================================
@@ -311,6 +311,9 @@ class displayFlexAID(Base.Base):
 
         scrollBar.config(command=self.TextMessage.yview)
         self.TextMessage.config(state='disabled', yscrollcommand=scrollBar.set)                                       
+
+        #self.Btn_Dummy = Button(fBottomRight, text='Close', font=self.font_Text)
+        #self.Btn_Dummy.bind('<Button-1>', lambda event, arg=self.ActiveFrame: self.SwitchTab(event,arg))
     
     ''' ==================================================================================
     FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
@@ -360,7 +363,6 @@ class displayFlexAID(Base.Base):
                         for Tab in self.listTabs:
                             try:
                                 Tab.Vars = pickle.load(in_)
-                                Tab.Update_Vars()
                                 Tab.Vars.refresh()
                                 Tab.Load_Session()
                             except:
@@ -460,8 +462,11 @@ class displayFlexAID(Base.Base):
     FUNCTION Btn_*_Clicked: Display the Tab options menu
     ================================================================================== '''    
     def Btn_IOFiles_Clicked(self):
+    
+        Btn_Dummy = Button(self.frame)
+        Btn_Dummy.bind('<Button-1>', lambda event, Frame=self.IOFile: self.SetActiveFrame)
         
-        self.SetActiveFrame(self.IOFile)
+        
 
     def Btn_Config1_Clicked(self):
         

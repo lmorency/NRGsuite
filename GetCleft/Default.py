@@ -141,9 +141,6 @@ class Default(Tabs.Tab):
         self.ColorList = list()
         self.ColorRGB = list()
 
-        self.ValidNbCleft = list()
-        self.ValidOutput = list()
-
 
     def Init_Vars(self):
 
@@ -159,14 +156,6 @@ class Default(Tabs.Tab):
         self.listResidues = []
         self.PartitionColor = 'partition'
         self.LastdefaultOption = ''
-        
-        self.ValidNbCleft = [ True, 1, 0, None ]
-        self.ValidMinRadius = [ True, 1, 0, None ]
-        self.ValidMaxRadius = [ True, 1, 0, None ]
-        self.ValidOutput = [ True, 1, 0, None ]
-
-        self.Validator = [ self.ValidNbCleft, self.ValidMinRadius, self.ValidMaxRadius, self.ValidOutput ]
-        
     
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
@@ -276,13 +265,13 @@ class Default(Tabs.Tab):
         EntryMinRadius.pack(side=RIGHT)
         Label(fBasicLine2, text='Min:', font=self.top.font_Text).pack(side=RIGHT, padx=2)
 
-        args_list = [EntryMaxRadius, self.MaxRadius, EntryMinRadius, 10.00, 2, self.ValidMaxRadius, 'Maximum radius', 'float']
-        EntryMaxRadius.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidMaxRadius[3] = EntryMaxRadius
+        args_list = [EntryMaxRadius, self.MaxRadius, EntryMinRadius, 10.00, 2, 'Maximum radius', 'float']
+        EntryMaxRadius.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        self.ValidMaxRadius = [ 1, 0, EntryMaxRadius ]
 
-        args_list = [EntryMinRadius, self.MinRadius, 0.25, EntryMaxRadius, 2, self.ValidMinRadius, 'Minimum radius', 'float']
-        EntryMinRadius.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidMinRadius[3] = EntryMinRadius
+        args_list = [EntryMinRadius, self.MinRadius, 0.25, EntryMaxRadius, 2, 'Minimum radius', 'float']
+        EntryMinRadius.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        self.ValidMinRadius = [ True, 1, 0, EntryMinRadius ]
         
         Label(fBasicLine3, text='Residue in contact (e.g. ALA13A):', font=self.top.font_Text).pack(side=LEFT)
         self.EntryResidu = Entry(fBasicLine3,textvariable=self.ResiduValue, background='white', justify=CENTER, font=self.top.font_Text)
@@ -291,16 +280,17 @@ class Default(Tabs.Tab):
         Label(fBasicLine4, text='Number of clefts to show:', font=self.top.font_Text).pack(side=LEFT)
         EntryNbCleft = Entry(fBasicLine4, width=8, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
         EntryNbCleft.pack(side=RIGHT)
-        args_list = [EntryNbCleft, self.NbCleft, 1, 100, -1, self.ValidNbCleft, 'Number of clefts', 'int']
-        EntryNbCleft.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidNbCleft[3] = EntryNbCleft
+        args_list = [EntryNbCleft, self.NbCleft, 1, 100, -1, 'Number of clefts', 'int']
+        EntryNbCleft.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        self.ValidNbCleft = [ 1, 0, EntryNbCleft ]
 
         Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
         EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
         EntryOutput.pack(side=RIGHT)
-        args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, self.ValidOutput, 'Output filename', 'str']
-        EntryOutput.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidOutput[3] = EntryOutput
+        args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, 'Output filename', 'str']
+        EntryOutput.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        self.ValidOutput = [ 1, 0, EntryOutput ]
+
 
         #Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, width=20, relief=RIDGE, command=self.Btn_AdvancedOptions).pack(side=RIGHT)
 
@@ -357,6 +347,8 @@ class Default(Tabs.Tab):
         #Radiobutton(fDisplayLine2, text='Spheres', variable=self.RadioCLF, value='sphere', font=self.top.font_Text).pack(side=LEFT)
         #Radiobutton(fDisplayLine2, text='Surface', variable=self.RadioCLF, value='surface', font=self.top.font_Text).pack(side=LEFT)
         #Checkbutton(fDisplayLine3, text='Clefts', width=20, variable=self.intChkClefts, font=self.top.font_Text, justify=LEFT).pack(side=LEFT)
+
+        self.Validator = [ self.ValidNbCleft, self.ValidMinRadius, self.ValidMaxRadius, self.ValidOutput ]
        
         return self.fDefault
         
