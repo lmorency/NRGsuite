@@ -50,7 +50,7 @@ class flexSC(Wizard):
         self.FlexAID.WizardError = False
 
         self.ProtName = self.FlexAID.IOFile.ProtName.get()
-        self.TargetFlex = self.top.TargetFlex
+        self.TargetFlex = self.top.Vars.TargetFlex
 
         self.ResidueName = '...'
         self.PanelResidue = '   Residue: '

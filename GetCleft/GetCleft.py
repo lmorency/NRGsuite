@@ -164,7 +164,8 @@ class displayGetCleft(Base.Base):
         
         self.MakeMenuBar()
 
-        self.listBtnTabs = [self.Btn_Config,self.Btn_Volume,self.Btn_CropCleft]
+        self.listBtnTabs = [ self.Btn_Config, self.Btn_Volume, self.Btn_CropCleft ]
+        self.listTabs = [ self.Default, self.Crop, self.Volume ]
 
         # Default view
         self.Btn_Config_Clicked()
@@ -235,11 +236,11 @@ class displayGetCleft(Base.Base):
         Btn_Default = Button(fBottomRight, text='Default', command=self.Btn_Default_Clicked, font=self.font_Text)
         Btn_Default.pack(side=TOP, fill=X)
 
-        Btn_SaveDefault = Button(fBottomRight, text='Save as default', command=self.Btn_SaveDefault_Clicked, font=self.font_Text)
-        Btn_SaveDefault.pack(side=TOP, fill=X)
+        #Btn_SaveDefault = Button(fBottomRight, text='Save as default', command=self.Btn_SaveDefault_Clicked, font=self.font_Text)
+        #Btn_SaveDefault.pack(side=TOP, fill=X)
 
-        Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=self.font_Text)
-        Btn_Restore.pack(side=TOP, fill=X)
+        #Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=self.font_Text)
+        #Btn_Restore.pack(side=TOP, fill=X)
 
         Btn_Quit = Button(fBottomRight, text='Close', command=self.Quit, font=self.font_Text)
         Btn_Quit.pack(side=BOTTOM, fill=X)
@@ -332,19 +333,4 @@ class displayGetCleft(Base.Base):
 
         if not os.path.isdir(self.GetCleftTempProject_Dir):
             os.makedirs(self.GetCleftTempProject_Dir)
-            
-            
-    ''' ==================================================================================
-    FUNCTION Btn_Default_Clicked: Sets back the default config
-    ================================================================================== '''    
-    def Btn_Default_Clicked(self):
-        
-        if self.ActiveWizard != None:
-            self.DisplayMessage("Cannot reset values while a Wizard is active", 2)
-            return
-
-        if self.ProcessRunning is True:
-            self.DisplayMessage("Cannot reset values while a Process is running", 2)
-            return
-            
-        self.ActiveFrame.Init_Vars()
+    

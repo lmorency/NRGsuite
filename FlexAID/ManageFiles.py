@@ -163,10 +163,10 @@ class Manage():
         
         if rngOpt == 'LOCCEN':
             line = 'RNGOPT LOCCEN'
-            line += ' %.3f' % self.Config1.BindingSite.Sphere.Center[0]
-            line += ' %.3f' % self.Config1.BindingSite.Sphere.Center[1]
-            line += ' %.3f' % self.Config1.BindingSite.Sphere.Center[2]
-            line += ' %.3f\n' % self.Config1.BindingSite.Sphere.Radius
+            line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[0]
+            line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[1]
+            line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[2]
+            line += ' %.3f\n' % self.Config1.Vars.BindingSite.Sphere.Radius
             config_file.write(line)
 
         elif rngOpt == 'LOCCLF':
@@ -176,7 +176,7 @@ class Manage():
             config_file.write(line)        
 
         
-        if self.Config1.TargetFlex.Count_SideChain() > 0:
+        if self.Config1.Vars.TargetFlex.Count_SideChain() > 0:
             FlexSCFile = os.path.join(self.FlexAIDRunSimulationProject_Dir,'flexSC.lst')
             self.Create_FlexFile(FlexSCFile)
             config_file.write('FLEXSC ' + FlexSCFile + '\n')
@@ -292,7 +292,7 @@ class Manage():
                     
         FlexFile = open(outfile, 'w')
                   
-        for item in self.Config1.TargetFlex.listSideChain:
+        for item in self.Config1.Vars.TargetFlex.listSideChain:
             lastch = len(item) - 1
             ResName = item[0:3]
             ChainID = item[lastch]

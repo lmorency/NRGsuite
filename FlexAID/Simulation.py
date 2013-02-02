@@ -43,6 +43,7 @@ import UpdateScreen
 
 # Start the simulation with FlexAID      
 class Start(threading.Thread):
+#class Start():
 
     def __init__(self, top,commandline):
 
@@ -61,6 +62,7 @@ class Start(threading.Thread):
 
     # Start FlexAID on a side thread
     def run(self):        
+    #def start(self):        
         
         #print "FlexAID starting thread has begun."
         
@@ -72,7 +74,7 @@ class Start(threading.Thread):
             if self.FlexAID.OSid == 'WIN':
                 self.FlexAID.Run = Popen(self.commandline, shell=False, bufsize=1, stdout=PIPE, stderr=STDOUT)
             else:
-                self.FlexAID.Run = Popen(self.commandline, shell=True,  bufsize=1, stdout=PIPE, stderr=STDOUT)
+                self.FlexAID.Run = Popen(self.commandline, shell=True, bufsize=1, stdout=PIPE, stderr=STDOUT)
                 
             self.FlexAID.Run.wait()
             
@@ -90,7 +92,6 @@ class Start(threading.Thread):
         self.FlexAID.Run = None
         self.FlexAID.ProcessRunning = False
         
-
 
 class Parse(threading.Thread):
 #class Parse():
@@ -129,8 +130,6 @@ class Parse(threading.Thread):
         self.Translation = self.FlexAID.Config2.IntTranslation.get()
         self.Rotation = self.FlexAID.Config2.IntRotation.get()
         
-        #self.Updating = 0
-
         self.State = 0
         self.CurrentState = 0
 
@@ -143,7 +142,7 @@ class Parse(threading.Thread):
 
         self.ReferencePath = self.FlexAID.IOFile.ReferencePath.get()
 
-        self.listSideChain = self.FlexAID.Config1.TargetFlex.listSideChain
+        self.listSideChain = self.FlexAID.Config1.Vars.TargetFlex.listSideChain
         self.dictSideChainNRot = {}
         self.dictSideChainRotamers = {}
 
@@ -274,7 +273,7 @@ class Parse(threading.Thread):
                                 ID = str(self.Generation) + '.' + str(self.TOP)
                                 #print("updating " + ID)
 
-                                #print Line
+                                print Line
                                 Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
                                                                     self.Translation, self.Rotation )
 

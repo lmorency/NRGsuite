@@ -93,16 +93,26 @@ class UpdateScreen():
             self.CriticalError("Object " + str(self.ProtName) + " no longer exists")
         
 
-        if self.UpdateLigandAnchorPoint():
-            self.selSideChains = self.UpdateSideChainConformations()
+        if self.UpdateLigandAnchorPoint() or self.UpdateLigandFlexibility():
+            self.Delete_Object()
+            
+        self.selSideChains = self.UpdateSideChainConformations()
 
-        if self.UpdateLigandFlexibility() and self.WriteOutLigand() and self.EditView() and self.UpdateDataList():
-            try:
-                # delete temporary protein PDB file
-                cmd.delete(self.ProteinObj)
-            except:
-                self.CriticalError("Object " + str(self.ProteinObj) + " no longer exists")
+        if self.WriteOutLigand() or self.EditView() or self.UpdateDataList():
+            self.Delete_Object()            
 
+        return
+        
+    '''=========================================================================
+       Delete_Object: deleted the updating object if an error occurs
+    ========================================================================='''
+    def Delete_Object(self):
+
+        try:
+            # delete temporary protein PDB file
+            cmd.delete(self.ProteinObj)
+        except:
+            self.CriticalError("Object " + str(self.ProteinObj) + " no longer exists")
 
     '''=========================================================================
        UpdateDataList: Updates the table containing energy/fitness values
@@ -142,9 +152,9 @@ class UpdateScreen():
 
         except:
             self.CriticalError("  ERROR: while updating data list")
-            return 0
+            return 1
 
-        return 1
+        return 0
 
     '''=========================================================================
        EditView: Edit the visual aspects of the PyMOL interface
@@ -188,9 +198,9 @@ class UpdateScreen():
 
         except:
             self.CriticalError("  ERROR: while editing view")
-            return 0
+            return 1
 
-        return 1
+        return 0
 
     '''=========================================================================
        WriteOutLigand: Ouputs PDB ligand file with new coordinates
@@ -234,9 +244,9 @@ class UpdateScreen():
 
         except IOError:
             self.CriticalError("  ERROR: while writing PDB ligand file.")
-            return 0
+            return 1
 
-        return 1
+        return 0
 
     '''=========================================================================
        UpdateLigandFlexibility: Updates the dihedral angles of the ligand
@@ -303,9 +313,9 @@ class UpdateScreen():
                                     self.top.DisAngDih[int(ATflex_B)][2] = ColValue
         except:
             self.CriticalError("  ERROR: while updating ligand flexibility")
-            return 0
+            return 1
 
-        return 1
+        return 0
 
     '''=========================================================================
        UpdateLigandAnchorPoint: Updates the position of the ligand on the screen
@@ -341,9 +351,9 @@ class UpdateScreen():
 
         except:
             self.CriticalError("  ERROR: while updating ligand anchor point")
-            return 0
+            return 1
 
-        return 1
+        return 0
 
     '''=========================================================================
       .UpdateSideChainConformations: Update side-chain dihedral angles using rotamer library
@@ -379,11 +389,25 @@ class UpdateScreen():
                     IntVal = int(float(self.Line[self.colNo:(self.colNo+10)].strip()) + 0.5)
                     nFlex = Constants.nFlexBonds[Res]
                     
+                    #print("IntVal", str(IntVal))
+                    #print("nFlex", str(nFlex))
+                    #print strSelectSC
+                    
                     if IntVal > 0: # 0 is the default PDB side-chain conf.
         
                         # Get List of Dihedrals to rebuild
                         for k in range(0,nFlex):
-
+                        
+                            '''
+                            print "for k=" + str(k) + " for residue=" + str(residue)
+                            print self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+0])
+                            print self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+1])
+                            print self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+2])
+                            print self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+3])
+                            print self.top.dictSideChainRotamers[residue]
+                            print self.top.dictSideChainRotamers[residue][(IntVal-1)*nFlex+k]
+                            '''
+                            
                             # Set dihedrals for side-chain
                             cmd.set_dihedral(self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+0]),
                                              self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+1]),

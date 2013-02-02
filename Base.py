@@ -20,22 +20,7 @@
 from Tkinter import *
 
 import os, sys
-import pickle
 import time
-import tkFont
-import tkFileDialog
-
-import Prefs
-import Color
-import General
-
-if __debug__:
-	from pymol import cmd
-	from pymol.cgo import *
-	from pymol.vfont import plain
-
-	import General_cmd
-
 
 class Base:
 
@@ -64,6 +49,20 @@ class Base:
             return
             
         self.ActiveFrame.Init_Vars()
+
+    ''' ==================================================================================
+    FUNCTION Btn_SaveDefault_Clicked: Sets the default config
+    ================================================================================== '''    
+    def Btn_SaveDefault_Clicked(self):
+
+        return
+
+    ''' ==================================================================================
+    FUNCTION Btn_Restore_Clicked: Sets back the original default config
+    ================================================================================== '''    
+    def Btn_Restore_Clicked(self):
+
+        return
 
     ''' ==================================================================================
     FUNCTION SetActiveFrame: Switch up tabs in the uppper menu
@@ -125,16 +124,16 @@ class Base:
         RunFile.close()
 
     ''' ==================================================================================
-    FUNCTION Btn_Restore_Clicked: Restore the original default configuration
+    FUNCTION Restore: Restore the original default configuration
     ================================================================================== '''    
-    def Btn_Restore_Clicked(self):
+    def Restore(self):
         
         return
 
     ''' ==================================================================================
-    FUNCTION Btn_SaveDefault_Clicked: Saves the current configuration as default
+    FUNCTION SaveDefault: Saves the current configuration as default
     ================================================================================== '''    
-    def Btn_SaveDefault_Clicked(self):
+    def SaveDefault(self):
         
         return
 
@@ -180,16 +179,15 @@ class Base:
         # Close any Wizard interface in Pymol if started
         if not self.ActiveWizard is None:
             if self.PyMOL:
-                cmd.get_wizard().btn_Done()
-
+                self.ActiveWizard.btn_Done()
+        
         #Delete the .run file
         RunPath = os.path.join(self.AlreadyRunning_Dir,self.RunFile)
         if os.path.isfile(RunPath):
             try:
                 os.remove(RunPath)
             except OSError:
-                time.sleep(0.1)
-                os.remove(RunPath)
+                print('   An error occured while clearing running file for ' + self.Name)                
                     
         self.Del_Trace()
         
