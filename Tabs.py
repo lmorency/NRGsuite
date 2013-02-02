@@ -41,7 +41,6 @@ class Tab:
         self.DisplayMessage = self.top.DisplayMessage
 
         self.Vars = Vars
-        self.Update_Vars()
         self.Def_Vars()
         self.Init_Vars()
 
@@ -71,13 +70,6 @@ class Tab:
     FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
     def After_Show(self):
-    
-        return
-        
-    ''' ==================================================================================
-    FUNCTION Update_Vars: Update session variables when a session is loaded
-    =================================================================================  '''    
-    def Update_Vars(self):
     
         return
         
@@ -252,6 +244,7 @@ class Tab:
         General.setState(self.fFrame)
 
         for arg in args:
+            print arg
             General.setState(arg,'normal')
 
     ''' ==================================================================================

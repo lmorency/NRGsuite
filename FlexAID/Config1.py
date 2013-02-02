@@ -101,15 +101,7 @@ class Config1(Tabs.Tab):
         self.Vars.BindingSite.Clear()
         
         self.CleftTmpPath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,'tmp.pdb')
-                
-    ''' ==================================================================================
-    FUNCTION Update_Vars: Update session variables when a session is loaded
-    =================================================================================  '''    
-    def Update_Vars(self):
-
-        self.BindingSite = self.Vars.BindingSite
-        self.TargetFlex = self.Vars.TargetFlex
-    
+                    
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
     =================================================================================  '''    
@@ -369,26 +361,34 @@ class Config1(Tabs.Tab):
     def RngOpt_Toggle(self,*args):
                 
         if self.RngOpt.get() == 'LOCCLF':
+            # Cleft controls
             self.Btn_ImportCleft.config(state='normal')
             self.Btn_DeleteCleft.config(state='normal')
             self.Btn_DeleteOthersCleft.config(state='normal')
             self.Btn_ClearCleft.config(state='normal')
             self.OptMenuCleft.config(state='normal')
-
+            
+            # Sphere controls
             self.Btn_EditSphere.config(state='disabled')
+            self.Btn_OptSphRefresh.config(state='disabled')
+            self.OptMenuSphere.config(state='disabled')
 
             self.Vars.BindingSite.Set_Cleft()
             self.Display_BindingSite()
 
         elif self.RngOpt.get() == 'LOCCEN':
+            # Cleft controls
             self.Btn_ImportCleft.config(state='disabled')
             self.Btn_DeleteCleft.config(state='disabled')
             self.Btn_DeleteOthersCleft.config(state='disabled')
             self.Btn_ClearCleft.config(state='disabled')
             self.OptMenuCleft.config(state='disabled')
 
+            # Sphere controls
             self.Btn_EditSphere.config(state='normal')
-                    
+            self.Btn_OptSphRefresh.config(state='disabled')
+            self.OptMenuSphere.config(state='disabled')
+                        
             if self.Vars.BindingSite.Sphere == None:
                 self.Create_NewSphere()
 
@@ -396,13 +396,17 @@ class Config1(Tabs.Tab):
             self.Display_BindingSite()
 
         else:
+            # Cleft controls
             self.Btn_ImportCleft.config(state='disabled')
             self.Btn_DeleteCleft.config(state='disabled')        
             self.Btn_DeleteOthersCleft.config(state='disabled')
             self.Btn_ClearCleft.config(state='disabled')        
             self.OptMenuCleft.config(state='disabled')
                     
+            # Sphere controls
             self.Btn_EditSphere.config(state='disabled')
+            self.Btn_OptSphRefresh.config(state='disabled')
+            self.OptMenuSphere.config(state='disabled')
             
             self.Vars.BindingSite.Unset()
             self.Delete_BindingSite()
@@ -787,8 +791,7 @@ class Config1(Tabs.Tab):
     def SphereRunning(self, boolRun):
 
         if boolRun:
-            self.Disable_Frame(self.Btn_OptSphRefresh,self.OptMenuSphere,self.sclResizeSphere,
-                               self.lblCenter,self.lblRadius)
+            self.Disable_Frame(self.Btn_OptSphRefresh,self.OptMenuSphere,self.sclResizeSphere,self.lblCenter,self.lblRadius)
             self.Delete_BindingSite()
 
         else:
@@ -830,7 +833,7 @@ class Config1(Tabs.Tab):
         if not self.PyMOL:
             return
 
-        exc = [ self.Vars.BindingSiteDisplay, self.SphereDisplay ]
+        exc = [ self.BindingSiteDisplay, self.SphereDisplay ]
         General_cmd.Refresh_DDL(self.OptMenuSphere,self.defOptSphere,exc,self.CenterSphere)
 
     ''' ==================================================================================

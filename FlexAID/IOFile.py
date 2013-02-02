@@ -592,9 +592,11 @@ class IOFile(Tabs.Tab):
     ==================================================================================  '''                
     def Btn_RefreshOptMenu_Clicked(self): 
         
-        if self.PyMOL:
-            exc = []
-            General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, exc, None)
+        if not self.PyMOL:
+            return
+            
+        exc = []
+        General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, exc, None)
    
     ''' ==================================================================================
     FUNCTIONS Display Ligand and Protein in pymol
@@ -688,17 +690,17 @@ class IOFile(Tabs.Tab):
     #=======================================================================   
     def store_Neighbours(self, inpInfo):
         
-        self.top.Config2.dictNeighbours.clear()
+        self.top.Config2.Vars.dictNeighbours.clear()
         
         for atom in iter(inpInfo):
-            self.top.Config2.dictNeighbours[atom] = inpInfo[atom][1:]
+            self.top.Config2.Vars.dictNeighbours[atom] = inpInfo[atom][1:]
                     
     #=======================================================================
     ''' Store Flexible Bonds Dictionary'''
     #=======================================================================   
     def store_FlexBonds(self, flexInfo):
         
-        self.top.Config2.dictFlexBonds.clear()
+        self.top.Config2.Vars.dictFlexBonds.clear()
         
         for index in iter(flexInfo):
             
@@ -711,17 +713,17 @@ class IOFile(Tabs.Tab):
             for i in range(0, len(flexInfo[index])):
                 dictList.append(flexInfo[index][i])
                 
-            self.top.Config2.dictFlexBonds[index] = dictList
+            self.top.Config2.Vars.dictFlexBonds[index] = dictList
 
     #=======================================================================
     ''' Store Atom Types Dictionary'''
     #=======================================================================   
     def store_AtomTypes(self, inpInfo):
         
-        self.top.Config2.dictAtomTypes.clear()
+        self.top.Config2.Vars.dictAtomTypes.clear()
         
         for atom in iter(inpInfo):
-            self.top.Config2.dictAtomTypes[atom] = [inpInfo[atom][0], inpInfo[atom][0]]
+            self.top.Config2.Vars.dictAtomTypes[atom] = [inpInfo[atom][0], inpInfo[atom][0]]
 
     
     #=======================================================================
