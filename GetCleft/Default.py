@@ -597,20 +597,6 @@ class Default(Tabs.Tab):
         return CleftPath
 
     ''' ==================================================================================
-    FUNCTION Get_BindingSitePath: Retrieves the default path of the bindingsite
-    ==================================================================================  '''        
-    def Get_BindingSitePath(self):
-        
-        if self.LastdefaultOption != '':
-            TARGETNAME = self.LastdefaultOption.upper()
-        else:
-            TARGETNAME = self.defaultOption.get().upper()
-
-        BindingSitePath = os.path.join(self.top.BindingSiteProject_Dir,TARGETNAME)
-        
-        return BindingSitePath
-
-    ''' ==================================================================================
     FUNCTION Btn_Load_Clefts: Asks for user to load clefts
     ==================================================================================  '''        
     def Btn_Load_Clefts(self):

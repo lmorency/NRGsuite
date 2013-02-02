@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		156DDD1016BCA5CF00E42516 /* Base.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Base.py; path = ../Base.py; sourceTree = SOURCE_ROOT; };
 		158C859816A5C19C00E07CFF /* CleftObj.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CleftObj.py; path = ../CleftObj.py; sourceTree = SOURCE_ROOT; };
 		158C859916A5C19C00E07CFF /* Color.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Color.py; path = ../Color.py; sourceTree = SOURCE_ROOT; };
 		158C859A16A5C19C00E07CFF /* Constants.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Constants.py; path = ../Constants.py; sourceTree = SOURCE_ROOT; };
@@ -88,6 +89,7 @@
 				158C85DF16A5C19C00E07CFF /* IsoCleft */,
 				158C85E616A5C19C00E07CFF /* Plugin */,
 				158C85E916A5C19C00E07CFF /* Project */,
+				156DDD1016BCA5CF00E42516 /* Base.py */,
 				15BDCF2D16B8E418000F45F7 /* BindingSite.py */,
 				158C859816A5C19C00E07CFF /* CleftObj.py */,
 				158C859916A5C19C00E07CFF /* Color.py */,

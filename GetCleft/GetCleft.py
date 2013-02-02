@@ -29,23 +29,35 @@
 
 from Tkinter import *
 
-import tkFileDialog, tkMessageBox
-import tkFont, os
+import os, sys
+import pickle
+import time
+import tkFont
+import tkFileDialog
 
-import General
-import Color
 import Prefs
+import Color
+import General
+
+import Base
 import CleftObj
 import ManageFiles2
 import Default
 import CropCleft
 import Volume
 
+if __debug__:
+	from pymol import cmd
+	from pymol.cgo import *
+	from pymol.vfont import plain
+
+	import General_cmd
+
 #=========================================================================================
 '''                           ---   PARENT WINDOW  ---                                 '''
 #========================================================================================= 
 
-class displayGetCleft:
+class displayGetCleft(Base.Base):
     
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
@@ -58,6 +70,7 @@ class displayGetCleft:
             import General_cmd
 
         self.Name = 'GetCleft'
+        self.RunFile = '.grun'
         self.OSid = OSid
         
         self.WINDOWWIDTH = 500
@@ -71,8 +84,6 @@ class displayGetCleft:
         self.Project_Dir = Project_Dir
 
         self.GetCleftInstall_Dir = os.path.join(self.Install_Dir,'GetCleft')
-
-        self.BindingSiteProject_Dir = os.path.join(self.Project_Dir,'Binding_Site')
 
         if self.OSid == 'WIN':
             self.GetCleftExecutable = os.path.join(self.GetCleftInstall_Dir,'WRK','GetCleft.exe')
@@ -95,7 +106,7 @@ class displayGetCleft:
         # Create the folders if the arent exist
         self.ValidateFolders()
                
-        self.GetCleftIsRunning()
+        self.AppIsRunning()
 
         #self.MsgLineCounter = 2
         
@@ -107,14 +118,14 @@ class displayGetCleft:
         self.Color_Black = 'black'
 
         self.top = top
-        self.top.title('GetCleft')
+        self.top.title(self.Name)
 
         General.CenterWindow(self.top,self.WINDOWWIDTH,self.WINDOWHEIGHT)
 
         #self.top.geometry()   # Interface DIMENSIONS
         #self.top.maxsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
         #self.top.minsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        self.top.protocol('WM_DELETE_WINDOW', self.Btn_Quit_Clicked)       
+        self.top.protocol('WM_DELETE_WINDOW', self.Quit)
 
         #================================================================================== 
         #                 SET the default fonts of the interface
@@ -230,7 +241,7 @@ class displayGetCleft:
         Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=self.font_Text)
         Btn_Restore.pack(side=TOP, fill=X)
 
-        Btn_Quit = Button(fBottomRight, text='Close', command=self.Btn_Quit_Clicked, font=self.font_Text)
+        Btn_Quit = Button(fBottomRight, text='Close', command=self.Quit, font=self.font_Text)
         Btn_Quit.pack(side=BOTTOM, fill=X)
 
         fBottomLeft = Frame(fBottom)
@@ -270,6 +281,16 @@ class displayGetCleft:
         self.SetActiveFrame(self.Crop)
 
     ''' ==================================================================================
+    FUNCTION Before_Quit: Execute tasks before exitting the application
+    ==================================================================================  '''
+    def Before_Quit(self):
+    
+        if not self.CopySession:
+            if tkMessageBox.askquestion("Question", message="One or more cleft(s) are unsaved. Would you like to save them before leaving?",
+                                        icon='warning') == 'yes':
+                self.Default.Btn_Save_Clefts()
+    
+    ''' ==================================================================================
     FUNCTION Go_Step1: Enables/Disables buttons for step 1
     ================================================================================== '''    
     def Go_Step1(self):
@@ -305,9 +326,6 @@ class displayGetCleft:
 
         if not os.path.isdir(self.CleftProject_Dir):
             os.makedirs(self.CleftProject_Dir)
-
-        if not os.path.isdir(self.BindingSiteProject_Dir):
-            os.makedirs(self.BindingSiteProject_Dir)
         
         if not os.path.isdir(self.GetCleftSaveProject_Dir):
             os.makedirs(self.GetCleftSaveProject_Dir)
@@ -315,128 +333,7 @@ class displayGetCleft:
         if not os.path.isdir(self.GetCleftTempProject_Dir):
             os.makedirs(self.GetCleftTempProject_Dir)
             
-    
-    ''' ==================================================================================
-    FUNCTION DisplayMessage: Display the message  
-    ==================================================================================  '''    
-    def DisplayMessage(self, msg, priority):
-        
-        self.TextMessage.config(state='normal', font=self.font_Text) 
-        self.TextMessage.insert(INSERT, '\n' + msg)
-
-        if priority == 1:
-            #self.TextMessage.tag_add('warn', lineNo + '.0', lineNo + '.' + str(NbChar))
-            self.TextMessage.tag_config('warn', foreground='red')
-        elif priority == 2:
-            #self.TextMessage.tag_add('notice', lineNo + '.0', lineNo + '.' + str(NbChar))
-            self.TextMessage.tag_config('notice', foreground='blue')   
-
-        self.TextMessage.yview(INSERT)
-        
-        
-    ''' ==================================================================================
-    FUNCTION Btn_Quit_Clicked: Exit the application 
-    ==================================================================================  '''
-    def Btn_Quit_Clicked(self):
-        
-        if not self.CopySession:
-            if tkMessageBox.askquestion("Question", message="One or more cleft(s) are unsaved. Would you like to save them before leaving?",
-                                        icon='warning') == 'yes':
-                self.Default.Btn_Save_Clefts()
             
-        #Delete the .run file
-        RunPath = os.path.join(self.AlreadyRunning_Dir,'.grun')
-        if os.path.isfile(RunPath):
-            try:
-                os.remove(RunPath)
-            except OSError:
-                time.sleep(0.1)
-                os.remove(RunPath)
-                    
-        self.top.destroy()        
-
-        print('   Closed GetCleft.')
-        
-
-    ''' ==================================================================================
-    FUNCTION GetCleftIsRunning: Update or Create the Running File to BLOCK multiple GUI 
-    ==================================================================================  '''       
-    def GetCleftIsRunning(self):
-        
-        #Create the .run file
-        RunPath = os.path.join(self.AlreadyRunning_Dir,'.grun')
-        RunFile = open(RunPath, 'w')
-        RunFile.write(str(os.getpid()))
-        RunFile.close()
-
-    ''' ==================================================================================
-    FUNCTION SetActiveFrame: Switch up tabs in the uppper menu
-    ================================================================================== '''    
-    def SetActiveFrame(self, Frame):
-
-        if not self.ActiveWizard is None:
-            self.DisplayMessage("Cannot switch tab: A wizard is currently running...", 2)
-            return
-
-        if self.ProcessRunning:
-            self.DisplayMessage("Cannot switch tab: A process is currently running...", 2)
-            return
-
-        if self.ActiveFrame != Frame:
-
-            if not self.ActiveFrame is None:
-
-                # Trigger lost_focus event for validation
-                self.fMiddle.focus_set()
-                self.fMiddle.update_idletasks()
-
-                rv = self.ActiveFrame.Validate_Entries(self.ActiveFrame.Validator)
-                if rv > 0:
-                    if rv == 1:
-                        self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
-                    elif rv == 2:
-                        self.ActiveFrame.Validator_Fail()
-                    return
-
-                if not self.ActiveFrame.Before_Kill_Frame() or not self.ActiveFrame.Kill_Frame():
-                    self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
-                    return
-
-                self.fMiddle.update_idletasks()
-
-                #print "Killed Frame " + self.ActiveFrame.FrameName
-                self.ActiveFrame.Tab.config(bg=self.Color_White)
-                #self.ActiveFrame.Del_Trace()
-
-            self.ActiveFrame = Frame
-            print("New active frame " + self.ActiveFrame.FrameName)
-
-            self.ActiveFrame.Show()
-            print("Done showing")
-            self.ActiveFrame.After_Show()
-            print("Done after showing")
-            self.ActiveFrame.Tab.config(bg=self.Color_Blue)
-            print("Done switching color")
-
-            self.fMiddle.update_idletasks()
-
-        return
-
-
-    ''' ==================================================================================
-    FUNCTION Btn_Restore_Clicked: Restore the original default configuration
-    ================================================================================== '''    
-    def Btn_Restore_Clicked(self):
-        
-        return
-
-    ''' ==================================================================================
-    FUNCTION Btn_SaveDefault_Clicked: Saves the current configuration as default
-    ================================================================================== '''    
-    def Btn_SaveDefault_Clicked(self):
-        
-        return
-
     ''' ==================================================================================
     FUNCTION Btn_Default_Clicked: Sets back the default config
     ================================================================================== '''    
