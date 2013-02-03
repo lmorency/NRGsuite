@@ -289,7 +289,7 @@ class Default(Tabs.Tab):
 
         Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
         EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
-        EntryOutput.pack(side=RIGHT)
+        #EntryOutput.pack(side=RIGHT)
         args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, 'Output filename', 'str']
         #EntryOutput.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidOutput = [ 1, 0, EntryOutput ]
