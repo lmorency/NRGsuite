@@ -266,12 +266,14 @@ class Default(Tabs.Tab):
         Label(fBasicLine2, text='Min:', font=self.top.font_Text).pack(side=RIGHT, padx=2)
 
         args_list = [EntryMaxRadius, self.MaxRadius, EntryMinRadius, 10.00, 2, 'Maximum radius', 'float']
-        EntryMaxRadius.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        #EntryMaxRadius.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidMaxRadius = [ 1, 0, EntryMaxRadius ]
+        #self.MaxRadiusTrace = self.MaxRadius.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         args_list = [EntryMinRadius, self.MinRadius, 0.25, EntryMaxRadius, 2, 'Minimum radius', 'float']
-        EntryMinRadius.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        #EntryMinRadius.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidMinRadius = [ True, 1, 0, EntryMinRadius ]
+        #self.MinRadiusTrace = self.MinRadius.trace('w', lambda args=args_list: self.Validate_Field(args_list))
         
         Label(fBasicLine3, text='Residue in contact (e.g. ALA13A):', font=self.top.font_Text).pack(side=LEFT)
         self.EntryResidu = Entry(fBasicLine3,textvariable=self.ResiduValue, background='white', justify=CENTER, font=self.top.font_Text)
@@ -281,16 +283,17 @@ class Default(Tabs.Tab):
         EntryNbCleft = Entry(fBasicLine4, width=8, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
         EntryNbCleft.pack(side=RIGHT)
         args_list = [EntryNbCleft, self.NbCleft, 1, 100, -1, 'Number of clefts', 'int']
-        EntryNbCleft.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        #EntryNbCleft.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidNbCleft = [ 1, 0, EntryNbCleft ]
+        #self.NbCleft = self.NbCleft.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
         EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
         EntryOutput.pack(side=RIGHT)
         args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, 'Output filename', 'str']
-        EntryOutput.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
+        #EntryOutput.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidOutput = [ 1, 0, EntryOutput ]
-
+        #self.OutputFileValueTrace = self.OutputFileValue.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         #Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, width=20, relief=RIDGE, command=self.Btn_AdvancedOptions).pack(side=RIGHT)
 

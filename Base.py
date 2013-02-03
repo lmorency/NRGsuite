@@ -67,7 +67,7 @@ class Base:
     ''' ==================================================================================
     FUNCTION SetActiveFrame: Switch up tabs in the uppper menu
     ================================================================================== '''    
-    def SetActiveFrame(self, event, Frame):
+    def SetActiveFrame(self, Frame):
 
         if not self.ActiveWizard is None:
             self.DisplayMessage("Cannot switch tab: A wizard is currently running...", 2)
@@ -81,9 +81,7 @@ class Base:
 
             if not self.ActiveFrame is None:
                 
-                print "Validating all entries before switching frame"
-                rv = self.ActiveFrame.Validate_Entries()
-                print "rv=", rv
+                rv = self.ActiveFrame.Validate_Fields()
                 if rv > 0:
                     if rv == 1:
                         self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
@@ -98,11 +96,8 @@ class Base:
                 #print "Killed Frame " + self.ActiveFrame.FrameName
                 self.ActiveFrame.Tab.config(bg=self.Color_White)
 
-
-            print "Switching frame..."
             self.ActiveFrame = Frame
             
-            print("Showing the frame", self.ActiveFrame.FrameName)
             self.ActiveFrame.Show()
             self.ActiveFrame.After_Show()
             self.ActiveFrame.Tab.config(bg=self.Color_Blue)

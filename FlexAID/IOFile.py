@@ -227,7 +227,9 @@ class IOFile(Tabs.Tab):
         
         # Download a PDB File from the internet
         Button(fPDB_optionsLine2, text='Download', command=self.Btn_DownloadPDB_Clicked, font=self.font_Text, width=10).pack(side=RIGHT, padx=5)
-        Entry(fPDB_optionsLine2, textvariable=self.FetchPDB, width=10, background='white', font=self.font_Text, justify=CENTER).pack(side=RIGHT)
+        entFetchPDB = Entry(fPDB_optionsLine2, textvariable=self.FetchPDB, width=10, background='white', font=self.font_Text, justify=CENTER)#,
+        #                    validate="key", validatecommand=lambda v=self.FetchPDB: len(v.get()) < 5)
+        #entFetchPDB.pack(side=RIGHT)
         Label(fPDB_optionsLine2, text='Enter the PDB code:', font=self.font_Text, justify=CENTER).pack(side=RIGHT, padx=5)
         
 
@@ -595,8 +597,7 @@ class IOFile(Tabs.Tab):
         if not self.PyMOL:
             return
             
-        exc = []
-        General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, exc, None)
+        General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, [], None)
    
     ''' ==================================================================================
     FUNCTIONS Display Ligand and Protein in pymol

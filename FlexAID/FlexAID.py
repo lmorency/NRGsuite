@@ -354,16 +354,22 @@ class displayFlexAID(Base.Base):
 
                 if len(LoadFile) > 0:
                     
+                    print "BTN_IOFILES_CLICKED"
                     self.Btn_IOFiles_Clicked()
                     
+                    print "LOADFILE"
                     LoadFile = os.path.normpath(LoadFile)
                     
+                    print "PICKLE"
                     try:
                         in_ = open(LoadFile, 'r')
                         for Tab in self.listTabs:
                             try:
+                                print "Tab", Tab.FrameName
                                 Tab.Vars = pickle.load(in_)
+                                print "REFRESH"
                                 Tab.Vars.refresh()
+                                print "LOADSESSION"
                                 Tab.Load_Session()
                             except:
                                 pass
@@ -463,10 +469,7 @@ class displayFlexAID(Base.Base):
     ================================================================================== '''    
     def Btn_IOFiles_Clicked(self):
     
-        Btn_Dummy = Button(self.frame)
-        Btn_Dummy.bind('<Button-1>', lambda event, Frame=self.IOFile: self.SetActiveFrame)
-        
-        
+        self.SetActiveFrame(self.IOFile)        
 
     def Btn_Config1_Clicked(self):
         
@@ -520,19 +523,6 @@ class displayFlexAID(Base.Base):
     #=====================================================================================
     '''                            --- BUTTONS EVENT ---                               '''
     #=====================================================================================     
-
-    ''' ==================================================================================
-    FUNCTION Btn_LoadCfg_Clicked: Load the Configuration from a Text File 
-    ==================================================================================  '''
-    def Btn_LoadCfg_Clicked(self):
-        # Validate the selection of a PDB name and a Ligand
-        filename = tkFileDialog.askopenfilename(initialdir=os.path.join(self.path,'Config'), title='Load the Configuration File', filetypes=[('Configuration File','*.cfg')])
-            
-        if len(filename ) > 0:
-            text_file = open(os.path.join(self.path,'Config/write_it.txt'), 'r')
-            #print text_file.read()
-            text_file.close()
-               
         
     ''' ==================================================================================
     FUNCTION ValidateResiduValue: Validate the residue entered 

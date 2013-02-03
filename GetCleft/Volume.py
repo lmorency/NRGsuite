@@ -116,12 +116,12 @@ class EstimateVolume(Tabs.Tab):
         EntryIterations = Entry(fIterations, width=6, background='white', justify=CENTER, font=self.top.font_Text, textvariable=self.Iterations)
         EntryIterations.pack(side=RIGHT, anchor=SE, padx=5)
         args_list = [EntryIterations, self.Iterations, 1, 5, -1,'Iterations','int']
-        EntryIterations.bind('<KeyPress>', functools.partial(self.Key_Pressed,args=args_list))
         self.ValidIterations = [1, 0, EntryIterations]
+        #self.IterationsTrace = self.Iterations.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         lblIterations = Label(fIterations, text='Iterations:', font=self.top.font_Text)
         lblIterations.pack(side=RIGHT, anchor=SE)
-                
+        
 
         #==================================================================================
         '''                           --- BUTTONS AREA ---                              '''
