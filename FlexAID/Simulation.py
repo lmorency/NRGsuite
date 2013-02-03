@@ -87,7 +87,7 @@ class Start(threading.Thread):
             self.top.DisplayMessage('   Make sure you downloaded NRGsuite for the right platform', 1)
             self.top.ProcessError = True
 
-        #print "FlexAID starting thread has ended."
+        print "FlexAID starting thread has ended."
         
         self.FlexAID.Run = None
         self.FlexAID.ProcessRunning = False
@@ -112,7 +112,7 @@ class Parse(threading.Thread):
                 
         self.NbTopChrom = int(self.FlexAID.GAParam.NbTopChrom.get())
         
-        self.dictFlexBonds = self.FlexAID.Config2.dictFlexBonds
+        self.dictFlexBonds = self.FlexAID.Config2.Vars.dictFlexBonds
 
         self.RngOpt = self.FlexAID.Config1.RngOpt.get()  # Possibility: GLOBAL, LOCCEN, LOCCLF
         
@@ -386,7 +386,7 @@ class Parse(threading.Thread):
             time.sleep(INTERVAL)
 
 
-        #print "FlexAID parsing thread has ended."
+        print "FlexAID parsing thread has ended."
         self.FlexAID.ProcessRunning = False
 
         # Empty rotamers data

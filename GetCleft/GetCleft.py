@@ -151,7 +151,11 @@ class displayGetCleft(Base.Base):
 
         self.ProcessRunning = False
         self.Run = None
+
+        # flag for saving unsaved clefts
         self.CopySession = True
+        
+        # flag for saving unsaved calculated cleft volumes
         self.EditSession = True
 
         self.Frame_Main()

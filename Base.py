@@ -44,7 +44,7 @@ class Base:
             self.DisplayMessage("Cannot reset values while a Wizard is active", 2)
             return
 
-        if self.ProcessRunning is True:
+        if self.ProcessRunning:
             self.DisplayMessage("Cannot reset values while a Process is running", 2)
             return
             
@@ -164,7 +164,7 @@ class Base:
         self.Before_Quit()
         
         # Cannot quit while process is running
-        if self.ProcessRunning is True and self.Run is not None:
+        if self.ProcessRunning and self.Run is not None:
             print("   The following process will be killed", self.Run)
             self.Run.kill()
             

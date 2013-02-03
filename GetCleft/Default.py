@@ -63,8 +63,12 @@ class RunThread(threading.Thread):
         self.GetCleft = self.top.top
 
         self.cmdline = cmdline
+        print self.cmdline
+        
+        print "RUNNING!"
         self.top.GetCleftRunning(True)
 
+        print "START THEAD"
         # Start the thread
         self.start()
 
@@ -287,7 +291,7 @@ class Default(Tabs.Tab):
         self.ValidNbCleft = [ 1, 0, EntryNbCleft ]
         #self.NbCleft = self.NbCleft.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
-        Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
+        #Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
         EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
         #EntryOutput.pack(side=RIGHT)
         args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, 'Output filename', 'str']
@@ -380,18 +384,9 @@ class Default(Tabs.Tab):
     FUNCTION Btn_StartGetCleft_Clicked: Run GetCleft and display the result in Pymol 
     ==================================================================================  '''
     def Btn_StartGetCleft_Clicked(self):
-        
+
         if not self.top.ProcessRunning:
-            
-            # Trigger lost_focus event for validation
-            self.top.fMiddle.focus_set()
-            self.top.fMiddle.update_idletasks()
-            
-            rv = self.Validate_Entries(self.Validator)
-            if rv > 0:
-                self.DisplayMessage("  Cannot run GetCleft: Not all fields are validated", 2)
-                return
-            
+              
             try:
                 TmpFile = os.path.join(self.top.GetCleftProject_Dir,'tmp.pdb')
 
@@ -419,7 +414,7 @@ class Default(Tabs.Tab):
                     return
 
                 self.EntryResidu.config(bg=self.top.Color_White)
-            
+
             self.DisplayMessage("  Analyzing clefts for object/selection '" + self.defaultOption.get() + "'...", 0)
             
             #TmpFile = '/Users/francisgaudreault/1stp.pdb'
@@ -474,27 +469,7 @@ class Default(Tabs.Tab):
         # Size of spheres
         Args += ' -l ' + str(self.MinRadius.get())
         Args += ' -u ' + str(self.MaxRadius.get())
-        
-        """    
-        # Misc.
-        Args += ' -k ' + self.top.AdvOptions.Entry_K.get()
-
-        # Booleans
-        if self.top.AdvOptions.Entry_R_Value.get():
-            Args += ' -r'
                 
-        if self.top.AdvOptions.Entry_h_Value.get():
-            Args += ' -h'
-                
-        if self.top.AdvOptions.Entry_H_Value.get():
-            Args += ' -H'
-                
-        if self.top.AdvOptions.Entry_C.get() != 'ALL':
-            Args += ' -c ' + self.Entry_C.get()
-        
-        """
-        #Args += ' -ca'
-        
         Args += ' -s'
 
         self.LastdefaultOption = self.defaultOption.get()
@@ -520,16 +495,6 @@ class Default(Tabs.Tab):
         if self.PyMOL:
             exc = []
             General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, exc, None)
-
-    """
-    ''' ==================================================================================
-    FUNCTION Btn_AdvancedOptions: Opens the Advanced menu of GetCleft
-    ==================================================================================  '''                
-    def Btn_AdvancedOptions(self):
-
-        self.top.SetActiveFrame(self.top.AdvOptions)
-       
-    """
     
     ''' ========================================================
                   Welcome message upon frame built

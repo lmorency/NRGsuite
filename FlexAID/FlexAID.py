@@ -354,22 +354,16 @@ class displayFlexAID(Base.Base):
 
                 if len(LoadFile) > 0:
                     
-                    print "BTN_IOFILES_CLICKED"
                     self.Btn_IOFiles_Clicked()
                     
-                    print "LOADFILE"
                     LoadFile = os.path.normpath(LoadFile)
                     
-                    print "PICKLE"
                     try:
                         in_ = open(LoadFile, 'r')
                         for Tab in self.listTabs:
                             try:
-                                print "Tab", Tab.FrameName
                                 Tab.Vars = pickle.load(in_)
-                                print "REFRESH"
                                 Tab.Vars.refresh()
-                                print "LOADSESSION"
                                 Tab.Load_Session()
                             except:
                                 pass
