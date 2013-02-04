@@ -227,7 +227,10 @@ class Manage():
             config_file.write('SLVPEN ' + self.Config3.SolventTerm.get() + '\n')
 
         config_file.write('STATEP ' + self.FlexAID.FlexAIDSimulationProject_Dir  + '\n')
-
+        config_file.write('TEMPOP ' + self.FlexAID.FlexAIDSimulationProject_Dir  + '\n')
+        
+        #config_file.write('OUTRNG\n')
+        
         config_file.write('DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n')
 
         config_file.write('MAXRES 10'  + '\n')
