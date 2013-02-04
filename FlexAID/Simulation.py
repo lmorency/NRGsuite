@@ -273,7 +273,7 @@ class Parse(threading.Thread):
                                 ID = str(self.Generation) + '.' + str(self.TOP)
                                 #print("updating " + ID)
 
-                                print Line
+                                #print Line
                                 Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
                                                                     self.Translation, self.Rotation )
 

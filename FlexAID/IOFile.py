@@ -19,7 +19,6 @@
 
 from Tkinter import *
 
-import functools
 import math
 import os
 import hashlib

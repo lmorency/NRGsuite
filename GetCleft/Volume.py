@@ -22,7 +22,6 @@ from subprocess import Popen, PIPE
 
 import Tabs
 import tkTable
-import functools
 import threading
 
 if __debug__:

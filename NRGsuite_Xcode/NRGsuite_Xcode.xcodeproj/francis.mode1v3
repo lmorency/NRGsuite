@@ -273,13 +273,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>16</integer>
-									<integer>1</integer>
+									<integer>52</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 194}, {186, 755}}</string>
+							<string>{{0, 299}, {186, 755}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -316,7 +315,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ProcessLigand.py</string>
+								<string>tkTable.py</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -324,20 +323,15 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ProcessLigand.py</string>
+										<string>tkTable.py</string>
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>156DE0A416BF602000E42516</string>
+										<string>156DE0EF16BF83B800E42516</string>
 										<key>history</key>
 										<array>
-											<string>156DDE3116BCEB5D00E42516</string>
-											<string>156DDE4616BCEDFF00E42516</string>
-											<string>156DDED716BDAB3D00E42516</string>
-											<string>156DDEEB16BDADFA00E42516</string>
 											<string>156DDFA416BEFDF900E42516</string>
 											<string>156DE00816BF128100E42516</string>
-											<string>156DE00A16BF128100E42516</string>
 											<string>156DE02916BF16BB00E42516</string>
 											<string>156DE02C16BF16BB00E42516</string>
 											<string>156DE02D16BF16BB00E42516</string>
@@ -351,26 +345,31 @@
 											<string>156DE03516BF16BB00E42516</string>
 											<string>156DE03616BF16BB00E42516</string>
 											<string>156DE03716BF16BB00E42516</string>
-											<string>156DE03916BF16BB00E42516</string>
-											<string>156DE03A16BF16BB00E42516</string>
-											<string>156DE04716BF191200E42516</string>
-											<string>156DE04F16BF195100E42516</string>
-											<string>156DE05516BF1A5400E42516</string>
-											<string>156DE05F16BF1CB100E42516</string>
-											<string>156DE06616BF1D7F00E42516</string>
-											<string>156DE07A16BF203A00E42516</string>
-											<string>156DE07D16BF204E00E42516</string>
 											<string>156DE08816BF222700E42516</string>
 											<string>156DE09016BF238200E42516</string>
-											<string>156DE09B16BF602000E42516</string>
-											<string>156DE09C16BF602000E42516</string>
-											<string>156DE09D16BF602000E42516</string>
-											<string>156DE09E16BF602000E42516</string>
 											<string>156DE09F16BF602000E42516</string>
-											<string>156DE0A016BF602000E42516</string>
 											<string>156DE0A116BF602000E42516</string>
-											<string>156DE0A216BF602000E42516</string>
-											<string>156DE0A316BF602000E42516</string>
+											<string>156DE0A816BF771A00E42516</string>
+											<string>156DE0AF16BF7A7E00E42516</string>
+											<string>156DE0B416BF7BE000E42516</string>
+											<string>156DE0B816BF7BE000E42516</string>
+											<string>156DE0B916BF7BE000E42516</string>
+											<string>156DE0BD16BF7BE000E42516</string>
+											<string>156DE0BE16BF7BE000E42516</string>
+											<string>156DE0C916BF7CF900E42516</string>
+											<string>156DE0CA16BF7CF900E42516</string>
+											<string>156DE0CB16BF7CF900E42516</string>
+											<string>156DE0CD16BF7D1C00E42516</string>
+											<string>156DE0D916BF80EE00E42516</string>
+											<string>156DE0DD16BF812F00E42516</string>
+											<string>156DE0DE16BF812F00E42516</string>
+											<string>156DE0E116BF814100E42516</string>
+											<string>156DE0E216BF814100E42516</string>
+											<string>156DE0E516BF814900E42516</string>
+											<string>156DE0E816BF818800E42516</string>
+											<string>156DE0E916BF818800E42516</string>
+											<string>156DE0ED16BF83B800E42516</string>
+											<string>156DE0EE16BF83B800E42516</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>

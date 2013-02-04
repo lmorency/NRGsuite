@@ -20,7 +20,6 @@
 from Tkinter import *
 
 import General
-import functools
 import Vars
 import Tabs 
 

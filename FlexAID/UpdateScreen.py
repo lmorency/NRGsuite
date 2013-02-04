@@ -92,15 +92,16 @@ class UpdateScreen():
         except:
             self.CriticalError("Object " + str(self.ProtName) + " no longer exists")
         
-
-        if self.UpdateLigandAnchorPoint() or self.UpdateLigandFlexibility():
-            self.Delete_Object()
+        
+        if not self.UpdateLigandAnchorPoint() and not self.UpdateLigandFlexibility():
+        
+            self.selSideChains = self.UpdateSideChainConformations()
             
-        self.selSideChains = self.UpdateSideChainConformations()
+            if self.WriteOutLigand() or self.EditView() or self.UpdateDataList():
+                self.Delete_Object()            
 
-        if self.WriteOutLigand() or self.EditView() or self.UpdateDataList():
-            self.Delete_Object()            
-
+        self.Delete_Object()
+        
         return
         
     '''=========================================================================
@@ -111,6 +112,9 @@ class UpdateScreen():
         try:
             # delete temporary protein PDB file
             cmd.delete(self.ProteinObj)
+            cmd.delete(self.LigandObj)
+            cmd.refresh()
+
         except:
             self.CriticalError("Object " + str(self.ProteinObj) + " no longer exists")
 
@@ -192,9 +196,6 @@ class UpdateScreen():
             if self.selSideChains != '':
                 #cmd.show("sticks", self.selSideChains.replace(self.protName__,"sol_*__"))
                 cmd.show("sticks", self.selSideChains.replace(self.ProteinObj,SolutionObj))
-
-            cmd.delete(self.LigandObj)                        
-            cmd.refresh()
 
         except:
             self.CriticalError("  ERROR: while editing view")

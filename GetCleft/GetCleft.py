@@ -226,7 +226,6 @@ class displayGetCleft(Base.Base):
         
         self.fMiddle = Frame(self.fMain, relief=RIDGE)
         self.fMiddle.pack(fill=X, expand=True, padx=10, pady=10)
-        self.fMiddle.bind('<FocusIn>', lambda e: None)
         
         #==================================================================================
         '''                 BOTTOM DISPLAY SECTION OF THE INTERFACE                     '''
@@ -263,7 +262,7 @@ class displayGetCleft(Base.Base):
         self.TextMessage.pack(side=RIGHT, fill=BOTH, expand=True)
 
         scrollBar.config(command=self.TextMessage.yview)
-        self.TextMessage.config(state='disabled', yscrollcommand=scrollBar.set)                                       
+        self.TextMessage.config(state='disabled', yscrollcommand=scrollBar.set)
     
     ''' ==================================================================================
     FUNCTION Btn_Config_Clicked: Default configuration view

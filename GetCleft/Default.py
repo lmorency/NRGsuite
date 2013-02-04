@@ -39,7 +39,6 @@ import General
 import CleftObj
 import BindingSite
 
-import functools
 import threading
 import Color
 import pickle
@@ -63,12 +62,10 @@ class RunThread(threading.Thread):
         self.GetCleft = self.top.top
 
         self.cmdline = cmdline
-        print self.cmdline
+        print(self.cmdline)
         
-        print "RUNNING!"
         self.top.GetCleftRunning(True)
 
-        print "START THEAD"
         # Start the thread
         self.start()
 
