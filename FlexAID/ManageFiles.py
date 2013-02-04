@@ -230,7 +230,7 @@ class Manage():
 
         config_file.write('DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n')
 
-        config_file.write('MAXRES 30'  + '\n')
+        config_file.write('MAXRES 10'  + '\n')
 
         config_file.write('NRGSUI\n')
         config_file.write('ENDINP\n')

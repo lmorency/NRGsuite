@@ -233,7 +233,6 @@ class Tab:
         General.setState(self.fFrame)
 
         for arg in args:
-            print arg
             General.setState(arg,'normal')
 
     ''' ==================================================================================

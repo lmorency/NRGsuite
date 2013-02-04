@@ -20,10 +20,12 @@
 from Tkinter import *
 
 import os
+import re
 import tkTable
 import General
 import Color
 import ManageFiles
+import glob
 import Vars
 import Tabs 
 
@@ -224,6 +226,8 @@ class Simulate(Tabs.Tab):
                                                     self.Manage.ga_inp,
                                                     os.path.join(self.Manage.FlexAIDRunSimulationProject_Dir,'RESULT') )
         
+        self.Results = True
+        
         # START SIMULATION
         self.DisplayMessage('   Starting executable thread.', 2)
         Start = Simulation.Start(self, commandline)
@@ -302,7 +306,7 @@ class Simulate(Tabs.Tab):
     def AbortStatus(self):
 
         self.lblSimStatus.config(fg='orange')
-        self.SimStatus.set('Aborted.')
+        self.SimStatus.set('Aborting...')
 
     ''' =============================================================================== 
     FUNCTION ClusterStatus: GA has ended - clustering all individuals
@@ -318,7 +322,7 @@ class Simulate(Tabs.Tab):
     def SuccessStatus(self):
 
         self.lblSimStatus.config(fg='chartreuse')
-        self.SimStatus.set('Successfully done.')
+        self.SimStatus.set('Simulation ended successfully.')
 
     ''' =============================================================================== 
     FUNCTION ErrorStatus: An error occured.
@@ -355,7 +359,7 @@ class Simulate(Tabs.Tab):
         self.Table.Clear()
 
         i = 0
-        for key in iter(self.dictSimData):
+        for key in sorted(self.dictSimData.keys()):
             self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], self.dictSimData[key][2] ], 
                             [ self.ColorList[i], None, None, None, None ] )
             i += 1
@@ -371,39 +375,58 @@ class Simulate(Tabs.Tab):
         self.Btn_Abort.config(state='disabled')
 
     ''' =============================================================================== 
+    FUNCTION Display_Results(self): resets button states back to defaults
+    ===============================================================================  '''        
+    def Display_Results(self):
+
+        if not self.Results:
+            return
+        
+        pattern = os.path.join(self.Manage.FlexAIDRunSimulationProject_Dir,'RESULT_*.pdb')
+        for file in glob.glob(pattern):
+            
+            if re.match(pattern,'RESULT_(\d+).pdb$'):
+                TOP = int(m.group(1)) + 1
+                
+                cmd.load(file)
+            
+        
+    ''' =============================================================================== 
     FUNCTION Btn_PauseResumeSim: Pauses/Resumes the simulation   
     ===============================================================================  '''        
     def Btn_PauseResumeSim(self):
                 
         if self.SimStatus.get() == 'Running...':
         
+            try:
+                #Create the .pause file            
+                pause_file = open(self.Manage.PAUSE, 'w')
+                pause_file.close()
+            except OSError:
+                self.DisplayMessage('  ERROR: An error occured while trying to pause the simulation.', 0)
+                return
+                
             self.Btn_PauseResume.config(text='Resume...')
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')
 
             self.PauseStatus()
-
-            #Create the .pause file            
-            pause_file = open(self.Manage.PAUSE, 'w')
-            pause_file.close()
-
-            self.DisplayMessage('   the simulation...', 0)
           
         elif self.SimStatus.get() == 'Paused.':
         
+            if os.path.isfile(self.Manage.PAUSE):
+                try:
+                    os.remove(self.Manage.PAUSE)
+                except OSError:
+                    self.DisplayMessage('  ERROR: An error occured while trying to resume the simulation.', 0)
+                    pass
+
             self.Btn_PauseResume.config(text='Pause...')
             self.Btn_Stop.config(state='normal')
             self.Btn_Abort.config(state='normal')
 
             self.RunStatus()
-
-            if os.path.isfile(self.Manage.PAUSE):
-                try:
-                    os.remove(self.Manage.PAUSE)
-                except OSError:
-                    pass
           
-            self.DisplayMessage('  Resuming the simulation...', 0)
         
     ''' =============================================================================== 
     FUNCTION Btn_AbortSim: Abort the simulation 
@@ -412,18 +435,21 @@ class Simulate(Tabs.Tab):
         
         if self.SimStatus.get() == 'Running...':
  
+            try:
+                #Create the .abort file
+                abort_file = open(self.Manage.ABORT, 'w')
+                abort_file.close()
+            except OSError:
+                self.DisplayMessage('  ERROR: An error occured while trying to abort the simulation.', 0)
+                return
+
             self.Btn_PauseResume.config(state='disabled')
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')
-            
+
             self.AbortStatus()
-            
-            #Create the .abort file
-            abort_file = open(self.Manage.ABORT, 'w')
-            abort_file.close()
-            
-            self.DisplayMessage('  Abort the simulation.', 0)
-            
+            self.Results = False
+
 
     ''' =============================================================================== 
     FUNCTION Btn_StopSim: Stop the simulation 
@@ -432,18 +458,20 @@ class Simulate(Tabs.Tab):
         
         if self.SimStatus.get() == 'Running...':
  
+            try:
+                #Create the .stop file
+                stop_file = open(self.Manage.STOP, 'w')
+                stop_file.close()
+            except OSError:
+                self.DisplayMessage('  ERROR: An error occured while trying to stop the simulation.', 0)
+                return
+
             self.Btn_PauseResume.config(state='disabled')
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')
-            
+
             self.StopStatus()
-            
-            #Create the .stop file
-            stop_file = open(self.Manage.STOP, 'w')
-            stop_file.close()
-            
-            self.DisplayMessage('  Stop the simulation.', 0)
-               
+    
         
     ''' ==================================================================================
     FUNCTION Click_RadioSIM: Change the way the ligand is displayed in Pymol

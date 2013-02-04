@@ -208,11 +208,13 @@ class Parse(threading.Thread):
         
         self.top.progressBarHandler(0,self.NbTotalGen)
         self.top.Init_Table()
-        
+
         # Set the auto_zoom to off
         cmd.set("auto_zoom", 0)
         cmd.delete("TOP_*__")
         cmd.frame(1)
+
+        self.top.InitStatus()
         
         while self.FlexAID.Run is not None: # and self.FlexAID.Run.poll() is None:
 
@@ -339,9 +341,7 @@ class Parse(threading.Thread):
                         continue
 
                     m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
-                    if m:
-                        self.top.InitStatus()
-                        
+                    if m:                        
                         self.ListAtom.append(int(m.group(1)))
 
                         if len(self.ListAtom) == nbAtoms:
@@ -386,6 +386,7 @@ class Parse(threading.Thread):
             time.sleep(INTERVAL)
 
 
+        
         print "FlexAID parsing thread has ended."
         self.FlexAID.ProcessRunning = False
 
@@ -399,8 +400,11 @@ class Parse(threading.Thread):
         self.top.Btn_Stop.config(state='disabled')
         self.top.Btn_Abort.config(state='disabled')
 
+        self.top.Display_Results()
+
         # Put back the auto_zoom to on
         cmd.set("auto_zoom", -1)
+        cmd.disable("TOP_*__")
 
 
     '''
