@@ -174,14 +174,14 @@ class Table:
     def Add(self, Item, BGColor):
         
         for i in range(0, self.nCol):
-            self.Columns[self.ColNames[i]]['List'].insert(END, General.repeat(' ', self.Columns[self.ColNames[i]]['Spacer']) + str(Item[i]))
-            
-            if BGColor[i] != None:
-                try:
+            try:
+                self.Columns[self.ColNames[i]]['List'].insert(END, General.repeat(' ', self.Columns[self.ColNames[i]]['Spacer']) + str(Item[i]))
+                
+                if BGColor[i] != None:
                     self.Columns[self.ColNames[i]]['List'].itemconfig(self.Columns[self.ColNames[i]]['List'].size()-1, bg=BGColor[i])
-                except:
-                    pass
-        
+            except:
+                pass
+            
     ''' ==================================================================================
     FUNCTION Add_List: Adds MULTIPLE items to listboxes
     ==================================================================================  '''            

@@ -143,7 +143,7 @@ class ProcLig:
         if self.AnchorAtom != -1:
             commandline += ' --force_gpa ' + str(self.AnchorAtom)
         
-        #print commandline
+        print(commandline)
         
         # Execute command-line
         try:
