@@ -34,6 +34,7 @@ import pickle
 import time
 import tkFont
 import tkFileDialog
+import tkMessageBox
 
 import Prefs
 import Color

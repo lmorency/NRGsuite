@@ -99,7 +99,7 @@ class IOFile(Tabs.Tab):
         
         #self.TargetRNA.set(0)
         self.ResSeq.set(0)
-        #self.top.Config2.Anchor.set(-1)
+        #self.top.Config2.Vars.Anchor.set(-1)
 
         self.Vars.LigandPathMD5 = ''
     

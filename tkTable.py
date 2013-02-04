@@ -183,8 +183,8 @@ class Table:
                 self.Columns[self.ColNames[i]]['List'].itemconfig(self.Columns[self.ColNames[i]]['List'].size()-1,
                                                                   bg=BGColor[i])
 
-            print("Successfully added item", i)
-            print("StringVar is", self.Columns[self.ColNames[i]]['StringVar'])
+            #print("Successfully added item", i)
+            #print("StringVar is", self.Columns[self.ColNames[i]]['StringVar'])
         
     ''' ==================================================================================
     FUNCTION Add_List: Adds MULTIPLE items to listboxes

@@ -87,7 +87,8 @@ class Config2(Tabs.Tab):
         self.FlexStatus.set('')
         self.SATStatus.set('')
     
-    
+        self.Anchor.set(-1)
+        
     ''' ==================================================================================
     FUNCTION Btn_AddRemove_FlexBonds: Enables wizard to set flexible bond
     =================================================================================  '''    
