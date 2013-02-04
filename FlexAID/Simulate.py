@@ -385,7 +385,8 @@ class Simulate(Tabs.Tab):
         pattern = os.path.join(self.Manage.FlexAIDRunSimulationProject_Dir,'RESULT_*.pdb')
         for file in glob.glob(pattern):
             
-            if re.match(pattern,'RESULT_(\d+).pdb$'):
+            m = re.search("RESULT_(\d+)\.pdb$",file)
+            if m:
                 TOP = int(m.group(1)) + 1
                 
                 cmd.load(file)
