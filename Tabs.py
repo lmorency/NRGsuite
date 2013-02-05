@@ -137,8 +137,8 @@ class Tab:
     ==================================================================================  '''    
     def Validate_Field(self, *args):
         
-        print "VALIDATE_FIELD"
-        print args
+        print("VALIDATE_FIELD")
+        print(args)
         
         Entry = args[0]
         Var = args[1]

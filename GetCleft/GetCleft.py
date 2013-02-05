@@ -27,8 +27,6 @@
 @creation date:  Oct. 19, 2010
 '''
 
-<<<<<<< HEAD
-=======
 from Tkinter import *
 
 import os, sys

@@ -59,6 +59,7 @@ class Simulate(Tabs.Tab):
         self.ProgBarText.set('... / ...')
         self.SimDefDisplay.set('sticks')
         self.SimCartoonDisplay.set(0)
+        self.GridBuffer = 1000
 
         self.BarWidth = 0
         self.BarHeight = 0
@@ -137,9 +138,8 @@ class Simulate(Tabs.Tab):
         fSim_ProgressLine3 = Frame(fSim_Progress)
         fSim_ProgressLine3.pack(side=TOP, fill=X)
         
-        Label(fSim_ProgressLine1, text='Status:', font=self.top.font_Title).pack(side=LEFT) 
-        self.lblSimStatus = Label(fSim_ProgressLine1, textvariable=self.SimStatus, font=self.top.font_Title, fg=self.top.Color_Blue)
-        self.lblSimStatus.pack(side=LEFT) 
+        self.lblSimStatus = Label(fSim_ProgressLine1, bg=self.Color_Black, textvariable=self.SimStatus, font=self.top.font_Title, fg=self.top.Color_Blue)
+        self.lblSimStatus.pack(side=LEFT, fill=X, expand=True, anchor=W) 
 
         self.ProgressBar = Canvas(fSim_ProgressLine2, bg=self.top.Color_White, width=325, height=25, relief=RAISED, bd=1)
         self.ProgressBar.pack(side=LEFT, fill=BOTH, expand=True, anchor=W)
@@ -221,7 +221,7 @@ class Simulate(Tabs.Tab):
         self.Btn_Abort.config(state='normal')
 
         # START FLEXAID AS THREAD
-        commandline =   '"%s" "%s" "%s" "%s"' % (   self.top.FlexAIDExecutable,
+        commandline =   '"%s" "%s" "%s" "%s" --NRGsuite' % (   self.top.FlexAIDExecutable,
                                                     self.Manage.CONFIG,
                                                     self.Manage.ga_inp,
                                                     os.path.join(self.Manage.FlexAIDRunSimulationProject_Dir,'RESULT') )
@@ -233,8 +233,8 @@ class Simulate(Tabs.Tab):
         Start = Simulation.Start(self, commandline)
         
         # START PARSING AS THREAD
-        self.DisplayMessage('   Starting parsing thread.', 2)
-        Parse = Simulation.Parse(self)
+        #self.DisplayMessage('   Starting parsing thread.', 2)
+        #Parse = Simulation.Parse(self)
 
         self.DisplayMessage("  *** For better performance you can disable object BINDINGSITE_AREA__", 0)
     
@@ -327,10 +327,10 @@ class Simulate(Tabs.Tab):
     ''' =============================================================================== 
     FUNCTION ErrorStatus: An error occured.
     ===============================================================================  '''     
-    def ErrorStatus(self):
+    def ErrorStatus(self, ErrorMsg):
 
         self.lblSimStatus.config(fg='red')
-        self.SimStatus.set('Critical error.')
+        self.SimStatus.set(ErrorMsg)
 
     ''' ==================================================================================
     FUNCTION Init_Table: Initialisation the dictionary that contain the energy 

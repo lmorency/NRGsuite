@@ -18,21 +18,11 @@
 '''
 
 from Tkinter import *
-<<<<<<< HEAD
-<<<<<<< HEAD
 from subprocess import Popen, PIPE
 
 import ctypes
 import os
-import sys
-=======
-
 import os, sys
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
-=======
-
-import os, sys
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
 import time
 
 class Base:
@@ -62,20 +52,6 @@ class Base:
             return
             
         self.ActiveFrame.Init_Vars()
-
-    ''' ==================================================================================
-    FUNCTION Btn_SaveDefault_Clicked: Sets the default config
-    ================================================================================== '''    
-    def Btn_SaveDefault_Clicked(self):
-
-        return
-
-    ''' ==================================================================================
-    FUNCTION Btn_Restore_Clicked: Sets back the original default config
-    ================================================================================== '''    
-    def Btn_Restore_Clicked(self):
-
-        return
 
     ''' ==================================================================================
     FUNCTION SetActiveFrame: Switch up tabs in the uppper menu
@@ -170,8 +146,6 @@ class Base:
         return
 
     ''' ==================================================================================
-<<<<<<< HEAD
-<<<<<<< HEAD
     FUNCTION Kill: Kills a process by PID
     ==================================================================================  '''
     def Kill(self, pid):
@@ -187,13 +161,10 @@ class Base:
             pkill = Popen(['kill',int(self.Run.pid)], stdout=PIPE, stderr=PIPE)
             (out, err) = pkill.communicate()
             if err:
+                print("   An error occuring while killing the following process", self.Run)
                 pass
 
     ''' ==================================================================================
-=======
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
-=======
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
     FUNCTION Quit: Exit the application
     ==================================================================================  '''
     def Quit(self):
@@ -202,20 +173,8 @@ class Base:
         
         # Cannot quit while process is running
         if self.ProcessRunning and self.Run is not None:
-<<<<<<< HEAD
-<<<<<<< HEAD
             self.Kill(self.Run.pid)
 
-=======
-            print("   The following process will be killed", self.Run)
-            self.Run.kill()
-            
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
-=======
-            print("   The following process will be killed", self.Run)
-            self.Run.kill()
-            
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
         # Close any Wizard interface in Pymol if started
         if not self.ActiveWizard is None:
             if self.PyMOL:
@@ -227,25 +186,11 @@ class Base:
             try:
                 os.remove(RunPath)
             except OSError:
-<<<<<<< HEAD
-<<<<<<< HEAD
-                print('   An error occured while cleaning running file for ' + self.Name)                
-                    
-        self.Del_Trace()
-        
-        self.top.destroy()
-=======
-=======
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
                 print('   An error occured while clearing running file for ' + self.Name)                
                     
         self.Del_Trace()
         
         self.top.destroy()        
-<<<<<<< HEAD
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
-=======
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
 
         print('   Closed ' + self.Name)
 

@@ -43,7 +43,7 @@ class Manage():
         self.STOP = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'.stop')
         self.ABORT = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'.abort')
         
-        self.LOGFILE = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'sim.log')
+        self.LOGFILE = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'log.txt')
         self.LOGFILETMP = self.LOGFILE + '.tmp'
 
         self.Now = str(datetime.now())
@@ -236,6 +236,8 @@ class Manage():
         config_file.write('MAXRES 10'  + '\n')
 
         config_file.write('NRGSUI\n')
+        config_file.write('GRDBUF ' + str(self.top.GridBuffer) + '\n')
+
         config_file.write('ENDINP\n')
 
         config_file.close()

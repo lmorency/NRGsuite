@@ -34,7 +34,6 @@ from collections import defaultdict
 from pymol import cmd
 from subprocess import Popen, PIPE, STDOUT
 
-#import psutil
 import math, os, time, re
 import sys
 import threading
@@ -42,7 +41,8 @@ import Color
 import Geometry
 import UpdateScreen
 
-# Start the simulation with FlexAID      
+
+# Start the simulation with FlexAID
 class Start(threading.Thread):
 #class Start():
 
@@ -72,16 +72,23 @@ class Start(threading.Thread):
         self.FlexAID.ProcessRunning = True
 
         try:
-            if self.FlexAID.OSid == 'WIN':
-                self.FlexAID.Run = Popen(self.commandline, shell=False, bufsize=-1, stdout=PIPE, stderr=STDOUT)
-            else:
-                self.FlexAID.Run = Popen(self.commandline, shell=True, bufsize=1, stdout=PIPE, stderr=STDOUT)
-                
+            with open(self.top.Manage.LOGFILE,'w') as logfile:
+
+                if self.FlexAID.OSid == 'WIN':
+                    self.FlexAID.Run = Popen(self.commandline, shell=False, stdout=logfile, stderr=STDOUT)
+                    #self.FlexAID.Run = Popen(self.commandline, shell=False, bufsize=0, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+                else:
+                    self.FlexAID.Run = Popen(self.commandline, shell=True, stdout=logfile, stderr=STDOUT)
+                    #self.FlexAID.Run = Popen(self.commandline, shell=True, bufsize=0, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+            
             self.FlexAID.Run.wait()
             
             if self.FlexAID.Run.returncode != 0:
                 self.top.ProcessError = True
 
+            self.FlexAID.Run = None
+            self.FlexAID.ProcessRunning = False
+ 
         except:
 
             self.top.DisplayMessage('   Fatal error: Could not run the executable FlexAID', 1)
@@ -90,9 +97,7 @@ class Start(threading.Thread):
 
         print("FlexAID starting thread has ended.")
         
-        self.FlexAID.Run = None
-        self.FlexAID.ProcessRunning = False
-        
+       
 
 class Parse(threading.Thread):
 #class Parse():
@@ -108,8 +113,6 @@ class Parse(threading.Thread):
         self.FlexStatus = self.FlexAID.Config2.FlexStatus.get()
         self.OSid = self.FlexAID.OSid
         self.BindingSiteDisplay = self.FlexAID.Config1.BindingSiteDisplay
-
-        self.LOGFILE = self.top.Manage.LOGFILE
                 
         self.NbTopChrom = int(self.FlexAID.GAParam.NbTopChrom.get())
         
@@ -186,9 +189,9 @@ class Parse(threading.Thread):
         
         #print "FlexAID parsing thread has begun."
 
-        # 20 msec
-        INTERVAL = 0.05
-        TIMEOUT = INTERVAL * 10
+        # 10 msec
+        INTERVAL = 0.10
+        #TIMEOUT = INTERVAL * 10
 
         # Number of ligand atoms
         nbAtoms = len(self.DisAngDih)
@@ -217,208 +220,228 @@ class Parse(threading.Thread):
         cmd.delete("TOP_*__")
         cmd.frame(1)
 
-        Abort = False
-
         self.top.InitStatus()
+        self.ErrorMsg = ''
         
         while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
 
-            while (1):
-                # Parsing output
-                try:
-                    Line = self.FlexAID.Run.stdout.readline()
-                    Line.rstrip('\n')
-
-                    m = re.match('^Grid', Line)
-                    if not m:
-                        print(Line)
-                except:
-                    #print "NO OUTPUT1!"
-                    break
-
-                # stop reading from stdout buffer
-                if Line == '':
-                    print("NO OUTPUT2!")
-                    break
-                
-                # track errors
-                if Line.startswith('ERROR'):
-                    Abort = True
-
-                    self.top.DisplayMessage(str("A critical error occured\n" + Line), 1)
-                    
-                    try:
-                        self.FlexAID.Run.terminate()
-                    except:
-                        pass
-                    
-                    break
-
-                if self.ParseGA:
-                             
-                    '''
-                    Generation:   0
-                    best by energy
-                     0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
-                     1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
-                     2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
-                     3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
-                     4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
-                    best by fitnes
-                     0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
-                     1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
-                     2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
-                     3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
-                     4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
-                    '''
-
-                    m = re.match("(\s*(\d+) \()", Line)
-                    if m:
-                        self.TOP = int(m.group(2))
-
-                        # Find starting index where to parse column values
-                        colNo = len(m.group(1))
-
-                        if self.Best == 'energy' and self.Generation != -1 and self.TOP != -1:
-
-                            # Reading the values calculated for the generation
-                            if (self.Generation % self.ModuloGEN) == 0 or self.Generation == self.NbTotalGen:
-
-                                #self.Updating += 1
-
-                                ID = str(self.Generation) + '.' + str(self.TOP)
-                                #print("updating " + ID)
-
-                                #print Line
-                                Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
-                                                                    self.Translation, self.Rotation )
-
-                                if (self.TOP+1) == self.NBLineGEN:
-                                    self.State = self.CurrentState
-
-                                    # Update energy/fitness table
-                                    self.top.update_DataList()
-
-                                    self.top.Refresh_LigDisplay()
-                                    self.top.Refresh_CartoonDisplay()
-
-                        continue
-
-
-                    m = re.match("best by (\w+)\s+", Line)
-                    if m:
-                        self.Best = m.group(1)
-                        #print "Best by " + self.Best
-                        continue
-
-                    m = re.match("Generation:\s*(\d+)\s+", Line)
-                    if m:
-
-                        self.Generation = int(m.group(1))
-                        #print("Generation " + str(self.Generation))
-                        self.CurrentState = self.State + 1
-
-                        #print "will update progressbar"
-                        # ProgressionBar Handler
-                        try:
-                            self.top.progressBarHandler(self.Generation, self.NbTotalGen)
-                        except:
-                            pass
-
-                        continue
-                    
-                    m = re.match("clustering all individuals", Line)
-                    if m:
-                        self.top.ClusterStatus()
-
-                else:
-    
-                    m = re.match("Rotamer for", Line)
-                    if m:                        
-                        self.AddRotamerFromLine(Line)
-                        
-
-                    m = re.match("shiftval=", Line)
-                    if m and self.FlexStatus != '':
-
-                        # Shift values for fixed dihedrals between pair-triplets of atoms
-                        fields = Line.split()
-
-                        MergeAtomsAB = fields[1] + fields[2]
-                        
-                        self.FixedAngle[MergeAtomsAB] = fields[5]                   
-                                                    
-                        continue
-
-                    m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
-                    if m:                        
-                        self.ListAtom.append(int(m.group(1)))
-
-                        if len(self.ListAtom) == nbAtoms:
-                        
-                            # Order the FLEDIH based on the atoms occurences
-                            self.OrderFledih()
-                        
-                        continue
-
-                    m = re.match("the protein center of coordinates is:\s+(\S+)\s+(\S+)\s+(\S+)\s+", Line)
-                    if m:
-                        self.Ori[0] = float(m.group(1))
-                        self.Ori[1] = float(m.group(2))
-                        self.Ori[2] = float(m.group(3))
-
-                        self.OriX[0] = self.Ori[0] + 1.0  # X
-                        self.OriX[1] = self.Ori[1]        # Y
-                        self.OriX[2] = self.Ori[2]        # Z
-                        
-                        self.OriY[0] = self.Ori[0]        # X
-                        self.OriY[1] = self.Ori[1] + 1.0  # Y
-                        self.OriY[2] = self.Ori[2]        # Z
-                        
-                        continue            
-
-                    m = re.match("Grid\[(\d+)\]=", Line)
-                    if m:
-                        index = int(m.group(1))
-                        
-                        strcoor = Line[(Line.find('=')+1):]
-                        self.GridVertex[index] = [  float(strcoor[0:8].strip()), 
-                                                    float(strcoor[8:16].strip()),
-                                                    float(strcoor[16:24].strip())]
-                        continue
-                        
-                    m = re.match("SIGMA_SHARE", Line)
-                    if m:
-                        self.ParseGA = True
-                        self.top.RunStatus()
-                        continue
-            
-            if Abort:
-                break
-                                        
             time.sleep(INTERVAL)
 
 
-        if self.top.ProcessError:
-            self.top.ErrorStatus()
-        else:
-            self.top.SuccessStatus()
 
-        print("FlexAID parsing thread has ended.")
+            # Parsing output
+            print("PARSING OUTPUT...")
 
-        self.FlexAID.ProcessRunning = False
+            try:
+                #out = self.FlexAID.Run.communicate(input='\n')[0]
+                out = self.FlexAID.Run.stdout.readlines()
+                #Line = self.FlexAID.Run.stdout.readline()
+                #Line.rstrip('\n')
+                Lines = out.splitlines()
+                print("number of lines read=", len(Lines))
 
-        # Empty rotamers data
-        self.dictSideChainNRot.clear()
-        self.dictSideChainRotamers.clear()
+                for Line in Lines:
 
-        # Re-enable buttons
-        self.top.Btn_Start.config(state='normal') 
-        self.top.Btn_PauseResume.config(state='disabled')
-        self.top.Btn_Stop.config(state='disabled')
-        self.top.Btn_Abort.config(state='disabled')
+                    '''
+                    m = re.match('^Grid', Line)
+                    if not m:
+                        print(Line)
+                    '''
 
-        self.top.Display_Results()
+                    # track errors
+                    m = re.match('^ERROR', Line)
+                    if m:
+                        self.top.DisplayMessage(str("A critical error occured\n" + Line), 1)
+                        self.ErrorMsg = Line
+
+                        try:
+                            self.FlexAID.Run.terminate()
+                        except:
+                            pass
+                    
+                        print("TERMINATING DUE TO ERROR!")
+                        break
+
+                    if self.ParseGA:
+                             
+                        '''
+                        Generation:   0
+                        best by energy
+                            0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
+                            1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
+                            2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
+                            3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
+                            4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
+                        best by fitnes
+                            0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
+                            1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
+                            2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
+                            3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
+                            4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
+                        '''
+
+                        m = re.match("(\s*(\d+) \()", Line)
+                        if m:
+                            self.TOP = int(m.group(2))
+
+                            # Find starting index where to parse column values
+                            colNo = len(m.group(1))
+
+                            if self.Best == 'energy' and self.Generation != -1 and self.TOP != -1:
+
+                                # Reading the values calculated for the generation
+                                if (self.Generation % self.ModuloGEN) == 0 or self.Generation == self.NbTotalGen:
+
+                                    #self.Updating += 1
+
+                                    ID = str(self.Generation) + '.' + str(self.TOP)
+                                    #print("updating " + ID)
+
+                                    #print Line
+                                    Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
+                                                                        self.Translation, self.Rotation )
+
+                                    if (self.TOP+1) == self.NBLineGEN:
+                                        self.State = self.CurrentState
+
+                                        # Update energy/fitness table
+                                        self.top.update_DataList()
+
+                                        self.top.Refresh_LigDisplay()
+                                        self.top.Refresh_CartoonDisplay()
+
+                                        # Update is successful, continue simulation
+                                        #self.FlexAID.Run.stdin.write('\n')
+
+                            continue
+
+                        m = re.match("best by (\w+)\s+", Line)
+                        if m:
+                            self.Best = m.group(1)
+                            #print "Best by " + self.Best
+                            continue
+
+                        m = re.match("Generation:\s*(\d+)\s+", Line)
+                        if m:
+
+                            self.Generation = int(m.group(1))
+                            #print("Generation " + str(self.Generation))
+                            self.CurrentState = self.State + 1
+
+                            #print "will update progressbar"
+                            # ProgressionBar Handler
+                            self.top.progressBarHandler(self.Generation, self.NbTotalGen)
+
+                            continue
+                    
+                        m = re.match("clustering all individuals", Line)
+                        if m:
+                            self.top.ClusterStatus()
+
+                            continue
+
+                    else:
+    
+                        m = re.match("NRGsuite Init", Line)
+                        if m:
+                            self.FlexAID.Run.stdin.write('\n')
+
+                            continue
+
+                        m = re.match("Rotamer for", Line)
+                        if m:                        
+                            self.AddRotamerFromLine(Line)
+                        
+                            continue
+
+                        m = re.match("shiftval=", Line)
+                        if m and self.FlexStatus != '':
+
+                            # Shift values for fixed dihedrals between pair-triplets of atoms
+                            fields = Line.split()
+                            MergeAtomsAB = fields[1] + fields[2]
+                            self.FixedAngle[MergeAtomsAB] = fields[5]                   
+                                                    
+                            continue
+
+                        m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
+                        if m:                        
+                            self.ListAtom.append(int(m.group(1)))
+                            if len(self.ListAtom) == nbAtoms:
+                                # Order the FLEDIH based on the atoms occurences
+                                self.OrderFledih()
+                        
+                            continue
+
+                        m = re.match("the protein center of coordinates is:\s+(\S+)\s+(\S+)\s+(\S+)\s+", Line)
+                        if m:
+                            self.Ori[0] = float(m.group(1))
+                            self.Ori[1] = float(m.group(2))
+                            self.Ori[2] = float(m.group(3))
+
+                            self.OriX[0] = self.Ori[0] + 1.0  # X
+                            self.OriX[1] = self.Ori[1]        # Y
+                            self.OriX[2] = self.Ori[2]        # Z
+                        
+                            self.OriY[0] = self.Ori[0]        # X
+                            self.OriY[1] = self.Ori[1] + 1.0  # Y
+                            self.OriY[2] = self.Ori[2]        # Z
+                        
+                            continue            
+
+                        m = re.match("Grid\[(\d+)\]=", Line)
+                        if m:
+                            index = int(m.group(1))
+                        
+                            strcoor = Line[(Line.find('=')+1):]
+                            self.GridVertex[index] = [  float(strcoor[0:8].strip()), 
+                                                        float(strcoor[8:16].strip()),
+                                                        float(strcoor[16:24].strip())]
+
+                            # used to not overflow communicate
+                            #if index % self.top.GridBuffer == 0:
+                            #    self.FlexAID.Run.stdin.write('\n')
+
+                            continue
+                        
+                        m = re.match("SIGMA_SHARE", Line)
+                        if m:                            
+                            # send ready to simulate signal  
+                            self.top.DisplayMessage("  Signal sent to start simulation", 2)
+                            self.FlexAID.Run.stdin.write('\n')
+
+                            self.ParseGA = True
+                            self.top.RunStatus()
+
+                            continue
+            
+            except:
+                pass
+
+        # Simulation might have been shut down by closing main frame
+        try:
+            if self.top.ProcessError:
+                self.top.ErrorStatus(self.ErrorMsg)
+            else:
+                self.top.SuccessStatus()
+
+            print("FlexAID parsing thread has ended.")
+
+            self.FlexAID.ProcessRunning = False
+
+            # Empty rotamers data
+            self.dictSideChainNRot.clear()
+            self.dictSideChainRotamers.clear()
+
+            # Re-enable buttons
+            self.top.Btn_Start.config(state='normal') 
+            self.top.Btn_PauseResume.config(state='disabled')
+            self.top.Btn_Stop.config(state='disabled')
+            self.top.Btn_Abort.config(state='disabled')
+
+            self.top.Display_Results()
+        except:
+            pass
 
         # Put back the auto_zoom to on
         cmd.set("auto_zoom", -1)
