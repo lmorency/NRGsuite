@@ -18,35 +18,118 @@
 '''
 
 from Tkinter import *
+from subprocess import Popen, PIPE
 
-import tkFileDialog, tkMessageBox
-import tkFont
-
-import pickle
+import ctypes
+import os
+import sys
 import time
-import os, sys
-import General
-import Color
-import Prefs
-
-if __debug__:
-	from pymol import cmd
-	from pymol.cgo import *
-	from pymol.vfont import plain
-
-	import General_cmd
 
 class Base:
 
     def __init__(self):
-
+    
         return
-
+        
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
     ==================================================================================  '''  
     def Frame_Main(self):
 
+            return
+    
+    ''' ==================================================================================
+    FUNCTION Btn_Default_Clicked: Sets back the default config
+    ================================================================================== '''    
+    def Btn_Default_Clicked(self):
+        
+        if self.ActiveWizard != None:
+            self.DisplayMessage("Cannot reset values while a Wizard is active", 2)
+            return
+
+        if self.ProcessRunning:
+            self.DisplayMessage("Cannot reset values while a Process is running", 2)
+            return
+            
+        self.ActiveFrame.Init_Vars()
+
+    ''' ==================================================================================
+    FUNCTION Btn_SaveDefault_Clicked: Sets the default config
+    ================================================================================== '''    
+    def Btn_SaveDefault_Clicked(self):
+
+        return
+
+    ''' ==================================================================================
+    FUNCTION Btn_Restore_Clicked: Sets back the original default config
+    ================================================================================== '''    
+    def Btn_Restore_Clicked(self):
+
+        return
+
+    ''' ==================================================================================
+    FUNCTION SetActiveFrame: Switch up tabs in the uppper menu
+    ================================================================================== '''    
+    def SetActiveFrame(self, Frame):
+
+        if not self.ActiveWizard is None:
+            self.DisplayMessage("Cannot switch tab: A wizard is currently running...", 2)
+            return
+
+        if self.ProcessRunning:
+            self.DisplayMessage("Cannot switch tab: A process is currently running...", 2)
+            return
+
+        if self.ActiveFrame != Frame:
+
+            if not self.ActiveFrame is None:
+                
+                rv = self.ActiveFrame.Validate_Fields()
+                if rv > 0:
+                    if rv == 1:
+                        self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
+                    elif rv == 2:
+                        self.ActiveFrame.Validator_Fail()
+                    return
+
+                if not self.ActiveFrame.Before_Kill_Frame() or not self.ActiveFrame.Kill_Frame():
+                    self.DisplayMessage("Cannot switch tab: Could not kill the frame", 2)
+                    return
+
+                #print "Killed Frame " + self.ActiveFrame.FrameName
+                self.ActiveFrame.Tab.config(bg=self.Color_White)
+
+            self.ActiveFrame = Frame
+            
+            self.ActiveFrame.Show()
+            self.ActiveFrame.After_Show()
+            self.ActiveFrame.Tab.config(bg=self.Color_Blue)
+
+        return
+
+    ''' ==================================================================================
+    FUNCTION AppIsRunning: Update or Create the Running File to BLOCK multiple GUI 
+    ==================================================================================  '''       
+    def AppIsRunning(self):
+        
+        #Create the .run file
+        RunPath = os.path.join(self.AlreadyRunning_Dir,self.RunFile)
+        RunFile = open(RunPath, 'w')
+        RunFile.write(str(os.getpid()))
+        RunFile.close()
+
+    ''' ==================================================================================
+    FUNCTION Restore: Restore the original default configuration
+    ================================================================================== '''    
+    def Restore(self):
+        
+        return
+
+    ''' ==================================================================================
+    FUNCTION SaveDefault: Saves the current configuration as default
+    ================================================================================== '''    
+    def SaveDefault(self):
+        
         return
 
     ''' ==================================================================================
@@ -68,104 +151,67 @@ class Base:
 
         self.TextMessage.yview(INSERT)        
         self.TextMessage.config(state='disabled')
+                
+    ''' ==================================================================================
+    FUNCTION Before_Quit: Execute tasks before exitting the application
+    ==================================================================================  '''
+    def Before_Quit(self):
+    
+        return
 
     ''' ==================================================================================
-    FUNCTION Del_Trace: Deletes the variables being traced when app is destroyed
+    FUNCTION Kill: Kills a process by PID
+    ==================================================================================  '''
+    def Kill(self, pid):
+    
+         print("   The following process will be killed", self.Run)
+
+         if self.OSid == 'WIN':
+            kernel32 = ctypes.windll.kernel32
+            handle = kernel32.OpenProcess(1, 0, self.Run.pid)
+            return (0 != kernel32.TerminateProcess(handle, 0))
+
+         else:
+            pkill = Popen(['kill',int(self.Run.pid)], stdout=PIPE, stderr=PIPE)
+            (out, err) = pkill.communicate()
+            if err:
+                pass
+
+    ''' ==================================================================================
+    FUNCTION Quit: Exit the application
+    ==================================================================================  '''
+    def Quit(self):
+        
+        self.Before_Quit()
+        
+        # Cannot quit while process is running
+        if self.ProcessRunning and self.Run is not None:
+            self.Kill(self.Run.pid)
+
+        # Close any Wizard interface in Pymol if started
+        if not self.ActiveWizard is None:
+            if self.PyMOL:
+                self.ActiveWizard.btn_Done()
+        
+        #Delete the .run file
+        RunPath = os.path.join(self.AlreadyRunning_Dir,self.RunFile)
+        if os.path.isfile(RunPath):
+            try:
+                os.remove(RunPath)
+            except OSError:
+                print('   An error occured while cleaning running file for ' + self.Name)                
+                    
+        self.Del_Trace()
+        
+        self.top.destroy()
+
+        print('   Closed ' + self.Name)
+
+    ''' ==================================================================================
+    FUNCTION Del_Trace: Deletes the trace of some variables
     ================================================================================== '''    
     def Del_Trace(self):
     
         for Tab in self.listTabs:
             Tab.Del_Trace()
 
-    ''' ==================================================================================
-    FUNCTION Btn_Default_Clicked: Sets back the default config
-    ================================================================================== '''    
-    def Btn_Default_Clicked(self):
-        
-        if self.ActiveWizard != None:
-            self.DisplayMessage("Cannot reset values while a Wizard is active", 2)
-            return
-
-        if self.ProcessRunning is True:
-            self.DisplayMessage("Cannot reset values while a Process is running", 2)
-            return
-            
-        self.ActiveFrame.Init_Vars()
-
-    ''' ==================================================================================
-    FUNCTION SetActiveFrame: Switch up tabs in the uppper menu
-    ================================================================================== '''    
-    def SetActiveFrame(self, Frame):
-
-        if not self.ActiveWizard is None:
-            self.DisplayMessage("Cannot switch tab: A wizard is currently running...", 2)
-            return
-
-        if self.ProcessRunning:
-            self.DisplayMessage("Cannot switch tab: A process is currently running...", 2)
-            return
-
-        if self.ActiveFrame != Frame:
-
-            if not self.ActiveFrame is None:
-
-                # Trigger lost_focus event for validation
-                self.fMiddle.focus_set()
-                self.fMiddle.update_idletasks()
-
-                rv = self.ActiveFrame.Validate_Entries(self.ActiveFrame.Validator)
-                if rv > 0:
-                    if rv == 1:
-                        self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
-                    elif rv == 2:
-                        self.ActiveFrame.Validator_Fail()
-                    return
-
-                if not self.ActiveFrame.Before_Kill_Frame() or not self.ActiveFrame.Kill_Frame():
-                    self.DisplayMessage("Cannot switch tab: Not all fields are validated", 2)
-                    return
-
-                self.fMiddle.update_idletasks()
-
-                #print "Killed Frame " + self.ActiveFrame.FrameName
-                self.ActiveFrame.Tab.config(bg=self.Color_White)
-                #self.ActiveFrame.Del_Trace()
-
-            self.ActiveFrame = Frame
-            print("New active frame " + self.ActiveFrame.FrameName)
-
-            self.ActiveFrame.Show()
-            print("Done showing")
-            self.ActiveFrame.After_Show()
-            print("Done after showing")
-            self.ActiveFrame.Tab.config(bg=self.Color_Blue)
-            print("Done switching color")
-
-            self.fMiddle.update_idletasks()
-
-        return
-
-    ''' ==================================================================================
-    FUNCTION AppIsRunning: Update or Create the Running File to BLOCK multiple GUI 
-    ==================================================================================  '''       
-    def AppIsRunning(self):
-        
-        #Create the .run fileBtn_DelResidu_Clicked
-        RunPath = os.path.join(self.AlreadyRunning_Dir,self.RunFile)
-        RunFileH = open(RunPath, 'w')
-        RunFileH.write(str(os.getpid()))
-        RunFileH.close()
-        
-    ''' ==================================================================================
-    FUNCTION Btn_Restore_Clicked: Restore the original default configuration
-    ================================================================================== '''    
-    def Btn_Restore_Clicked(self):
-        
-        return
-
-    ''' ==================================================================================
-    FUNCTION Btn_SaveDefault_Clicked: Saves the current configuration as default
-    ================================================================================== '''    
-    def Btn_SaveDefault_Clicked(self):
-        
-        return

@@ -34,7 +34,9 @@ from collections import defaultdict
 from pymol import cmd
 from subprocess import Popen, PIPE, STDOUT
 
+#import psutil
 import math, os, time, re
+import sys
 import threading
 import Color
 import Geometry
@@ -42,6 +44,7 @@ import UpdateScreen
 
 # Start the simulation with FlexAID      
 class Start(threading.Thread):
+#class Start():
 
     def __init__(self, top,commandline):
 
@@ -60,17 +63,20 @@ class Start(threading.Thread):
 
     # Start FlexAID on a side thread
     def run(self):        
+    #def start(self):        
         
         #print "FlexAID starting thread has begun."
         
+        #print("Process list", [psutil.Process(i).name for i in psutil.get_pid_list()])
+
         self.FlexAID.ProcessRunning = True
 
         try:
             if self.FlexAID.OSid == 'WIN':
-                self.FlexAID.Run = Popen(self.commandline, shell=False, bufsize=1, stdout=PIPE, stderr=STDOUT)
+                self.FlexAID.Run = Popen(self.commandline, shell=False, bufsize=-1, stdout=PIPE, stderr=STDOUT)
             else:
-                self.FlexAID.Run = Popen(self.commandline, shell=True,  bufsize=1, stdout=PIPE, stderr=STDOUT)
-                
+                self.FlexAID.Run = Popen(self.commandline, shell=True, bufsize=-1, stdout=PIPE, stderr=STDOUT)
+            
             self.FlexAID.Run.wait()
             
             if self.FlexAID.Run.returncode != 0:
@@ -82,12 +88,11 @@ class Start(threading.Thread):
             self.top.DisplayMessage('   Make sure you downloaded NRGsuite for the right platform', 1)
             self.top.ProcessError = True
 
-        #print "FlexAID starting thread has ended."
+        print("FlexAID starting thread has ended.")
         
         self.FlexAID.Run = None
         self.FlexAID.ProcessRunning = False
         
-
 
 class Parse(threading.Thread):
 #class Parse():
@@ -108,7 +113,7 @@ class Parse(threading.Thread):
                 
         self.NbTopChrom = int(self.FlexAID.GAParam.NbTopChrom.get())
         
-        self.dictFlexBonds = self.FlexAID.Config2.dictFlexBonds
+        self.dictFlexBonds = self.FlexAID.Config2.Vars.dictFlexBonds
 
         self.RngOpt = self.FlexAID.Config1.RngOpt.get()  # Possibility: GLOBAL, LOCCEN, LOCCLF
         
@@ -126,8 +131,6 @@ class Parse(threading.Thread):
         self.Translation = self.FlexAID.Config2.IntTranslation.get()
         self.Rotation = self.FlexAID.Config2.IntRotation.get()
         
-        #self.Updating = 0
-
         self.State = 0
         self.CurrentState = 0
 
@@ -140,7 +143,7 @@ class Parse(threading.Thread):
 
         self.ReferencePath = self.FlexAID.IOFile.ReferencePath.get()
 
-        self.listSideChain = self.FlexAID.Config1.TargetFlex.listSideChain
+        self.listSideChain = self.FlexAID.Config1.Vars.TargetFlex.listSideChain
         self.dictSideChainNRot = {}
         self.dictSideChainRotamers = {}
 
@@ -170,7 +173,9 @@ class Parse(threading.Thread):
 
         # In order, atoms that need their values to be modified
         self.VarAtoms = self.getVarAtoms(self.top.Manage.INPFlexAIDRunSimulationProject_Dir)    # 1st = 3 positions, 2nd = 2 positions, 3rd = 1 position
-         
+        
+        #time.sleep(1)
+
         self.start()
         
     '''
@@ -206,34 +211,47 @@ class Parse(threading.Thread):
         
         self.top.progressBarHandler(0,self.NbTotalGen)
         self.top.Init_Table()
-        
+
         # Set the auto_zoom to off
         cmd.set("auto_zoom", 0)
         cmd.delete("TOP_*__")
         cmd.frame(1)
+
+        Critical = False
+
+        self.top.InitStatus()
         
-        while self.FlexAID.Run is not None: # and self.FlexAID.Run.poll() is None:
+        while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
 
             while (1):
                 # Parsing output
                 try:
                     Line = self.FlexAID.Run.stdout.readline()
-                    #print Line
-                except:
+                    Line.rstrip('\n')
+
+                    m = re.match('^Grid', Line)
+                    if not m:
+                        print(Line)
+                except 
+                    #print "NO OUTPUT1!"
                     break
 
                 # stop reading from stdout buffer
                 if Line == '':
+                    print "NO OUTPUT2!"
                     break
                 
                 # track errors
                 if Line.startswith('ERROR'):
+                    Critical = True
+
                     self.top.DisplayMessage(str("A critical error occured\n" + Line), 1)
-                    self.top.ErrorStatus()
+                    
                     try:
                         self.FlexAID.Run.terminate()
                     except:
                         pass
+                    
                     break
 
                 if self.ParseGA:
@@ -313,10 +331,6 @@ class Parse(threading.Thread):
                     if m:
                         self.top.ClusterStatus()
 
-                    m = re.match("Done", Line)
-                    if m:
-                        self.top.SuccessStatus()
-                        
                 else:
     
                     m = re.match("Rotamer for", Line)
@@ -337,9 +351,7 @@ class Parse(threading.Thread):
                         continue
 
                     m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
-                    if m:
-                        self.top.InitStatus()
-                        
+                    if m:                        
                         self.ListAtom.append(int(m.group(1)))
 
                         if len(self.ListAtom) == nbAtoms:
@@ -380,11 +392,19 @@ class Parse(threading.Thread):
                         self.ParseGA = True
                         self.top.RunStatus()
                         continue
-                                
+            
+            if Critical:
+                break
+                                        
             time.sleep(INTERVAL)
 
 
-        #print "FlexAID parsing thread has ended."
+        if self.top.ProcessError:
+            self.top.ErrorStatus()
+        else:
+            self.top.SuccessStatus()
+
+        print("FlexAID parsing thread has ended.")
         self.FlexAID.ProcessRunning = False
 
         # Empty rotamers data
@@ -397,8 +417,12 @@ class Parse(threading.Thread):
         self.top.Btn_Stop.config(state='disabled')
         self.top.Btn_Abort.config(state='disabled')
 
+        self.top.Display_Results()
+
         # Put back the auto_zoom to on
         cmd.set("auto_zoom", -1)
+        cmd.disable("TOP_*__")
+        cmd.frame(1)
 
 
     '''
