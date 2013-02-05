@@ -39,7 +39,6 @@ import General
 import CleftObj
 import BindingSite
 
-import functools
 import threading
 import Color
 import pickle
@@ -63,6 +62,8 @@ class RunThread(threading.Thread):
         self.GetCleft = self.top.top
 
         self.cmdline = cmdline
+        print(self.cmdline)
+        
         self.top.GetCleftRunning(True)
 
         # Start the thread
@@ -141,9 +142,6 @@ class Default(Tabs.Tab):
         self.ColorList = list()
         self.ColorRGB = list()
 
-        self.ValidNbCleft = list()
-        self.ValidOutput = list()
-
 
     def Init_Vars(self):
 
@@ -159,14 +157,6 @@ class Default(Tabs.Tab):
         self.listResidues = []
         self.PartitionColor = 'partition'
         self.LastdefaultOption = ''
-        
-        self.ValidNbCleft = [ True, 1, 0, None ]
-        self.ValidMinRadius = [ True, 1, 0, None ]
-        self.ValidMaxRadius = [ True, 1, 0, None ]
-        self.ValidOutput = [ True, 1, 0, None ]
-
-        self.Validator = [ self.ValidNbCleft, self.ValidMinRadius, self.ValidMaxRadius, self.ValidOutput ]
-        
     
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
@@ -210,7 +200,8 @@ class Default(Tabs.Tab):
         #                           SELECTION OF STRUCTURE
         #==================================================================================                
         fStructure = Frame(self.fDefault)
-        fStructure.pack(side=TOP, padx=5, pady=5, fill=X, expand=True)
+        #fStructure.pack(side=TOP, padx=5, pady=5, fill=X, expand=True)
+
         fStructureLine1 = Frame(fStructure)
         fStructureLine1.pack(side=TOP, fill=X, expand=True)
         fStructureLine2 = Frame(fStructure)
@@ -275,13 +266,15 @@ class Default(Tabs.Tab):
         EntryMinRadius.pack(side=RIGHT)
         Label(fBasicLine2, text='Min:', font=self.top.font_Text).pack(side=RIGHT, padx=2)
 
-        args_list = [EntryMaxRadius, self.MaxRadius, EntryMinRadius, 10.00, 2, self.ValidMaxRadius, 'Maximum radius', 'float']
-        EntryMaxRadius.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidMaxRadius[3] = EntryMaxRadius
+        args_list = [EntryMaxRadius, self.MaxRadius, EntryMinRadius, 10.00, 2, 'Maximum radius', 'float']
+        #EntryMaxRadius.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
+        self.ValidMaxRadius = [ 1, 0, EntryMaxRadius ]
+        #self.MaxRadiusTrace = self.MaxRadius.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
-        args_list = [EntryMinRadius, self.MinRadius, 0.25, EntryMaxRadius, 2, self.ValidMinRadius, 'Minimum radius', 'float']
-        EntryMinRadius.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidMinRadius[3] = EntryMinRadius
+        args_list = [EntryMinRadius, self.MinRadius, 0.25, EntryMaxRadius, 2, 'Minimum radius', 'float']
+        #EntryMinRadius.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
+        self.ValidMinRadius = [ True, 1, 0, EntryMinRadius ]
+        #self.MinRadiusTrace = self.MinRadius.trace('w', lambda args=args_list: self.Validate_Field(args_list))
         
         Label(fBasicLine3, text='Residue in contact (e.g. ALA13A):', font=self.top.font_Text).pack(side=LEFT)
         self.EntryResidu = Entry(fBasicLine3,textvariable=self.ResiduValue, background='white', justify=CENTER, font=self.top.font_Text)
@@ -290,16 +283,18 @@ class Default(Tabs.Tab):
         Label(fBasicLine4, text='Number of clefts to show:', font=self.top.font_Text).pack(side=LEFT)
         EntryNbCleft = Entry(fBasicLine4, width=8, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
         EntryNbCleft.pack(side=RIGHT)
-        args_list = [EntryNbCleft, self.NbCleft, 1, 100, -1, self.ValidNbCleft, 'Number of clefts', 'int']
-        EntryNbCleft.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidNbCleft[3] = EntryNbCleft
+        args_list = [EntryNbCleft, self.NbCleft, 1, 100, -1, 'Number of clefts', 'int']
+        #EntryNbCleft.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
+        self.ValidNbCleft = [ 1, 0, EntryNbCleft ]
+        #self.NbCleft = self.NbCleft.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
-        Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
+        #Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
         EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
-        EntryOutput.pack(side=RIGHT)
-        args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, self.ValidOutput, 'Output filename', 'str']
-        EntryOutput.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidOutput[3] = EntryOutput
+        #EntryOutput.pack(side=RIGHT)
+        args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, 'Output filename', 'str']
+        #EntryOutput.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
+        self.ValidOutput = [ 1, 0, EntryOutput ]
+        #self.OutputFileValueTrace = self.OutputFileValue.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         #Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, width=20, relief=RIDGE, command=self.Btn_AdvancedOptions).pack(side=RIGHT)
 
@@ -356,6 +351,8 @@ class Default(Tabs.Tab):
         #Radiobutton(fDisplayLine2, text='Spheres', variable=self.RadioCLF, value='sphere', font=self.top.font_Text).pack(side=LEFT)
         #Radiobutton(fDisplayLine2, text='Surface', variable=self.RadioCLF, value='surface', font=self.top.font_Text).pack(side=LEFT)
         #Checkbutton(fDisplayLine3, text='Clefts', width=20, variable=self.intChkClefts, font=self.top.font_Text, justify=LEFT).pack(side=LEFT)
+
+        self.Validator = [ self.ValidNbCleft, self.ValidMinRadius, self.ValidMaxRadius, self.ValidOutput ]
        
         return self.fDefault
         
@@ -384,18 +381,9 @@ class Default(Tabs.Tab):
     FUNCTION Btn_StartGetCleft_Clicked: Run GetCleft and display the result in Pymol 
     ==================================================================================  '''
     def Btn_StartGetCleft_Clicked(self):
-        
+
         if not self.top.ProcessRunning:
-            
-            # Trigger lost_focus event for validation
-            self.top.fMiddle.focus_set()
-            self.top.fMiddle.update_idletasks()
-            
-            rv = self.Validate_Entries(self.Validator)
-            if rv > 0:
-                self.DisplayMessage("  Cannot run GetCleft: Not all fields are validated", 2)
-                return
-            
+              
             try:
                 TmpFile = os.path.join(self.top.GetCleftProject_Dir,'tmp.pdb')
 
@@ -423,7 +411,7 @@ class Default(Tabs.Tab):
                     return
 
                 self.EntryResidu.config(bg=self.top.Color_White)
-            
+
             self.DisplayMessage("  Analyzing clefts for object/selection '" + self.defaultOption.get() + "'...", 0)
             
             #TmpFile = '/Users/francisgaudreault/1stp.pdb'
@@ -478,27 +466,7 @@ class Default(Tabs.Tab):
         # Size of spheres
         Args += ' -l ' + str(self.MinRadius.get())
         Args += ' -u ' + str(self.MaxRadius.get())
-        
-        """    
-        # Misc.
-        Args += ' -k ' + self.top.AdvOptions.Entry_K.get()
-
-        # Booleans
-        if self.top.AdvOptions.Entry_R_Value.get():
-            Args += ' -r'
                 
-        if self.top.AdvOptions.Entry_h_Value.get():
-            Args += ' -h'
-                
-        if self.top.AdvOptions.Entry_H_Value.get():
-            Args += ' -H'
-                
-        if self.top.AdvOptions.Entry_C.get() != 'ALL':
-            Args += ' -c ' + self.Entry_C.get()
-        
-        """
-        #Args += ' -ca'
-        
         Args += ' -s'
 
         self.LastdefaultOption = self.defaultOption.get()
@@ -524,16 +492,6 @@ class Default(Tabs.Tab):
         if self.PyMOL:
             exc = []
             General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, exc, None)
-
-    """
-    ''' ==================================================================================
-    FUNCTION Btn_AdvancedOptions: Opens the Advanced menu of GetCleft
-    ==================================================================================  '''                
-    def Btn_AdvancedOptions(self):
-
-        self.top.SetActiveFrame(self.top.AdvOptions)
-       
-    """
     
     ''' ========================================================
                   Welcome message upon frame built
@@ -594,20 +552,6 @@ class Default(Tabs.Tab):
         CleftPath = os.path.join(self.top.CleftProject_Dir,TARGETNAME)
         
         return CleftPath
-
-    ''' ==================================================================================
-    FUNCTION Get_BindingSitePath: Retrieves the default path of the bindingsite
-    ==================================================================================  '''        
-    def Get_BindingSitePath(self):
-        
-        if self.LastdefaultOption != '':
-            TARGETNAME = self.LastdefaultOption.upper()
-        else:
-            TARGETNAME = self.defaultOption.get().upper()
-
-        BindingSitePath = os.path.join(self.top.BindingSiteProject_Dir,TARGETNAME)
-        
-        return BindingSitePath
 
     ''' ==================================================================================
     FUNCTION Btn_Load_Clefts: Asks for user to load clefts
@@ -691,80 +635,6 @@ class Default(Tabs.Tab):
         else:
             self.top.DisplayMessage("  No clefts to save as 'clefts'", 2)
 
-    ''' ==================================================================================
-    FUNCTION Btn_Load_BindingSite: Asks for user to load binding-site
-    ==================================================================================  '''        
-    def Btn_Load_BindingSite(self):
-
-        BindingSitePath = self.Get_BindingSitePath()
-
-        if not os.path.isdir(BindingSitePath):
-            self.DisplayMessage("  Could not find a BindingSite folder for your target:", 2)
-            self.DisplayMessage("  The default BindingSite folder is used.", 2)
-            
-            BindingSitePath = self.top.BindingSiteProject_Dir
-        
-        LoadPath = tkFileDialog.askopenfilename(filetypes=[('NRG BindingSite','*.nrgbs')],
-                                                initialdir=BindingSitePath, title='Select a NRG BindingSite file to load')
-        
-        if len(LoadPath) > 0:
-            LoadPath = os.path.normpath(LoadPath)
-            
-            try:
-                in_ = open(LoadPath, 'r')
-                TempBindingSite = pickle.load(in_)
-                in_.close()
-                
-                if TempBindingSite.Count_Cleft() > 0:
-                    self.Btn_Clear_Clicked()
-                    self.TempBindingSite = TempBindingSite
-
-                    self.Display_Temp()
-                    self.top.Go_Step2()
-                    
-            except:
-                self.DisplayMessage("  ERROR: Could not find read the BindingSite", 2)
-
-
-    ''' ==================================================================================
-    FUNCTION Btn_Save_BindingSite: Asks for user to save binding-site
-    ==================================================================================  '''        
-    def Btn_Save_BindingSite(self):
-
-        BindingSitePath = self.Get_BindingSitePath()
-
-        if self.TempBindingSite.Count_Cleft() > 0:
-            
-            if not os.path.isdir(BindingSitePath):
-                os.makedirs(BindingSitePath)
-
-            SaveFile = tkFileDialog.asksaveasfilename(initialdir=BindingSitePath,
-                                                      title='Save the BindingSite file', initialfile='def_cleft_bindingsite',
-                                                      filetypes=[('NRG BindingSite','*.nrgbs')])
-            
-            if len(SaveFile) > 0:
-                SaveFile = os.path.norm(SaveFile)
-                
-                if SaveFile.find('.nrgbs') == -1:
-                    SaveFile = SaveFile + '.nrgbs'
-
-                self.Update_TempBindingSite()
-                self.TempBindingSite.Type = 2
-                
-                # Save all cleft 
-                self.top.Manage.save_Temp()
-
-                try:
-                    out = open(SaveFile, 'w')
-                    pickle.dump(self.TempBindingSite, out)
-                    out.close()
-                    
-                    self.top.DisplayMessage("  Successfully saved '" + SaveFile + "'", 0)
-                except:
-                    self.top.DisplayMessage("  ERROR: Could not save binding-site configuration", 1)
-
-        else:
-            self.top.DisplayMessage("  No clefts to save as 'binding-site'", 2)
     
     ''' ==================================================================================
     FUNCTION Load_Clefts: Loads the list of temp clefts

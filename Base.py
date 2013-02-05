@@ -18,11 +18,16 @@
 '''
 
 from Tkinter import *
+<<<<<<< HEAD
 from subprocess import Popen, PIPE
 
 import ctypes
 import os
 import sys
+=======
+
+import os, sys
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
 import time
 
 class Base:
@@ -160,6 +165,7 @@ class Base:
         return
 
     ''' ==================================================================================
+<<<<<<< HEAD
     FUNCTION Kill: Kills a process by PID
     ==================================================================================  '''
     def Kill(self, pid):
@@ -178,6 +184,8 @@ class Base:
                 pass
 
     ''' ==================================================================================
+=======
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
     FUNCTION Quit: Exit the application
     ==================================================================================  '''
     def Quit(self):
@@ -186,8 +194,14 @@ class Base:
         
         # Cannot quit while process is running
         if self.ProcessRunning and self.Run is not None:
+<<<<<<< HEAD
             self.Kill(self.Run.pid)
 
+=======
+            print("   The following process will be killed", self.Run)
+            self.Run.kill()
+            
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
         # Close any Wizard interface in Pymol if started
         if not self.ActiveWizard is None:
             if self.PyMOL:
@@ -199,11 +213,19 @@ class Base:
             try:
                 os.remove(RunPath)
             except OSError:
+<<<<<<< HEAD
                 print('   An error occured while cleaning running file for ' + self.Name)                
                     
         self.Del_Trace()
         
         self.top.destroy()
+=======
+                print('   An error occured while clearing running file for ' + self.Name)                
+                    
+        self.Del_Trace()
+        
+        self.top.destroy()        
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
 
         print('   Closed ' + self.Name)
 

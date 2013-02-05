@@ -19,7 +19,6 @@
 
 from Tkinter import *
 
-import functools
 import math
 import os
 import hashlib
@@ -99,7 +98,7 @@ class IOFile(Tabs.Tab):
         
         #self.TargetRNA.set(0)
         self.ResSeq.set(0)
-        #self.top.Config2.Anchor.set(-1)
+        #self.top.Config2.Vars.Anchor.set(-1)
 
         self.Vars.LigandPathMD5 = ''
     
@@ -212,7 +211,7 @@ class IOFile(Tabs.Tab):
         #                              PDB Options
         #==================================================================================
         fPDB_options = Frame(self.fIOFile)#, border=1, relief=SUNKEN)
-        fPDB_options.pack(fill=X, side=TOP, padx=5, pady=5)
+        #fPDB_options.pack(fill=X, side=TOP, padx=5, pady=5)
 
         fPDB_optionsLine1 = Frame(fPDB_options)#, border=1, relief=SUNKEN)
         fPDB_optionsLine1.pack(side=TOP, fill=X)
@@ -227,7 +226,9 @@ class IOFile(Tabs.Tab):
         
         # Download a PDB File from the internet
         Button(fPDB_optionsLine2, text='Download', command=self.Btn_DownloadPDB_Clicked, font=self.font_Text, width=10).pack(side=RIGHT, padx=5)
-        Entry(fPDB_optionsLine2, textvariable=self.FetchPDB, width=10, background='white', font=self.font_Text, justify=CENTER).pack(side=RIGHT)
+        entFetchPDB = Entry(fPDB_optionsLine2, textvariable=self.FetchPDB, width=10, background='white', font=self.font_Text, justify=CENTER)#,
+        #                    validate="key", validatecommand=lambda v=self.FetchPDB: len(v.get()) < 5)
+        #entFetchPDB.pack(side=RIGHT)
         Label(fPDB_optionsLine2, text='Enter the PDB code:', font=self.font_Text, justify=CENTER).pack(side=RIGHT, padx=5)
         
 
@@ -592,9 +593,10 @@ class IOFile(Tabs.Tab):
     ==================================================================================  '''                
     def Btn_RefreshOptMenu_Clicked(self): 
         
-        if self.PyMOL:
-            exc = []
-            General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, exc, None)
+        if not self.PyMOL:
+            return
+            
+        General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, [], None)
    
     ''' ==================================================================================
     FUNCTIONS Display Ligand and Protein in pymol
@@ -688,17 +690,17 @@ class IOFile(Tabs.Tab):
     #=======================================================================   
     def store_Neighbours(self, inpInfo):
         
-        self.top.Config2.dictNeighbours.clear()
+        self.top.Config2.Vars.dictNeighbours.clear()
         
         for atom in iter(inpInfo):
-            self.top.Config2.dictNeighbours[atom] = inpInfo[atom][1:]
+            self.top.Config2.Vars.dictNeighbours[atom] = inpInfo[atom][1:]
                     
     #=======================================================================
     ''' Store Flexible Bonds Dictionary'''
     #=======================================================================   
     def store_FlexBonds(self, flexInfo):
         
-        self.top.Config2.dictFlexBonds.clear()
+        self.top.Config2.Vars.dictFlexBonds.clear()
         
         for index in iter(flexInfo):
             
@@ -711,17 +713,17 @@ class IOFile(Tabs.Tab):
             for i in range(0, len(flexInfo[index])):
                 dictList.append(flexInfo[index][i])
                 
-            self.top.Config2.dictFlexBonds[index] = dictList
+            self.top.Config2.Vars.dictFlexBonds[index] = dictList
 
     #=======================================================================
     ''' Store Atom Types Dictionary'''
     #=======================================================================   
     def store_AtomTypes(self, inpInfo):
         
-        self.top.Config2.dictAtomTypes.clear()
+        self.top.Config2.Vars.dictAtomTypes.clear()
         
         for atom in iter(inpInfo):
-            self.top.Config2.dictAtomTypes[atom] = [inpInfo[atom][0], inpInfo[atom][0]]
+            self.top.Config2.Vars.dictAtomTypes[atom] = [inpInfo[atom][0], inpInfo[atom][0]]
 
     
     #=======================================================================

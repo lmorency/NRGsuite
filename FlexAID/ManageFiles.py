@@ -163,10 +163,10 @@ class Manage():
         
         if rngOpt == 'LOCCEN':
             line = 'RNGOPT LOCCEN'
-            line += ' %.3f' % self.Config1.BindingSite.Sphere.Center[0]
-            line += ' %.3f' % self.Config1.BindingSite.Sphere.Center[1]
-            line += ' %.3f' % self.Config1.BindingSite.Sphere.Center[2]
-            line += ' %.3f\n' % self.Config1.BindingSite.Sphere.Radius
+            line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[0]
+            line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[1]
+            line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[2]
+            line += ' %.3f\n' % self.Config1.Vars.BindingSite.Sphere.Radius
             config_file.write(line)
 
         elif rngOpt == 'LOCCLF':
@@ -176,12 +176,12 @@ class Manage():
             config_file.write(line)        
 
         
-        if self.Config1.TargetFlex.Count_SideChain() > 0:
+        if self.Config1.Vars.TargetFlex.Count_SideChain() > 0:
             FlexSCFile = os.path.join(self.FlexAIDRunSimulationProject_Dir,'flexSC.lst')
             self.Create_FlexFile(FlexSCFile)
             config_file.write('FLEXSC ' + FlexSCFile + '\n')
 
-        if len(self.Config2.dictCovConstraints): # or len(self.Config2.dictIntConstraints):
+        if len(self.Config2.Vars.dictCovConstraints):
             ConsFile = os.path.join(self.self.FlexAIDRunSimulationProject_Dir,'cons.lst')
             self.Create_ConsFile(ConsFile)
             config_file.write('CONSTR ' + ConsFile + '\n')
@@ -193,7 +193,7 @@ class Manage():
             config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n')
         
         # Ligand flexibility
-        order = sorted(self.Config2.dictFlexBonds.keys())
+        order = sorted(self.Config2.Vars.dictFlexBonds.keys())
         self.Add_FlexBonds(config_file,order)
 
         if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
@@ -227,10 +227,13 @@ class Manage():
             config_file.write('SLVPEN ' + self.Config3.SolventTerm.get() + '\n')
 
         config_file.write('STATEP ' + self.FlexAID.FlexAIDSimulationProject_Dir  + '\n')
-
+        config_file.write('TEMPOP ' + self.FlexAID.FlexAIDSimulationProject_Dir  + '\n')
+        
+        #config_file.write('OUTRNG\n')
+        
         config_file.write('DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n')
 
-        config_file.write('MAXRES 30'  + '\n')
+        config_file.write('MAXRES 10'  + '\n')
 
         config_file.write('NRGSUI\n')
         config_file.write('ENDINP\n')
@@ -292,7 +295,7 @@ class Manage():
                     
         FlexFile = open(outfile, 'w')
                   
-        for item in self.Config1.TargetFlex.listSideChain:
+        for item in self.Config1.Vars.TargetFlex.listSideChain:
             lastch = len(item) - 1
             ResName = item[0:3]
             ChainID = item[lastch]
@@ -313,17 +316,17 @@ class Manage():
     #                
     #    ConsFile = open(outfile, 'w')
     #              
-    #    for key in iter(self.Config2.dictCovConstraints):
+    #    for key in iter(self.Config2.Vars.dictCovConstraints):
     #        
-    #        atom1 = Constraint.parse_cons(self.Config2.dictCovConstraints[key][0])
-    #        atom2 = Constraint.parse_cons(self.Config2.dictCovConstraints[key][1])
+    #        atom1 = Constraint.parse_cons(self.Config2.Vars.dictCovConstraints[key][0])
+    #        atom2 = Constraint.parse_cons(self.Config2.Vars.dictCovConstraints[key][1])
     #        
     #        ConsFile.write('COVALENT ')
     #        self.Print_Constraint(ConsFile,atom1)
     #        ConsFile.write(':')
     #        self.Print_Constraint(ConsFile,atom2)
     #        ConsFile.write(':')
-    #        ConsFile.write('%.2f' % float(self.Config2.dictCovConstraints[key][5]))
+    #        ConsFile.write('%.2f' % float(self.Config2.Vars.dictCovConstraints[key][5]))
     #        ConsFile.write('\n')
     #        
     #    ConsFile.close()            
@@ -350,16 +353,16 @@ class Manage():
             strk = str(k)
 
             # If bond is flexible
-            if self.Config2.dictFlexBonds[k][0]:
+            if self.Config2.Vars.dictFlexBonds[k][0]:
                 FilePtr.write('OPTIMZ ' + str(self.IOFile.ResSeq.get()) + ' - ' + strk + '\n')
                             
                 # If the bond is forced
-                if self.Config2.dictFlexBonds[k][1]:
+                if self.Config2.Vars.dictFlexBonds[k][1]:
 
                     ForcedLines += 'FLEDIH' + strk.rjust(3, ' ') + ' '
-                    n = self.Config2.dictFlexBonds[k][2]            
+                    n = self.Config2.Vars.dictFlexBonds[k][2]            
                     for i in range(0, n):
-                        ForcedLines += str(self.Config2.dictFlexBonds[k][i+3]).rjust(5, ' ')
+                        ForcedLines += str(self.Config2.Vars.dictFlexBonds[k][i+3]).rjust(5, ' ')
                     ForcedLines += '\n'                
         
         self.Add_Forced(ForcedLines)
@@ -401,7 +404,7 @@ class Manage():
         for line in lines:
             if line.startswith('HETTYP'):
                 index = line[6:11].strip()
-                newline = line[:11] + self.Config2.dictAtomTypes[index][1].rjust(2, ' ') +  line[13:]
+                newline = line[:11] + self.Config2.Vars.dictAtomTypes[index][1].rjust(2, ' ') +  line[13:]
                 inpFile.write(newline)
             else:
                 inpFile.write(line)

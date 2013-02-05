@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Base.py" />
     <None Include="..\..\BindingSite.py" />
     <None Include="..\..\CleftObj.py" />
     <None Include="..\..\Color.py" />

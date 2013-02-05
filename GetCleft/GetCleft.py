@@ -27,6 +27,22 @@
 @creation date:  Oct. 19, 2010
 '''
 
+<<<<<<< HEAD
+=======
+from Tkinter import *
+
+import os, sys
+import pickle
+import time
+import tkFont
+import tkFileDialog
+import tkMessageBox
+
+import Prefs
+import Color
+import General
+
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
 import Base
 import CleftObj
 import ManageFiles2
@@ -34,11 +50,22 @@ import Default
 import CropCleft
 import Volume
 
+if __debug__:
+	from pymol import cmd
+	from pymol.cgo import *
+	from pymol.vfont import plain
+
+	import General_cmd
+
 #=========================================================================================
 '''                           ---   PARENT WINDOW  ---                                 '''
 #========================================================================================= 
 
+<<<<<<< HEAD
 class displayGetCleft(Base):
+=======
+class displayGetCleft(Base.Base):
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
     
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
@@ -51,6 +78,7 @@ class displayGetCleft(Base):
             import General_cmd
 
         self.Name = 'GetCleft'
+        self.RunFile = '.grun'
         self.OSid = OSid
         
         self.WINDOWWIDTH = 500
@@ -64,8 +92,6 @@ class displayGetCleft(Base):
         self.Project_Dir = Project_Dir
 
         self.GetCleftInstall_Dir = os.path.join(self.Install_Dir,'GetCleft')
-
-        self.BindingSiteProject_Dir = os.path.join(self.Project_Dir,'Binding_Site')
 
         if self.OSid == 'WIN':
             self.GetCleftExecutable = os.path.join(self.GetCleftInstall_Dir,'WRK','GetCleft.exe')
@@ -100,14 +126,14 @@ class displayGetCleft(Base):
         self.Color_Black = 'black'
 
         self.top = top
-        self.top.title('GetCleft')
+        self.top.title(self.Name)
 
         General.CenterWindow(self.top,self.WINDOWWIDTH,self.WINDOWHEIGHT)
 
         #self.top.geometry()   # Interface DIMENSIONS
         #self.top.maxsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
         #self.top.minsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        self.top.protocol('WM_DELETE_WINDOW', self.Btn_Quit_Clicked)       
+        self.top.protocol('WM_DELETE_WINDOW', self.Quit)
 
         #================================================================================== 
         #                 SET the default fonts of the interface
@@ -133,7 +159,11 @@ class displayGetCleft(Base):
 
         self.ProcessRunning = False
         self.Run = None
+
+        # flag for saving unsaved clefts
         self.CopySession = True
+        
+        # flag for saving unsaved calculated cleft volumes
         self.EditSession = True
 
         self.Frame_Main()
@@ -146,7 +176,8 @@ class displayGetCleft(Base):
         
         self.MakeMenuBar()
 
-        self.listBtnTabs = [self.Btn_Config,self.Btn_Volume,self.Btn_CropCleft]
+        self.listBtnTabs = [ self.Btn_Config, self.Btn_Volume, self.Btn_CropCleft ]
+        self.listTabs = [ self.Default, self.Crop, self.Volume ]
 
         # Default view
         self.Btn_Config_Clicked()
@@ -202,7 +233,6 @@ class displayGetCleft(Base):
         
         self.fMiddle = Frame(self.fMain, relief=RIDGE)
         self.fMiddle.pack(fill=X, expand=True, padx=10, pady=10)
-        self.fMiddle.bind('<FocusIn>', lambda e: None)
         
         #==================================================================================
         '''                 BOTTOM DISPLAY SECTION OF THE INTERFACE                     '''
@@ -217,13 +247,13 @@ class displayGetCleft(Base):
         Btn_Default = Button(fBottomRight, text='Default', command=self.Btn_Default_Clicked, font=self.font_Text)
         Btn_Default.pack(side=TOP, fill=X)
 
-        Btn_SaveDefault = Button(fBottomRight, text='Save as default', command=self.Btn_SaveDefault_Clicked, font=self.font_Text)
-        Btn_SaveDefault.pack(side=TOP, fill=X)
+        #Btn_SaveDefault = Button(fBottomRight, text='Save as default', command=self.Btn_SaveDefault_Clicked, font=self.font_Text)
+        #Btn_SaveDefault.pack(side=TOP, fill=X)
 
-        Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=self.font_Text)
-        Btn_Restore.pack(side=TOP, fill=X)
+        #Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=self.font_Text)
+        #Btn_Restore.pack(side=TOP, fill=X)
 
-        Btn_Quit = Button(fBottomRight, text='Close', command=self.Btn_Quit_Clicked, font=self.font_Text)
+        Btn_Quit = Button(fBottomRight, text='Close', command=self.Quit, font=self.font_Text)
         Btn_Quit.pack(side=BOTTOM, fill=X)
 
         fBottomLeft = Frame(fBottom)
@@ -239,7 +269,7 @@ class displayGetCleft(Base):
         self.TextMessage.pack(side=RIGHT, fill=BOTH, expand=True)
 
         scrollBar.config(command=self.TextMessage.yview)
-        self.TextMessage.config(state='disabled', yscrollcommand=scrollBar.set)                                       
+        self.TextMessage.config(state='disabled', yscrollcommand=scrollBar.set)
     
     ''' ==================================================================================
     FUNCTION Btn_Config_Clicked: Default configuration view
@@ -262,6 +292,16 @@ class displayGetCleft(Base):
         
         self.SetActiveFrame(self.Crop)
 
+    ''' ==================================================================================
+    FUNCTION Before_Quit: Execute tasks before exitting the application
+    ==================================================================================  '''
+    def Before_Quit(self):
+    
+        if not self.CopySession:
+            if tkMessageBox.askquestion("Question", message="One or more cleft(s) are unsaved. Would you like to save them before leaving?",
+                                        icon='warning') == 'yes':
+                self.Default.Btn_Save_Clefts()
+    
     ''' ==================================================================================
     FUNCTION Go_Step1: Enables/Disables buttons for step 1
     ================================================================================== '''    
@@ -298,15 +338,13 @@ class displayGetCleft(Base):
 
         if not os.path.isdir(self.CleftProject_Dir):
             os.makedirs(self.CleftProject_Dir)
-
-        if not os.path.isdir(self.BindingSiteProject_Dir):
-            os.makedirs(self.BindingSiteProject_Dir)
         
         if not os.path.isdir(self.GetCleftSaveProject_Dir):
             os.makedirs(self.GetCleftSaveProject_Dir)
 
         if not os.path.isdir(self.GetCleftTempProject_Dir):
             os.makedirs(self.GetCleftTempProject_Dir)
+<<<<<<< HEAD
                  
     ''' ==================================================================================
     FUNCTION Btn_Quit_Clicked: Exit the application 
@@ -330,3 +368,6 @@ class displayGetCleft(Base):
         self.top.destroy()        
 
         print('   Closed GetCleft.')
+=======
+    
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b

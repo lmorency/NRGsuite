@@ -143,19 +143,20 @@ class ProcLig:
         if self.AnchorAtom != -1:
             commandline += ' --force_gpa ' + str(self.AnchorAtom)
         
+        print(commandline)
+        
         # Execute command-line
         try:
             if self.FlexAID.OSid == 'WIN':
-                # Set environment variable here
-                os.putenv('BABEL_DATADIR', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'data') + '"')
+                self.set_environment('BABEL_DATADIR', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'data') + '"')
                 self.FlexAID.Run = Popen(commandline, shell=False, stderr=PIPE, stdout=PIPE)
             elif self.FlexAID.OSid == 'LINUX':
-                os.putenv('LD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
-                os.putenv('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
+                self.set_environment('LD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
+                self.set_environment('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
                 self.FlexAID.Run = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
             elif self.FlexAID.OSid == 'MAC':
-                os.putenv('DYLD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
-                os.putenv('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
+                self.set_environment('DYLD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
+                self.set_environment('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
                 self.FlexAID.Run = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
             else:
                 self.FlexAID.DisplayMessage("  ERROR: Your platform is not supported by NRGsuite",1)
@@ -182,3 +183,12 @@ class ProcLig:
         return 1
         
     
+    '''
+    @summary: set_environment sets a environment variable
+    '''  
+    def set_environment(self, variable, value):
+
+        os.putenv(variable, value)
+        if os.getenv(variable) == None:
+            os.environ[variable] = value
+        

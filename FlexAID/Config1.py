@@ -20,7 +20,6 @@
 from Tkinter import *
 
 import os
-import functools
 import tkFileDialog
 import Vars
 import Tabs
@@ -97,19 +96,11 @@ class Config1(Tabs.Tab):
         self.TargetFlexName.set('')
         self.BindingSiteName.set('')
 
-        self.TargetFlex.Clear_SideChain()
-        self.BindingSite.Clear()
+        self.Vars.TargetFlex.Clear_SideChain()
+        self.Vars.BindingSite.Clear()
         
         self.CleftTmpPath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,'tmp.pdb')
-                
-    ''' ==================================================================================
-    FUNCTION Update_Vars: Update session variables when a session is loaded
-    =================================================================================  '''    
-    def Update_Vars(self):
-
-        self.BindingSite = self.Vars.BindingSite
-        self.TargetFlex = self.Vars.TargetFlex
-    
+                    
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
     =================================================================================  '''    
@@ -344,14 +335,17 @@ class Config1(Tabs.Tab):
     =================================================================================  '''                            
     def Highlight_SelectedCleft(self, CleftName):
 
-        if self.top.ActiveFrame == self and self.BindingSite.Type == 2:
+        if self.top.ActiveFrame == self and self.Vars.BindingSite.Type == 2:
             
-            cmd.color('purpleblue', self.BindingSiteDisplay)
-            
-            if CleftName != '':
-                Cleft = self.BindingSite.Get_CleftName(CleftName)
-                cmd.color('oxygen', self.BindingSiteDisplay + ' & resi ' + str(Cleft.Index))
-                self.defOptCleft.set(CleftName)
+            try:
+                cmd.color('purpleblue', self.BindingSiteDisplay)
+                
+                if CleftName != '':
+                    Cleft = self.Vars.BindingSite.Get_CleftName(CleftName)
+                    cmd.color('oxygen', self.BindingSiteDisplay + ' & resi ' + str(Cleft.Index))
+                    self.defOptCleft.set(CleftName)
+            except:
+                pass
 
     ''' ==================================================================================
     FUNCTION defOptCleft_Toggle: Highlights the selected cleft
@@ -366,42 +360,54 @@ class Config1(Tabs.Tab):
     def RngOpt_Toggle(self,*args):
                 
         if self.RngOpt.get() == 'LOCCLF':
+            # Cleft controls
             self.Btn_ImportCleft.config(state='normal')
             self.Btn_DeleteCleft.config(state='normal')
             self.Btn_DeleteOthersCleft.config(state='normal')
             self.Btn_ClearCleft.config(state='normal')
             self.OptMenuCleft.config(state='normal')
-
+            
+            # Sphere controls
             self.Btn_EditSphere.config(state='disabled')
+            self.Btn_OptSphRefresh.config(state='disabled')
+            self.OptMenuSphere.config(state='disabled')
 
-            self.BindingSite.Set_Cleft()
+            self.Vars.BindingSite.Set_Cleft()
             self.Display_BindingSite()
 
         elif self.RngOpt.get() == 'LOCCEN':
+            # Cleft controls
             self.Btn_ImportCleft.config(state='disabled')
             self.Btn_DeleteCleft.config(state='disabled')
             self.Btn_DeleteOthersCleft.config(state='disabled')
             self.Btn_ClearCleft.config(state='disabled')
             self.OptMenuCleft.config(state='disabled')
 
+            # Sphere controls
             self.Btn_EditSphere.config(state='normal')
-                    
-            if self.BindingSite.Sphere == None:
+            self.Btn_OptSphRefresh.config(state='disabled')
+            self.OptMenuSphere.config(state='disabled')
+                        
+            if self.Vars.BindingSite.Sphere == None:
                 self.Create_NewSphere()
 
-            self.BindingSite.Set_Sphere()
+            self.Vars.BindingSite.Set_Sphere()
             self.Display_BindingSite()
 
         else:
+            # Cleft controls
             self.Btn_ImportCleft.config(state='disabled')
             self.Btn_DeleteCleft.config(state='disabled')        
             self.Btn_DeleteOthersCleft.config(state='disabled')
             self.Btn_ClearCleft.config(state='disabled')        
             self.OptMenuCleft.config(state='disabled')
                     
+            # Sphere controls
             self.Btn_EditSphere.config(state='disabled')
+            self.Btn_OptSphRefresh.config(state='disabled')
+            self.OptMenuSphere.config(state='disabled')
             
-            self.BindingSite.Unset()
+            self.Vars.BindingSite.Unset()
             self.Delete_BindingSite()
                 
         self.Highlight_RngOpt()
@@ -419,9 +425,9 @@ class Config1(Tabs.Tab):
         Width = General_cmd.Get_MaxWidth(self.top.IOFile.ProtName.get(), cmd.get_state())
 
         if len(Center) > 0 and Width != -1:
-            self.BindingSite.Sphere = SphereObj.SphereObj(Width/4.0,Width/2.0,Center)
-            self.sclResizeSphere.config(from_=0.5,to=self.BindingSite.Sphere.MaxRadius)
-            self.SphereSize.set(self.BindingSite.Sphere.Radius)
+            self.Vars.BindingSite.Sphere = SphereObj.SphereObj(Width/4.0,Width/2.0,Center)
+            self.sclResizeSphere.config(from_=0.5,to=self.Vars.BindingSite.Sphere.MaxRadius)
+            self.SphereSize.set(self.Vars.BindingSite.Sphere.Radius)
         else:
             self.DisplayMessage("  ERROR: Could not display the default sphere", 1)
             self.RngOpt.set('')
@@ -464,7 +470,7 @@ class Config1(Tabs.Tab):
         self.optMenuWidgetRES["menu"].delete(0, END)
 
         Residue = ''
-        for res in sorted(self.TargetFlex.listSideChain, key=str.lower):
+        for res in sorted(self.Vars.TargetFlex.listSideChain, key=str.lower):
             self.optMenuWidgetRES["menu"].add_command(label=res, command=lambda temp = res: self.optMenuWidgetRES.setvar(self.optMenuWidgetRES.cget("textvariable"), value = temp))
             Residue = res
 
@@ -478,7 +484,7 @@ class Config1(Tabs.Tab):
         self.OptMenuCleft["menu"].delete(0, END)
 
         CleftName = ''
-        for clf in self.BindingSite.Get_SortedCleftNames():
+        for clf in self.Vars.BindingSite.Get_SortedCleftNames():
             self.OptMenuCleft["menu"].add_command(label=clf, command=lambda temp = clf: self.Highlight_SelectedCleft(temp))
             CleftName = clf
 
@@ -512,7 +518,7 @@ class Config1(Tabs.Tab):
                 TargetFlex.listSideChain[:] = [ res for res in TargetFlex.listSideChain if self.listResidues.count(res) ]
                 
                 if TargetFlex.Count_SideChain() > 0: # or normal modes
-                    self.TargetFlex = TargetFlex
+                    self.Vars.TargetFlex = TargetFlex
                     self.Update_FlexSideChain_DDL()
 
                     self.TargetFlexName.set(os.path.basename(os.path.splitext(LoadPath)[0]))
@@ -530,7 +536,7 @@ class Config1(Tabs.Tab):
         TargetFlexPath = self.Get_TargetFlexPath()
         #DefaultName = self.Test
 
-        if self.TargetFlex.Count_SideChain() > 0:
+        if self.Vars.TargetFlex.Count_SideChain() > 0:
             
             if not os.path.isdir(TargetFlexPath):
                 os.makedirs(TargetFlexPath)
@@ -548,7 +554,7 @@ class Config1(Tabs.Tab):
 
                 try:
                     out = open(SaveFile, 'w')
-                    pickle.dump(self.TargetFlex, out)
+                    pickle.dump(self.Vars.TargetFlex, out)
                     out.close()
 
                     self.TargetFlexName.set(os.path.basename(os.path.splitext(SaveFile)[0]))
@@ -586,19 +592,20 @@ class Config1(Tabs.Tab):
                 TmpBindingSite = pickle.load(in_)
                 in_.close()
                 
-                if BTmpindingSite.Count_Cleft() > 0 or TmpBindingSite.Sphere != None:
-                    self.BindingSite = TmpBindingSite
+                if TmpBindingSite.Count_Cleft() > 0 or TmpBindingSite.Sphere != None:
+                    self.Vars.BindingSite = TmpBindingSite
 
-                    if self.BindingSite.Type == 1:
-                        self.sclResizeSphere.config(from_=0.5,to=self.BindingSite.Sphere.MaxRadius)
-                        self.SphereSize.set(self.BindingSite.Sphere.Radius)
+                    if self.Vars.BindingSite.Type == 1:
+                        self.sclResizeSphere.config(from_=0.5,to=self.Vars.BindingSite.Sphere.MaxRadius)
+                        self.SphereSize.set(self.Vars.BindingSite.Sphere.Radius)
                         self.RngOpt.set('LOCCEN')
-                    elif self.BindingSite.Type == 2:
+                    elif self.Vars.BindingSite.Type == 2:
                         self.RngOpt.set('LOCCLF')
                 
                     self.Update_Clefts_DDL()
-                
                     self.BindingSiteName.set(os.path.basename(os.path.splitext(LoadPath)[0]))
+
+                    self.Update_Vars()
 
                 else:
                     self.DisplayMessage("  ERROR: The BindingSite file has unknown format", 2)
@@ -617,7 +624,7 @@ class Config1(Tabs.Tab):
 
         BindingSitePath = self.Get_BindingSitePath()
 
-        if self.BindingSite.Type == 1 or (self.BindingSite.Type == 2 and self.BindingSite.Count_Cleft() > 0):
+        if self.Vars.BindingSite.Type == 1 or (self.Vars.BindingSite.Type == 2 and self.Vars.BindingSite.Count_Cleft() > 0):
             
             if not os.path.isdir(BindingSitePath):
                 os.makedirs(BindingSitePath)
@@ -635,11 +642,10 @@ class Config1(Tabs.Tab):
 
                 try:
                     out = open(SaveFile, 'w')
-                    pickle.dump(self.BindingSite, out)
+                    pickle.dump(self.Vars.BindingSite, out)
                     out.close()
 
                     self.BindingSiteName.set(os.path.basename(os.path.splitext(SaveFile)[0]))
-
                     self.DisplayMessage("  Successfully saved '" + SaveFile + "'", 0)
 
                 except:
@@ -661,7 +667,7 @@ class Config1(Tabs.Tab):
 
             if resn != 'ALA' and resn != 'GLY' and resn != 'PRO':
 
-                self.TargetFlex.Add_SideChain(res)
+                self.Vars.TargetFlex.Add_SideChain(res)
                 self.Update_FlexSideChain_DDL()
                 self.ResiduValue.set('')
                 self.EntryResidu.config(bg=self.top.Color_White)
@@ -687,7 +693,7 @@ class Config1(Tabs.Tab):
             Index = self.optMenuWidgetRES["menu"].index(OptResidue)
             self.optMenuWidgetRES["menu"].delete(Index)
 
-            self.TargetFlex.Remove_SideChain(OptResidue)
+            self.Vars.TargetFlex.Remove_SideChain(OptResidue)
             self.Update_FlexSideChain_DDL()
 
     ''' ==================================================================================
@@ -695,7 +701,7 @@ class Config1(Tabs.Tab):
     ==================================================================================  '''        
     def Btn_DelAllResidu_Clicked(self):
         
-        self.TargetFlex.Clear_SideChain()
+        self.Vars.TargetFlex.Clear_SideChain()
         self.Update_FlexSideChain_DDL()
         
     ''' ==================================================================================
@@ -721,7 +727,7 @@ class Config1(Tabs.Tab):
     def Btn_DeleteCleft_Clicked(self):
 
         if self.defOptCleft.get() != '':
-            self.BindingSite.Remove_CleftName(self.defOptCleft.get())
+            self.Vars.BindingSite.Remove_CleftName(self.defOptCleft.get())
 
             self.Display_BindingSite()
             self.Update_Clefts_DDL()
@@ -733,7 +739,7 @@ class Config1(Tabs.Tab):
 
         if self.defOptCleft.get() != '':
         
-            self.BindingSite.listClefts = [ Cleft for Cleft in self.BindingSite.listClefts if Cleft.CleftName == self.defOptCleft.get() ]
+            self.Vars.BindingSite.listClefts = [ Cleft for Cleft in self.Vars.BindingSite.listClefts if Cleft.CleftName == self.defOptCleft.get() ]
 
             self.Display_BindingSite()
             self.Update_Clefts_DDL()
@@ -743,7 +749,7 @@ class Config1(Tabs.Tab):
     ==================================================================================  '''   
     def Btn_ClearCleft_Clicked(self):
 
-        self.BindingSite.Clear_Cleft()
+        self.Vars.BindingSite.Clear_Cleft()
         self.Display_BindingSite()
         self.Update_Clefts_DDL()
 
@@ -766,7 +772,7 @@ class Config1(Tabs.Tab):
 
             self.SphereRunning(True)
 
-            self.top.ActiveWizard = Sphere.Sphere(self, self.BindingSite.Sphere, self.SphereDisplay, self.SphereSize)
+            self.top.ActiveWizard = Sphere.Sphere(self, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize)
             cmd.set_wizard(self.top.ActiveWizard)
             self.top.ActiveWizard.Start()
 
@@ -784,8 +790,7 @@ class Config1(Tabs.Tab):
     def SphereRunning(self, boolRun):
 
         if boolRun:
-            self.Disable_Frame(self.Btn_OptSphRefresh,self.OptMenuSphere,self.sclResizeSphere,
-                               self.lblCenter,self.lblRadius)
+            self.Disable_Frame(self.Btn_OptSphRefresh,self.OptMenuSphere,self.sclResizeSphere,self.lblCenter,self.lblRadius)
             self.Delete_BindingSite()
 
         else:
@@ -795,7 +800,7 @@ class Config1(Tabs.Tab):
             if self.top.WizardError:
                 self.RngOpt.set('')
 
-            self.SphereSize.set(self.BindingSite.Sphere.Radius)
+            self.SphereSize.set(self.Vars.BindingSite.Sphere.Radius)
             self.Display_BindingSite()
             
     
@@ -877,7 +882,7 @@ class Config1(Tabs.Tab):
                 Cleft = pickle.load(in_)
                 in_.close()
 
-                self.BindingSite.Add_Cleft(Cleft)
+                self.Vars.BindingSite.Add_Cleft(Cleft)
                 
             self.Display_BindingSite()
             self.Update_Clefts_DDL()
@@ -895,18 +900,18 @@ class Config1(Tabs.Tab):
         self.Delete_BindingSite()
 
         try:
-            if self.BindingSite.Type == 1:
+            if self.Vars.BindingSite.Type == 1:
 
                 cmd.pseudoatom(self.BindingSiteDisplay,
-                               pos=self.BindingSite.Sphere.Center,
-                               vdw=self.BindingSite.Sphere.Radius,
+                               pos=self.Vars.BindingSite.Sphere.Center,
+                               vdw=self.Vars.BindingSite.Sphere.Radius,
                                state=1)
 
                 cmd.hide('everything', self.BindingSiteDisplay)
                 cmd.show('spheres', self.BindingSiteDisplay)
                 cmd.set('sphere_transparency', 0.7, self.BindingSiteDisplay)
 
-            elif self.BindingSite.Type == 2:
+            elif self.Vars.BindingSite.Type == 2:
                 
                 self.Generate_CleftBindingSite()
 
@@ -933,7 +938,7 @@ class Config1(Tabs.Tab):
         
         out = file(self.CleftTmpPath, 'w')
 
-        for Cleft in iter(self.BindingSite.listClefts):
+        for Cleft in self.Vars.BindingSite.listClefts:
             in_ = open(Cleft.CleftFile, 'r')
             lines = in_.readlines()
             in_.close()

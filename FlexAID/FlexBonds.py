@@ -183,17 +183,17 @@ class flexbond(Wizard):
         Del_Down2 = 0
 
         #Unselect ALL the flexible bonds
-        for index in iter(self.top.dictFlexBonds):
-            self.top.dictFlexBonds[index][0] = 0 
+        for index in iter(self.top.Vars.dictFlexBonds):
+            self.top.Vars.dictFlexBonds[index][0] = 0 
             
-            if self.top.dictFlexBonds[index][1]:
+            if self.top.Vars.dictFlexBonds[index][1]:
                 if Del_Down2 == 0 or index < Del_Down2:
                     Del_Down2 = index
             
         # Remove forced bond(s) from dict
         if Del_Down2:
-            for i in range(Del_Down2, len(self.top.dictFlexBonds)+1):
-                del self.top.dictFlexBonds[i]
+            for i in range(Del_Down2, len(self.top.Vars.dictFlexBonds)+1):
+                del self.top.Vars.dictFlexBonds[i]
     
         self.show_SelectedBonds()
 
@@ -208,12 +208,12 @@ class flexbond(Wizard):
         nBonds = 0
         nPoss = 0
         nBondsForced = 0
-        for index in iter(self.top.dictFlexBonds):
-            if self.top.dictFlexBonds[index][0]:
-                #if self.top.dictFlexBonds[index][1]:
+        for index in iter(self.top.Vars.dictFlexBonds):
+            if self.top.Vars.dictFlexBonds[index][0]:
+                #if self.top.Vars.dictFlexBonds[index][1]:
                 #    nBondsForced += 1
                 nBonds += 1
-            if not self.top.dictFlexBonds[index][1]:
+            if not self.top.Vars.dictFlexBonds[index][1]:
                 nPoss += 1
 
         self.FlexAID.WizardResult = nBonds
@@ -249,23 +249,23 @@ class flexbond(Wizard):
 
             PossFlexBonds = []
 
-            for index in iter(self.top.dictFlexBonds):
+            for index in iter(self.top.Vars.dictFlexBonds):
 
                 point1 = []
                 point2 = []
 
-                #print self.top.dictFlexBonds[index]
-                #print self.top.dictNeighbours[self.top.dictFlexBonds[index][3]]
+                #print self.top.Vars.dictFlexBonds[index]
+                #print self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]]
 
                 # if bond is not Forced
-                if not self.top.dictFlexBonds[index][1]:
+                if not self.top.Vars.dictFlexBonds[index][1]:
                     # Get coordinates of 1st and 2nd neighbours
-                    if int(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0]) != 0 and \
-                       int(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1]) != 0 and \
-                       int(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][2]) != 0:
+                    if int(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][0]) != 0 and \
+                       int(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][1]) != 0 and \
+                       int(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][2]) != 0:
 
-                        if self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0], point1) or \
-                           self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1], point2):
+                        if self.get_Coords(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][0], point1) or \
+                           self.get_Coords(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][1], point2):
                             return 1
 
                     PossFlexBonds.extend(self.highlight_Possible(point1, point2))
@@ -294,20 +294,20 @@ class flexbond(Wizard):
 
             SelFlexBonds = []
 
-            for index in iter(self.top.dictFlexBonds):
+            for index in iter(self.top.Vars.dictFlexBonds):
 
                 point1 = []
                 point2 = []
                 
                 # if bond is flexible
-                if self.top.dictFlexBonds[index][0]:
+                if self.top.Vars.dictFlexBonds[index][0]:
                     # Get coordinates of 1st and 2nd neighbours
-                    if self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0] != 0 and \
-                       self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1] != 0 and \
-                       self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][2] != 0:
+                    if self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][0] != 0 and \
+                       self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][1] != 0 and \
+                       self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][2] != 0:
 
-                        if self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0], point1) or \
-                           self.get_Coords(self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1], point2):
+                        if self.get_Coords(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][0], point1) or \
+                           self.get_Coords(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][1], point2):
                             return 1
                     
                     SelFlexBonds.extend(self.highlight_Selected(point1, point2))
@@ -325,14 +325,14 @@ class flexbond(Wizard):
     #=======================================================================
     def btn_SelectAllBonds(self):
         
-        for index in iter(self.top.dictFlexBonds):
-            if not self.top.dictFlexBonds[index][1]:
+        for index in iter(self.top.Vars.dictFlexBonds):
+            if not self.top.Vars.dictFlexBonds[index][1]:
                 # Get coordinates of 1st and 2nd neighbours
-                if self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][0] != 0 and \
-                   self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][1] != 0 and \
-                   self.top.dictNeighbours[self.top.dictFlexBonds[index][3]][2] != 0:
+                if self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][0] != 0 and \
+                   self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][1] != 0 and \
+                   self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][2] != 0:
 
-                    self.top.dictFlexBonds[index][0] = 1
+                    self.top.Vars.dictFlexBonds[index][0] = 1
 
         self.show_SelectedBonds()
         
@@ -478,9 +478,9 @@ class flexbond(Wizard):
     #=======================================================================    
     def is_Already_Forced(self, atom_id):
         
-        for index in iter(self.top.dictFlexBonds):
-            if self.top.dictFlexBonds[index][1]:
-                if atom_id in self.top.dictFlexBonds[index][3:]:
+        for index in iter(self.top.Vars.dictFlexBonds):
+            if self.top.Vars.dictFlexBonds[index][1]:
+                if atom_id in self.top.Vars.dictFlexBonds[index][3:]:
                     return index
 
         return 0
@@ -493,33 +493,33 @@ class flexbond(Wizard):
         list = []
         list.extend([1, 1, 0])
 
-        for atom in iter(self.top.dictNeighbours):
+        for atom in iter(self.top.Vars.dictNeighbours):
             
-            if (atom_id1 == int(self.top.dictNeighbours[atom][0]) and \
-                atom_id2 == int(self.top.dictNeighbours[atom][1])) or \
-               (atom_id2 == int(self.top.dictNeighbours[atom][0]) and \
-                atom_id1 == int(self.top.dictNeighbours[atom][1])):
+            if (atom_id1 == int(self.top.Vars.dictNeighbours[atom][0]) and \
+                atom_id2 == int(self.top.Vars.dictNeighbours[atom][1])) or \
+               (atom_id2 == int(self.top.Vars.dictNeighbours[atom][0]) and \
+                atom_id1 == int(self.top.Vars.dictNeighbours[atom][1])):
 
                 list[2] += 1
                 list.append(atom)
 
         if not self.is_Already_Forced(list[3]):      
-            Index = len(self.top.dictFlexBonds) + 1
-            self.top.dictFlexBonds[Index] = list
+            Index = len(self.top.Vars.dictFlexBonds) + 1
+            self.top.Vars.dictFlexBonds[Index] = list
         else:
-            self.top.dictFlexBonds[self.is_Already_Forced(list[3])][0] = 0
+            self.top.Vars.dictFlexBonds[self.is_Already_Forced(list[3])][0] = 0
             
     #=======================================================================   
     ''' Check if bond can be flexible using the neighbours'''
     #=======================================================================    
     def is_Definable(self, atom_id1, atom_id2):
 
-        for atom in iter(self.top.dictNeighbours):
+        for atom in iter(self.top.Vars.dictNeighbours):
             
-            if (atom_id1 == int(self.top.dictNeighbours[atom][0]) and \
-                atom_id2 == int(self.top.dictNeighbours[atom][1])) or \
-               (atom_id2 == int(self.top.dictNeighbours[atom][0]) and \
-                atom_id1 == int(self.top.dictNeighbours[atom][1])):
+            if (atom_id1 == int(self.top.Vars.dictNeighbours[atom][0]) and \
+                atom_id2 == int(self.top.Vars.dictNeighbours[atom][1])) or \
+               (atom_id2 == int(self.top.Vars.dictNeighbours[atom][0]) and \
+                atom_id1 == int(self.top.Vars.dictNeighbours[atom][1])):
 
                 return 1
 
@@ -532,13 +532,13 @@ class flexbond(Wizard):
         
         if self.is_Definable(atom_id1, atom_id2):
             
-            for index in iter(self.top.dictFlexBonds):
+            for index in iter(self.top.Vars.dictFlexBonds):
                 
-                for i in range(3,3 + int(self.top.dictFlexBonds[index][2])):
-                    if (atom_id1 == int(self.top.dictNeighbours[self.top.dictFlexBonds[index][i]][0]) and \
-                        atom_id2 == int(self.top.dictNeighbours[self.top.dictFlexBonds[index][i]][1])) or \
-                       (atom_id2 == int(self.top.dictNeighbours[self.top.dictFlexBonds[index][i]][0]) and \
-                        atom_id1 == int(self.top.dictNeighbours[self.top.dictFlexBonds[index][i]][1])):
+                for i in range(3,3 + int(self.top.Vars.dictFlexBonds[index][2])):
+                    if (atom_id1 == int(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][i]][0]) and \
+                        atom_id2 == int(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][i]][1])) or \
+                       (atom_id2 == int(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][i]][0]) and \
+                        atom_id1 == int(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][i]][1])):
 
                         return index
 
@@ -603,10 +603,10 @@ class flexbond(Wizard):
                     else:
                         # Already existing Possible Bond
                         if self.FlexIndex != 0:
-                            if self.top.dictFlexBonds[self.FlexIndex][0]:
-                                self.top.dictFlexBonds[self.FlexIndex][0] = 0
+                            if self.top.Vars.dictFlexBonds[self.FlexIndex][0]:
+                                self.top.Vars.dictFlexBonds[self.FlexIndex][0] = 0
                             else:
-                                self.top.dictFlexBonds[self.FlexIndex][0] = 1
+                                self.top.Vars.dictFlexBonds[self.FlexIndex][0] = 1
 
                         # Force new bond
                         else:

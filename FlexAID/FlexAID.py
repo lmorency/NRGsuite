@@ -27,6 +27,18 @@
 @creation date:  Aug. 25, 2010
 '''
 
+from Tkinter import *
+
+import os, sys
+import pickle
+import time
+import tkFont
+import tkFileDialog
+
+import Prefs
+import Color
+import General
+
 import Base
 import IOFile
 import Config1
@@ -39,7 +51,7 @@ import Simulate
 '''                           ---   PARENT WINDOW  ---                                 '''
 #========================================================================================= 
 
-class displayFlexAID(Base):
+class displayFlexAID(Base.Base):
     
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
@@ -50,6 +62,7 @@ class displayFlexAID(Base):
         self.PyMOL = PyMOL
 
         self.Name = 'FlexAID'
+        self.RunFile = '.frun'
 
         self.WINDOWWIDTH = 700
         self.WINDOWHEIGHT = 600
@@ -110,7 +123,7 @@ class displayFlexAID(Base):
         #print("FlexAID: initializing window")
         # Initialize the window
         self.top = top        
-        self.top.title('FlexAID')
+        self.top.title(self.Name)
 
         #print("FlexAID: center window")
         General.CenterWindow(self.top,self.WINDOWWIDTH,self.WINDOWHEIGHT)
@@ -119,7 +132,7 @@ class displayFlexAID(Base):
         #self.top.geometry()   # Interface DIMENSIONS
         #self.top.maxsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
         #self.top.minsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        self.top.protocol('WM_DELETE_WINDOW', self.Btn_Quit_Clicked)       
+        self.top.protocol('WM_DELETE_WINDOW', self.Quit)
 
         #================================================================================== 
         #                 SET the default fonts of the interface
@@ -250,9 +263,9 @@ class displayFlexAID(Base):
                 
         self.fMiddle.pack(fill=X, expand=True, padx=10, side=TOP)
         #self.fMiddle.config(takefocus=1)
-        self.fMiddle.bind('<FocusIn>', lambda e: None)
+        #self.fMiddle.bind('<FocusIn>', lambda e: None)
         #self.fMiddle.pack_propagate(0)
-
+        
         #==================================================================================
         '''                 BOTTOM DISPLAY SECTION OF THE INTERFACE                     '''
         #==================================================================================
@@ -272,8 +285,7 @@ class displayFlexAID(Base):
         #Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=self.font_Text)
         #Btn_Restore.pack(side=TOP, fill=X)
 
-        Btn_Quit = Button(fBottomRight, text='Close', width=15, command=self.Btn_Quit_Clicked, font=self.font_Text)
-
+        Btn_Quit = Button(fBottomRight, text='Close', width=15, command=self.Quit, font=self.font_Text)
         Btn_Quit.pack(side=BOTTOM, fill=X)
 
         fBottomLeft = Frame(fBottom)
@@ -287,6 +299,9 @@ class displayFlexAID(Base):
 
         scrollBar.config(command=self.TextMessage.yview)
         self.TextMessage.config(state='disabled', yscrollcommand=scrollBar.set)                                       
+
+        #self.Btn_Dummy = Button(fBottomRight, text='Close', font=self.font_Text)
+        #self.Btn_Dummy.bind('<Button-1>', lambda event, arg=self.ActiveFrame: self.SwitchTab(event,arg))
     
     ''' ==================================================================================
     FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
@@ -336,7 +351,6 @@ class displayFlexAID(Base):
                         for Tab in self.listTabs:
                             try:
                                 Tab.Vars = pickle.load(in_)
-                                Tab.Update_Vars()
                                 Tab.Vars.refresh()
                                 Tab.Load_Session()
                             except:
@@ -431,13 +445,13 @@ class displayFlexAID(Base):
                 self.DisplayMessage("  Cannot save session while a wizard is active", 2)
         else:
             self.DisplayMessage("  Cannot save session while a process is active", 2)
-                    
+
     ''' ==================================================================================
     FUNCTION Btn_*_Clicked: Display the Tab options menu
     ================================================================================== '''    
     def Btn_IOFiles_Clicked(self):
-        
-        self.SetActiveFrame(self.IOFile)
+    
+        self.SetActiveFrame(self.IOFile)        
 
     def Btn_Config1_Clicked(self):
         
@@ -491,54 +505,6 @@ class displayFlexAID(Base):
     #=====================================================================================
     '''                            --- BUTTONS EVENT ---                               '''
     #=====================================================================================     
-
-    ''' ==================================================================================
-    FUNCTION Btn_LoadCfg_Clicked: Load the Configuration from a Text File 
-    ==================================================================================  '''
-    def Btn_LoadCfg_Clicked(self):
-        # Validate the selection of a PDB name and a Ligand
-        filename = tkFileDialog.askopenfilename(initialdir=os.path.join(self.path,'Config'), title='Load the Configuration File', filetypes=[('Configuration File','*.cfg')])
-            
-        if len(filename ) > 0:
-            text_file = open(os.path.join(self.path,'Config/write_it.txt'), 'r')
-            #print text_file.read()
-            text_file.close()
-            
-
-    ''' ==================================================================================
-    FUNCTION Btn_Quit_Clicked: Exit the application 
-    ==================================================================================  '''
-    def Btn_Quit_Clicked(self):
-
-        # Cannot quit while process is running
-        if self.ProcessRunning is True:
-            self.DisplayMessage('  GUI cannot be closed while a process is currently running', 0)
-            return
-        
-        # Close any Wizard interface in Pymol if started
-        if not self.ActiveWizard is None:
-            if self.PyMOL:
-                cmd.get_wizard().btn_Done()
-
-        #Delete the .run file
-        RunPath = os.path.join(self.AlreadyRunning_Dir,'.frun')
-        
-        if os.path.isfile(RunPath):
-            try:
-                os.remove(RunPath)
-            except OSError:
-                time.sleep(0.1)
-                os.remove(RunPath)       
-
-        if self.PyMOL:
-            cmd.set_wizard()
-            cmd.set_wizard()
-        
-        self.Del_Trace()
-        
-        # Kill main application window
-        self.top.destroy()
-   
         
     ''' ==================================================================================
     FUNCTION ValidateResiduValue: Validate the residue entered 
@@ -610,5 +576,4 @@ class displayFlexAID(Base):
             
         if not os.path.isdir(self.FlexAIDTargetFlexProject_Dir):
             os.makedirs(self.FlexAIDTargetFlexProject_Dir)
-    
 

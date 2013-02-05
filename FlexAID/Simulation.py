@@ -217,7 +217,7 @@ class Parse(threading.Thread):
         cmd.delete("TOP_*__")
         cmd.frame(1)
 
-        Critical = False
+        Abort = False
 
         self.top.InitStatus()
         
@@ -232,18 +232,18 @@ class Parse(threading.Thread):
                     m = re.match('^Grid', Line)
                     if not m:
                         print(Line)
-                except 
+                except:
                     #print "NO OUTPUT1!"
                     break
 
                 # stop reading from stdout buffer
                 if Line == '':
-                    print "NO OUTPUT2!"
+                    print("NO OUTPUT2!")
                     break
                 
                 # track errors
                 if Line.startswith('ERROR'):
-                    Critical = True
+                    Abort = True
 
                     self.top.DisplayMessage(str("A critical error occured\n" + Line), 1)
                     
@@ -393,7 +393,7 @@ class Parse(threading.Thread):
                         self.top.RunStatus()
                         continue
             
-            if Critical:
+            if Abort:
                 break
                                         
             time.sleep(INTERVAL)
@@ -405,6 +405,7 @@ class Parse(threading.Thread):
             self.top.SuccessStatus()
 
         print("FlexAID parsing thread has ended.")
+
         self.FlexAID.ProcessRunning = False
 
         # Empty rotamers data

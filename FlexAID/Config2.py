@@ -20,7 +20,6 @@
 from Tkinter import *
 
 import os
-import functools
 import General
 import Vars
 import Tabs
@@ -74,7 +73,7 @@ class Config2(Tabs.Tab):
 
     def Init_Vars(self):
         
-        self.dictCovConstraints.clear()
+        self.Vars.dictCovConstraints.clear()
 
         self.UseReference.set(0)
 
@@ -86,16 +85,9 @@ class Config2(Tabs.Tab):
 
         self.FlexStatus.set('')
         self.SATStatus.set('')
-        
-
-    def Update_Vars(self):
     
-        self.dictCovConstraints = self.Vars.dictCovConstraints
-        self.dictAtomTypes = self.Vars.dictAtomTypes
-        self.dictFlexBonds = self.Vars.dictFlexBonds
-        self.dictNeighbours = self.Vars.dictNeighbours
+        self.Anchor.set(-1)
         
-    
     ''' ==================================================================================
     FUNCTION Btn_AddRemove_FlexBonds: Enables wizard to set flexible bond
     =================================================================================  '''    
@@ -363,10 +355,10 @@ class Config2(Tabs.Tab):
         self.btnAddCovConstraint = Button(fCovConstraintLine3, text = 'Add/Edit',font=self.top.font_Text,command=lambda: self.Add_Constraint('Covalent'))
         self.btnAddCovConstraint.pack(side=LEFT)
         self.btnDelCovConstraint = Button(fCovConstraintLine3, text = 'Delete', font=self.top.font_Text,
-                                          command=lambda: self.Del_Constraint(self.dictCovConstraints,self.optCovCons,self.CovConsSelection))
+                                          command=lambda: self.Del_Constraint(self.Vars.dictCovConstraints,self.optCovCons,self.CovConsSelection))
         self.btnDelCovConstraint.pack(side=LEFT)
         self.btnClearCovConstraint = Button(fCovConstraintLine3, text = 'Clear', font=self.top.font_Text,
-                                           command=lambda: self.Clear_Constraints(self.dictCovConstraints,self.optCovCons,self.CovConsSelection))
+                                           command=lambda: self.Clear_Constraints(self.Vars.dictCovConstraints,self.optCovCons,self.CovConsSelection))
         self.btnClearCovConstraint.pack(side=LEFT)
 
         Label(fCovConstraintLine4, text = '', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT, anchor=E)

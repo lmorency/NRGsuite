@@ -1,7 +1,6 @@
 from Tkinter import *
 
 import General
-import functools
 
 class Table:
 
@@ -67,8 +66,7 @@ class Table:
                                                              relief=RAISED)
 
             self.Columns[self.ColNames[i]]['Header'].pack(side=TOP)
-            self.Columns[self.ColNames[i]]['Header'].bind('<Button-1>', 
-                                                   functools.partial(self.Sort, args=[self.ColNames[i]]))
+            self.Columns[self.ColNames[i]]['Header'].bind('<Button-1>', lambda event, by=self.ColNames[i]: self.Sort(event, by))
 
     # Draws the header
     def draw_VSB(self):
@@ -95,9 +93,9 @@ class Table:
                                                              font=self.Font)
 
             self.Columns[self.ColNames[i]]['List'].pack(fill=Y, expand=True, side=LEFT)
-            self.Columns[self.ColNames[i]]['List'].bind('<Button-1>',
-                                                   functools.partial(self.OnButtonClick,
-                                                                     args=[self.Columns[self.ColNames[i]]['List']]))
+            self.Columns[self.ColNames[i]]['List'].bind('<Button-1>', 
+                                                        lambda event, List=self.Columns[self.ColNames[i]]['List']: self.OnButtonClick(event, List))
+
 
             # Mac/Windows
             self.Columns[self.ColNames[i]]['List'].bind('<MouseWheel>', self.OnListboxMouseWheel)
@@ -121,9 +119,8 @@ class Table:
     ''' ==================================================================================
     FUNCTION OnButtonClick: Selects identical index from the other lists
     ==================================================================================  '''            
-    def OnButtonClick(self, event, args):
+    def OnButtonClick(self, event, List):
 
-        List = args[0]
         Index = List.nearest(event.y)
 
         if Index != self.current and Index != '':
@@ -161,7 +158,7 @@ class Table:
             
         # Return 'break' to prevent the default bindings from
         # firing, which would end up scrolling the widget twice.
-        return "break"
+        return
 
     ''' ==================================================================================
     FUNCTION Clear: Clears all the data in the table
@@ -177,15 +174,14 @@ class Table:
     def Add(self, Item, BGColor):
         
         for i in range(0, self.nCol):
-            self.Columns[self.ColNames[i]]['List'].insert(END, General.repeat(' ', self.Columns[self.ColNames[i]]['Spacer']) + str(Item[i]))
+            try:
+                self.Columns[self.ColNames[i]]['List'].insert(END, General.repeat(' ', self.Columns[self.ColNames[i]]['Spacer']) + str(Item[i]))
+                
+                if BGColor[i] != None:
+                    self.Columns[self.ColNames[i]]['List'].itemconfig(self.Columns[self.ColNames[i]]['List'].size()-1, bg=BGColor[i])
+            except:
+                pass
             
-            if BGColor[i] != None:
-                self.Columns[self.ColNames[i]]['List'].itemconfig(self.Columns[self.ColNames[i]]['List'].size()-1,
-                                                                  bg=BGColor[i])
-
-            print("Successfully added item", i)
-            print("StringVar is", self.Columns[self.ColNames[i]]['StringVar'])
-        
     ''' ==================================================================================
     FUNCTION Add_List: Adds MULTIPLE items to listboxes
     ==================================================================================  '''            
@@ -216,7 +212,6 @@ class Table:
             Index = 0
             Found = False
             for item in self.Columns[Col]['List'].get(0, END):
-                #if item.replace(General.repeat(' ',self.Columns[Col]['Spacer']),'') == str(Item):
                 if item.lstrip() == str(Item):
                     Found = True
                     break
@@ -270,6 +265,6 @@ class Table:
     ''' ==================================================================================
     FUNCTION Sort: Sorts by a column name
     ==================================================================================  '''            
-    def Sort(self, event, args):
+    def Sort(self, event, by):
         
         return

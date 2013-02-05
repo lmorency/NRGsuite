@@ -22,7 +22,6 @@ from subprocess import Popen, PIPE
 
 import Tabs
 import tkTable
-import functools
 import threading
 
 if __debug__:
@@ -85,17 +84,11 @@ class EstimateVolume(Tabs.Tab):
         self.Iterations = StringVar()
         self.CleftVolume = DoubleVar()
         
-        self.ValidIterations = list()
-        self.Validator = list()
-
     def Init_Vars(self):
 
         self.ProcessError = False
         self.Iterations.set('3')
-
-        self.ValidIterations = [True, 1, 0, None]
-        self.Validator = [ self.ValidIterations ]
-
+        
     ''' ==================================================================================
     FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
@@ -121,13 +114,13 @@ class EstimateVolume(Tabs.Tab):
                 
         EntryIterations = Entry(fIterations, width=6, background='white', justify=CENTER, font=self.top.font_Text, textvariable=self.Iterations)
         EntryIterations.pack(side=RIGHT, anchor=SE, padx=5)
-        args_list = [EntryIterations, self.Iterations, 1, 5, -1, self.ValidIterations,'Iterations','int']
-        EntryIterations.bind('<FocusOut>', functools.partial(self.Lost_Focus,args=args_list))
-        self.ValidIterations[3] = EntryIterations
+        args_list = [EntryIterations, self.Iterations, 1, 5, -1,'Iterations','int']
+        self.ValidIterations = [1, 0, EntryIterations]
+        #self.IterationsTrace = self.Iterations.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         lblIterations = Label(fIterations, text='Iterations:', font=self.top.font_Text)
         lblIterations.pack(side=RIGHT, anchor=SE)
-                
+        
 
         #==================================================================================
         '''                           --- BUTTONS AREA ---                              '''
@@ -176,6 +169,8 @@ class EstimateVolume(Tabs.Tab):
 
         Button(fButtons2Line1, text='Save volumes', font=self.top.font_Text).pack(side=RIGHT, padx=2)
         Button(fButtons2Line1, text='Refresh clefts', font=self.top.font_Text, command=self.Init_Table).pack(side=RIGHT, padx=2)
+
+        self.Validator = [ self.ValidIterations ]
         
         return self.fVolume
         
