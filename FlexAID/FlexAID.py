@@ -445,7 +445,7 @@ class displayFlexAID(Base.Base):
                 self.DisplayMessage("  Cannot save session while a wizard is active", 2)
         else:
             self.DisplayMessage("  Cannot save session while a process is active", 2)
-
+    
     ''' ==================================================================================
     FUNCTION Btn_*_Clicked: Display the Tab options menu
     ================================================================================== '''    

@@ -75,8 +75,8 @@ class Start(threading.Thread):
             if self.FlexAID.OSid == 'WIN':
                 self.FlexAID.Run = Popen(self.commandline, shell=False, bufsize=-1, stdout=PIPE, stderr=STDOUT)
             else:
-                self.FlexAID.Run = Popen(self.commandline, shell=True, bufsize=-1, stdout=PIPE, stderr=STDOUT)
-            
+                self.FlexAID.Run = Popen(self.commandline, shell=True, bufsize=1, stdout=PIPE, stderr=STDOUT)
+                
             self.FlexAID.Run.wait()
             
             if self.FlexAID.Run.returncode != 0:

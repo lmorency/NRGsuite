@@ -19,11 +19,16 @@
 
 from Tkinter import *
 <<<<<<< HEAD
+<<<<<<< HEAD
 from subprocess import Popen, PIPE
 
 import ctypes
 import os
 import sys
+=======
+
+import os, sys
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
 =======
 
 import os, sys
@@ -166,6 +171,7 @@ class Base:
 
     ''' ==================================================================================
 <<<<<<< HEAD
+<<<<<<< HEAD
     FUNCTION Kill: Kills a process by PID
     ==================================================================================  '''
     def Kill(self, pid):
@@ -186,6 +192,8 @@ class Base:
     ''' ==================================================================================
 =======
 >>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
+=======
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
     FUNCTION Quit: Exit the application
     ==================================================================================  '''
     def Quit(self):
@@ -195,8 +203,14 @@ class Base:
         # Cannot quit while process is running
         if self.ProcessRunning and self.Run is not None:
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.Kill(self.Run.pid)
 
+=======
+            print("   The following process will be killed", self.Run)
+            self.Run.kill()
+            
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
 =======
             print("   The following process will be killed", self.Run)
             self.Run.kill()
@@ -214,17 +228,23 @@ class Base:
                 os.remove(RunPath)
             except OSError:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 print('   An error occured while cleaning running file for ' + self.Name)                
                     
         self.Del_Trace()
         
         self.top.destroy()
 =======
+=======
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
                 print('   An error occured while clearing running file for ' + self.Name)                
                     
         self.Del_Trace()
         
         self.top.destroy()        
+<<<<<<< HEAD
+>>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
+=======
 >>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
 
         print('   Closed ' + self.Name)

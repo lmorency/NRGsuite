@@ -42,7 +42,6 @@ import Prefs
 import Color
 import General
 
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
 import Base
 import CleftObj
 import ManageFiles2
@@ -61,11 +60,7 @@ if __debug__:
 '''                           ---   PARENT WINDOW  ---                                 '''
 #========================================================================================= 
 
-<<<<<<< HEAD
-class displayGetCleft(Base):
-=======
 class displayGetCleft(Base.Base):
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
     
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
@@ -344,30 +339,4 @@ class displayGetCleft(Base.Base):
 
         if not os.path.isdir(self.GetCleftTempProject_Dir):
             os.makedirs(self.GetCleftTempProject_Dir)
-<<<<<<< HEAD
-                 
-    ''' ==================================================================================
-    FUNCTION Btn_Quit_Clicked: Exit the application 
-    ==================================================================================  '''
-    def Btn_Quit_Clicked(self):
-        
-        if not self.CopySession:
-            if tkMessageBox.askquestion("Question", message="One or more cleft(s) are unsaved. Would you like to save them before leaving?",
-                                        icon='warning') == 'yes':
-                self.Default.Btn_Save_Clefts()
-            
-        #Delete the .run file
-        RunPath = os.path.join(self.AlreadyRunning_Dir,'.grun')
-        if os.path.isfile(RunPath):
-            try:
-                os.remove(RunPath)
-            except OSError:
-                time.sleep(0.1)
-                os.remove(RunPath)
-                    
-        self.top.destroy()        
-
-        print('   Closed GetCleft.')
-=======
     
->>>>>>> 554710b18783180b61e0ba0726d2a453af08059b
