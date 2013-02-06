@@ -158,7 +158,8 @@ class Base:
             return (0 != kernel32.TerminateProcess(handle, 0))
 
          else:
-            pkill = Popen(['kill',int(self.Run.pid)], stdout=PIPE, stderr=PIPE)
+            killcmd = 'kill ' + str(self.Run.pid)
+            pkill = Popen(killcmd, shell=True, stdout=PIPE, stderr=PIPE)
             (out, err) = pkill.communicate()
             if err:
                 print("   An error occuring while killing the following process", self.Run)
@@ -173,6 +174,7 @@ class Base:
         
         # Cannot quit while process is running
         if self.ProcessRunning and self.Run is not None:
+            #self.Kill(self.Run.pid)
             self.Kill(self.Run.pid)
 
         # Close any Wizard interface in Pymol if started

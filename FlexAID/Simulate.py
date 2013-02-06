@@ -221,7 +221,7 @@ class Simulate(Tabs.Tab):
         self.Btn_Abort.config(state='normal')
 
         # START FLEXAID AS THREAD
-        commandline =   '"%s" "%s" "%s" "%s" --NRGsuite' % (   self.top.FlexAIDExecutable,
+        commandline =   '"%s" "%s" "%s" "%s"' % (   self.top.FlexAIDExecutable,
                                                     self.Manage.CONFIG,
                                                     self.Manage.ga_inp,
                                                     os.path.join(self.Manage.FlexAIDRunSimulationProject_Dir,'RESULT') )
@@ -230,11 +230,11 @@ class Simulate(Tabs.Tab):
         
         # START SIMULATION
         self.DisplayMessage('   Starting executable thread.', 2)
-        Start = Simulation.Start(self, commandline)
+        self.Start = Simulation.Start(self, commandline)
         
         # START PARSING AS THREAD
-        #self.DisplayMessage('   Starting parsing thread.', 2)
-        #Parse = Simulation.Parse(self)
+        self.DisplayMessage('   Starting parsing thread.', 2)
+        self.Parse = Simulation.Parse(self)
 
         self.DisplayMessage("  *** For better performance you can disable object BINDINGSITE_AREA__", 0)
     
@@ -269,11 +269,19 @@ class Simulate(Tabs.Tab):
         self.SimStatus.set('Idle.')
 
     ''' =============================================================================== 
+    FUNCTION BindingSiteSim: BindingSite generation status
+    ===============================================================================  '''     
+    def BindingSiteStatus(self):
+
+        self.lblSimStatus.config(fg='yellow')
+        self.SimStatus.set('Generating binding-site...')
+
+    ''' =============================================================================== 
     FUNCTION InitStatus: Initializes necessary variables from FlexAID parsing thread   
     ===============================================================================  '''     
     def InitStatus(self):
 
-        self.lblSimStatus.config(fg='cyan')        
+        self.lblSimStatus.config(fg='cyan')
         self.SimStatus.set('Initializing...')
 
     ''' =============================================================================== 
@@ -467,6 +475,8 @@ class Simulate(Tabs.Tab):
                 self.DisplayMessage('  ERROR: An error occured while trying to stop the simulation.', 0)
                 return
 
+            self.Parse.ParseFile = self.Parse.LOGFILE
+            
             self.Btn_PauseResume.config(state='disabled')
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')

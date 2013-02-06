@@ -36,6 +36,7 @@ from subprocess import Popen, PIPE, STDOUT
 
 import math, os, time, re
 import sys
+import shutil
 import threading
 import Color
 import Geometry
@@ -70,16 +71,14 @@ class Start(threading.Thread):
         #print("Process list", [psutil.Process(i).name for i in psutil.get_pid_list()])
 
         self.FlexAID.ProcessRunning = True
-
+ 
         try:
-            with open(self.top.Manage.LOGFILE,'w') as logfile:
-
-                if self.FlexAID.OSid == 'WIN':
-                    self.FlexAID.Run = Popen(self.commandline, shell=False, stdout=logfile, stderr=STDOUT)
-                    #self.FlexAID.Run = Popen(self.commandline, shell=False, bufsize=0, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
-                else:
-                    self.FlexAID.Run = Popen(self.commandline, shell=True, stdout=logfile, stderr=STDOUT)
-                    #self.FlexAID.Run = Popen(self.commandline, shell=True, bufsize=0, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+            logfile = open(self.top.Manage.LOGFILE, "w")
+            
+            if self.FlexAID.OSid == 'WIN':
+                self.FlexAID.Run = Popen(self.commandline, shell=False, stdout=logfile, stderr=STDOUT)
+            else:
+                self.FlexAID.Run = Popen(self.commandline, shell=True, stdout=logfile, stderr=STDOUT)
             
             self.FlexAID.Run.wait()
             
@@ -123,8 +122,10 @@ class Parse(threading.Thread):
         self.NbTotalGen = int(self.FlexAID.GAParam.NbGen.get())
         self.DefaultDisplay = self.top.SimDefDisplay.get()
         
-        self.LOGFILE = self.top.Manage.LOGFILE     
-        self.LOGFILETMP = self.top.Manage.LOGFILE + '.tmp'
+        self.READ = self.top.Manage.READ
+        self.UPDATE = self.top.Manage.UPDATE
+        self.LOGFILE = self.top.Manage.LOGFILE
+        self.LOGFILETMP = self.top.Manage.LOGFILETMP
 
         self.Generation = -1
         self.Best = ''
@@ -152,8 +153,8 @@ class Parse(threading.Thread):
 
         self.dictSimData = self.top.dictSimData
 
-        self.ModuloGEN = int(self.FlexAID.GAParam.NbGenFreq.get())     # Draw every XX generation        
-        self.NBLineGEN = int(self.FlexAID.GAParam.NbTopChrom.get())    # Number of Lines READ per Generation        
+        self.NbGenFreq = int(self.FlexAID.GAParam.NbGenFreq.get())     # Draw every XX generation        
+        self.NbTopChrom = int(self.FlexAID.GAParam.NbTopChrom.get())    # Number of Lines READ per Generation        
 
         self.listTmpPDB = list()
         self.dictCoordRef = dict()
@@ -162,7 +163,7 @@ class Parse(threading.Thread):
 
         # Set the Colors
         self.NBCOLOR = Color.NBCOLOR
-        self.PymolColorList = Color.GetHeatColorList(self.NBLineGEN, False)
+        self.PymolColorList = Color.GetHeatColorList(self.NbTopChrom, False)
 
         #Creation of the dictionaries
         self.RecAtom = self.dictRecAtom(self.top.Manage.INPFlexAIDRunSimulationProject_Dir)        # 3 Neighbors that lead to the middle atoms
@@ -191,7 +192,7 @@ class Parse(threading.Thread):
 
         # 10 msec
         INTERVAL = 0.10
-        #TIMEOUT = INTERVAL * 10
+        TIMEOUT = INTERVAL * 100
 
         # Number of ligand atoms
         nbAtoms = len(self.DisAngDih)
@@ -210,7 +211,6 @@ class Parse(threading.Thread):
         except:
             self.top.DisplayMessage("Could not read ligand PDB File",1)
             return
-
         
         self.top.progressBarHandler(0,self.NbTotalGen)
         self.top.Init_Table()
@@ -221,206 +221,213 @@ class Parse(threading.Thread):
         cmd.frame(1)
 
         self.top.InitStatus()
+
+        self.Error = False
         self.ErrorMsg = ''
+        
+        self.ParseFile = self.LOGFILE
+    
+        nRead = {}
         
         while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
 
             time.sleep(INTERVAL)
-
-
-
-            # Parsing output
-            print("PARSING OUTPUT...")
-
-            try:
-                #out = self.FlexAID.Run.communicate(input='\n')[0]
-                out = self.FlexAID.Run.stdout.readlines()
-                #Line = self.FlexAID.Run.stdout.readline()
-                #Line.rstrip('\n')
-                Lines = out.splitlines()
-                print("number of lines read=", len(Lines))
-
-                for Line in Lines:
-
-                    '''
-                    m = re.match('^Grid', Line)
-                    if not m:
-                        print(Line)
-                    '''
-
-                    # track errors
-                    m = re.match('^ERROR', Line)
-                    if m:
-                        self.top.DisplayMessage(str("A critical error occured\n" + Line), 1)
-                        self.ErrorMsg = Line
-
-                        try:
-                            self.FlexAID.Run.terminate()
-                        except:
-                            pass
-                    
-                        print("TERMINATING DUE TO ERROR!")
-                        break
-
-                    if self.ParseGA:
-                             
-                        '''
-                        Generation:   0
-                        best by energy
-                            0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
-                            1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
-                            2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
-                            3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
-                            4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
-                        best by fitnes
-                            0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
-                            1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
-                            2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
-                            3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
-                            4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
-                        '''
-
-                        m = re.match("(\s*(\d+) \()", Line)
-                        if m:
-                            self.TOP = int(m.group(2))
-
-                            # Find starting index where to parse column values
-                            colNo = len(m.group(1))
-
-                            if self.Best == 'energy' and self.Generation != -1 and self.TOP != -1:
-
-                                # Reading the values calculated for the generation
-                                if (self.Generation % self.ModuloGEN) == 0 or self.Generation == self.NbTotalGen:
-
-                                    #self.Updating += 1
-
-                                    ID = str(self.Generation) + '.' + str(self.TOP)
-                                    #print("updating " + ID)
-
-                                    #print Line
-                                    Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
-                                                                        self.Translation, self.Rotation )
-
-                                    if (self.TOP+1) == self.NBLineGEN:
-                                        self.State = self.CurrentState
-
-                                        # Update energy/fitness table
-                                        self.top.update_DataList()
-
-                                        self.top.Refresh_LigDisplay()
-                                        self.top.Refresh_CartoonDisplay()
-
-                                        # Update is successful, continue simulation
-                                        #self.FlexAID.Run.stdin.write('\n')
-
-                            continue
-
-                        m = re.match("best by (\w+)\s+", Line)
-                        if m:
-                            self.Best = m.group(1)
-                            #print "Best by " + self.Best
-                            continue
-
-                        m = re.match("Generation:\s*(\d+)\s+", Line)
-                        if m:
-
-                            self.Generation = int(m.group(1))
-                            #print("Generation " + str(self.Generation))
-                            self.CurrentState = self.State + 1
-
-                            #print "will update progressbar"
-                            # ProgressionBar Handler
-                            self.top.progressBarHandler(self.Generation, self.NbTotalGen)
-
-                            continue
-                    
-                        m = re.match("clustering all individuals", Line)
-                        if m:
-                            self.top.ClusterStatus()
-
-                            continue
-
-                    else:
-    
-                        m = re.match("NRGsuite Init", Line)
-                        if m:
-                            self.FlexAID.Run.stdin.write('\n')
-
-                            continue
-
-                        m = re.match("Rotamer for", Line)
-                        if m:                        
-                            self.AddRotamerFromLine(Line)
-                        
-                            continue
-
-                        m = re.match("shiftval=", Line)
-                        if m and self.FlexStatus != '':
-
-                            # Shift values for fixed dihedrals between pair-triplets of atoms
-                            fields = Line.split()
-                            MergeAtomsAB = fields[1] + fields[2]
-                            self.FixedAngle[MergeAtomsAB] = fields[5]                   
-                                                    
-                            continue
-
-                        m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
-                        if m:                        
-                            self.ListAtom.append(int(m.group(1)))
-                            if len(self.ListAtom) == nbAtoms:
-                                # Order the FLEDIH based on the atoms occurences
-                                self.OrderFledih()
-                        
-                            continue
-
-                        m = re.match("the protein center of coordinates is:\s+(\S+)\s+(\S+)\s+(\S+)\s+", Line)
-                        if m:
-                            self.Ori[0] = float(m.group(1))
-                            self.Ori[1] = float(m.group(2))
-                            self.Ori[2] = float(m.group(3))
-
-                            self.OriX[0] = self.Ori[0] + 1.0  # X
-                            self.OriX[1] = self.Ori[1]        # Y
-                            self.OriX[2] = self.Ori[2]        # Z
-                        
-                            self.OriY[0] = self.Ori[0]        # X
-                            self.OriY[1] = self.Ori[1] + 1.0  # Y
-                            self.OriY[2] = self.Ori[2]        # Z
-                        
-                            continue            
-
-                        m = re.match("Grid\[(\d+)\]=", Line)
-                        if m:
-                            index = int(m.group(1))
-                        
-                            strcoor = Line[(Line.find('=')+1):]
-                            self.GridVertex[index] = [  float(strcoor[0:8].strip()), 
-                                                        float(strcoor[8:16].strip()),
-                                                        float(strcoor[16:24].strip())]
-
-                            # used to not overflow communicate
-                            #if index % self.top.GridBuffer == 0:
-                            #    self.FlexAID.Run.stdin.write('\n')
-
-                            continue
-                        
-                        m = re.match("SIGMA_SHARE", Line)
-                        if m:                            
-                            # send ready to simulate signal  
-                            self.top.DisplayMessage("  Signal sent to start simulation", 2)
-                            self.FlexAID.Run.stdin.write('\n')
-
-                            self.ParseGA = True
-                            self.top.RunStatus()
-
-                            continue
             
-            except:
-                pass
+            if self.CopyRead_UPDATE(INTERVAL, TIMEOUT):
+                self.Error = True
+                self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files'
+                break
+                             
+            if nRead.get(self.ParseFile):
+                # Resume a file that was not read completely
+                self.Lines = self.Lines[nRead[self.ParseFile]:]
+            else:
+                nRead[self.ParseFile] = 0
+            
+            for Line in self.Lines:
+                
+                # check line completion
+                m = re.search('\n', Line)
+                if m:
+                    nRead[self.ParseFile] = nRead[self.ParseFile] + 1
+                else:
+                    # EOF signal - will resume from here next time
+                    break
 
+                # track errors
+                m = re.match('ERROR', Line)
+                if m:
+                    self.top.DisplayMessage(str("A critical error occured\n" + Line), 1)
+                    self.Error = True
+                    self.ErrorMsg = '*FlexAID ' + Line
+                    
+                    try:
+                        self.FlexAID.Run.terminate()
+                    except:
+                        pass
+                    
+                    break
+                         
+                '''
+                Generation:   0
+                best by energy
+                    0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
+                    1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
+                    2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
+                    3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
+                    4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
+                best by fitnes
+                    0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
+                    1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
+                    2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
+                    3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
+                    4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
+                '''
+
+                m = re.match("(\s*(\d+) \()", Line)
+                if m:
+                    #print Line
+                    
+                    self.TOP = int(m.group(2))
+
+                    # Find starting index where to parse column values
+                    colNo = len(m.group(1))
+
+                    if self.Best == 'energy' and self.Generation != -1 and self.TOP != -1:
+
+                        # Reading the values calculated for the generation
+                        if (self.Generation % self.NbGenFreq) == 0 or self.Generation == self.NbTotalGen:
+
+                            ID = str(self.Generation) + '.' + str(self.TOP)
+                            #print("updating " + ID)
+
+                            #print Line
+                            Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
+                                                                self.Translation, self.Rotation )
+
+                            if (self.TOP+1) == self.NbTopChrom:
+                                self.State = self.CurrentState
+
+                                # Update energy/fitness table
+                                self.top.update_DataList()
+
+                                self.top.Refresh_LigDisplay()
+                                self.top.Refresh_CartoonDisplay()
+                        
+                        # Ready to read another file
+                        if (self.TOP+1) == self.NbTopChrom:
+                        
+                            nRead[self.ParseFile] = 0
+                                
+                            if self.Generation == self.NbTotalGen:
+                                self.ParseFile = self.LOGFILE
+                                
+                            else:
+                                if self.Remove_UPDATE(INTERVAL, TIMEOUT):
+                                    self.Error = True
+                                    self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temp files'
+                                    break
+                                                                    
+                    continue
+
+                m = re.match("best by (\w+)\s+", Line)
+                if m:
+                    #print Line
+
+                    self.Best = m.group(1)
+                    #print "Best by " + self.Best
+                    continue
+
+                m = re.match("Generation:\s*(\d+)\s+", Line)
+                if m:
+                    #print Line
+                    
+                    self.Generation = int(m.group(1))
+                    #print("Generation " + str(self.Generation))
+                    self.CurrentState = self.State + 1
+
+                    #print "will update progressbar"
+                    # ProgressionBar Handler
+                    self.top.progressBarHandler(self.Generation, self.NbTotalGen)
+
+                    continue
+            
+                m = re.match("clustering all individuals", Line)
+                if m:
+                    print Line
+                    self.top.ClusterStatus()
+
+                    continue
+
+                m = re.match("Rotamer for", Line)
+                if m:                        
+                    self.AddRotamerFromLine(Line)
+                
+                    continue
+
+                m = re.match("shiftval=", Line)
+                if m and self.FlexStatus != '':
+
+                    # Shift values for fixed dihedrals between pair-triplets of atoms
+                    fields = Line.split()
+                    MergeAtomsAB = fields[1] + fields[2]
+                    self.FixedAngle[MergeAtomsAB] = fields[5]                   
+                                            
+                    continue
+
+                m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
+                if m:                        
+                    self.ListAtom.append(int(m.group(1)))
+                    if len(self.ListAtom) == nbAtoms:
+                        # Order the FLEDIH based on the atoms occurences
+                        self.OrderFledih()
+                
+                    continue
+
+                m = re.match("the protein center of coordinates is:\s+(\S+)\s+(\S+)\s+(\S+)\s+", Line)
+                if m:
+                    self.Ori[0] = float(m.group(1))
+                    self.Ori[1] = float(m.group(2))
+                    self.Ori[2] = float(m.group(3))
+
+                    self.OriX[0] = self.Ori[0] + 1.0  # X
+                    self.OriX[1] = self.Ori[1]        # Y
+                    self.OriX[2] = self.Ori[2]        # Z
+                
+                    self.OriY[0] = self.Ori[0]        # X
+                    self.OriY[1] = self.Ori[1] + 1.0  # Y
+                    self.OriY[2] = self.Ori[2]        # Z
+                
+                    continue            
+
+                m = re.match("Grid\[(\d+)\]=", Line)
+                if m:
+                    index = int(m.group(1))
+                
+                    strcoor = Line[(Line.find('=')+1):]
+                    self.GridVertex[index] = [  float(strcoor[0:8].strip()), 
+                                                float(strcoor[8:16].strip()),
+                                                float(strcoor[16:24].strip())]
+
+                    continue
+                
+                m = re.match("SIGMA_SHARE", Line)
+                if m:                            
+                    # send ready to simulate signal  
+                    self.top.DisplayMessage("  Signal sent to start simulation", 2)
+                    self.top.RunStatus()
+
+                    #self.ParseGA = True
+                    self.ParseFile = self.UPDATE
+
+                    continue
+            
+            if self.Error:
+                break
+            
         # Simulation might have been shut down by closing main frame
         try:
-            if self.top.ProcessError:
+            if self.top.ProcessError or self.Error:
                 self.top.ErrorStatus(self.ErrorMsg)
             else:
                 self.top.SuccessStatus()
@@ -621,6 +628,61 @@ class Parse(threading.Thread):
     def CreateTempPDB(self, Path):
         
         # Create the custom path for the temporary pdb files
-        for i in range (self.NBLineGEN + 1):
+        for i in range (self.NbTopChrom + 1):
             self.listTmpPDB.append(os.path.join(Path,'LIG' + str(i) + '.pdb'))
             #print Path + "/LIG" + str(i) + '.pdb'
+
+    '''
+    @summary: SUBROUTINE: Remove_UPDATE: Tries to remove the .update to be able to generate another one
+    '''   
+    def Remove_UPDATE(self, INTERVAL, TIMEOUT):
+    
+        TIME = 0
+        while TIME < TIMEOUT:
+            try:
+                os.remove(self.UPDATE)
+                break
+                
+            except OSError:
+                pass
+            
+            time.sleep(INTERVAL)
+
+            TIME = TIME + INTERVAL
+            
+        if TIME >= TIMEOUT:
+            return 1
+            
+        return 0
+        
+    '''
+    @summary: SUBROUTINE: CopyRead_UPDATE: Tries to copy then read the .read (log.txt OR .update) file
+    '''   
+    def CopyRead_UPDATE(self, INTERVAL, TIMEOUT):
+    
+        TIME = 0
+        while TIME < TIMEOUT:
+            try:
+                shutil.copy(self.ParseFile, self.READ)
+                    
+                readhandle = open(self.READ, 'r')
+                self.Lines = readhandle.readlines()
+                readhandle.close()
+                
+                break
+                
+            except OSError:
+                pass
+            
+            except IOError:
+                pass
+            
+            time.sleep(INTERVAL)
+
+            TIME = TIME + INTERVAL
+            
+        if TIME >= TIMEOUT:
+            return 1
+            
+        return 0
+
