@@ -229,27 +229,34 @@ class Parse(threading.Thread):
     
         nRead = {}
         
+        print("ENTERING MAINLOOP")
         while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
 
+            print("SLEEPING")
             time.sleep(INTERVAL)
             
-            if self.CopyRead_UPDATE(INTERVAL, TIMEOUT):
+            # Once copied cannot go change file (safe-protection)
+            ParseFile = self.ParseFile 
+
+            print("COPYREAD " + ParseFile + " @ Line " + str(nRead.get(self.ParseFile)))
+            if self.CopyRead_UPDATE(ParseFile, INTERVAL, TIMEOUT):
                 self.Error = True
                 self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files'
                 break
-                             
-            if nRead.get(self.ParseFile):
+                
+            if nRead.get(ParseFile):
                 # Resume a file that was not read completely
-                self.Lines = self.Lines[nRead[self.ParseFile]:]
+                self.Lines = self.Lines[nRead[ParseFile]:]
             else:
-                nRead[self.ParseFile] = 0
+                nRead[ParseFile] = 0
             
+            print("Number of lines read is", len(self.Lines))
             for Line in self.Lines:
                 
                 # check line completion
                 m = re.search('\n', Line)
                 if m:
-                    nRead[self.ParseFile] = nRead[self.ParseFile] + 1
+                    nRead[ParseFile] = nRead[ParseFile] + 1
                 else:
                     # EOF signal - will resume from here next time
                     break
@@ -317,7 +324,7 @@ class Parse(threading.Thread):
                         # Ready to read another file
                         if (self.TOP+1) == self.NbTopChrom:
                         
-                            nRead[self.ParseFile] = 0
+                            nRead[ParseFile] = 0
                                 
                             if self.Generation == self.NbTotalGen:
                                 self.ParseFile = self.LOGFILE
@@ -354,7 +361,7 @@ class Parse(threading.Thread):
             
                 m = re.match("clustering all individuals", Line)
                 if m:
-                    print Line
+                    #print Line
                     self.top.ClusterStatus()
 
                     continue
@@ -658,12 +665,12 @@ class Parse(threading.Thread):
     '''
     @summary: SUBROUTINE: CopyRead_UPDATE: Tries to copy then read the .read (log.txt OR .update) file
     '''   
-    def CopyRead_UPDATE(self, INTERVAL, TIMEOUT):
+    def CopyRead_UPDATE(self, ParseFile, INTERVAL, TIMEOUT):
     
         TIME = 0
         while TIME < TIMEOUT:
             try:
-                shutil.copy(self.ParseFile, self.READ)
+                shutil.copy(ParseFile, self.READ)
                     
                 readhandle = open(self.READ, 'r')
                 self.Lines = readhandle.readlines()
