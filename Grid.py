@@ -64,18 +64,20 @@ class Grid(threading.Thread):
             self.top.ProcessError = True
             self.top.GenGridRunning(False)
             return
-            
+        
+        '''
         if self.OutputFile != '' and self.write_Grid():
             self.top.DisplayMessage("Error while outputting the grid to a file", 1)
             self.top.ProcessError = True
             self.top.GenGridRunning(False)
             return
-
+        
         if self.Estimate and self.estimate_Volume():
             self.top.DisplayMessage("Error while estimating the size of the grid", 1)
             self.top.ProcessError = True
             self.top.GenGridRunning(False)
             return
+        '''
 
         self.top.GenGridRunning(False)
         
@@ -117,27 +119,29 @@ class Grid(threading.Thread):
 
             for sph in iter(self.dictSpheres):
                 
-                if (1.0 / self.Spacer) - int(1.0 / self.Spacer) > 0.001:
-                    xmin = (int((self.dictSpheres[sph][1][0] - self.dictSpheres[sph][0]) / self.Spacer)) * self.Spacer;
-                    ymin = (int((self.dictSpheres[sph][1][1] - self.dictSpheres[sph][0]) / self.Spacer)) * self.Spacer;
-                    zmin = (int((self.dictSpheres[sph][1][2] - self.dictSpheres[sph][0]) / self.Spacer)) * self.Spacer;
-                    xmax = (int((self.dictSpheres[sph][1][0] + self.dictSpheres[sph][0]) / self.Spacer) + 1.0) * self.Spacer;
-                    ymax = (int((self.dictSpheres[sph][1][1] + self.dictSpheres[sph][0]) / self.Spacer) + 1.0) * self.Spacer;
-                    zmax = (int((self.dictSpheres[sph][1][2] + self.dictSpheres[sph][0]) / self.Spacer) + 1.0) * self.Spacer;
+                if float(1.0 / self.Spacer) - float(int(1.0 / self.Spacer)) > 0.001:
+                    xmin = float(int((self.dictSpheres[sph][1][0] - self.dictSpheres[sph][0]) / self.Spacer)) * self.Spacer;
+                    ymin = float(int((self.dictSpheres[sph][1][1] - self.dictSpheres[sph][0]) / self.Spacer)) * self.Spacer;
+                    zmin = float(int((self.dictSpheres[sph][1][2] - self.dictSpheres[sph][0]) / self.Spacer)) * self.Spacer;
+                    xmax = float(int((self.dictSpheres[sph][1][0] + self.dictSpheres[sph][0]) / self.Spacer) + 1.0) * self.Spacer;
+                    ymax = float(int((self.dictSpheres[sph][1][1] + self.dictSpheres[sph][0]) / self.Spacer) + 1.0) * self.Spacer;
+                    zmax = float(int((self.dictSpheres[sph][1][2] + self.dictSpheres[sph][0]) / self.Spacer) + 1.0) * self.Spacer;
 
                 else:
-                    xmin = int(self.dictSpheres[sph][1][0] - self.dictSpheres[sph][0] - self.Spacer);
-                    ymin = int(self.dictSpheres[sph][1][1] - self.dictSpheres[sph][0] - self.Spacer);   
-                    zmin = int(self.dictSpheres[sph][1][2] - self.dictSpheres[sph][0] - self.Spacer);
-                    xmax = int(self.dictSpheres[sph][1][0] + self.dictSpheres[sph][0] + self.Spacer + 1.0);
-                    ymax = int(self.dictSpheres[sph][1][1] + self.dictSpheres[sph][0] + self.Spacer + 1.0);
-                    zmax = int(self.dictSpheres[sph][1][2] + self.dictSpheres[sph][0] + self.Spacer + 1.0);
+                    xmin = float(int(self.dictSpheres[sph][1][0] - self.dictSpheres[sph][0] - self.Spacer));
+                    ymin = float(int(self.dictSpheres[sph][1][1] - self.dictSpheres[sph][0] - self.Spacer));   
+                    zmin = float(int(self.dictSpheres[sph][1][2] - self.dictSpheres[sph][0] - self.Spacer));
+                    xmax = float(int(self.dictSpheres[sph][1][0] + self.dictSpheres[sph][0] + self.Spacer + 1.0);
+                    ymax = float(int(self.dictSpheres[sph][1][1] + self.dictSpheres[sph][0] + self.Spacer + 1.0);
+                    zmax = float(int(self.dictSpheres[sph][1][2] + self.dictSpheres[sph][0] + self.Spacer + 1.0);
 
 
                 x = xmin
                 y = ymin
                 z = zmin
-
+                
+                sqrrad = sph.Radius
+                
                 while z < zmax:
                     while y < ymax:
                         while x < xmax:

@@ -936,6 +936,8 @@ class Config1(Tabs.Tab):
     ================================================================================== '''        
     def Generate_CleftBindingSite(self):
         
+        #self.listSpheres = []
+        
         out = file(self.CleftTmpPath, 'w')
 
         for Cleft in self.Vars.BindingSite.listClefts:
@@ -947,10 +949,22 @@ class Config1(Tabs.Tab):
             #0123456789012345678901234567890123456789012345678901234567890123456789
             #ATOM     16  C   SPH Z   1      11.271   0.268  -8.282  1.00  2.17 
             for line in lines:
-                if line.startswith('ATOM  '):
+                if line.startswith('ATOM  '):                    
                     outline = line[0:22]
                     outline += '%4d' % Cleft.Index
                     outline += line[26:]
+                    
+                    '''
+                    sphere = SphereObj.SphereObj()
+                    sphere.Set_Radius(float(line[60:66].strip()))
+                    
+                    sphere.Set_Center( [ float(line[30:38].strip()),
+                                         float(line[38:46].strip()),
+                                         float(line[46:54].strip()) ] )
+                                         
+                    self.listSpheres.append(sphere)
+                    '''
+                    
                 else:
                     outline = line
 

@@ -20,6 +20,7 @@
 from subprocess import Popen, PIPE
 from datetime import datetime
 
+import shutil
 import os
 
 if __debug__:
@@ -38,10 +39,6 @@ class Manage():
         self.Config2 = self.FlexAID.Config2
         self.Config3 = self.FlexAID.Config3
         self.GAParam = self.FlexAID.GAParam
-
-        self.PAUSE = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'.pause')
-        self.STOP = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'.stop')
-        self.ABORT = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'.abort')
         
         self.LOGFILE = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'log.txt')
         self.LOGFILETMP = self.LOGFILE + '.tmp'
@@ -62,6 +59,12 @@ class Manage():
         self.INPFlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.inp')
         self.ICFlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.ic')
         
+        self.PAUSE = os.path.join(self.FlexAIDRunSimulationProject_Dir,'.pause')
+        self.STOP = os.path.join(self.FlexAIDRunSimulationProject_Dir,'.stop')
+        self.ABORT = os.path.join(self.FlexAIDRunSimulationProject_Dir,'.abort')
+        self.UPDATE = os.path.join(self.FlexAIDRunSimulationProject_Dir,'.update')
+        self.READ = os.path.join(self.FlexAIDRunSimulationProject_Dir,'.read')
+
         self.CONFIG = os.path.join(self.FlexAIDRunSimulationProject_Dir,'CONFIG.inp')
         self.ga_inp = os.path.join(self.FlexAIDRunSimulationProject_Dir,'ga_inp.dat')
 
@@ -99,17 +102,8 @@ class Manage():
     def Move_Files(self):
 
         try:
-            if self.FlexAID.OSid == 'WIN':
-                p = Popen('copy "' + self.INPFlexAIDSimulationProject_Dir + '" "' + self.INPFlexAIDRunSimulationProject_Dir + '"' , shell=True)
-                p.wait()
-                p = Popen('copy "' + self.ICFlexAIDSimulationProject_Dir + '" "' + self.ICFlexAIDRunSimulationProject_Dir + '"' , shell=True)
-                p.wait()
-            else:
-                p = Popen('cp "' + self.INPFlexAIDSimulationProject_Dir + '" "' + self.INPFlexAIDRunSimulationProject_Dir + '"' , shell=True)
-                p.wait()
-                p = Popen('cp "' + self.ICFlexAIDSimulationProject_Dir + '" "' + self.ICFlexAIDRunSimulationProject_Dir + '"' , shell=True)
-                p.wait()
-
+            shutil.copy(self.INPFlexAIDSimulationProject_Dir, self.INPFlexAIDRunSimulationProject_Dir)
+            shutil.copy(self.ICFlexAIDSimulationProject_Dir, self.ICFlexAIDRunSimulationProject_Dir)
         except:
             return False
 
@@ -129,6 +123,12 @@ class Manage():
 
             if os.path.isfile(self.STOP):
                 os.remove(self.STOP)
+
+            if os.path.isfile(self.UPDATE):
+                os.remove(self.UPDATE)
+
+            if os.path.isfile(self.READ):
+                os.remove(self.READ)
 
             if os.path.isfile(self.LOGFILE):
                 os.remove(self.LOGFILE)
@@ -226,7 +226,7 @@ class Manage():
         if self.Config3.SolventTypeIndex.get() == 0:
             config_file.write('SLVPEN ' + self.Config3.SolventTerm.get() + '\n')
 
-        config_file.write('STATEP ' + self.FlexAID.FlexAIDSimulationProject_Dir  + '\n')
+        config_file.write('STATEP ' + self.FlexAIDRunSimulationProject_Dir  + '\n')
         config_file.write('TEMPOP ' + self.FlexAID.FlexAIDSimulationProject_Dir  + '\n')
         
         #config_file.write('OUTRNG\n')
