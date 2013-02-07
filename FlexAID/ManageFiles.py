@@ -181,8 +181,8 @@ class Manage():
             self.Create_FlexFile(FlexSCFile)
             config_file.write('FLEXSC ' + FlexSCFile + '\n')
 
-        if len(self.Config2.Vars.dictCovConstraints):
-            ConsFile = os.path.join(self.self.FlexAIDRunSimulationProject_Dir,'cons.lst')
+        if len(self.Config2.Vars.dictConstraints):
+            ConsFile = os.path.join(self.FlexAIDRunSimulationProject_Dir,'cons.lst')
             self.Create_ConsFile(ConsFile)
             config_file.write('CONSTR ' + ConsFile + '\n')
 
@@ -314,24 +314,25 @@ class Manage():
     ''' ==================================================================================
     FUNCTION Create_ConsFile: Creates the constraints file
     ==================================================================================  '''          
-    #def Create_ConsFile(self,outfile):
-    #                
-    #    ConsFile = open(outfile, 'w')
-    #              
-    #    for key in iter(self.Config2.Vars.dictCovConstraints):
-    #        
-    #        atom1 = Constraint.parse_cons(self.Config2.Vars.dictCovConstraints[key][0])
-    #        atom2 = Constraint.parse_cons(self.Config2.Vars.dictCovConstraints[key][1])
-    #        
-    #        ConsFile.write('COVALENT ')
-    #        self.Print_Constraint(ConsFile,atom1)
-    #        ConsFile.write(':')
-    #        self.Print_Constraint(ConsFile,atom2)
-    #        ConsFile.write(':')
-    #        ConsFile.write('%.2f' % float(self.Config2.Vars.dictCovConstraints[key][5]))
-    #        ConsFile.write('\n')
-    #        
-    #    ConsFile.close()            
+    def Create_ConsFile(self,outfile):
+                    
+        ConsFile = open(outfile, 'w')
+                  
+        for key in sorted(self.Config2.Vars.dictConstraints, key=str.lower):
+            
+            print "key=",key
+            atom1 = self.Config2.parse_cons(self.Config2.Vars.dictConstraints[key][0])
+            atom2 = self.Config2.parse_cons(self.Config2.Vars.dictConstraints[key][1])
+            
+            ConsFile.write('COVALENT ')
+            self.Print_Constraint(ConsFile,atom1)
+            ConsFile.write(':')
+            self.Print_Constraint(ConsFile,atom2)
+            ConsFile.write(':')
+            ConsFile.write('%.2f' % float(self.Config2.Vars.dictConstraints[key][5]))
+            ConsFile.write('\n')
+            
+        ConsFile.close()            
 
     ''' ==================================================================================
     FUNCTION Print_Constraint: Prints a constraint atom

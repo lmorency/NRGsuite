@@ -33,13 +33,14 @@ from pymol.cgo import *
 
 import pymol
 import General
+import General_cmd
 
 class constraint(Wizard):
 
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
-    def __init__(self, top, type):
+    def __init__(self, top):
               
         Wizard.__init__(self)
 
@@ -48,81 +49,29 @@ class constraint(Wizard):
 
         self.DisplayVar = BooleanVar()
 
-        if type == 'Covalent':
-            self.dictConstraints = self.top.dictCovConstraints
-            self.optConstraints = self.top.optCovCons
-            self.ConsSelection = self.top.CovConsSelection
-            self.Scale = self.top.sclCovDist
-            self.ScaleVar = self.top.CovDist
-            self.Check = None
-            self.CheckVar = IntVar()   # dummy Var
-            self.DefaultValue = self.top.DefaultCovDist
-            self.CONSTRAINT = 'COVALENT_CONS__'
-        else:
-            self.dictConstraints = self.top.dictIntConstraints
-            self.optConstraints = self.top.optIntCons
-            self.ConsSelection = self.top.IntConsSelection
-            self.Scale = self.top.sclIntFactor
-            self.ScaleVar = self.top.IntFactor
-            self.Check = self.top.chkIntForced
-            self.CheckVar = self.top.IntForced
-            self.DefaultValue = self.top.DefaultIntFactor
-            self.CONSTRAINT = 'INTERACT_CONS__'
-
-        self.DisplayVarTrace = self.DisplayVar.trace('w', self.DisplayVar_Toggle)
-        self.ScaleVarTrace = self.ScaleVar.trace('w', self.ScaleVar_Toggle)
-        self.CheckVarTrace = self.CheckVar.trace('w', self.CheckVar_Toggle)
-        self.ConsSelectionTrace = self.ConsSelection.trace('w', self.ConsSelection_Toggle)
-
-        self.HIGHLIGHT = self.top.HIGHLIGHT
-
-        self.DisplayVar.set(True)
-        self.ErrorStatus = ''
+        self.Active = self.top.ActiveCons
+        self.dictConstraints = self.top.Vars.dictConstraints
+        self.Scale = self.top.sclConsDist
+        self.ScaleVar = self.top.ConsDist
+        
+        self.DefaultConsDist = '1.5'
+        self.CONSTRAINT = 'CONSTRAINT_'
+        self.ACTIVE = 'ACTIVE_CONS__'
 
         self.pick_count = 0
+        self.ErrorStatus = [ "The active constraint is shown as a solid white line.",
+                             "Use the scaler in the interface to edit the interaction distance." ]
 
         self.View = cmd.get_view()
-        cmd.rebuild()        
-
-
-    #=======================================================================
-    ''' Toggle between displaying or not constraints '''
-    #=======================================================================    
-    def DisplayVar_Toggle(self, *args):
-
-        if self.DisplayVar.get():
-            self.DisplayText = 'Hide all'
-        else:
-            self.DisplayText = 'Show all'
-
-        self.refresh_display()
-
-    #=======================================================================
-    ''' Highlight the right selection '''
-    #=======================================================================    
-    def ConsSelection_Toggle(self, *args):
-
-        self.refresh_display()
-
-    #=======================================================================
-    ''' Sets the value of slider of selected key '''
-    #=======================================================================    
-    def ScaleVar_Toggle(self, *args):
-
-        self.dictConstraints[self.ConsSelection.get()][5] = self.ScaleVar.get()
-
-    #=======================================================================
-    ''' Sets the value of check of selected key '''
-    #=======================================================================    
-    def CheckVar_Toggle(self, *args):
-
-        self.dictConstraints[self.ConsSelection.get()][6] = self.CheckVar.get()
+        self.State = cmd.get_state()
         
+        cmd.rebuild()
+
     #=======================================================================
     ''' Executes the first steps of the Wizard'''
     #=======================================================================    
     def Start(self):
-            
+    
         self.ErrorCode = 1
 
         try:
@@ -136,7 +85,7 @@ class constraint(Wizard):
             self.ErrorCode = 0
 
         except:
-            self.FlexAID.DisplayMessage("  ERROR: Could not start the Constraint wizard", 1)
+            self.FlexAID.DisplayMessage("  ERROR: Could not start the constraints wizard", 1)
             self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1)
             self.Quit_Wizard()
             return
@@ -159,23 +108,20 @@ class constraint(Wizard):
 
             General_cmd.unmask_Objects(self.exc)
             cmd.set("mouse_selection_mode", self.selection_mode)
-                
+            
+            cmd.delete(self.ACTIVE)
             cmd.delete(self.CONSTRAINT + '*')
-            cmd.delete(self.HIGHLIGHT)
 
             cmd.deselect()
         except:
             pass
 
+        cmd.refresh()
+
         if self.ErrorCode > 0:
             self.FlexAID.WizardError = True
 
-        self.top.ConsRunning(self.dictConstraints, self.optConstraints, self.ConsSelection, False)
-
-        self.ScaleVar.trace_vdelete('w',self.ScaleVarTrace)
-        self.CheckVar.trace_vdelete('w',self.CheckVarTrace)
-        self.ConsSelection.trace_vdelete('w',self.ConsSelectionTrace)
-
+        self.top.ConsRunning(False)
         self.FlexAID.ActiveWizard = None
         
         cmd.set_wizard()
@@ -185,31 +131,19 @@ class constraint(Wizard):
     ''' Button Done selected '''
     #=======================================================================
     def btn_Done(self):
+    
+        self.FlexAID.WizardResult = len(self.dictConstraints)
 
         self.Quit_Wizard()
-        
-    #=======================================================================
-    ''' Button Display: Toggles between on/off displaying constraints '''
-    #=======================================================================       
-    def btn_display(self):
-
-        if self.DisplayVar.get():
-            self.DisplayVar.set(False)
-        else:
-            self.DisplayVar.set(True)
-
-        cmd.refresh_wizard()
 
     #=======================================================================
-    ''' Button Reset Clicked: Reset atom selection '''
+    ''' Button Clear Clicked: Delete all constraints '''
     #=======================================================================       
-    def btn_reset(self):
+    def btn_Clear(self):
 
-        self.ErrorStatus = ''
-        self.pick_count = 0
+        self.dictConstraints.clear()
+        self.Active.set('')
         
-        cmd.refresh_wizard()
-
     #=======================================================================   
     ''' gets atom information (coordinates and index)'''
     #=======================================================================    
@@ -222,7 +156,7 @@ class constraint(Wizard):
             listlen = len(list)
 
             if listlen == 1:
-                atoms = cmd.get_model(name, state=cmd.get_state())
+                atoms = cmd.get_model(name, state=self.State)
                 for at in atoms.atom:
                     info.extend([ at.index, at.resn, at.resi, at.chain, at.name,
                                   at.coord[0], at.coord[1], at.coord[2] ])                  
@@ -268,34 +202,22 @@ class constraint(Wizard):
 
             if len(self.atom2) > 0:
                 if self.AnalyzeConstraint(self.atom1,self.atom2):
-                    self.ErrorStatus = "An unexpected error occured.\n"
-            
-                self.btn_reset()
-     
+                    self.ErrorStatus = [ "An unexpected error occured. Try again." ]
+
+            self.pick_count = 0
+            cmd.refresh_wizard()
+
     #=======================================================================
     ''' Display a message in the interface '''
     #=======================================================================
     def get_prompt(self):
-
+        
         if self.pick_count == 0:
-            return [self.ErrorStatus + 
-                    'Please click on the FIRST atom that defines the constraint.']
+            return self.ErrorStatus + \
+                    [ "Please click on the FIRST atom that defines the constraint." ]
         elif self.pick_count == 1:
-            return ['Please click on the SECOND atom that defines the constraint.']
+            return [ "Please click on the SECOND atom that defines the constraint." ]
         
-
-    #=======================================================================
-    ''' Counts the total number of constraints '''
-    #=======================================================================
-    def count_cons(self):
-        
-        tot = 0
-
-        for key in self.dictConstraints:
-            for item in self.dictConstraints[key]:
-                tot = tot + 1
-        
-        return tot
 
     #=======================================================================
     ''' Analyze if constraint can be added '''
@@ -306,17 +228,12 @@ class constraint(Wizard):
             #        0     1      2     3     4
             #atom1 [907, 'BTN', '300', 'A', 'O3', 14.692000389099121, -0.44600000977516174, -8.2049999237060547]
             #atom2 [234, 'SER', '45', 'A', 'OG', 14.543999671936035, 0.81300002336502075, -12.081999778747559]
-
-            #print atom1
-            #print atom2
-
+            
             if atom1[3] == '': atom1[3] = '-'
             if atom2[3] == '': atom2[3] = '-'
 
             # example : '#907(O3) BTN300A'
             # example : '#234(OG) SER45A'
-            #leftkey = '#' + str(atom1[0]) + '(' + atom1[4] + ') ' + atom1[1] + atom1[2] + atom1[3]
-            #rightkey = '#' + str(atom2[0]) + '(' + atom2[4] + ') ' + atom2[1] + atom2[2] + atom2[3]        
 
             leftsel = 'resn ' + atom1[1] + ' & resi ' + atom1[2]
             if atom1[3] != '-':
@@ -330,112 +247,131 @@ class constraint(Wizard):
             rightkey = '#' + str(General_cmd.get_ID(atom2[0], rightsel)) + ' ' + atom2[1] + atom2[2] + atom2[3]
             key = leftkey + ' :: ' + rightkey
             altkey = rightkey + ' :: ' + leftkey
-
-            #print leftsel
-            #print rightsel
-            #print leftkey
-            #print rightkey
-
+            
             if leftkey == rightkey:
-                self.ErrorStatus = "Atoms selected are the same. Try again.\n"
+                self.ErrorStatus = [ "Atoms selected are the same. Try again." ]
 
             elif key in self.dictConstraints or altkey in self.dictConstraints:
-                self.ErrorStatus = "Constraint already exists. Try again.\n"
+                self.ErrorStatus = [ "The selected constraint already exists. Try again." ]
 
             else:
 
-                # Add item in drop-down-list
-                self.optConstraints["menu"].add_command(label=key, command=lambda temp = key: self.optConstraints.setvar(self.optConstraints.cget("textvariable"), value = temp))
-                self.ConsSelection.set(key)
-
                 # Create new entry in dictionary
+                distobj = self.CONSTRAINT + str(len(self.dictConstraints) + 1) + '__'
                 self.dictConstraints[key] = [ leftkey, rightkey, 
-                                              self.CONSTRAINT + str(len(self.dictConstraints) + 1),  # constraint name
+                                              distobj,                             # constraint name
                                               [ atom1[5], atom1[6], atom1[7] ],    # coordinates of atom 1
                                               [ atom2[5], atom2[6], atom2[7] ],    # coordinates of atom 2
-                                              0.25,                                 # value of slider
-                                              0 ]                                  # checkbox value
+                                              self.DefaultConsDist ]               # value of slider
                 
-                # Set default value of slider
-                self.ScaleVar.set(self.DefaultValue)
+                if not self.Active.get():
+                    self.Active.set(key)
+                else:
+                    self.refresh_display()
 
-                # Set default value of checkbox
-                if self.Check != None:
-                    self.CheckVar.set(0)
-
-                # Create object
-                if self.create_cons(key):
-                    return 1
-                
-                # Highlight newly created object
-                self.highlight_Active(self.ConsSelection)
-
-        except:
+        except:            
             return 1
 
         return 0
 
 
     #=======================================================================
-    ''' Disable all constraints of type i '''
+    ''' Highlights the active constraint '''
     #=======================================================================
-    def highlight_Active(self, selection):
+    def highlight_Active(self):
         
         try:
-
             View = cmd.get_view()
-
-            cmd.delete(self.HIGHLIGHT)
-            #cmd.color('orange', self.CONSTRAINT + '*')
-            
-            self.Scale.config(state='disabled')
-
-            if self.Check != None:
-                self.Check.config(state='disabled')
             
             for key in self.dictConstraints:
-
-                if key == selection.get():
-                    ref = self.dictConstraints[key]
-                    # Draw white cylinder
-
+                if key == self.Active.get():
+                    
+                    cons = self.dictConstraints[key]
+                    
                     Highlight = []
                     Highlight.extend([ CYLINDER, 
-                                       float(ref[3][0]), float(ref[3][1]), float(ref[3][2]), 
-                                       float(ref[4][0]), float(ref[4][1]), float(ref[4][2]),
-                                       0.05, 
-                                       1.000, 1.000, 1.000, 
+                                       float(cons[3][0]), float(cons[3][1]), float(cons[3][2]), 
+                                       float(cons[4][0]), float(cons[4][1]), float(cons[4][2]),
+                                       0.05,
+                                       1.000, 1.000, 1.000,
                                        1.000, 1.000, 1.000 ])
 
-                    cmd.load_cgo(Highlight, self.HIGHLIGHT)
-                    cmd.refresh()
+                    cmd.load_cgo(Highlight, self.ACTIVE)
+                    
+                    break
 
-                    self.Scale.config(state='normal')
-                    self.ScaleVar.set(ref[5])
-
-                    if self.Check != None:
-                        self.Check.config(state='normal')
-                        self.CheckVar.set(ref[6])
-            
-                    cmd.set_view(View)
-                    return 0
+            cmd.set_view(View)
                 
-            # Default values of blank item ''
-            self.ScaleVar.set(0.25)
-            if self.Check != None:
-                self.CheckVar.set(0)
-
         except:
             return 1
 
         return 0
 
     #=======================================================================
-    ''' Deletes the active constraint '''
+    ''' Move up to the next active constraint '''
+    #=======================================================================
+    def Next_Active(self):
+            
+        Active = ''
+        First = ''
+        Next = False
+        
+        for key in sorted(self.dictConstraints, key=str.lower):
+            
+            if Next:
+                Active = key
+                break
+            
+            if not First:
+                First = key
+            
+            if key == self.Active:
+                Next = True
+            
+        if not Active:
+            Active = First
+
+        self.Active.set(Active)
+
+        return 0
+    
+    #=======================================================================
+    ''' Move up to the previous active constraint '''
+    #=======================================================================
+    def Previous_Active(self):
+            
+        Active = ''
+        First = ''
+        Next = False
+        
+        for key in reversed(sorted(self.dictConstraints, key=str.lower)):
+            
+            if Next:
+                Active = key
+                break
+            
+            if not First:
+                First = key
+            
+            if key == self.Active:
+                Next = True
+            
+        if not Active:
+            Active = First
+
+        self.Active.set(Active)
+
+        return 0
+    
+
+    #=======================================================================
+        ''' deletes the active constraint '''
     #=======================================================================
     def delete(self):
-        
-        self.top.Del_Constraint(self.dictConstraints,self.optConstraints,self.ConsSelection)
+
+        if self.Active.get():
+            del self.dictConstraints[self.Active.get()]
+            self.Next_Active()
 
     #=======================================================================
         ''' refreshes the display of the constraints '''
@@ -443,75 +379,35 @@ class constraint(Wizard):
     def refresh_display(self):
         
         try:
-            
             # Cleaning
-            cmd.delete(self.HIGHLIGHT)
+            cmd.delete(self.ACTIVE)
             cmd.delete(self.CONSTRAINT + '*')
-
+        except:
+            pass
+            
+        try:
             # Create if not exists constraint
             for key in self.dictConstraints:
-                obj = self.dictConstraints[key][2]
-                if not General_cmd.object_Exists(obj) and self.create_cons(key):
+                distobj = self.dictConstraints[key][2]
+                if not General_cmd.object_Exists(distobj) and self.create_cons(key):
                     return 1
-
-                if not self.DisplayVar.get():
-                    cmd.disable(obj)
-                else:
-                    cmd.enable(obj)
-
-            self.highlight_Active(self.ConsSelection)
-
+            
+            self.highlight_Active()
+            cmd.refresh()
+            
         except:
             self.ErrorCode = 1
         
         return self.ErrorCode
         
     #=======================================================================
-    ''' Disable all constraints of type i '''
-    #=======================================================================
-    def hide_all(self):
-        
-        try:
-            #cmd.disable(self.HIGHLIGHT)
-            cmd.disable(self.CONSTRAINT + '*')
-        except:
-            return 1
-        
-        return 0
-
-    #=======================================================================
-    ''' Loop through contraints of type i and show '''
-    ''' if not exists, create new object           '''
-    #=======================================================================
-    def show_all(self):
-        
-        try:
-            
-            cmd.delete(self.CONSTRAINT + '*')
-
-            # Create if not exists
-            for key in self.dictConstraints:
-                if not General_cmd.object_Exists(self.dictConstraints[key][2]) and self.create_cons(key):
-                    return 1
-
-            # Enable all constraints
-            cmd.enable(self.CONSTRAINT + '*')
-
-            self.highlight_Active(self.ConsSelection)
-
-        except:
-            return 1
-        
-        return 0
-                    
-    #=======================================================================
     ''' Shows the constraint using the distance object '''
     #=======================================================================
     def create_cons(self, key):
 
         try:
-            atom1 = parse_cons(self.dictConstraints[key][0])
-            atom2 = parse_cons(self.dictConstraints[key][1])
+            atom1 = self.top.parse_cons(self.dictConstraints[key][0])
+            atom2 = self.top.parse_cons(self.dictConstraints[key][1])
 
             sel1 = "id " + str(atom1[0]) + " & resn " + atom1[1] + " & resi " + atom1[2]
             if atom1[3] != '-':
@@ -521,12 +417,9 @@ class constraint(Wizard):
             if atom2[3] != '-':
                 sel2 += " & chain " + atom2[3]
 
-            #print sel1
-            #print sel2
-
             cmd.distance(self.dictConstraints[key][2], sel1, sel2)
             cmd.hide('labels', self.dictConstraints[key][2])
-            #cmd.color('orange', self.dictConstraints[key][2])
+            cmd.color('white', self.dictConstraints[key][2])
             
         except:
             return 1
@@ -540,30 +433,9 @@ class constraint(Wizard):
 
         return [
          [ 1, '* Constraint Options *',''],
-         #[ 2, 'Show all','cmd.get_wizard().show_all()'],
-         #[ 2, 'Hide all','cmd.get_wizard().hide_all()'],
-         [ 2, self.DisplayText,'cmd.get_wizard().btn_display()'],
+         [ 2, 'Go to next active','cmd.get_wizard().Next_Active()'],
+         [ 2, 'Go to previous active','cmd.get_wizard().Previous_Active()'],
          [ 2, 'Delete active','cmd.get_wizard().delete()'],
-         [ 2, 'Reset selection','cmd.get_wizard().btn_reset()'],         
+         [ 2, 'Clear constraints', 'cmd.get_wizard().btn_Clear()'],
          [ 2, 'Done','cmd.get_wizard().btn_Done()'],         
          ]
-
-#=======================================================================
-''' Parse constraints and returns an array with each element '''
-#=======================================================================
-def parse_cons(key):
-
-    l = list()
-
-    #l.append(key[1:key.find('(')])
-    l.append(key[1:key.find(' ')])
-
-    #st = key.find(')')+2
-    st = key.find(' ') + 1
-    rnc = key[st:]
-
-    l.append(rnc[0:3])
-    l.append(rnc[3:len(rnc)-1])
-    l.append(rnc[len(rnc)-1:len(rnc)])
-
-    return l

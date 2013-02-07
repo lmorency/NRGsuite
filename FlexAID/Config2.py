@@ -35,59 +35,68 @@ if __debug__:
 
 class Config2Vars(Vars.Vars):
 
-    SATStatus = StringVar()
-    FlexStatus = StringVar()
-    UseReference = IntVar()
-    CovDist = DoubleVar() 
-    CovConsSelection = StringVar()
     IntTranslation = IntVar()
     IntRotation = IntVar()
+    FlexStatus = StringVar()
+    ConsStatus = StringVar()
+    SATStatus = StringVar()
+    UseReference = IntVar()
+    ConsDist = DoubleVar() 
+    ActiveCons = StringVar()
     Anchor = IntVar()
     
     def __init__(self):
     
-        self.dictCovConstraints = dict()
+        self.dictConstraints = dict()
         self.dictAtomTypes = dict()
         self.dictFlexBonds = dict()
         self.dictNeighbours = dict()
     
 
 class Config2(Tabs.Tab):
-
-    DefaultCovDist = 1.5
-
-    HIGHLIGHT = 'HIGHLIGHTCONS'
-    COVCONS = 'COVCONS'
-
     
     def Def_Vars(self):
 
         self.SATStatus = self.Vars.SATStatus
         self.FlexStatus = self.Vars.FlexStatus
         self.UseReference = self.Vars.UseReference
-        self.CovDist = self.Vars.CovDist
-        self.CovConsSelection = self.Vars.CovConsSelection
+        self.ConsDist = self.Vars.ConsDist
+        self.ConsStatus = self.Vars.ConsStatus
         self.IntTranslation = self.Vars.IntTranslation
         self.IntRotation = self.Vars.IntRotation
+        self.ActiveCons = self.Vars.ActiveCons
         self.Anchor = self.Vars.Anchor
 
     def Init_Vars(self):
         
-        self.Vars.dictCovConstraints.clear()
-
+        self.Vars.dictConstraints.clear()
+        self.ActiveCons.set('')
+        
         self.UseReference.set(0)
-
-        self.CovDist.set(0.25)
-        self.CovConsSelection.set('')
-
+        self.ConsDist.set(0.25)
+        self.ConsStatus.set('')
         self.IntTranslation.set(1)
         self.IntRotation.set(1)
-
         self.FlexStatus.set('')
         self.SATStatus.set('')
-    
         self.Anchor.set(-1)
-        
+
+    def Trace(self):
+    
+        try:
+            self.ActiveConsTrace = self.ActiveCons.trace('w', self.ActiveCons_Toggle)
+            self.ConsDistTrace = self.ConsDist.trace('w', self.ConsDist_Toggle)
+        except:
+            pass
+    
+    def Del_Trace(self):
+    
+        try:
+            self.ActiveCons.trace_vdelete('w',self.ActiveConsTrace)
+            self.ConsDist.trace_vdelete('w',self.ConsDistTrace)
+        except:
+            pass
+    
     ''' ==================================================================================
     FUNCTION Btn_AddRemove_FlexBonds: Enables wizard to set flexible bond
     =================================================================================  '''    
@@ -119,12 +128,10 @@ class Config2(Tabs.Tab):
         else:
             self.Enable_Frame()
             
-            #print "WizardResult=",self.top.WizardResult
             if self.top.WizardError or self.top.WizardResult == 0:
                 self.FlexStatus.set('')
             
             elif self.top.WizardResult > 0:
-                #print "IM HERE FUCK!"
                 Status = ' (' + str(self.top.WizardResult) + ') flexible bond(s) set'
                 self.FlexStatus.set(Status)
 
@@ -161,18 +168,18 @@ class Config2(Tabs.Tab):
             self.Enable_Frame()
 
     ''' ==================================================================================
-    FUNCTION Add_Constraint: Adds a new constraint type (starts wizard)
+    FUNCTION AddEditDel_Constraint: Opens the Constraint Wizard.
     =================================================================================  '''    
-    def Add_Constraint(self, Type):
+    def AddEditDel_Constraint(self):
 
         if not self.PyMOL:
             return
-
+        
         if self.top.ActiveWizard is None:
             
-            self.ConsRunning(None, None, None, True)
+            self.ConsRunning(True)
 
-            self.top.ActiveWizard = Constraint.constraint(self,Type)
+            self.top.ActiveWizard = Constraint.constraint(self)
             cmd.set_wizard(self.top.ActiveWizard)
 
             self.top.ActiveWizard.Start()
@@ -182,68 +189,18 @@ class Config2(Tabs.Tab):
 
 
     ''' ==================================================================================
-    FUNCTION Update_Constraints: Updates the list of constraints
-    =================================================================================  '''    
-    def Update_Constraints(self, dictCons, optCons, selection):
-
-        optCons["menu"].delete(0, END)
-
-        Cons = ''
-        for key in sorted(dictCons): # odd sorting !
-            optCons["menu"].add_command(label=key, command=lambda temp = key: optCons.setvar(optCons.cget("textvariable"), value = temp))
-            Cons = key
-
-        selection.set(Cons)
-
-
-    ''' ==================================================================================
     FUNCTION ConsRunning: Toggles controls' state related to when Constraints are active
     =================================================================================  '''    
-    def ConsRunning(self, dictCons, optCons, selection, boolRun):
+    def ConsRunning(self, boolRun):
         
         if boolRun:
-            del self.StateList[:]
-
-            General.saveState(self.fBonds,self.StateList)
-            General.saveState(self.fSAT,self.StateList)
-
-            General.setState(self.fBonds)
-            General.setState(self.fSAT)
-            
+            self.Disable_Frame()
         else:
+            self.Enable_Frame()
 
-            General.backState(self.fBonds,self.StateList)
-            General.backState(self.fSAT,self.StateList)
+            Status = ' (' + str(self.top.WizardResult) + ') constraint(s) set'
+            self.ConsStatus.set(Status)
             
-            self.Update_Constraints(dictCons, optCons, selection)
-
-
-    ''' ==================================================================================
-    FUNCTION Del_Constraint: Deletes a constraint type
-    =================================================================================  '''    
-    def Del_Constraint(self, dictCons, optCons, selection):
-
-        key = selection.get()
-
-        if key != '':
-            
-            try:
-                cmd.delete(self.HIGHLIGHT)
-                cmd.delete(dictCons[key][2])
-            except:
-                pass
-            
-            del dictCons[key]
-            self.Update_Constraints(dictCons, optCons, selection)
-
-
-    ''' ==================================================================================
-    FUNCTION Clear_Constraints: Clear constraints of type i
-    =================================================================================  '''    
-    def Clear_Constraints(self, dictCons, optCons, selection):
-
-        dictCons.clear()
-        self.Update_Constraints(dictCons,optCons,selection)
 
     ''' ==================================================================================
     FUNCTION Frame: Generate the Configuration Options frame in the the middle 
@@ -254,7 +211,7 @@ class Config2(Tabs.Tab):
         self.fConfig2 = Frame(self.top.fMiddle)
 
         fC2Left = Frame(self.fConfig2)
-        fC2Left.pack(side=LEFT, fill=Y)
+        fC2Left.pack(side=LEFT, fill=BOTH, expand=True)
         
         fC2Right = Frame(self.fConfig2)
         fC2Right.pack(side=LEFT, fill=BOTH, expand=True)
@@ -290,9 +247,9 @@ class Config2(Tabs.Tab):
         fBondsLine3.pack(side=TOP, fill=X, padx=5, pady=2)
         
         Label(fBondsLine1, text='Ligand flexibility', font=self.top.font_Title).pack(side=TOP, anchor=W)
-        Button(fBondsLine2, text='Add/Remove flexible bonds', font=self.top.font_Text,command=self.Btn_AddRemove_FlexBonds, width=40).pack(side=LEFT, anchor=W)
+        Button(fBondsLine2, text='Add/Delete flexible bonds', font=self.top.font_Text,command=self.Btn_AddRemove_FlexBonds, width=40).pack(side=LEFT, anchor=NW,expand=True)
         Entry(fBondsLine3, text='', state='disabled', textvariable=self.FlexStatus, font=self.top.font_Text, 
-                disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT)
+                disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT,anchor=NW,expand=True)
 
         #************************************************#
         #*             Set atom types                   *#
@@ -308,9 +265,9 @@ class Config2(Tabs.Tab):
         fSATLine3.pack(side=TOP, fill=X, padx=5, pady=2)
 
         Label(fSATLine1, text='Ligand atom typing', font=self.top.font_Title, state='disabled').pack(side=TOP,anchor=W)
-        Button(fSATLine2, text='Edit atom types', font=self.top.font_Text,command=self.Btn_Edit_AtomTypes, width=40, state='disabled').pack(side=LEFT, anchor=W)
+        Button(fSATLine2, text='Edit atom types', font=self.top.font_Text,command=self.Btn_Edit_AtomTypes, width=40, state='disabled').pack(side=LEFT, anchor=NW,expand=True)
         Entry(fSATLine3, text='', state='disabled', textvariable=self.SATStatus, font=self.top.font_Text,
-                disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT)
+                disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT,anchor=NW,expand=True)
 
         #************************************************#
         #*                Reference pose (RMSD)         *#
@@ -328,48 +285,79 @@ class Config2(Tabs.Tab):
         #************************************************#
         #*               Add Constraints                *#
         #************************************************#
-        #*                  COVALENT                    *#
-        #************************************************#        
         
-        fCovConstraint = Frame(fC2Right)#,bd=1,bg="red")
-        fCovConstraint.pack(fill=X, side=TOP, padx=5, pady=5)
-        fCovConstraintLine1 = Frame(fCovConstraint)
-        fCovConstraintLine1.pack(fill=X, side=TOP, padx=5, pady=2)
-        fCovConstraintLine2 = Frame(fCovConstraint)
-        fCovConstraintLine2.pack(fill=X, side=TOP, padx=5, pady=2)
-        fCovConstraintLine3 = Frame(fCovConstraint)
-        fCovConstraintLine3.pack(fill=X, side=TOP, padx=5, pady=2)
-        fCovConstraintLine4 = Frame(fCovConstraint)
-        fCovConstraintLine4.pack(fill=X, side=TOP, padx=5, pady=2)
+        fConstraint = Frame(fC2Right)#,bd=1,bg="red")
+        fConstraint.pack(fill=X, side=TOP, padx=5, pady=5)
+        fConstraintLine1 = Frame(fConstraint)
+        fConstraintLine1.pack(fill=X, side=TOP, padx=5, pady=2)
+        fConstraintLine2 = Frame(fConstraint)
+        fConstraintLine2.pack(fill=X, side=TOP, padx=5, pady=2)
+        fConstraintLine3 = Frame(fConstraint)
+        fConstraintLine3.pack(fill=X, side=TOP, padx=5, pady=2)
+        fConstraintLine4 = Frame(fConstraint)
+        fConstraintLine4.pack(fill=X, side=TOP, padx=5, pady=2)
  
-        #Label(fCovConstraintLine1, text = 'Covalent constraints', font=self.top.font_Title, justify=LEFT).pack(side=LEFT, anchor=W)
-        Label(fCovConstraintLine1, text = 'Constraints', font=self.top.font_Title, justify=LEFT).pack(side=LEFT, anchor=W)
+        Label(fConstraintLine1, text = 'Constraints', font=self.top.font_Title, justify=LEFT).pack(side=LEFT, anchor=W)
 
-        Label(fCovConstraintLine2, text = 'Name:', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT, anchor=E)
-        optionTuple = '',
-        self.optCovCons = apply(OptionMenu, (fCovConstraintLine2, self.CovConsSelection) + optionTuple)
-        self.optCovCons.config(bg=self.top.Color_White, font=self.top.font_Text)
-        self.optCovCons.pack(side=LEFT, fill=X, expand=True)
+        self.btnAddConstraint = Button(fConstraintLine2, text = 'Add/Edit/Delete constraints',font=self.top.font_Text,command=self.AddEditDel_Constraint)
+        self.btnAddConstraint.pack(side=LEFT, fill=X, expand=True, anchor=NE)
 
-        Label(fCovConstraintLine3, text = '', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT, anchor=E)
-        self.btnAddCovConstraint = Button(fCovConstraintLine3, text = 'Add/Edit',font=self.top.font_Text,command=lambda: self.Add_Constraint('Covalent'))
-        self.btnAddCovConstraint.pack(side=LEFT)
-        self.btnDelCovConstraint = Button(fCovConstraintLine3, text = 'Delete', font=self.top.font_Text,
-                                          command=lambda: self.Del_Constraint(self.Vars.dictCovConstraints,self.optCovCons,self.CovConsSelection))
-        self.btnDelCovConstraint.pack(side=LEFT)
-        self.btnClearCovConstraint = Button(fCovConstraintLine3, text = 'Clear', font=self.top.font_Text,
-                                           command=lambda: self.Clear_Constraints(self.Vars.dictCovConstraints,self.optCovCons,self.CovConsSelection))
-        self.btnClearCovConstraint.pack(side=LEFT)
+        Entry(fConstraintLine3, text='', state='disabled', textvariable=self.ConsStatus, font=self.top.font_Text, 
+                disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT, fill=X, expand=True, anchor=NE)
 
-        Label(fCovConstraintLine4, text = '', width=10, font=self.top.font_Text, justify=RIGHT).pack(side=LEFT, anchor=E)
-        Label(fCovConstraintLine4, text = 'Interaction distance (A):', font=self.top.font_Text).pack(side=LEFT, anchor=S)
+        Label(fConstraintLine4, text = 'Interaction distance (A):', font=self.top.font_Text).pack(side=LEFT, anchor=SW)
 
-        self.sclCovDist = Scale(fCovConstraintLine4, from_ = 0.25, to = 10.0, orient=HORIZONTAL, length=120, resolution=0.05, variable=self.CovDist)
-        self.sclCovDist.pack(side=LEFT)
-        self.sclCovDist.config(state='disabled')
+        self.sclConsDist = Scale(fConstraintLine4, from_ = 0.25, to = 10.0, orient=HORIZONTAL, length=120, resolution=0.05, variable=self.ConsDist)
+        self.sclConsDist.pack(side=LEFT, fill=X, expand=True)
+        self.sclConsDist.config(state='disabled')
+        
 
         return self.fConfig2
-        
+    
+    ''' ==================================================================================
+    FUNCTION parse_cons: parses the constraint key from the dictConstraints
+    ================================================================================== '''        
+    def parse_cons(self, key):
+
+        l = list()
+
+        #l.append(key[1:key.find('(')])
+        l.append(key[1:key.find(' ')])
+
+        #st = key.find(')')+2
+        st = key.find(' ') + 1
+        rnc = key[st:]
+
+        l.append(rnc[0:3])
+        l.append(rnc[3:len(rnc)-1])
+        l.append(rnc[len(rnc)-1:len(rnc)])
+
+        return l
+
+    ''' ==================================================================================
+    FUNCTION ActiveCons_Toggle: The active constraint is changed
+    ================================================================================== '''        
+    def ActiveCons_Toggle(self, *args):
+
+        if self.top.ActiveWizard is not None:
+            
+            if self.ActiveCons.get():
+                self.sclConsDist.config(state='normal')
+                self.ConsDist.set(self.Vars.dictConstraints[self.ActiveCons.get()][5])
+            else:
+                self.sclConsDist.config(state='disabled')
+            
+            self.top.ActiveWizard.refresh_display()
+
+    ''' ==================================================================================
+    FUNCTION ConsDist_Toggle: The active constraint's interaction distance is changed
+    ================================================================================== '''        
+    def ConsDist_Toggle(self, *args):
+
+        if self.top.ActiveWizard is not None:
+            
+            self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
+
     ''' ==================================================================================
     FUNCTION Load_Message: Display the message based on the menu selected
     ================================================================================== '''        

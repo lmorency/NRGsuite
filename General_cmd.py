@@ -74,7 +74,10 @@ def unmask_Objects(lstexc):
     for obj in lstobj:
         if lstexc.count(str(obj)) == 0:
             try:
-                cmd.unmask(str(obj))
+                type = cmd.get_type(str(obj))
+                
+                if type == 'object:molecule' or type == 'selection':
+                    cmd.mask(str(obj))
             except:
                 continue
 

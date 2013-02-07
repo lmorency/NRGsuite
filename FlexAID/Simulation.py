@@ -223,7 +223,7 @@ class Parse(threading.Thread):
         self.top.InitStatus()
 
         self.Error = False
-        self.ErrorMsg = ''
+        self.ErrorMsg = '*FlexAID ERROR: An unexpected error occured.'
         
         self.ParseFile = self.LOGFILE
     
@@ -241,7 +241,7 @@ class Parse(threading.Thread):
             
             elif self.CopyRead_UPDATE(ParseFile, INTERVAL, TIMEOUT):
                 self.Error = True
-                self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files'
+                self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files.'
                 break
                 
             if nRead.get(ParseFile):
@@ -329,7 +329,7 @@ class Parse(threading.Thread):
                             else:
                                 if self.Remove_UPDATE(INTERVAL, TIMEOUT):
                                     self.Error = True
-                                    self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temp files'
+                                    self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temp files.'
                                     break
                                                                     
                     continue
@@ -460,6 +460,7 @@ class Parse(threading.Thread):
         # Put back the auto_zoom to on
         cmd.set("auto_zoom", -1)
         cmd.disable("TOP_*__")
+        cmd.enable("RESULT_*")
         cmd.frame(1)
 
 

@@ -397,7 +397,7 @@ class Simulate(Tabs.Tab):
             if m:
                 TOP = int(m.group(1)) + 1
                 
-                cmd.load(file)
+                cmd.load(file, 'RESULT_' + str(TOP + 1) + '__', state=1)
             
         
     ''' =============================================================================== 
