@@ -476,7 +476,6 @@ class Simulate(Tabs.Tab):
                 return
 
             self.Parse.ParseFile = self.Parse.LOGFILE
-            print("ParseFile changed to", self.Parse.LOGFILE)
 
             self.Btn_PauseResume.config(state='disabled')
             self.Btn_Stop.config(state='disabled')

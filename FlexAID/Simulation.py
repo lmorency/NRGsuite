@@ -229,17 +229,17 @@ class Parse(threading.Thread):
     
         nRead = {}
         
-        print("ENTERING MAINLOOP")
         while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
 
-            print("SLEEPING")
             time.sleep(INTERVAL)
             
             # Once copied cannot go change file (safe-protection)
             ParseFile = self.ParseFile 
-
-            print("COPYREAD " + ParseFile + " @ Line " + str(nRead.get(self.ParseFile)))
-            if self.CopyRead_UPDATE(ParseFile, INTERVAL, TIMEOUT):
+            
+            if self.top.SimStatus.get() == 'Paused.':
+                continue
+            
+            elif self.CopyRead_UPDATE(ParseFile, INTERVAL, TIMEOUT):
                 self.Error = True
                 self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files'
                 break
@@ -250,7 +250,6 @@ class Parse(threading.Thread):
             else:
                 nRead[ParseFile] = 0
             
-            print("Number of lines read is", len(self.Lines))
             for Line in self.Lines:
                 
                 # check line completion
@@ -260,41 +259,39 @@ class Parse(threading.Thread):
                 else:
                     # EOF signal - will resume from here next time
                     break
-
-                # track errors
-                m = re.match('ERROR', Line)
+                
+                m = re.match("Grid\[(\d+)\]=", Line)
                 if m:
-                    self.top.DisplayMessage(str("A critical error occured\n" + Line), 1)
-                    self.Error = True
-                    self.ErrorMsg = '*FlexAID ' + Line
-                    
-                    try:
-                        self.FlexAID.Run.terminate()
-                    except:
-                        pass
-                    
-                    break
-                         
-                '''
-                Generation:   0
-                best by energy
-                    0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
-                    1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
-                    2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
-                    3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
-                    4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
-                best by fitnes
-                    0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
-                    1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
-                    2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
-                    3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
-                    4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
-                '''
+                    index = int(m.group(1))
+                
+                    strcoor = Line[(Line.find('=')+1):]
+                    self.GridVertex[index] = [  float(strcoor[0:8].strip()), 
+                                                float(strcoor[8:16].strip()),
+                                                float(strcoor[16:24].strip())]
+
+                    continue
+
 
                 m = re.match("(\s*(\d+) \()", Line)
                 if m:
                     #print Line
                     
+                    '''
+                    Generation:   0
+                    best by energy
+                        0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
+                        1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
+                        2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
+                        3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
+                        4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
+                    best by fitnes
+                        0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
+                        1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
+                        2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
+                        3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
+                        4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
+                    '''
+
                     self.TOP = int(m.group(2))
 
                     # Find starting index where to parse column values
@@ -337,14 +334,6 @@ class Parse(threading.Thread):
                                                                     
                     continue
 
-                m = re.match("best by (\w+)\s+", Line)
-                if m:
-                    #print Line
-
-                    self.Best = m.group(1)
-                    #print "Best by " + self.Best
-                    continue
-
                 m = re.match("Generation:\s*(\d+)\s+", Line)
                 if m:
                     #print Line
@@ -357,6 +346,14 @@ class Parse(threading.Thread):
                     # ProgressionBar Handler
                     self.top.progressBarHandler(self.Generation, self.NbTotalGen)
 
+                    continue
+
+                m = re.match("best by (\w+)\s+", Line)
+                if m:
+                    #print Line
+
+                    self.Best = m.group(1)
+                    #print "Best by " + self.Best
                     continue
             
                 m = re.match("clustering all individuals", Line)
@@ -406,17 +403,6 @@ class Parse(threading.Thread):
                     self.OriY[2] = self.Ori[2]        # Z
                 
                     continue            
-
-                m = re.match("Grid\[(\d+)\]=", Line)
-                if m:
-                    index = int(m.group(1))
-                
-                    strcoor = Line[(Line.find('=')+1):]
-                    self.GridVertex[index] = [  float(strcoor[0:8].strip()), 
-                                                float(strcoor[8:16].strip()),
-                                                float(strcoor[16:24].strip())]
-
-                    continue
                 
                 m = re.match("SIGMA_SHARE", Line)
                 if m:                            
@@ -429,6 +415,20 @@ class Parse(threading.Thread):
 
                     continue
             
+                # track errors
+                m = re.match("ERROR", Line)
+                if m:
+                    Line = Line.rstrip('\n')
+                    self.Error = True
+                    self.ErrorMsg = '*FlexAID ' + Line
+                    
+                    try:
+                        self.FlexAID.Run.terminate()
+                    except:
+                        pass
+                    
+                    break
+
             if self.Error:
                 break
             
@@ -671,11 +671,10 @@ class Parse(threading.Thread):
         while TIME < TIMEOUT:
             try:
                 shutil.copy(ParseFile, self.READ)
-                    
+
                 readhandle = open(self.READ, 'r')
                 self.Lines = readhandle.readlines()
-                readhandle.close()
-                
+                readhandle.close()                
                 break
                 
             except OSError:
