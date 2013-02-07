@@ -40,7 +40,7 @@ class RunVolume(threading.Thread):
         self.cmdline  = '"' + self.GetCleft.VolumeExecutable + '"'
         self.cmdline += ' -i "' + self.Cleft.CleftFile + '"'
         self.cmdline += ' -t ' + Iterations
-        #print self.cmdline
+        print(self.cmdline)
 
         self.start()
         
@@ -89,6 +89,23 @@ class EstimateVolume(Tabs.Tab):
         self.ProcessError = False
         self.Iterations.set('3')
         
+    def Trace(self):
+
+        try:
+            self.IterationsTrace = self.Iterations.trace('w', lambda *args, **kwargs:
+                                                              self.Validate_Field(input=self.EntryIterations, var=self.Iterations, min=1,
+                                                              max=5, ndec=-1, tag='Number of iterations', _type=int))
+        except:
+            pass
+            
+    def Del_Trace(self):
+    
+        try:
+            self.Iterations.trace_vdelete('w', self.IterationsTrace)
+        except:
+            pass
+            
+    
     ''' ==================================================================================
     FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
@@ -96,7 +113,6 @@ class EstimateVolume(Tabs.Tab):
 
         self.top.Default.Update_TempBindingSite()
         
-        print(self.top.Default.TempBindingSite.listClefts)
         self.Init_Table()
 
     ''' ==================================================================================
@@ -112,11 +128,9 @@ class EstimateVolume(Tabs.Tab):
         fIterations = Frame(self.fVolume, relief=RIDGE, border=0, width=400, height=30)
         fIterations.pack(fill=X, expand=True, side=TOP)
                 
-        EntryIterations = Entry(fIterations, width=6, background='white', justify=CENTER, font=self.top.font_Text, textvariable=self.Iterations)
-        EntryIterations.pack(side=RIGHT, anchor=SE, padx=5)
-        args_list = [EntryIterations, self.Iterations, 1, 5, -1,'Iterations','int']
-        self.ValidIterations = [1, 0, EntryIterations]
-        #self.IterationsTrace = self.Iterations.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.EntryIterations = Entry(fIterations, width=6, background='white', justify=CENTER, font=self.top.font_Text, textvariable=self.Iterations)
+        self.EntryIterations.pack(side=RIGHT, anchor=SE, padx=5)
+        self.ValidIterations = [1, False, self.EntryIterations]
 
         lblIterations = Label(fIterations, text='Iterations:', font=self.top.font_Text)
         lblIterations.pack(side=RIGHT, anchor=SE)
@@ -175,24 +189,11 @@ class EstimateVolume(Tabs.Tab):
         return self.fVolume
         
     ''' ==================================================================================
-    FUNCTION Validate_Iterations: Validates the value in Entry before starting Grid
-    ==================================================================================  '''                 
-    def Validate_Iterations(self):
-        
-        self.fVolume.focus_set()
-        self.fVolume.update_idletasks()
-
-        if self.ValidIterations[0]:
-            return 0
-        
-        return 1
-
-    ''' ==================================================================================
     FUNCTION Calculates the volume of the selected cleft only 
     ==================================================================================  '''    
     def Btn_Selected_Clicked(self):
 
-        if not self.Validate_Iterations():
+        if not self.Validate_Fields():
 
             Selected = self.SelectedCleft.get()
 
@@ -221,7 +222,7 @@ class EstimateVolume(Tabs.Tab):
     ==================================================================================  '''    
     def Btn_Remaining_Clicked(self):
 
-        if not self.Validate_Iterations():
+        if not self.Validate_Fields():
 
             self.VolumeRunning(True)
 
@@ -248,7 +249,7 @@ class EstimateVolume(Tabs.Tab):
     ==================================================================================  '''    
     def Btn_ALL_Clicked(self):
 
-        if not self.Validate_Iterations():
+        if not self.Validate_Fields():
 
             self.VolumeRunning(True)
             
@@ -288,20 +289,6 @@ class EstimateVolume(Tabs.Tab):
     def VolumeRunning(self, boolRun):
                 
         if boolRun:
-            self.Btn_Selected.config(state='disabled')
-            self.Btn_Remaining.config(state='disabled')
-            self.Btn_ALL.config(state='disabled')
-
-            self.Btn_Selected.update_idletasks()
-            self.Btn_Remaining.update_idletasks()
-            self.Btn_ALL.update_idletasks()
-
+            self.Disable_Frame()
         else:
-            self.Btn_Selected.config(state='normal')
-            self.Btn_Remaining.config(state='normal')
-            self.Btn_ALL.config(state='normal')
-
-            # Catch errors
-            if not self.ProcessError:
-                return
-                
+            self.Enable_Frame()

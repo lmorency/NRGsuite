@@ -165,6 +165,19 @@ class Default(Tabs.Tab):
 
         try:
             self.defaultOptionTrace = self.defaultOption.trace('w',self.Toggle_defaultOption)
+
+            self.MaxRadiusTrace = self.MaxRadius.trace('w', lambda *args, **kwargs:
+                                                            self.Validate_Field(input=self.EntryMaxRadius, var=self.MaxRadius, min=self.MinRadius,
+                                                            max=5.00, ndec=2, tag='Maximum radius', _type=float))
+
+            self.MinRadiusTrace = self.MinRadius.trace('w', lambda *args, **kwargs:
+                                                            self.Validate_Field(input=self.EntryMinRadius, var=self.MinRadius, min=0.50,
+                                                            max=self.MaxRadius, ndec=2, tag='Minimum radius', _type=float))
+                     
+            self.NbCleftTrace = self.NbCleft.trace('w', lambda *args, **kwargs:
+                                                        self.Validate_Field(input=self.EntryNbCleft, var=self.NbCleft, min=1,
+                                                        max=100, ndec=-1, tag='Number of clefts', _type=int))
+
         except:
             pass
 
@@ -175,6 +188,9 @@ class Default(Tabs.Tab):
 
         try:
             self.defaultOption.trace_vdelete('w',self.defaultOptionTrace)
+            self.MaxRadius.trace_vdelete('w',self.MaxRadiusTrace)
+            self.MinRadius.trace_vdelete('w',self.MinRadiusTrace)
+            self.NbCleft.trace_vdelete('w',self.NbCleftTrace)
         except:
             pass
 
@@ -258,43 +274,30 @@ class Default(Tabs.Tab):
 
         Label(fBasicLine2, text='Insert spheres radii:', font=self.top.font_Text).pack(side=LEFT)
 
-        EntryMaxRadius = Entry(fBasicLine2, width=5, textvariable=self.MaxRadius, background='white', justify=CENTER, font=self.top.font_Text)
-        EntryMaxRadius.pack(side=RIGHT)
+        self.EntryMaxRadius = Entry(fBasicLine2, width=5, textvariable=self.MaxRadius, background='white', justify=CENTER, font=self.top.font_Text)
+        self.EntryMaxRadius.pack(side=RIGHT)
         Label(fBasicLine2, text='Max:', font=self.top.font_Text).pack(side=RIGHT, padx=2)
 
-        EntryMinRadius = Entry(fBasicLine2, width=5, textvariable=self.MinRadius, background='white', justify=CENTER, font=self.top.font_Text)
-        EntryMinRadius.pack(side=RIGHT)
+        self.EntryMinRadius = Entry(fBasicLine2, width=5, textvariable=self.MinRadius, background='white', justify=CENTER, font=self.top.font_Text)
+        self.EntryMinRadius.pack(side=RIGHT)
         Label(fBasicLine2, text='Min:', font=self.top.font_Text).pack(side=RIGHT, padx=2)
-
-        args_list = [EntryMaxRadius, self.MaxRadius, EntryMinRadius, 10.00, 2, 'Maximum radius', 'float']
-        #EntryMaxRadius.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidMaxRadius = [ 1, 0, EntryMaxRadius ]
-        #self.MaxRadiusTrace = self.MaxRadius.trace('w', lambda args=args_list: self.Validate_Field(args_list))
-
-        args_list = [EntryMinRadius, self.MinRadius, 0.25, EntryMaxRadius, 2, 'Minimum radius', 'float']
-        #EntryMinRadius.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidMinRadius = [ True, 1, 0, EntryMinRadius ]
-        #self.MinRadiusTrace = self.MinRadius.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.ValidMaxRadius = [ 1, 0, self.EntryMaxRadius ]
+        self.ValidMinRadius = [ True, 1, 0, self.EntryMinRadius ]
         
         Label(fBasicLine3, text='Residue in contact (e.g. ALA13A):', font=self.top.font_Text).pack(side=LEFT)
         self.EntryResidu = Entry(fBasicLine3,textvariable=self.ResiduValue, background='white', justify=CENTER, font=self.top.font_Text)
         self.EntryResidu.pack(side=RIGHT)
 
         Label(fBasicLine4, text='Number of clefts to show:', font=self.top.font_Text).pack(side=LEFT)
-        EntryNbCleft = Entry(fBasicLine4, width=8, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
-        EntryNbCleft.pack(side=RIGHT)
-        args_list = [EntryNbCleft, self.NbCleft, 1, 100, -1, 'Number of clefts', 'int']
-        #EntryNbCleft.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidNbCleft = [ 1, 0, EntryNbCleft ]
-        #self.NbCleft = self.NbCleft.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.EntryNbCleft = Entry(fBasicLine4, width=8, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
+        self.EntryNbCleft.pack(side=RIGHT)
+        self.ValidNbCleft = [ 1, 0, self.EntryNbCleft ]
 
         #Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
         EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
         #EntryOutput.pack(side=RIGHT)
-        args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, 'Output filename', 'str']
-        #EntryOutput.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
+        #args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, 'Output filename', 'str']
         self.ValidOutput = [ 1, 0, EntryOutput ]
-        #self.OutputFileValueTrace = self.OutputFileValue.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         #Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, width=20, relief=RIDGE, command=self.Btn_AdvancedOptions).pack(side=RIGHT)
 

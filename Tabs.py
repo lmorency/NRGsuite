@@ -135,59 +135,58 @@ class Tab:
     ''' ==================================================================================
     FUNCTION Validate_Field: Validates an Entry Field in the FlexAID interface
     ==================================================================================  '''    
-    def Validate_Field(self, *args):
+    def Validate_Field(self, *args, **kwargs):
         
-        print("VALIDATE_FIELD")
-        print(args)
+        input = kwargs.pop('input')
+        var = kwargs.pop('var')
+        min = kwargs.pop('min')
+        max = kwargs.pop('max')
+        ndec = kwargs.pop('ndec')
+        tag = kwargs.pop('tag')
+        _type = kwargs.pop('_type')
         
-        Entry = args[0]
-        Var = args[1]
-        Min = args[2]
-        Max = args[3]
-        nDec = args[4]
-        Label = args[5]
-        Type = args[6]
-
         rv = -1
+        
+        if _type == float:
 
-        if Type == 'float':
-            # If the min-max value depends on another Widget Entry value
-            if type(Min) != float:
+            if type(min) != float:
                 try:
-                    Min = float(Min.get())
-                except ValueError:
-                    Min = 0.0
+                    min = float(min.get())
+                except:
+                    min = 0
 
-            if type(Max) != float:
+            if type(max) != float:
                 try:
-                    Max = float(Max.get())
+                    max = float(max.get())
+                except:
+                    max = 0
+        
+            rv = General.validate_Float(var.get(), min, max, ndec)
+        
+        elif _type == int:
+        
+            if type(min) != int:
+                try:
+                    min = int(min.get())
                 except ValueError:
-                    Max = 1.0
+                    min = 0
+
+            if type(max) != int:
+                try:
+                    max = int(max.get())
+                except ValueError:
+                    max = 100
+
+            rv = General.validate_Integer(var.get(), min, max)
             
-            rv = General.validate_Float(Var.get(), Min, Max, nDec)
+        elif _type == str:
+        
+            rv = General.validate_String(var.get())
 
-        elif Type == 'int':
-            # If the min-max value depends on another Widget Entry value
-            if type(Min) != int:
-                try:
-                    Min = int(Min.get())
-                except ValueError:
-                    Min = 1
-
-            if type(Max) != int:
-                try:
-                    Max = int(Max.get())
-                except ValueError:
-                    Max = 100
-            
-            rv = General.validate_Integer(Var.get(), Min, Max)
-                
-        elif Type == 'str':
-            rv = General.validate_String(Var.get())
-
+        
         # Return-value testing
         if rv == 0:
-            Entry.config(bg=self.Color_White)
+            input.config(bg=self.Color_White)
             return True
             
         elif rv == -1:
@@ -195,17 +194,18 @@ class Tab:
             
         else:
             if rv == 1:
-                self.DisplayMessage("Value has erroneus format for field " + Label, 1)
+                self.DisplayMessage("Value has erroneus format for field " + tag, 1)
             elif rv == 2:
-                self.DisplayMessage("The number of decimals cannot exceed (" + str(nDec) + ") for field " + Label, 1)
+                self.DisplayMessage("The number of decimals cannot exceed (" + str(ndec) + ") for field " + tag, 1)
             elif rv == 3:
-                self.DisplayMessage("Value must be within the range[" + str(Min) + "," + str(Max) + "] for field " + Label, 1)
+                self.DisplayMessage("Value must be within the range[" + str(min) + "," + str(max) + "] for field " + tag, 1)
 
-            Entry.config(bg=self.Color_Red)
+            input.config(bg=self.Color_Red)
             
             return False
     
         return True
+        
         
     ''' ==================================================================================
     FUNCTION Validate_Fields: Validate all fields of a frame before switching

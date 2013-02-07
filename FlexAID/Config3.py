@@ -99,9 +99,30 @@ class Config3(Tabs.Tab):
             self.SolventTypeTrace = self.SolventType.trace('w',self.SolventType_Toggle)
             self.DEETrace = self.UseDEE.trace('w',self.DEE_Toggle)
 
-            #self.PermeabilityTrace = self.Permeability.trace('w', lambda args=args_list: self.Validate_Field(self.Permeability_args_list))
-            #self.DeltaAngleTrace = self.DeltaAngle.trace('w', lambda args=args_list: self.Validate_Field(args_list))            
-            #self.DeltaDihedralTrace = self.DeltaDihedral.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+            self.PermeabilityTrace = self.Permeability.trace('w', lambda *args, **kwargs:
+                                                                  self.Validate_Field(input=self.entPermea, var=self.Permeability, min=0.00,
+                                                                  max=1.00, ndec=2, tag='Van der Waals permeability', _type=float))
+
+            self.DeltaDihedralTrace = self.DeltaDihedral.trace('w', lambda *args, **kwargs:
+                                                                    self.Validate_Field(input=self.entDDih, var=self.DeltaDihedral, min=0.5,
+                                                                    max=10.0, ndec=1, tag='Delta dihedral', _type=float))
+
+            self.DeltaAngleTrace = self.DeltaAngle.trace('w', lambda *args, **kwargs:
+                                                              self.Validate_Field(input=self.entDAng, var=self.DeltaAngle, min=0.5,
+                                                              max=10.0, ndec=1, tag='Delta angle', _type=float))
+
+            self.DeltaDihedralFlexTrace = self.DeltaDihedralFlex.trace('w', lambda *args, **kwargs:
+                                                                            self.Validate_Field(input=self.entDDihFlex, var=self.DeltaDihedralFlex, min=1.0,
+                                                                            max=30.0, ndec=1, tag='Delta flexible dihedral', _type=float))
+
+            self.DEE_Clash_ThresholdTrace = self.DEE_Clash_Threshold.trace('w', lambda *args, **kwargs:
+                                                                                self.Validate_Field(input=self.entDEE, var=self.DEE_Clash_Threshold, min=0.00,
+                                                                                max=1.00, ndec=2, tag='Dead-end-elimination clash', _type=float))
+
+            self.SolventTermTrace = self.SolventTerm.trace('w', lambda *args, **kwargs:
+                                                                self.Validate_Field(input=self.entSolventTerm, var=self.SolventTerm, min=-10.0,
+                                                                max=10.0, ndec=1, tag='Solvent term', _type=float))
+
         except:
             pass
         
@@ -115,6 +136,12 @@ class Config3(Tabs.Tab):
             self.top.IOFile.AtomTypes.trace_vdelete('w',self.top.IOFile.AtomTypesTrace)
             self.SolventType.trace_vdelete('w',self.SolventTypeTrace)
             self.UseDEE.trace_vdelete('w',self.DEETrace)
+            self.Permeability.trace_vdelete('w',self.PermeabilityTrace)
+            self.DeltaDihedral.trace_vdelete('w',self.DeltaDihedralTrace)
+            self.DeltaAngle.trace_vdelete('w',self.DeltaAngleTrace)
+            self.DeltaDihedralFlex.trace_vdelete('w',self.DeltaDihedralFlexTrace)
+            self.DEE_Clash_Threshold.trace_vdelete('w',self.DEE_Clash_ThresholdTrace)
+            self.SolventTerm.trace_vdelete('w',self.SolventTermTrace)
         except:
             pass        
 
@@ -216,12 +243,9 @@ class Config3(Tabs.Tab):
 
         Label(fPermeaLine1, text='Permeability', font=self.top.font_Title).pack(side=LEFT, anchor=W)
         Label(fPermeaLine2, text='Van der Waals ratio: ', font=self.top.font_Text).pack(side=LEFT)
-        entPermea = Entry(fPermeaLine2, textvariable=self.Permeability, font=self.top.font_Text, justify=CENTER, width=4)
-        entPermea.pack(side=RIGHT)
-        args_list = [entPermea, self.Permeability, 0.00, 1.00, 2, 'VDW Permeability','float']
-        #entPermea.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidPermeability = [1, 0, entPermea]
-        #self.PermeabilityTrace = self.Permeability.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.entPermea = Entry(fPermeaLine2, textvariable=self.Permeability, font=self.top.font_Text, justify=CENTER, width=4)
+        self.entPermea.pack(side=RIGHT)
+        self.ValidPermeability = [1, 0, self.entPermea]
 
         #==================================================================================
         # Delta (variations of distances/angles)
@@ -246,30 +270,21 @@ class Config3(Tabs.Tab):
 
         # Angles
         Label(fDeltaLine2, text='Angle from reference: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
-        entDAng = Entry(fDeltaLine2, textvariable=self.DeltaAngle, font=self.top.font_Text, justify=CENTER, width=5)
-        entDAng.pack(side=RIGHT, anchor=W)
-        args_list = [entDAng, self.DeltaAngle, 1.0, 10.0, 2, 'DELTA Angle','float']
-        #entDAng.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidDeltaAngle = [1, 0, entDAng]
-        #self.DeltaAngleTrace = self.DeltaAngle.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.entDAng = Entry(fDeltaLine2, textvariable=self.DeltaAngle, font=self.top.font_Text, justify=CENTER, width=5)
+        self.entDAng.pack(side=RIGHT, anchor=W)
+        self.ValidDeltaAngle = [1, 0, self.entDAng]
 
         # Dihedrals
         Label(fDeltaLine3, text='Dihedrals from reference: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
-        entDDih = Entry(fDeltaLine3, textvariable=self.DeltaDihedral, font=self.top.font_Text, justify=CENTER, width=5)
-        entDDih.pack(side=RIGHT, anchor=W)
-        args_list = [entDDih, self.DeltaDihedral, 1.0, 10.0, 2, 'DELTA Dihedral','float']
-        #entDDih.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidDeltaDihedral = [1, 0, entDDih]
-        #self.DeltaDihedralTrace = self.DeltaDihedral.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.entDDih = Entry(fDeltaLine3, textvariable=self.DeltaDihedral, font=self.top.font_Text, justify=CENTER, width=5)
+        self.entDDih.pack(side=RIGHT, anchor=W)
+        self.ValidDeltaDihedral = [1, 0, self.entDDih]
 
         # Dihedrals (Flex Bonds)
         Label(fDeltaLine4, text='Dihedrals of flexible bonds: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
-        entDDihFlex = Entry(fDeltaLine4, textvariable=self.DeltaDihedralFlex, font=self.top.font_Text, width=5, justify=CENTER)
-        entDDihFlex.pack(side=RIGHT, anchor=W)
-        args_list = [entDDihFlex, self.DeltaDihedralFlex, 1.0, 30.0, 2, 'DELTA Dihedral Flexible Bonds','float']
-        #entDDihFlex.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidDeltaDihedralFlex = [1, 0, entDDihFlex]
-        #self.DeltaDihedralFlexTrace = self.DeltaDihedralFlex.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.entDDihFlex = Entry(fDeltaLine4, textvariable=self.DeltaDihedralFlex, font=self.top.font_Text, width=5, justify=CENTER)
+        self.entDDihFlex.pack(side=RIGHT, anchor=W)
+        self.ValidDeltaDihedralFlex = [1, 0, self.entDDihFlex]
 
         #==================================================================================
         # Side-chain optimization (DEE)
@@ -291,10 +306,7 @@ class Config3(Tabs.Tab):
         Label(fDEELine3, text='Clashing Threshold:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entDEE = Entry(fDEELine3, width=5, font=self.top.font_Text, textvariable=self.DEE_Clash_Threshold, state='disabled', justify=CENTER)
         self.entDEE.pack(side=RIGHT)
-        args_list = [self.entDEE, self.DEE_Clash_Threshold, 0.01, 1.00, 2,'DEE Clash Threshold','float']
-        #self.entDEE.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidDEE = [1, 0, self.entDEE]
-        #self.DEE_Clash_ThresholdTrace = self.DEE_Clash_Threshold.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         #==================================================================================
         # Implicit Solvent Type
@@ -320,10 +332,7 @@ class Config3(Tabs.Tab):
         Label(fSolventLine3, text='Solvent term:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entSolventTerm = Entry(fSolventLine3, textvariable=self.SolventTerm, font=self.top.font_Text, width=4, justify=CENTER)
         self.entSolventTerm.pack(side=RIGHT)
-        args_list = [self.entSolventTerm, self.SolventTerm, -10.0, 10.0, 1, 'Solvent Term','float']
-        #self.entSolventTerm.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidSolventTerm = [1, 0, self.entSolventTerm]
-        #self.SolventTermTrace = self.SolventTerm.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
 
         self.Validator = [ self.ValidDEE, self.ValidPermeability,

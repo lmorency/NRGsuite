@@ -116,6 +116,68 @@ class GAParam(Tabs.Tab):
             self.AGATrace = self.UseAGA.trace('w',self.AGA_Toggle)
             self.RepModelTrace = self.RepModel.trace('w',self.RepModel_Toggle)
             self.FitModelTrace = self.FitModel.trace('w',self.FitModel_Toggle)
+
+            self.NbChromTrace = self.NbChrom.trace('w', lambda *args, **kwargs:
+                                    self.Validate_Field(input=self.inputNbChr, var=self.NbChrom, min=1, max=100000,
+                                                        ndec=-1, tag='Chromosomes', _type=int))
+
+            self.NbGenTrace = self.NbGen.trace('w', lambda *args, **kwargs:
+                                                    self.Validate_Field(input=self.inputNbGen, var=self.NbGen, min=1, 
+                                                                        max=100000, ndec=-1, tag='Generations', _type=int))
+            
+            self.CrossRateTrace = self.CrossRate.trace('w', lambda *args, **kwargs:
+                                                            self.Validate_Field(input=self.inputCR, var=self.CrossRate, min=0.000, 
+                                                                                max=1.000, ndec=3, tag='Crossover rate', _type=float))
+            
+            self.MutaRateTrace = self.MutaRate.trace('w', lambda *args, **kwargs:
+                                                          self.Validate_Field(input=self.inputMR, var=self.MutaRate, min=0.000,
+                                                          max=1.000, ndec=3, tag='Mutation rate', _type=float))
+
+            self.AGAk1Trace = self.AGAk1.trace('w', lambda *args, **kwargs:
+                                                    self.Validate_Field(input=self.entAGAk1, var=self.AGAk1, min=0.000,
+                                                    max=1.000, ndec=3, tag='Adaptive constant k1', _type=float))
+
+            self.AGAk2Trace = self.AGAk2.trace('w', lambda *args, **kwargs:
+                                                    self.Validate_Field(input=self.entAGAk2, var=self.AGAk2, min=0.000,
+                                                    max=1.000, ndec=3, tag='Adaptive constant k2', _type=float))
+
+            self.AGAk3Trace = self.AGAk3.trace('w', lambda *args, **kwargs:
+                                                    self.Validate_Field(input=self.entAGAk3, var=self.AGAk3, min=0.000,
+                                                    max=1.000, ndec=3, tag='Adaptive constant k3', _type=float))
+
+            self.AGAk4Trace = self.AGAk4.trace('w', lambda *args, **kwargs:
+                                                    self.Validate_Field(input=self.entAGAk4, var=self.AGAk4, min=0.000,
+                                                    max=1.000, ndec=3, tag='Adaptive constant k4', _type=float))
+
+            self.NbTopChromTrace = self.NbTopChrom.trace('w', lambda *args, **kwargs:
+                                                              self.Validate_Field(input=self.inputTopChr, var=self.NbTopChrom, min=0,
+                                                              max=self.inputNbChr, ndec=-1, tag='TOP complexes', _type=int))
+
+            self.NbGenFreqTrace = self.NbGenFreq.trace('w', lambda *args, **kwargs:
+                                                            self.Validate_Field(input=self.inputGenFq, var=self.NbGenFreq, min=1,
+                                                            max=self.inputNbGen, ndec=-1, tag='Generations interval', _type=int))
+
+            self.FitScaleTrace = self.FitScale.trace('w', lambda *args, **kwargs:
+                                                          self.Validate_Field(input=self.entScale, var=self.FitScale, min=0.00,
+                                                          max=100.00, ndec=2, tag='Fitness scale', _type=float))
+
+            self.FitPeakTrace = self.FitPeak.trace('w', lambda *args, **kwargs:
+                                                        self.Validate_Field(input=self.entPeak, var=self.FitPeak, min=0.00,
+                                                        max=100.00, ndec=2, tag='Fitness peak', _type=float))
+
+            self.FitAlphaTrace = self.FitAlpha.trace('w', lambda *args, **kwargs:
+                                                          self.Validate_Field(input=self.entAlpha, var=self.FitAlpha, min=0.00,
+                                                          max=100.00, ndec=2, tag='Fitness alpha', _type=float))
+
+            self.RepSSTrace = self.RepSS.trace('w', lambda *args, **kwargs:
+                                                    self.Validate_Field(input=self.entSS, var=self.RepSS, min=1,
+                                                    max=1000, ndec=-1, tag='Reproduction steady-state', _type=int))
+
+            self.RepBTrace = self.RepB.trace('w', lambda *args, **kwargs:
+                                                  self.Validate_Field(input=self.entB, var=self.RepB, min=0.10,
+                                                  max=5.00, ndec=2, tag='Reproduction population boom', _type=float))
+
+
         except:
             pass
 
@@ -128,6 +190,21 @@ class GAParam(Tabs.Tab):
             self.UseAGA.trace_vdelete('w',self.AGATrace)
             self.RepModel.trace_vdelete('w',self.RepModelTrace)
             self.FitModel.trace_vdelete('w',self.FitModelTrace)
+            self.NbChrom.trace_vdelete('w',self.NbChromTrace)
+            self.NbGen.trace_vdelete('w',self.NbGenTrace)
+            self.CrossRate.trace_vdelete('w',self.CrossRateTrace)
+            self.MutaRate.trace_vdelete('w',self.MutaRateTrace)
+            self.AGAk1.trace_vdelete('w',self.AGAk1Trace)
+            self.AGAk2.trace_vdelete('w',self.AGAk2Trace)
+            self.AGAk3.trace_vdelete('w',self.AGAk3Trace)
+            self.AGAk4.trace_vdelete('w',self.AGAk4Trace)
+            self.NbTopChrom.trace_vdelete('w',self.NbTopChromTrace)
+            self.NbGenFreq.trace_vdelete('w',self.NbGenFreqTrace)
+            self.FitScale.trace_vdelete('w',self.FitScaleTrace)
+            self.FitPeak.trace_vdelete('w',self.FitPeakTrace)
+            self.FitAlpha.trace_vdelete('w',self.FitAlphaTrace)
+            self.RepSS.trace_vdelete('w',self.RepSSTrace)
+            self.RepB.trace_vdelete('w',self.RepBTrace)
         except:
             pass
 
@@ -157,20 +234,14 @@ class GAParam(Tabs.Tab):
 
         Label(fGeneticLine1, text='Genetic parameters', font=self.top.font_Title).pack(side=LEFT)
         Label(fGeneticLine2, text='Number of chromosomes:', font=self.top.font_Text).pack(side=LEFT)
-        inputNbChr = Entry(fGeneticLine2, width=5, background='white', justify=CENTER, textvariable=self.NbChrom, font=self.top.font_Text)
-        inputNbChr.pack(side=RIGHT, anchor=NW)
-        args_list = [inputNbChr, self.NbChrom, 1, 100000, -1, 'Chromosomes','int']
-        #inputNbChr.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidNbChrom = [1, False, inputNbChr]
-        #self.NbChromTrace = self.NbChrom.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.inputNbChr = Entry(fGeneticLine2, width=5, background='white', justify=CENTER, textvariable=self.NbChrom, font=self.top.font_Text)
+        self.inputNbChr.pack(side=RIGHT, anchor=NW)
+        self.ValidNbChrom = [1, False, self.inputNbChr]
 
         Label(fGeneticLine3, text='Number of generations:', font=self.top.font_Text).pack(side=LEFT)
-        inputNbGen = Entry(fGeneticLine3, width=5, background='white', justify=CENTER, textvariable=self.NbGen, font=self.top.font_Text)
-        inputNbGen.pack(side=RIGHT, anchor=NW)
-        args_list = [inputNbGen, self.NbGen, 1, 100000, -1, 'Generations','int']
-        #inputNbGen.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidNbGen = [1, False, inputNbGen]
-        #self.NbGenTrace = self.NbGen.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.inputNbGen = Entry(fGeneticLine3, width=5, background='white', justify=CENTER, textvariable=self.NbGen, font=self.top.font_Text)
+        self.inputNbGen.pack(side=RIGHT, anchor=NW)
+        self.ValidNbGen = [1, False, self.inputNbGen]
 
         ''' ========================================================================== '''
 
@@ -187,18 +258,12 @@ class GAParam(Tabs.Tab):
         Label(fOperatorsLine2, text='Crossover rate:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.inputCR = Entry(fOperatorsLine2, width=5, background='white', justify=CENTER, textvariable=self.CrossRate, font=self.top.font_Text)
         self.inputCR.pack(side=RIGHT, anchor=NW)
-        args_list = [self.inputCR, self.CrossRate, 0.000, 1.000, 3, 'Crossover Rate','float']
-        #self.inputCR.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidCrossRate = [1, False, self.inputCR]
-        #self.CrossRateTrace = self.CrossRate.trace('w', lambda args=args_list: self.Validate_Field(args_list))
         
         Label(fOperatorsLine3, text='Mutation rate:', font=self.top.font_Text).pack(side=LEFT, anchor=W) 
         self.inputMR = Entry(fOperatorsLine3, width=5, background='white', justify=CENTER, textvariable=self.MutaRate, font=self.top.font_Text)
         self.inputMR.pack(side=RIGHT, anchor=W)
-        args_list = [self.inputMR, self.MutaRate, 0.001, 1.000, 3, 'Mutation Rate','float']
-        #self.inputMR.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidMutaRate = [1, False, self.inputMR]
-        #self.MutaRateTrace = self.MutaRate.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         ''' ========================================================================== '''
 
@@ -214,35 +279,23 @@ class GAParam(Tabs.Tab):
 
         self.entAGAk4 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk4, font=self.top.font_Text)
         self.entAGAk4.pack(side=RIGHT, anchor=W)
-        args_list = [self.entAGAk4, self.AGAk4, 0.001, 1.000, 3, 'Adative GA Constant k4','float']
         Label(fAGALine2, text='k4:',font=self.top.font_Text).pack(side=RIGHT)
-        #self.entAGAk4.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidAGAk4 = [1, False, self.entAGAk4]
-        #self.AGAk4Trace = self.AGAk4.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         self.entAGAk3 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk3, font=self.top.font_Text)
         self.entAGAk3.pack(side=RIGHT, anchor=W)
-        args_list = [self.entAGAk3, self.AGAk3, 0.001, 1.000, 3, 'Adative GA Constant k3','float']
         Label(fAGALine2, text='k3:',font=self.top.font_Text).pack(side=RIGHT)
-        #self.entAGAk3.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidAGAk3 = [1, False, self.entAGAk3]
-        #self.AGAk3Trace = self.AGAk3.trace('w', lambda args=args_list: self.Validate_Field(args_list))
         
         self.entAGAk2 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk2, font=self.top.font_Text)
         self.entAGAk2.pack(side=RIGHT, anchor=W)
-        args_list = [self.entAGAk2, self.AGAk2, 0.001, 1.000, 3, 'Adative GA Constant k2','float']
         Label(fAGALine2, text='k2:',font=self.top.font_Text).pack(side=RIGHT)
-        #self.entAGAk2.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidAGAk2 = [1, False, self.entAGAk2]
-        #self.AGAk2Trace = self.AGAk2.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         self.entAGAk1 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk1, font=self.top.font_Text)
         self.entAGAk1.pack(side=RIGHT, anchor=W)
-        args_list = [self.entAGAk1, self.AGAk1, 0.001, 1.000, 3, 'Adative GA Constant k1','float']
         Label(fAGALine2, text='k1:',font=self.top.font_Text).pack(side=RIGHT)
-        #self.entAGAk1.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidAGAk1 = [1, False, self.entAGAk1]
-        #self.AGAk1Trace = self.AGAk1.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         ''' ========================================================================== '''
 
@@ -257,20 +310,14 @@ class GAParam(Tabs.Tab):
 
         Label(fVisualLine1, text='Visual display', font=self.top.font_Title).pack(side=LEFT)
         Label(fVisualLine2, text='Number of TOP complexes:', font=self.top.font_Text, justify=LEFT).pack(side=LEFT)
-        inputTopChr = Entry(fVisualLine2, width=5, background='white', justify=CENTER, textvariable=self.NbTopChrom, font=self.top.font_Text)
-        inputTopChr.pack(side=RIGHT)
-        args_list = [inputTopChr, self.NbTopChrom, 0, inputNbChr, -1, 'TOP Complexes','int']
-        #inputTopChr.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidNbTopChrom = [1, False, inputTopChr]
-        #self.NbTopChromTrace = self.NbTopChrom.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.inputTopChr = Entry(fVisualLine2, width=5, background='white', justify=CENTER, textvariable=self.NbTopChrom, font=self.top.font_Text)
+        self.inputTopChr.pack(side=RIGHT)
+        self.ValidNbTopChrom = [1, False, self.inputTopChr]
         
         Label(fVisualLine3, text='Refresh interval:', font=self.top.font_Text).pack(side=LEFT)
-        inputGenFq = Entry(fVisualLine3, width=5, background='white', justify=CENTER, textvariable=self.NbGenFreq, font=self.top.font_Text)
-        inputGenFq.pack(side=RIGHT)
-        args_list = [inputGenFq, self.NbGenFreq, 1, inputNbGen, -1, 'Generations Interval','int']
-        #inputGenFq.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
-        self.ValidNbGenFreq = [1, False, inputGenFq]
-        #self.NbGenFreqTrace = self.NbGenFreq.trace('w', lambda args=args_list: self.Validate_Field(args_list))
+        self.inputGenFq = Entry(fVisualLine3, width=5, background='white', justify=CENTER, textvariable=self.NbGenFreq, font=self.top.font_Text)
+        self.inputGenFq.pack(side=RIGHT)
+        self.ValidNbGenFreq = [1, False, self.inputGenFq]
 
         ''' ========================================================================== '''        
 
@@ -289,27 +336,18 @@ class GAParam(Tabs.Tab):
 
         self.entScale = Entry(fFitnessLine3, width=4, background='white', justify=CENTER, textvariable=self.FitScale, font=self.top.font_Text)
         self.entScale.pack(side=RIGHT)
-        args_list = [self.entScale, self.FitScale, 0.0, 100.0, 2, 'Fitness scale','float']
         Label(fFitnessLine3, text='Scale:', font=self.top.font_Text).pack(side=RIGHT)
-        #self.entScale.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidFitScale = [1, False, self.entScale]
-        #self.FitScaleTrace = self.FitScale.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         self.entPeak = Entry(fFitnessLine3, width=4, background='white', justify=CENTER, textvariable=self.FitPeak, font=self.top.font_Text)
         self.entPeak.pack(side=RIGHT)
-        args_list = [self.entPeak, self.FitPeak, 0.0, 100.0, 2, 'Fitness peak','float']
         Label(fFitnessLine3, text='Peak:', font=self.top.font_Text).pack(side=RIGHT)
-        #self.entPeak.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidFitPeak = [1, False, self.entPeak]
-        #self.FitPeakTrace = self.FitPeak.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         self.entAlpha = Entry(fFitnessLine3, width=4, background='white', justify=CENTER, textvariable=self.FitAlpha, font=self.top.font_Text)
         self.entAlpha.pack(side=RIGHT)
-        args_list = [self.entAlpha, self.FitAlpha, 0.0, 100.0, 2, 'Fitness alpha','float']
         Label(fFitnessLine3, text='alpha:', font=self.top.font_Text).pack(side=RIGHT)
-        #self.entAlpha.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidFitAlpha = [1, False, self.entAlpha]
-        #self.FitAlphaTrace = self.FitAlpha.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         
         ''' ========================================================================== '''                
@@ -329,20 +367,14 @@ class GAParam(Tabs.Tab):
         Radiobutton(fRepModelLine2, text='Elitism (Steady-state):', value='STEADY', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
         self.entSS = Entry(fRepModelLine2, width=5, background='white', justify=CENTER, textvariable=self.RepSS, font=self.top.font_Text)
         self.entSS.pack(side=RIGHT)
-        args_list = [self.entSS, self.RepSS, 1, 1000, -1, 'Reproduction Steady-State','int']
         Label(fRepModelLine2, text='Chr.:', font=self.top.font_Text).pack(side=RIGHT)
-        #self.entSS.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidRepSS = [1, False, self.entSS]
-        #self.RepSSTrace = self.RepSS.trace('w', lambda args=args_list: self.Validate_Field(args_list))
 
         Radiobutton(fRepModelLine3, text='Population boom:', value='BOOM', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
         self.entB = Entry(fRepModelLine3, width=5, background='white', justify=CENTER, textvariable=self.RepB, font=self.top.font_Text)
         self.entB.pack(side=RIGHT)
-        args_list = [self.entB, self.RepB, 0.01, 5.00, 2, 'Reproduction PopBoom','float']
         Label(fRepModelLine3, text='Ratio.:', font=self.top.font_Text).pack(side=RIGHT)
-        #self.entB.config(validate='key', validatecommand=lambda args=args_list: self.Validate_Field(args_list))
         self.ValidRepB = [1, False, self.entB]
-        #self.RepBTrace = self.RepB.trace('w', lambda args=args_list: self.Validate_Field(args_list))
         
         Checkbutton(fRepModelLine4, text='Allow duplicates', variable=self.RepDup, font=self.top.font_Text).pack(side=LEFT)
         
