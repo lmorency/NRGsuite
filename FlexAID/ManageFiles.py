@@ -173,9 +173,8 @@ class Manage():
             self.Config1.Generate_CleftBindingSite()
             line = 'RNGOPT LOCCLF '
             line += self.Config1.CleftTmpPath + '\n'
-            config_file.write(line)        
+            config_file.write(line)
 
-        
         if self.Config1.Vars.TargetFlex.Count_SideChain() > 0:
             FlexSCFile = os.path.join(self.FlexAIDRunSimulationProject_Dir,'flexSC.lst')
             self.Create_FlexFile(FlexSCFile)

@@ -128,8 +128,8 @@ class Default(Tabs.Tab):
         self.TempBindingSite = BindingSite.BindingSite()
 
         self.NbCleft = StringVar()
-        self.MinRadius = DoubleVar()
-        self.MaxRadius = DoubleVar()
+        self.MinRadius = StringVar()
+        self.MaxRadius = StringVar()
         self.MessageValue = StringVar()
 
         self.FetchPDB = StringVar()
@@ -281,8 +281,9 @@ class Default(Tabs.Tab):
         self.EntryMinRadius = Entry(fBasicLine2, width=5, textvariable=self.MinRadius, background='white', justify=CENTER, font=self.top.font_Text)
         self.EntryMinRadius.pack(side=RIGHT)
         Label(fBasicLine2, text='Min:', font=self.top.font_Text).pack(side=RIGHT, padx=2)
-        self.ValidMaxRadius = [ 1, 0, self.EntryMaxRadius ]
-        self.ValidMinRadius = [ True, 1, 0, self.EntryMinRadius ]
+        
+        self.ValidMaxRadius = [ 1, False, self.EntryMaxRadius ]
+        self.ValidMinRadius = [ 1, False, self.EntryMinRadius ]
         
         Label(fBasicLine3, text='Residue in contact (e.g. ALA13A):', font=self.top.font_Text).pack(side=LEFT)
         self.EntryResidu = Entry(fBasicLine3,textvariable=self.ResiduValue, background='white', justify=CENTER, font=self.top.font_Text)
@@ -291,13 +292,13 @@ class Default(Tabs.Tab):
         Label(fBasicLine4, text='Number of clefts to show:', font=self.top.font_Text).pack(side=LEFT)
         self.EntryNbCleft = Entry(fBasicLine4, width=8, textvariable=self.NbCleft, background='white', justify=CENTER, font=self.top.font_Text)
         self.EntryNbCleft.pack(side=RIGHT)
-        self.ValidNbCleft = [ 1, 0, self.EntryNbCleft ]
+        self.ValidNbCleft = [ 1, False, self.EntryNbCleft ]
 
         #Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
-        EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
+        self.EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
         #EntryOutput.pack(side=RIGHT)
         #args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, 'Output filename', 'str']
-        self.ValidOutput = [ 1, 0, EntryOutput ]
+        self.ValidOutput = [ 1, False, self.EntryOutput ]
 
         #Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, width=20, relief=RIDGE, command=self.Btn_AdvancedOptions).pack(side=RIGHT)
 
@@ -386,7 +387,11 @@ class Default(Tabs.Tab):
     def Btn_StartGetCleft_Clicked(self):
 
         if not self.top.ProcessRunning:
-              
+            
+            if self.Validate_Fields():
+                self.DisplayMessage("  ERROR: Not all fields are validated.", 2)
+                return
+            
             try:
                 TmpFile = os.path.join(self.top.GetCleftProject_Dir,'tmp.pdb')
 
@@ -400,6 +405,7 @@ class Default(Tabs.Tab):
             except:
                 self.DisplayMessage("  ERROR: Could not save the object/selection '" + self.defaultOption.get() + "'", 2)
                 return
+
 
             if self.ResiduValue.get() != '':
                 

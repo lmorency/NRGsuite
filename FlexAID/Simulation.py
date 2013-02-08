@@ -369,6 +369,12 @@ class Parse(threading.Thread):
                 
                     continue
 
+                m = re.match("Done.", Line)
+                if m:                        
+                    self.Error = False
+                    
+                    continue
+
                 m = re.match("shiftval=", Line)
                 if m and self.FlexStatus != '':
 
@@ -419,7 +425,6 @@ class Parse(threading.Thread):
                 m = re.match("ERROR", Line)
                 if m:
                     Line = Line.rstrip('\n')
-                    self.Error = True
                     self.ErrorMsg = '*FlexAID ' + Line
                     
                     try:

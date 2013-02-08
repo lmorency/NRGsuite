@@ -245,7 +245,7 @@ class Config3(Tabs.Tab):
         Label(fPermeaLine2, text='Van der Waals ratio: ', font=self.top.font_Text).pack(side=LEFT)
         self.entPermea = Entry(fPermeaLine2, textvariable=self.Permeability, font=self.top.font_Text, justify=CENTER, width=4)
         self.entPermea.pack(side=RIGHT)
-        self.ValidPermeability = [1, 0, self.entPermea]
+        self.ValidPermeability = [1, False, self.entPermea]
 
         #==================================================================================
         # Delta (variations of distances/angles)
@@ -272,19 +272,19 @@ class Config3(Tabs.Tab):
         Label(fDeltaLine2, text='Angle from reference: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entDAng = Entry(fDeltaLine2, textvariable=self.DeltaAngle, font=self.top.font_Text, justify=CENTER, width=5)
         self.entDAng.pack(side=RIGHT, anchor=W)
-        self.ValidDeltaAngle = [1, 0, self.entDAng]
+        self.ValidDeltaAngle = [1, False, self.entDAng]
 
         # Dihedrals
         Label(fDeltaLine3, text='Dihedrals from reference: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entDDih = Entry(fDeltaLine3, textvariable=self.DeltaDihedral, font=self.top.font_Text, justify=CENTER, width=5)
         self.entDDih.pack(side=RIGHT, anchor=W)
-        self.ValidDeltaDihedral = [1, 0, self.entDDih]
+        self.ValidDeltaDihedral = [1, False, self.entDDih]
 
         # Dihedrals (Flex Bonds)
         Label(fDeltaLine4, text='Dihedrals of flexible bonds: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entDDihFlex = Entry(fDeltaLine4, textvariable=self.DeltaDihedralFlex, font=self.top.font_Text, width=5, justify=CENTER)
         self.entDDihFlex.pack(side=RIGHT, anchor=W)
-        self.ValidDeltaDihedralFlex = [1, 0, self.entDDihFlex]
+        self.ValidDeltaDihedralFlex = [1, False, self.entDDihFlex]
 
         #==================================================================================
         # Side-chain optimization (DEE)
@@ -306,7 +306,7 @@ class Config3(Tabs.Tab):
         Label(fDEELine3, text='Clashing Threshold:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entDEE = Entry(fDEELine3, width=5, font=self.top.font_Text, textvariable=self.DEE_Clash_Threshold, state='disabled', justify=CENTER)
         self.entDEE.pack(side=RIGHT)
-        self.ValidDEE = [1, 0, self.entDEE]
+        self.ValidDEE = [1, False, self.entDEE]
 
         #==================================================================================
         # Implicit Solvent Type
@@ -332,7 +332,7 @@ class Config3(Tabs.Tab):
         Label(fSolventLine3, text='Solvent term:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entSolventTerm = Entry(fSolventLine3, textvariable=self.SolventTerm, font=self.top.font_Text, width=4, justify=CENTER)
         self.entSolventTerm.pack(side=RIGHT)
-        self.ValidSolventTerm = [1, 0, self.entSolventTerm]
+        self.ValidSolventTerm = [1, False, self.entSolventTerm]
 
 
         self.Validator = [ self.ValidDEE, self.ValidPermeability,

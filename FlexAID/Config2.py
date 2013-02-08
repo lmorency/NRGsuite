@@ -74,11 +74,11 @@ class Config2(Tabs.Tab):
         
         self.UseReference.set(0)
         self.ConsDist.set(0.25)
-        self.ConsStatus.set('')
         self.IntTranslation.set(1)
         self.IntRotation.set(1)
-        self.FlexStatus.set('')
         self.SATStatus.set('')
+        self.ConsStatus.set('No constraint(s) set')
+        self.FlexStatus.set('No flexible bond(s) set')
         self.Anchor.set(-1)
 
     def Trace(self):

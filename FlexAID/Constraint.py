@@ -65,6 +65,9 @@ class constraint(Wizard):
         self.View = cmd.get_view()
         self.State = cmd.get_state()
         
+        # Trigger controls state
+        self.Active.set(self.Active.get())
+        
         cmd.rebuild()
 
     #=======================================================================
@@ -144,6 +147,15 @@ class constraint(Wizard):
         self.dictConstraints.clear()
         self.Active.set('')
         
+    #=======================================================================
+    ''' Resets to pick the first atom '''
+    #=======================================================================
+    def btn_Reset(self):
+
+        self.pick_count = 0
+
+        cmd.refresh_wizard()
+
     #=======================================================================   
     ''' gets atom information (coordinates and index)'''
     #=======================================================================    
@@ -437,5 +449,6 @@ class constraint(Wizard):
          [ 2, 'Go to previous active','cmd.get_wizard().Previous_Active()'],
          [ 2, 'Delete active','cmd.get_wizard().delete()'],
          [ 2, 'Clear constraints', 'cmd.get_wizard().btn_Clear()'],
+         [ 2, 'Reset', 'cmd.get_wizard().btn_Reset()'],
          [ 2, 'Done','cmd.get_wizard().btn_Done()'],         
          ]
