@@ -702,7 +702,7 @@ class IOFile(Tabs.Tab):
         
         self.top.Config2.Vars.dictNeighbours.clear()
         
-        for atom in iter(inpInfo):
+        for atom in inpInfo.keys():
             self.top.Config2.Vars.dictNeighbours[atom] = inpInfo[atom][1:]
                     
     #=======================================================================
@@ -712,7 +712,7 @@ class IOFile(Tabs.Tab):
         
         self.top.Config2.Vars.dictFlexBonds.clear()
         
-        for index in iter(flexInfo):
+        for index in flexInfo.keys():
             
             ''' [ Selected as flexible,
                   Forced as flexible,
@@ -732,7 +732,7 @@ class IOFile(Tabs.Tab):
         
         self.top.Config2.Vars.dictAtomTypes.clear()
         
-        for atom in iter(inpInfo):
+        for atom in inpInfo.keys():
             self.top.Config2.Vars.dictAtomTypes[atom] = [inpInfo[atom][0], inpInfo[atom][0]]
 
     

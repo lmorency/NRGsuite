@@ -416,7 +416,7 @@ class Simulate(Tabs.Tab):
                 self.DisplayMessage('  ERROR: An error occured while trying to pause the simulation.', 0)
                 return
                 
-            self.Btn_PauseResume.config(text='Resume...')
+            self.Btn_PauseResume.config(text='Resume')
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')
 
@@ -431,7 +431,7 @@ class Simulate(Tabs.Tab):
                     self.DisplayMessage('  ERROR: An error occured while trying to resume the simulation.', 0)
                     pass
 
-            self.Btn_PauseResume.config(text='Pause...')
+            self.Btn_PauseResume.config(text='Pause')
             self.Btn_Stop.config(state='normal')
             self.Btn_Abort.config(state='normal')
 
@@ -444,7 +444,7 @@ class Simulate(Tabs.Tab):
     def Btn_AbortSim(self):
         
         if self.SimStatus.get() == 'Running...':
- 
+        
             try:
                 #Create the .abort file
                 abort_file = open(self.Manage.ABORT, 'w')

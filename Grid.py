@@ -117,7 +117,7 @@ class Grid(threading.Thread):
         
         try:
 
-            for sph in iter(self.dictSpheres):
+            for sph in self.dictSpheres.keys():
                 
                 if float(1.0 / self.Spacer) - float(int(1.0 / self.Spacer)) > 0.001:
                     xmin = float(int((self.dictSpheres[sph][1][0] - self.dictSpheres[sph][0]) / self.Spacer)) * self.Spacer;
@@ -181,7 +181,7 @@ class Grid(threading.Thread):
             outfile.write('REMARK ParentCleft ' + self.CleftFile + '\n') 
 
             i = 1
-            for vertex in sorted(iter(self.dictGridPoints)):
+            for vertex in sorted(self.dictGridPoints.keys()):
                 outfile.write('ATOM  ')
                 outfile.write('%5d' % i)
                 outfile.write('  C   GRD A   1    ')

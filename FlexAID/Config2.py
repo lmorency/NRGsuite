@@ -129,7 +129,7 @@ class Config2(Tabs.Tab):
             self.Enable_Frame()
             
             if self.top.WizardError or self.top.WizardResult == 0:
-                self.FlexStatus.set('')
+                self.FlexStatus.set('No flexible bond(s) set')
             
             elif self.top.WizardResult > 0:
                 Status = ' (' + str(self.top.WizardResult) + ') flexible bond(s) set'
@@ -198,7 +198,11 @@ class Config2(Tabs.Tab):
         else:
             self.Enable_Frame()
 
-            Status = ' (' + str(self.top.WizardResult) + ') constraint(s) set'
+            if self.top.WizardResult == 0:
+                Status = 'No constraint(s) set'
+            else:
+                Status = ' (' + str(self.top.WizardResult) + ') constraint(s) set'
+            
             self.ConsStatus.set(Status)
             
 

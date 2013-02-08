@@ -247,7 +247,7 @@ class setType(Wizard):
     def reset(self):
 
         # Put back default types
-        for atom in iter(self.top.Vars.dictAtomTypes):
+        for atom in self.top.Vars.dictAtomTypes.keys():
             self.top.Vars.dictAtomTypes[atom][1] = self.top.Vars.dictAtomTypes[atom][0]
 
         self.ColorByType()
@@ -259,7 +259,7 @@ class setType(Wizard):
         
         Changed = 0
         Total = 0
-        for atom in iter(self.top.Vars.dictAtomTypes):
+        for atom in self.top.Vars.dictAtomTypes.keys():
             if self.top.Vars.dictAtomTypes[atom][1] != self.top.Vars.dictAtomTypes[atom][0]:
                 Changed += 1
             Total += 1
@@ -294,7 +294,7 @@ class setType(Wizard):
     def ColorByType(self):
         
         try: 
-            for atom in iter(self.top.Vars.dictAtomTypes):
+            for atom in self.top.Vars.dictAtomTypes.keys():
                 cmd.color(self.type_color[self.top.Vars.dictAtomTypes[atom][1]], self.LigDisplay + ' & ID ' + atom)
         except:
             return 1

@@ -131,7 +131,7 @@
     <None Include="..\..\Sphere.py" />
     <None Include="..\..\SphereObj.py" />
     <None Include="..\..\Tabs.py" />
-    <None Include="..\..\tkTable.py" />
     <None Include="..\..\Base.py" />
+    <None Include="..\..\MultiList.py" />
   </ItemGroup>
 </Project>

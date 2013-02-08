@@ -325,7 +325,7 @@ class displayLoadProject:
     def ProjectName_Toggle(self, *args):
 
         self.ActualKey = ''
-        for k in iter(self.dictProjectList):
+        for k in self.dictProjectList.keys():
             if self.dictProjectList[k][0] == self.ProjectName.get():
                 self.ActualKey = k
                 break

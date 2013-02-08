@@ -83,6 +83,7 @@ class constraint(Wizard):
 
             # Mask objects
             self.exc = [ self.FlexAID.IOFile.ProtName.get(), self.FlexAID.IOFile.LigandName.get() ]
+            print self.exc
             General_cmd.mask_Objects(self.exc)
 
             self.ErrorCode = 0

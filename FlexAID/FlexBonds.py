@@ -183,7 +183,7 @@ class flexbond(Wizard):
         Del_Down2 = 0
 
         #Unselect ALL the flexible bonds
-        for index in iter(self.top.Vars.dictFlexBonds):
+        for index in self.top.Vars.dictFlexBonds.keys():
             self.top.Vars.dictFlexBonds[index][0] = 0 
             
             if self.top.Vars.dictFlexBonds[index][1]:
@@ -208,7 +208,7 @@ class flexbond(Wizard):
         nBonds = 0
         nPoss = 0
         nBondsForced = 0
-        for index in iter(self.top.Vars.dictFlexBonds):
+        for index in self.top.Vars.dictFlexBonds.keys():
             if self.top.Vars.dictFlexBonds[index][0]:
                 #if self.top.Vars.dictFlexBonds[index][1]:
                 #    nBondsForced += 1
@@ -249,7 +249,7 @@ class flexbond(Wizard):
 
             PossFlexBonds = []
 
-            for index in iter(self.top.Vars.dictFlexBonds):
+            for index in self.top.Vars.dictFlexBonds.keys():
 
                 point1 = []
                 point2 = []
@@ -268,6 +268,8 @@ class flexbond(Wizard):
                            self.get_Coords(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][1], point2):
                             return 1
 
+                    #print "First neighbour", self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][0]
+                    #print "Second neighbour", self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][1]
                     PossFlexBonds.extend(self.highlight_Possible(point1, point2))
                     #print PossFlexBonds
                     
@@ -294,7 +296,7 @@ class flexbond(Wizard):
 
             SelFlexBonds = []
 
-            for index in iter(self.top.Vars.dictFlexBonds):
+            for index in self.top.Vars.dictFlexBonds.keys():
 
                 point1 = []
                 point2 = []
@@ -325,7 +327,7 @@ class flexbond(Wizard):
     #=======================================================================
     def btn_SelectAllBonds(self):
         
-        for index in iter(self.top.Vars.dictFlexBonds):
+        for index in self.top.Vars.dictFlexBonds.keys():
             if not self.top.Vars.dictFlexBonds[index][1]:
                 # Get coordinates of 1st and 2nd neighbours
                 if self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][3]][0] != 0 and \
@@ -478,7 +480,7 @@ class flexbond(Wizard):
     #=======================================================================    
     def is_Already_Forced(self, atom_id):
         
-        for index in iter(self.top.Vars.dictFlexBonds):
+        for index in self.top.Vars.dictFlexBonds.keys():
             if self.top.Vars.dictFlexBonds[index][1]:
                 if atom_id in self.top.Vars.dictFlexBonds[index][3:]:
                     return index
@@ -493,7 +495,7 @@ class flexbond(Wizard):
         list = []
         list.extend([1, 1, 0])
 
-        for atom in iter(self.top.Vars.dictNeighbours):
+        for atom in self.top.Vars.dictNeighbours.keys():
             
             if (atom_id1 == int(self.top.Vars.dictNeighbours[atom][0]) and \
                 atom_id2 == int(self.top.Vars.dictNeighbours[atom][1])) or \
@@ -514,7 +516,7 @@ class flexbond(Wizard):
     #=======================================================================    
     def is_Definable(self, atom_id1, atom_id2):
 
-        for atom in iter(self.top.Vars.dictNeighbours):
+        for atom in self.top.Vars.dictNeighbours.keys():
             
             if (atom_id1 == int(self.top.Vars.dictNeighbours[atom][0]) and \
                 atom_id2 == int(self.top.Vars.dictNeighbours[atom][1])) or \
@@ -532,7 +534,7 @@ class flexbond(Wizard):
         
         if self.is_Definable(atom_id1, atom_id2):
             
-            for index in iter(self.top.Vars.dictFlexBonds):
+            for index in self.top.Vars.dictFlexBonds.keys():
                 
                 for i in range(3,3 + int(self.top.Vars.dictFlexBonds[index][2])):
                     if (atom_id1 == int(self.top.Vars.dictNeighbours[self.top.Vars.dictFlexBonds[index][i]][0]) and \

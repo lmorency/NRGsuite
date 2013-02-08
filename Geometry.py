@@ -261,7 +261,7 @@ def rmsd(dictCoord, dictCoordRef):
     sum = 0.0
 
     try:
-        for index in iter(dictCoord):
+        for index in dictCoord.keys():
             sum += sqrdistance( dictCoord[index], dictCoordRef[index] )
             tot += 1
 

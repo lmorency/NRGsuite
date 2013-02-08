@@ -51,6 +51,7 @@
     <None Include="..\..\IsoCleft\Config.py" />
     <None Include="..\..\IsoCleft\IsoCleft.py" />
     <None Include="..\..\MessageBox.py" />
+    <None Include="..\..\MultiList.py" />
     <None Include="..\..\Plugin\NRGsuite.py" />
     <None Include="..\..\Prefs.py" />
     <None Include="..\..\Project\LoadProject.py" />
@@ -58,7 +59,6 @@
     <None Include="..\..\Sphere.py" />
     <None Include="..\..\SphereObj.py" />
     <None Include="..\..\Tabs.py" />
-    <None Include="..\..\tkTable.py" />
     <None Include="..\..\Vars.py" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
