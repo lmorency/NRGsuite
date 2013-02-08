@@ -159,8 +159,7 @@ class EstimateVolume(Tabs.Tab):
 
         self.Btn_ALL = Button(fButtonsLine2, text='ALL', font=self.top.font_Text, command=self.Btn_ALL_Clicked)
         self.Btn_ALL.pack(side=LEFT, padx=2)
-
-
+        
         fList = Frame(self.fVolume, relief=SUNKEN, border=1, width=375, height=200)
         fList.pack(fill=X, expand=True, side=TOP, pady=20)
         fList.pack_propagate(0)
@@ -172,11 +171,10 @@ class EstimateVolume(Tabs.Tab):
                                    [ True, True, True ],
                                    self.top.font_Text,
                                    self.top.Color_Blue)
-
+        
         self.Table.Draw()
         
         self.SelectedCleft = self.Table.Columns['Cleft object']['StringVar']
-        
         
         fButtons2 = Frame(self.fVolume)
         fButtons2.pack(side=TOP, fill=X, padx=5, pady=5)

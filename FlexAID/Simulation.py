@@ -190,9 +190,10 @@ class Parse(threading.Thread):
         
         #print "FlexAID parsing thread has begun."
 
-        # 10 msec
+        # 100 msec
         INTERVAL = 0.10
-        TIMEOUT = INTERVAL * 100
+        # 1 minute timeout
+        TIMEOUT = INTERVAL * 600
 
         # Number of ligand atoms
         nbAtoms = len(self.DisAngDih)
@@ -239,7 +240,7 @@ class Parse(threading.Thread):
             if self.top.SimStatus.get() == 'Paused.':
                 continue
             
-            elif self.CopyRead_UPDATE(ParseFile, INTERVAL, TIMEOUT):
+            elif self.CopyRead(ParseFile, INTERVAL, TIMEOUT):
                 self.Error = True
                 self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files.'
                 break
@@ -667,14 +668,15 @@ class Parse(threading.Thread):
             return 1
             
         return 0
-        
+    
     '''
     @summary: SUBROUTINE: CopyRead_UPDATE: Tries to copy then read the .read (log.txt OR .update) file
     '''   
-    def CopyRead_UPDATE(self, ParseFile, INTERVAL, TIMEOUT):
+    def CopyRead(self, ParseFile, INTERVAL, TIMEOUT):
     
         TIME = 0
         while TIME < TIMEOUT:
+            
             try:
                 shutil.copy(ParseFile, self.READ)
 

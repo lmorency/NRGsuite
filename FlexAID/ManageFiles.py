@@ -235,6 +235,8 @@ class Manage():
         config_file.write('MAXRES 10'  + '\n')
 
         config_file.write('NRGSUI\n')
+        config_file.write('NRGOUT 30\n')
+        
         config_file.write('GRDBUF ' + str(self.top.GridBuffer) + '\n')
 
         config_file.write('ENDINP\n')

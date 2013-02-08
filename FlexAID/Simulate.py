@@ -458,6 +458,7 @@ class Simulate(Tabs.Tab):
             self.Btn_Abort.config(state='disabled')
 
             self.AbortStatus()
+            self.Parse.ParseFile = self.Manage.LOGFILE
             self.Results = False
 
 
@@ -476,13 +477,12 @@ class Simulate(Tabs.Tab):
                 self.DisplayMessage('  ERROR: An error occured while trying to stop the simulation.', 0)
                 return
 
-            self.Parse.ParseFile = self.Parse.LOGFILE
-
             self.Btn_PauseResume.config(state='disabled')
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')
 
             self.StopStatus()
+            self.Parse.ParseFile = self.Parse.LOGFILE
     
         
     ''' ==================================================================================
