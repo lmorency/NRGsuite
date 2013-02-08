@@ -31,7 +31,7 @@ from Tkinter import *
 from pymol import cmd
 
 import General
-import tkTable
+import MultiList
 import tkFileDialog
 import tkFont
 import time
@@ -74,7 +74,7 @@ class displayLoadProject:
        
         self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)        
         self.font_Text = tkFont.Font(family=FontType,size=FontSize)
-        self.font_Text_U = tkFont.Font(family=FontType,size=FontSize, slant=tkFont.ITALIC)
+        self.font_Text_I = tkFont.Font(family=FontType,size=FontSize, slant=tkFont.ITALIC)
         
         self.Color_Gray = '#EDEDED'
         self.Color_White = '#FFFFFF'
@@ -160,8 +160,8 @@ class displayLoadProject:
         fProjList.pack(fill=X, expand=True)
         fProjList.pack_propagate(0)
 
-        self.Table = tkTable.Table(fProjList, 3,
-                                   [ 'Name', 'Last Used', 'Creation Date' ],
+        self.Table = MultiList.Table(fProjList, 3,
+                                   [ 'Name', 'Last used', 'Creation date' ],
                                    [ 140, 140, 140 ],
                                    [ 1, 1, 1 ],
                                    [ True, True, True ],
@@ -171,8 +171,8 @@ class displayLoadProject:
 
         # References to StringVar'
         self.ProjectName = self.Table.Columns['Name']['StringVar']
-        self.LastUsed = self.Table.Columns['Last Used']['StringVar']
-        self.CreationDate = self.Table.Columns['Creation Date']['StringVar']
+        self.LastUsed = self.Table.Columns['Last used']['StringVar']
+        self.CreationDate = self.Table.Columns['Creation date']['StringVar']
 
         #==================================================================================
         '''              --- NAME & PATH SELECTED - FRAME SECTION ---                   '''
@@ -181,17 +181,14 @@ class displayLoadProject:
         
         fProjName_L = Frame(fProjName, relief=RIDGE, border=0, width=100, height=35)
         fProjName_R = Frame(fProjName, relief=RIDGE, border=0, width=360, height=35)
-        
-        PName = Label(fProjName_L, text='Project:', font=self.font_Text)
-        PName.pack(side=LEFT, anchor=S, pady=4)
-        
-        Name = Label(fProjName_L, text='Name:', font=self.font_Text_U)
-        Name.pack(side=RIGHT, anchor=S, pady=4)
+                
+        Name = Label(fProjName_L, text='Name:', font=self.font_Text)
+        Name.pack(side=RIGHT, anchor=S, pady=4, padx=8)
         
         fProjName_L.pack(fill=X, expand=True, side=LEFT)
         fProjName_L.pack_propagate(0)
         
-        self.NameVal = Entry(fProjName_R, width=28, textvariable=self.ProjectName, background='white', \
+        self.NameVal = Entry(fProjName_R, width=20, textvariable=self.ProjectName, background='white', \
                              disabledbackground='white', disabledforeground='black', font=self.font_Text)
         self.NameVal.pack(side=LEFT, anchor=S, padx=4, pady=4)
         self.NameVal.config(state='disabled')
@@ -207,15 +204,15 @@ class displayLoadProject:
         fProjPath_L = Frame(fProjPath, relief=RIDGE, border=0, width=100, height=35)
         fProjPath_R = Frame(fProjPath, relief=RIDGE, border=0, width=360, height=35)
         
-        Path = Label(fProjPath_L, text='Path:', font=self.font_Text_U)
+        Path = Label(fProjPath_L, text='Path:', font=self.font_Text)
         Path.pack(side=RIGHT, anchor=N, padx=8)
         
         fProjPath_L.pack(fill=X, expand=True, side=LEFT)
         fProjPath_L.pack_propagate(0)     
         
-        self.PathVal = Entry(fProjPath_R, width=47, textvariable=self.ProjectDir, background='white', \
+        self.PathVal = Entry(fProjPath_R, textvariable=self.ProjectDir, background='white',
                              disabledbackground='white', disabledforeground='black')
-        self.PathVal.pack(side=LEFT, anchor=N, padx=4)
+        self.PathVal.pack(side=LEFT, anchor=N, padx=4, fill=X, expand=True)
         self.PathVal['font'] = self.font_Text
         self.PathVal.config(state='disabled')
         
@@ -296,7 +293,7 @@ class displayLoadProject:
     ==================================================================================  '''                
     def Fill_Table(self):
         
-        Keys = self.dictProjectList.keys()        
+        Keys = self.dictProjectList.keys()
         Keys.sort(reverse=True)
 
         for key in Keys:

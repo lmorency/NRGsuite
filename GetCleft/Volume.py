@@ -21,7 +21,7 @@ from Tkinter import *
 from subprocess import Popen, PIPE
 
 import Tabs
-import tkTable
+import MultiList
 import threading
 
 if __debug__:
@@ -29,52 +29,55 @@ if __debug__:
 
 class RunVolume(threading.Thread):
 
-    def __init__(self, top, Cleft, Iterations):
+    def __init__(self, top, Clefts, Iterations):
         
         threading.Thread.__init__(self)
 
         self.top = top
         self.GetCleft = self.top.top
-        self.Cleft = Cleft
+        self.Clefts = Clefts
+        self.Iterations = Iterations
         
-        self.cmdline  = '"' + self.GetCleft.VolumeExecutable + '"'
-        self.cmdline += ' -i "' + self.Cleft.CleftFile + '"'
-        self.cmdline += ' -t ' + Iterations
-        print(self.cmdline)
-
         self.start()
         
-        
-    def run(self):
+    def run(self):        
     
         self.GetCleft.ProcessRunning = True
+
+        for Cleft in self.Clefts:
         
-        if self.GetCleft.OSid == 'WIN':
-            self.GetCleft.Run = Popen(self.cmdline, shell=False, stdout=PIPE)
-        else:
-            self.GetCleft.Run = Popen(self.cmdline, shell=True, stdout=PIPE)
+            cmdline  = '"' + self.GetCleft.VolumeExecutable + '"'
+            cmdline += ' -i "' + Cleft.CleftFile + '"'
+            cmdline += ' -t ' + self.Iterations
+            print(cmdline)
+        
+            if self.GetCleft.OSid == 'WIN':
+                self.GetCleft.Run = Popen(cmdline, shell=False, stdout=PIPE)
+            else:
+                self.GetCleft.Run = Popen(cmdline, shell=True, stdout=PIPE)
+                
+            # Wait for task to end in thread
+            (out,err) = self.GetCleft.Run.communicate()
             
-        self.GetCleft.Run.wait()        
+            if self.GetCleft.Run.returncode != 0:
+                self.top.ProcessError = True
+                self.top.DisplayMessage("  ERROR: An error occured while executing volume_calc.", 1)
+                
+            else:
+                #self.top.DisplayMessage("Thread terminated for " + self.Cleft.CleftName, 0)
+                
+                Lines = out.splitlines()
+                for Line in Lines:
+                    if Line.startswith('Volume'):
+                        Cleft.Volume = float(Line[8:].strip())
+                        self.top.Init_Table()
+                        break
         
-        
-        if self.GetCleft.Run == None:
-            self.top.DisplayMessage("  Thread timed-out for " + self.Cleft.CleftName, 0)
                         
-        elif self.GetCleft.Run.returncode != 0:
-            self.top.ProcessError = True
-            self.top.DisplayMessage("  ERROR: An error occured while executing volume_calc.", 1)
-            
-        else:
-            self.top.DisplayMessage("Thread terminated for " + self.Cleft.CleftName, 0)
-            
-            Line = self.GetCleft.Run.stdout.readline()
-            if Line.startswith('Volume'):
-                self.Cleft.Volume = float(Line[8:].strip())
-
         self.GetCleft.Run = None
-
         self.GetCleft.ProcessRunning = False
         
+        self.top.VolumeRunning(False)
         
 
 class EstimateVolume(Tabs.Tab):
@@ -134,7 +137,6 @@ class EstimateVolume(Tabs.Tab):
 
         lblIterations = Label(fIterations, text='Iterations:', font=self.top.font_Text)
         lblIterations.pack(side=RIGHT, anchor=SE)
-        
 
         #==================================================================================
         '''                           --- BUTTONS AREA ---                              '''
@@ -163,8 +165,8 @@ class EstimateVolume(Tabs.Tab):
         fList.pack(fill=X, expand=True, side=TOP, pady=20)
         fList.pack_propagate(0)
         
-        self.Table = tkTable.Table(fList, 3,
-                                   [ 'Cleft Name', 'Estimated', 'Volume' ],
+        self.Table = MultiList.Table(fList, 3,
+                                   [ 'Cleft object', 'Estimated', 'Volume' ],
                                    [ 180, 70, 130 ],
                                    [ 1, 6, 13 ],
                                    [ True, True, True ],
@@ -173,7 +175,7 @@ class EstimateVolume(Tabs.Tab):
 
         self.Table.Draw()
         
-        self.SelectedCleft = self.Table.Columns['Cleft Name']['StringVar']
+        self.SelectedCleft = self.Table.Columns['Cleft object']['StringVar']
         
         
         fButtons2 = Frame(self.fVolume)
@@ -194,93 +196,70 @@ class EstimateVolume(Tabs.Tab):
     def Btn_Selected_Clicked(self):
 
         if not self.Validate_Fields():
-
+        
             Selected = self.SelectedCleft.get()
-
             if Selected != '':
-                self.Cleft = self.top.Default.TempBindingSite.Get_CleftName(Selected)
+                Cleft = self.top.Default.TempBindingSite.Get_CleftName(Selected)
                 
-                self.VolumeRunning(True)
-
-                if self.Cleft != None:            
+                if Cleft != None:
                     try:
-                        Process = RunVolume(self,self.Cleft, self.Iterations.get())
-                        Process.join(30.0)
+                        self.VolumeRunning(True)
                         
-                        self.Init_Table()
-                        
+                        Process = RunVolume(self, [ Cleft ], self.Iterations.get())
                     except:
-                        self.DisplayMessage("The cleft file for '" + self.Cleft + "' no longer exists", 2)
+                        self.DisplayMessage("The cleft file for '" + self.Cleft.CleftFile + "' no longer exists", 2)
                 else:
                     self.DisplayMessage("The cleft object '" + Selected + "' no longer exists", 2)                    
-                
-            
-                self.VolumeRunning(False)
-            
+    
     ''' ==================================================================================
     FUNCTION Calculates the volume of remaining clefts (volume=0) in the list
     ==================================================================================  '''    
     def Btn_Remaining_Clicked(self):
 
         if not self.Validate_Fields():
+        
+            Clefts = []
+            for item in self.Table.Columns['Cleft object']['List'].get(0, END):
 
-            self.VolumeRunning(True)
-
-            for item in self.Table.Columns['Cleft Name']['List'].get(0, END):
-
-                self.Cleft = self.top.Default.TempBindingSite.Get_CleftName(item.lstrip())
-                
-                if self.Cleft != None:            
-                    try:
-                        Process = RunVolume(self,self.Cleft, self.Iterations.get())
-                        Process.join(30.0)
-                        
-                        self.Init_Table()
-
-                    except:
-                        self.DisplayMessage("The cleft file for '" + self.Cleft.CleftName + "' no longer exists", 2)
-                else:
-                    self.DisplayMessage("The cleft object '" + item.lstrip() + "' no longer exists", 2)                    
-                
-            self.VolumeRunning(False)
-
+                Cleft = self.top.Default.TempBindingSite.Get_CleftName(item.lstrip())
+                if Cleft != None and Cleft.Volume == 0.0:
+                    Clefts.append(Cleft)
+            
+            try:
+                self.VolumeRunning(True)
+                Process = RunVolume(self, Clefts, self.Iterations.get())
+            except:
+                pass
+    
     ''' ==================================================================================
     FUNCTION Calculates the volume of all clefts in the list
     ==================================================================================  '''    
     def Btn_ALL_Clicked(self):
 
         if not self.Validate_Fields():
+                    
+            Clefts = []
+            for item in self.Table.Columns['Cleft object']['List'].get(0, END):
 
-            self.VolumeRunning(True)
-            
-            for item in self.Table.Columns['Cleft Name']['List'].get(0, END):
+                Cleft = self.top.Default.TempBindingSite.Get_CleftName(item.lstrip())
+                if Cleft != None:
+                    Clefts.append(Cleft)                
 
-                self.Cleft = self.top.Default.TempBindingSite.Get_CleftName(item.lstrip())
-                
-                if self.Cleft != None:            
-                    try:
-                        Process = RunVolume(self,self.Cleft, self.Iterations.get())
-                        Process.join(30.0)
-                        
-                        self.Init_Table()
-                        
-                    except:
-                        self.DisplayMessage("The cleft file for '" + self.Cleft.CleftName + "' no longer exists", 2)
-                else:
-                    self.DisplayMessage("The cleft object '" + item.lstrip() + "' no longer exists", 2)
-                                        
-            self.VolumeRunning(False)
-
+            try:
+                self.VolumeRunning(True)
+                Process = RunVolume(self, Clefts, self.Iterations.get())
+            except:
+                pass
+    
     ''' ==================================================================================
     FUNCTION Init_Table: updates the list of cleft in the table
     ==================================================================================  '''    
     def Init_Table(self):
-
+        
         self.Table.Clear()
         
         for CleftName in self.top.Default.TempBindingSite.Get_SortedCleftNames():
-            
-            self.Table.Add( [ CleftName, 'False', self.top.Default.TempBindingSite.Get_CleftName(CleftName).Volume ],
+            self.Table.Add( [ CleftName, 'False', str(self.top.Default.TempBindingSite.Get_CleftName(CleftName).Volume) ],
                             [ None, None, None ] )
 
     ''' ==================================================================================

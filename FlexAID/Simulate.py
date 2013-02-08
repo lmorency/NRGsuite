@@ -21,7 +21,7 @@ from Tkinter import *
 
 import os
 import re
-import tkTable
+import MultiList
 import General
 import Color
 import ManageFiles
@@ -90,7 +90,7 @@ class Simulate(Tabs.Tab):
         fTable.pack(side=BOTTOM, fill=BOTH, expand=True)
         fTable.pack_propagate(0)
         
-        self.Table = tkTable.Table(fTable, 5,
+        self.Table = MultiList.Table(fTable, 5,
                                    [ 'Color', 'TOP', 'Energy', 'Fitness', 'RMSD' ],
                                    [ 65, 65, 167, 167, 167 ],
                                    [ 0, 6, 15, 15, 15 ],
@@ -397,8 +397,9 @@ class Simulate(Tabs.Tab):
             if m:
                 TOP = int(m.group(1)) + 1
                 
-                cmd.load(file, 'RESULT_' + str(TOP + 1) + '__', state=1)
-            
+                cmd.load(file, 'RESULT_' + str(TOP) + '__', state=1)
+                
+                
         
     ''' =============================================================================== 
     FUNCTION Btn_PauseResumeSim: Pauses/Resumes the simulation   
@@ -491,7 +492,7 @@ class Simulate(Tabs.Tab):
     def Click_RadioSIM(self, *args):
         
         self.Refresh_LigDisplay()
-
+    
     ''' ==================================================================================
     FUNCTION Refresh_LigDisplay: Refreshes the visual appearance of the ligand in TOP_* objects
     ==================================================================================  '''               

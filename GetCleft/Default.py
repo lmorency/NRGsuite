@@ -655,7 +655,8 @@ class Default(Tabs.Tab):
             
         for Cleft in iter(self.TempBindingSite.listClefts):
                 cmd.load(Cleft.CleftFile, Cleft.CleftName, state=1)
-                
+                cmd.refresh()
+
                 if Cleft.Partition and Cleft.PartitionParent != None and \
                         General_cmd.object_Exists(Cleft.PartitionParent.CleftName):
                     

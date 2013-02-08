@@ -13,11 +13,11 @@ class Table:
         # Font Color
         self.Color = Color
 
-        self.current = None
-
         # Scalar
         self.nCol = nCol
 
+        self.current = None
+        
         # Lists
         self.ColNames = ColNames
         self.ColWidth = ColWidth
@@ -94,7 +94,8 @@ class Table:
 
             self.Columns[self.ColNames[i]]['List'].pack(fill=Y, expand=True, side=LEFT)
             self.Columns[self.ColNames[i]]['List'].bind('<Button-1>', 
-                                                        lambda event, List=self.Columns[self.ColNames[i]]['List']: self.OnButtonClick(event, List))
+                                                        lambda event, List=self.Columns[self.ColNames[i]]['List']: 
+                                                        self.OnButtonClick(event, List))
 
 
             # Mac/Windows
@@ -113,32 +114,32 @@ class Table:
     ==================================================================================  '''            
     def OnVsb(self, *args):
 
-        for col in iter(self.Columns):
+        for col in self.Columns.keys():
             self.Columns[col]['List'].yview(*args)
 
     ''' ==================================================================================
     FUNCTION OnButtonClick: Selects identical index from the other lists
     ==================================================================================  '''            
     def OnButtonClick(self, event, List):
-
+                
         Index = List.nearest(event.y)
-
+        
         if Index != self.current and Index != '':
-
+            
             if self.current != None:
-                for col in iter(self.Columns):
+                for col in self.Columns.keys():
                     if self.Columns[col]['Highlight']:
                         self.Columns[col]['List'].itemconfig(self.current, bg='white', foreground='black')
                     
-            for col in iter(self.Columns):
-
+            for col in self.Columns.keys():
                 if self.Columns[col]['Highlight']:
                     self.Columns[col]['List'].itemconfig(Index, bg=self.Color, foreground='white')
-
+                
                 self.Columns[col]['StringVar'].set(self.Columns[col]['List'].get(Index)[1:])
         
             self.current = Index
-
+            
+            
     ''' ==================================================================================
     FUNCTION OnListboxMouseWheel: Scroll the Listboxes based on the mouse wheel event.
     ==================================================================================  '''
@@ -153,21 +154,26 @@ class Table:
         else:                   # Windows & OSX
             delta = event.delta
             
-        for col in iter(self.Columns):
+        for col in self.Columns:
             self.Columns[col]['List'].yview("scroll", delta, "units")
             
         # Return 'break' to prevent the default bindings from
         # firing, which would end up scrolling the widget twice.
-        return
+        return "break"
 
     ''' ==================================================================================
     FUNCTION Clear: Clears all the data in the table
     ==================================================================================  '''            
     def Clear(self):
 
-        for col in iter(self.Columns):
-            self.Columns[col]['List'].delete(0, END)
+        for col in self.Columns.keys():
+            self.Columns[col]['List'].selection_clear(0, END)
 
+        for col in self.Columns.keys():
+            self.Columns[col]['List'].delete(0, END)
+        
+        self.current = None
+        
     ''' ==================================================================================
     FUNCTION Add: Adds ONE item to listboxes
     ==================================================================================  '''            
@@ -252,7 +258,7 @@ class Table:
                     if self.ColNames[i] == UptCol:
                         Found = True
                         break
-            
+                
                 if Found:
                     # Set item value
                     self.Columns[UptCol]['List'].delete(Index)
