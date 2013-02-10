@@ -65,8 +65,6 @@ class Config1(Tabs.Tab):
     BindingSiteDisplay = 'BINDINGSITE_AREA__'
     SphereDisplay = 'SPHERE__'
     ScaleResolution = 0.50
-
-    ProcessError = False
     
     def Def_Vars(self):
 
@@ -100,7 +98,7 @@ class Config1(Tabs.Tab):
         self.Vars.BindingSite.Clear()
         
         self.CleftTmpPath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,'tmp.pdb')
-                    
+        
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
     =================================================================================  '''    
@@ -440,16 +438,15 @@ class Config1(Tabs.Tab):
         if not self.PyMOL:
             return
 
-        if self.top.ActiveWizard is None:
-            self.FlexSCRunning(True)
-            self.top.ActiveWizard = FlexSideChain.flexSC(self)
-            cmd.set_wizard(self.top.ActiveWizard)
+        if self.top.ValidateWizardRunning():
+            return
 
-            self.top.ActiveWizard.Start()
-            
-        else:
-            self.DisplayMessage("  ERROR: Could not open Wizard because one is already active", 2)
+        self.FlexSCRunning(True)
+        self.top.ActiveWizard = FlexSideChain.flexSC(self)
+        cmd.set_wizard(self.top.ActiveWizard)
 
+        self.top.ActiveWizard.Start()
+        
     ''' ==================================================================================
     FUNCTION FlexSCRunning: Disables/Enables controls related to Flexible side-chains
     ==================================================================================  '''               
@@ -568,8 +565,7 @@ class Config1(Tabs.Tab):
     ==================================================================================  '''        
     def Btn_LoadConfBS_Clicked(self):
 
-        if self.top.ActiveWizard != None:
-            self.DisplayMessage("  Cannot load a binding-site while the 'Sphere' Wizard is currently active", 2)
+        if self.top.ValidateWizardRunning():
             return
 
         BindingSitePath = self.Get_BindingSitePath()
@@ -618,8 +614,7 @@ class Config1(Tabs.Tab):
     ==================================================================================  '''        
     def Btn_SaveConfBS_Clicked(self):
 
-        if self.top.ActiveWizard != None:
-            self.DisplayMessage("  Cannot save a binding-site while the 'Sphere' Wizard is currently active", 2)
+        if self.top.ValidateWizardRunning():
             return
 
         BindingSitePath = self.Get_BindingSitePath()
@@ -768,16 +763,15 @@ class Config1(Tabs.Tab):
         if not self.PyMOL:
             return
 
-        if self.top.ActiveWizard is None:
+        if self.top.ValidateWizardRunning():
+            return
 
-            self.SphereRunning(True)
+        self.SphereRunning(True)
 
-            self.top.ActiveWizard = Sphere.Sphere(self, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize)
-            cmd.set_wizard(self.top.ActiveWizard)
-            self.top.ActiveWizard.Start()
+        self.top.ActiveWizard = Sphere.Sphere(self, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize)
+        cmd.set_wizard(self.top.ActiveWizard)
+        self.top.ActiveWizard.Start()
 
-        else:
-            self.DisplayMessage("  ERROR: Could not open Wizard because one is already active", 1)
 
     # Deletes the binding-site object
     def Delete_BindingSite(self):
@@ -807,8 +801,10 @@ class Config1(Tabs.Tab):
     # ResizeSphere = Get the scale value, then resize the sphere          
     def ResizeSphere(self, *args):
 
-        if self.top.ActiveWizard is not None:
-            self.top.ActiveWizard.ResizeSphere()
+        if not self.top.ValidateWizardRunning():
+            return
+            
+        self.top.ActiveWizard.ResizeSphere()
 
     # Center the sphere based on the selection
     def CenterSphere(self, sel):
@@ -816,15 +812,16 @@ class Config1(Tabs.Tab):
         if not self.PyMOL:
             return
         
-        if self.top.ActiveWizard is not None:
-            Center = General_cmd.Get_CenterOfMass2(sel, cmd.get_state())
-            
-            if len(Center) > 0:
-                self.top.ActiveWizard.SphereView.Set_Center(Center)
-                self.top.ActiveWizard.DisplaySphere()
-                self.defOptSphere.set(sel)
-        else:
-            self.DisplayMessage(  "ERROR: Could not open Wizard because one is already active", 1)
+        if self.top.ValidateWizardRunning():
+            return
+
+        Center = General_cmd.Get_CenterOfMass2(sel, cmd.get_state())
+        
+        if len(Center) > 0:
+            self.top.ActiveWizard.SphereView.Set_Center(Center)
+            self.top.ActiveWizard.DisplaySphere()
+            self.defOptSphere.set(sel)
+
      
     # Listbox Menu Refresh values  
     def Btn_OptSphRefresh_Clicked(self):

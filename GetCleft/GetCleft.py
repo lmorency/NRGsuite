@@ -29,15 +29,9 @@
 
 from Tkinter import *
 
-import os, sys
-import pickle
-import time
+import os
 import tkFileDialog
 import tkMessageBox
-
-import Prefs
-import Color
-import General
 
 import Base
 import CleftObj
@@ -127,7 +121,6 @@ class displayGetCleft(Base.Base):
         menubar.add_cascade(label="Save", menu=savemenu)
         
         self.top.config(menu=menubar)
-        
         
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    

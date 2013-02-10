@@ -31,12 +31,7 @@ from Tkinter import *
 
 import os, sys
 import pickle
-import time
 import tkFileDialog
-
-import Prefs
-import Color
-import General
 
 import Base
 import IOFile
@@ -87,8 +82,10 @@ class displayFlexAID(Base.Base):
 
         if self.OSid == 'WIN':
             self.FlexAIDExecutable = os.path.join(self.FlexAIDInstall_Dir,'WRK','FlexAID.exe')
+            self.Process_LigandExecutable = os.path.join(self.FlexAIDInstall_Dir,'WRK','Process_Ligand.exe')
         else:
             self.FlexAIDExecutable = os.path.join(self.FlexAIDInstall_Dir,'WRK','FlexAID')
+            self.Process_LigandExecutable = os.path.join(self.FlexAIDInstall_Dir,'WRK','Process_Ligand')
 
         self.FlexAIDProject_Dir = os.path.join(self.Project_Dir,'FlexAID')
         self.GetCleftProject_Dir = os.path.join(self.Project_Dir,'GetCleft')
@@ -256,7 +253,7 @@ class displayFlexAID(Base.Base):
     def Btn_Load_Session(self):
 
         if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
-            self.ValidateWindowRunning:
+            self.ValidateWindowRunning():
             return
 
         LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDSessionProject_Dir,
@@ -289,7 +286,7 @@ class displayFlexAID(Base.Base):
     def Btn_Load_Results(self):
 
         if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
-            self.ValidateWindowRunning:
+            self.ValidateWindowRunning():
             return
 
         LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDResultsProject_Dir,
@@ -306,7 +303,7 @@ class displayFlexAID(Base.Base):
     def Btn_Save_Results(self):
 
         if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
-            self.ValidateWindowRunning:
+            self.ValidateWindowRunning():
             return
                 
         SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDResultsProject_Dir,
@@ -324,7 +321,7 @@ class displayFlexAID(Base.Base):
     def Btn_Save_Session(self):
 
         if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
-            self.ValidateWindowRunning:
+            self.ValidateWindowRunning():
             return
             
         SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDSessionProject_Dir,

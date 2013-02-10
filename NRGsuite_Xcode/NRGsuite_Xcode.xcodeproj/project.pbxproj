@@ -137,11 +137,11 @@
 		158C85C916A5C19C00E07CFF /* GetCleft */ = {
 			isa = PBXGroup;
 			children = (
+				158C85CE16A5C19C00E07CFF /* images */,
 				158C85CA16A5C19C00E07CFF /* AdvOptions.py */,
 				158C85CB16A5C19C00E07CFF /* CropCleft.py */,
 				158C85CC16A5C19C00E07CFF /* Default.py */,
 				158C85CD16A5C19C00E07CFF /* GetCleft.py */,
-				158C85CE16A5C19C00E07CFF /* images */,
 				158C85D816A5C19C00E07CFF /* ManageFiles2.py */,
 				158C85D916A5C19C00E07CFF /* RunGetCleft.py */,
 				158C85DA16A5C19C00E07CFF /* Volume.py */,

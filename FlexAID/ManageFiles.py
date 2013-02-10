@@ -321,7 +321,6 @@ class Manage():
                   
         for key in sorted(self.Config2.Vars.dictConstraints, key=str.lower):
             
-            print "key=",key
             atom1 = self.Config2.parse_cons(self.Config2.Vars.dictConstraints[key][0])
             atom2 = self.Config2.parse_cons(self.Config2.Vars.dictConstraints[key][1])
             

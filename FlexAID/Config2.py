@@ -105,18 +105,17 @@ class Config2(Tabs.Tab):
         if not self.PyMOL:
             return
 
-        if self.top.ActiveWizard is None:
+        if self.top.ValidateWizardRunning():
+            return
 
-            self.FlexStatus.set('')
-            self.FlexBondsRunning(True)
+        self.FlexStatus.set('')
+        self.FlexBondsRunning(True)
 
-            self.top.ActiveWizard = FlexBonds.flexbond(self)
+        self.top.ActiveWizard = FlexBonds.flexbond(self)
+        
+        cmd.set_wizard(self.top.ActiveWizard)
+        self.top.ActiveWizard.Start()
             
-            cmd.set_wizard(self.top.ActiveWizard)
-            self.top.ActiveWizard.Start()
-                
-        else:
-            self.top.DisplayMessage("A wizard is currently active", 2)
 
     ''' ==================================================================================
     FUNCTION FlexBondsRunning: Disables/enables controls related to Flexible lig. wizard
@@ -129,11 +128,12 @@ class Config2(Tabs.Tab):
             self.Enable_Frame()
             
             if self.top.WizardError or self.top.WizardResult == 0:
-                self.FlexStatus.set('No flexible bond(s) set')
+                Status = 'No flexible bond(s) set'
             
             elif self.top.WizardResult > 0:
                 Status = ' (' + str(self.top.WizardResult) + ') flexible bond(s) set'
-                self.FlexStatus.set(Status)
+                
+            self.FlexStatus.set(Status)
 
                     
     ''' ==================================================================================
@@ -144,18 +144,17 @@ class Config2(Tabs.Tab):
         if not self.PyMOL:
             return
 
-        if self.top.ActiveWizard is None:
-
-            self.SATStatus.set('')
-
-            self.SATRunning(True)
-            self.top.ActiveWizard = AtomTypes.setType(self, self.top.IOFile.OldTypes.get())
-
-            cmd.set_wizard(self.top.ActiveWizard)
-            self.top.ActiveWizard.Start()
+        if self.top.ValidateWizardRunning():
+            return
             
-        else:
-            self.top.DisplayMessage("A wizard is currently active", 2)
+        self.SATStatus.set('')
+
+        self.SATRunning(True)
+        self.top.ActiveWizard = AtomTypes.setType(self, self.top.IOFile.OldTypes.get())
+
+        cmd.set_wizard(self.top.ActiveWizard)
+        self.top.ActiveWizard.Start()
+            
 
     ''' ==================================================================================
     FUNCTION SATRunning: Disables/enables controls related to Flexible lig. wizard
@@ -175,18 +174,15 @@ class Config2(Tabs.Tab):
         if not self.PyMOL:
             return
         
-        if self.top.ActiveWizard is None:
+        if self.top.ValidateWizardRunning():
+            return
             
-            self.ConsRunning(True)
+        self.ConsRunning(True)
 
-            self.top.ActiveWizard = Constraint.constraint(self)
-            cmd.set_wizard(self.top.ActiveWizard)
+        self.top.ActiveWizard = Constraint.constraint(self)
+        cmd.set_wizard(self.top.ActiveWizard)
 
-            self.top.ActiveWizard.Start()
-            
-        else:
-            self.top.DisplayMessage("A wizard is currently active", 2)
-
+        self.top.ActiveWizard.Start()
 
     ''' ==================================================================================
     FUNCTION ConsRunning: Toggles controls' state related to when Constraints are active
@@ -343,24 +339,26 @@ class Config2(Tabs.Tab):
     ================================================================================== '''        
     def ActiveCons_Toggle(self, *args):
 
-        if self.top.ActiveWizard is not None:
+        if not self.top.ValidateWizardRunning():
+            return
             
-            if self.ActiveCons.get():
-                self.sclConsDist.config(state='normal')
-                self.ConsDist.set(self.Vars.dictConstraints[self.ActiveCons.get()][5])
-            else:
-                self.sclConsDist.config(state='disabled')
-            
-            self.top.ActiveWizard.refresh_display()
+        if self.ActiveCons.get():
+            self.sclConsDist.config(state='normal')
+            self.ConsDist.set(self.Vars.dictConstraints[self.ActiveCons.get()][5])
+        else:
+            self.sclConsDist.config(state='disabled')
+        
+        self.top.ActiveWizard.refresh_display()
 
     ''' ==================================================================================
     FUNCTION ConsDist_Toggle: The active constraint's interaction distance is changed
     ================================================================================== '''        
     def ConsDist_Toggle(self, *args):
 
-        if self.top.ActiveWizard is not None:
+        if not self.top.ValidateWizardRunning():
+            return
             
-            self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
+        self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
 
     ''' ==================================================================================
     FUNCTION Load_Message: Display the message based on the menu selected

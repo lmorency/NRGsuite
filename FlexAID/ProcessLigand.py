@@ -30,7 +30,8 @@
 @creation date:  oct. 1, 2010
 '''
 
-#import threading
+from shutil import copy, Error
+
 import os
 import time
 import shutil
@@ -42,20 +43,18 @@ from subprocess import Popen, PIPE
 class ProcLig:
 
 
-    def __init__(self, top, StartAtomIndex, AtomTypes, AnchorAtom, ConvertOnly):
+    def __init__(self, top, StartAtomIndex, AtomTypes, AnchorAtom, ConvertOnly, Gen3D):
         
-        #threading.Thread.__init__(self)
-
         self.top = top
         self.FlexAID = self.top.top
 
-        self.ProtPath = self.FlexAID.IOFile.ProtPath.get()
         self.LigandPath = self.FlexAID.IOFile.LigandPath.get()
 
         self.AtomTypes = AtomTypes
         self.AnchorAtom = AnchorAtom
 
         self.ConvertOnly = ConvertOnly
+        self.Gen3D = Gen3D
         
         self.FlexAIDWRKInstall_Dir = os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK')
 
@@ -65,72 +64,65 @@ class ProcLig:
 
         self.StartAtomIndex = StartAtomIndex
 
-        #self.start()
         self.run()
 
- 
 
-    '''
-    @summary: run: Side thread
-    '''
     def run(self):
         
         self.FlexAID.ProcessRunning = True
         
         if not self.Copy_LigandFile():
 
-            self.FlexAID.DisplayMessage("  Executing Process Ligand...",0)
+            self.FlexAID.DisplayMessage("  Executing Process Ligand...", 0)
             
             if not self.process():
-                # ligand extraction success
-                self.top.fProcessLigand = True
-                self.top.ResSeq.set(9999)
-
-                self.FlexAID.DisplayMessage("  The ligand '" + self.FlexAID.IOFile.LigandName.get() + "' was processed successfully",0)
+            
+                if self.ConvertOnly:
+                    self.FlexAID.DisplayMessage("  The ligand was converted successfully", 0)
+                else:
+                    self.FlexAID.DisplayMessage("  The ligand was processed successfully", 0)
 
             else:
-                # ligand extraction failed
+                # processing of ligand failed
                 self.top.ProcessError = True
-                self.FlexAID.DisplayMessage("  ERROR: The ligand '" + self.FlexAID.IOFile.LigandName.get() + "' could not be processed",1)
+                self.FlexAID.DisplayMessage("  ERROR: The ligand could not be processed", 1)
 
         else:
             # could not copy file
             self.top.ProcessError = True
-            self.FlexAID.DisplayMessage("  ERROR: The ligand '" + self.FlexAID.IOFile.LigandName.get() + "' could not be copied",1)
+            self.FlexAID.DisplayMessage("  ERROR: The ligand could not be copied", 1)
 
-
-        self.top.ProcessLigand(False, 0)
+        self.top.ProcessLigand(False, 0, '', 0, False, 0)
         self.FlexAID.ProcessRunning = False
 
-    '''
-    @summary: Set_LigandPDB: Prepare the ligand PDB file for the ligand_extractor  
-    '''                 
+
     def Copy_LigandFile(self):
         
         try:
-            shutil.copy(self.LigandPath, self.FlexAID.FlexAIDSimulationProject_Dir)
-
-            self.SimLigPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, os.path.split(self.LigandPath)[1])
-        except:
+            copy(self.LigandPath, self.FlexAID.FlexAIDSimulationProject_Dir)            
+        except IOError:
             return 1
+        except Error:
+            pass
+        
+        self.SimLigPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, os.path.split(self.LigandPath)[1])
 
         return 0
 
        
     '''
-    @summary: process: Processes the ligand (generates input files)
+    @summary: process: Processes the ligand (generates input files for FlexAID)
     '''  
     def process(self):
 
         # Set the command-line arguments to process ligand
-
-        if self.FlexAID.OSid == 'WIN':
-            commandline = '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'Process_Ligand.exe') + '"'
-        else:
-            commandline = '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'Process_Ligand') + '"'
+        commandline = '"' + self.FlexAID.Process_LigandExecutable + '"'
 
         commandline += ' -f ' + '"' + self.SimLigPath + '"'
         commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG') + '"'
+        
+        if self.Gen3D:
+            commandline += ' --gen3D'
         
         if self.ConvertOnly:
             commandline += ' -c'
@@ -152,36 +144,32 @@ class ProcLig:
         
         # Execute command-line
         try:
+        
             if self.FlexAID.OSid == 'WIN':
                 self.set_environment('BABEL_DATADIR', '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'data') + '"')
                 self.FlexAID.Run = Popen(commandline, shell=False, stderr=PIPE, stdout=PIPE)
+                
             elif self.FlexAID.OSid == 'LINUX':
                 self.set_environment('LD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
                 self.set_environment('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
                 self.FlexAID.Run = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
+                
             elif self.FlexAID.OSid == 'MAC':
                 self.set_environment('DYLD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
                 self.set_environment('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
                 self.FlexAID.Run = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
-            else:
-                self.FlexAID.DisplayMessage("  ERROR: Your platform is not supported by NRGsuite",1)
-                return 1
 
-            while self.FlexAID.Run.poll() is None:
-                time.sleep(0.25)
+            (out,err) = self.FlexAID.Run.communicate()
             
             if self.FlexAID.Run.returncode != 0:
                 self.top.ProcessError = True
-
+            
         except:
             return 1
-        
-        the_outerr = self.FlexAID.Run.stderr.read()
-        the_output = self.FlexAID.Run.stdout.read()
 
         self.FlexAID.Run = None
         
-        if the_output.find('Done.') != -1:
+        if out.find('Done.') != -1:
             self.top.ReferencePath.set(os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG_ref.pdb'))
             return 0
         

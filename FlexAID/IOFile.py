@@ -22,6 +22,8 @@ from Tkinter import *
 import math
 import os
 import hashlib
+import shutil
+
 import Vars
 import Tabs
 import tkFileDialog
@@ -54,20 +56,15 @@ class IOFileVars(Vars.Vars):
     LigandPath = StringVar()
     LigandName = StringVar()
     AtomTypes = StringVar()
-
+    SmilesString = StringVar()
+    Gen3D = IntVar()
+    
     def __init__(self):
         
         self.LigandPathMD5 = ''
     
     
 class IOFile(Tabs.Tab):
-
-    ProcessError = False
-    
-    # flags
-    fProcessLigand = False
-    fStoreInfo = False
-    fLoadProcessed = False
     
     SupportedFormats = [ ('PDB File','*.pdb'),
                          ('MOL File','*.mol'),
@@ -88,7 +85,8 @@ class IOFile(Tabs.Tab):
         self.LigandPath = self.Vars.LigandPath
         self.LigandName = self.Vars.LigandName
         self.AtomTypes = self.Vars.AtomTypes
-        
+        self.SmilesString = self.Vars.SmilesString
+        self.Gen3D = self.Vars.Gen3D
 
     def Init_Vars(self):
 
@@ -97,6 +95,8 @@ class IOFile(Tabs.Tab):
         self.ProtName.set('')
         self.LigandPath.set('')
         self.LigandName.set('')
+        self.SmilesString.set('')
+        self.Gen3D.set(0)
 
         self.ReferencePath.set('')
         self.defaultOption.set('')
@@ -108,8 +108,14 @@ class IOFile(Tabs.Tab):
         #self.top.Config2.Vars.Anchor.set(-1)
 
         self.Vars.LigandPathMD5 = ''
+        
+        self.ProcessError = False
     
-    
+        # flags
+        self.fProcessLigand = False
+        self.fStoreInfo = False
+        self.fLoadProcessed = False
+
     ''' ==================================================================================
     FUNCTION Load_Session: Actions related to when a new session is loaded
     =================================================================================  '''    
@@ -132,49 +138,96 @@ class IOFile(Tabs.Tab):
             if AtomIndex == -1:
                 return False
 
-            self.ProcessLigand(True, AtomIndex + 1)
+            self.ProcessLigand( True, AtomIndex + 1, self.AtomTypes.get(), self.top.Config2.Anchor.get(),
+                                False, self.Gen3D.get())
 
             if self.ProcessError:
                 return False
+            else:
+                self.fProcessLigand = True
+                self.ResSeq.set(9999)
 
         # Store content of ligand input files
         if not self.fStoreInfo:
             if self.store_InpFile():
                 return False
+            else:
+                self.fStoreInfo = True
 
         # Loads the PDB of the processed ligand
         if not self.fLoadProcessed:
-            if self.Load_ProcessedLigand():
+            if self.Load_ProcConvLigand(self.ReferencePath.get()):
                 return False
+            else:
+                self.fLoadProcessed = True
 
         return True
     
     ''' ==================================================================================
     FUNCTION ProcessLigand: Processes ligand PDB file using lig_extractor
     ================================================================================== '''    
-    def ProcessLigand(self, boolRun, StartAtomIndex):
+    def ProcessLigand(self, boolRun, StartAtomIndex, AtomTypes, Anchor, ConvertOnly, Gen3D):
 
         if boolRun:
             self.Disable_Frame()
             
             self.top.ProcessRunning = True
-            p = ProcessLigand.ProcLig(self, StartAtomIndex, self.AtomTypes.get(), self.top.Config2.Anchor.get())
+            p = ProcessLigand.ProcLig(self, StartAtomIndex, AtomTypes, Anchor, ConvertOnly, Gen3D)
 
         else:
             self.Enable_Frame()
 
     ''' ==================================================================================
+    FUNCTION Convert_Smiles: Converts the smiles string to a viewable molecule format
+    ================================================================================== '''    
+    def Convert_Smiles(self):
+        
+        self.ProcessLigand( True, 0, '', 0, True, 1)
+        
+        if self.ProcessError:
+            return 1
+            
+        return 0
+
+    ''' ==================================================================================
+    FUNCTION Convert_Smiles: Write the Smiles to a .smi file
+    ================================================================================== '''    
+    def Write_Smiles(self):
+        
+        LigandPath = os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIG.smi')
+        
+        try:
+            handle = open(LigandPath, 'w')
+            handle.write(self.SmilesString.get() + '\n')
+            handle.close()
+        except IOError:
+            self.DisplayMessage("  ERROR: Could not write Smiles string a file.", 2)
+            return 1
+            
+        self.LigandPath.set(LigandPath)
+        
+        return 0
+        
+    ''' ==================================================================================
     FUNCTION SmilesRunning: Disables all controls when smiles windows is opened
     ================================================================================== '''    
-    def SmilesRunning(self, boolRun, SmilesString):
+    def SmilesRunning(self, boolRun):
 
         if boolRun:
             self.Disable_Frame()
         else:
-            print "SmilesString is", SmilesString
+            # When a user inputs a SMILES string, need to first write to a .smi file
             
             self.Enable_Frame()
 
+            if self.SmilesString.get():
+                if not self.Write_Smiles() and not self.Convert_Smiles() and \
+                   not self.Move_TempLigand():
+                   
+                    self.LigandName.set('LIG')
+                    self.Load_ProcConvLigand(os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIG.mol2'))
+
+            
     ''' ==================================================================================
                          ENABLE / DISABLE - Buttons
     ================================================================================== '''             
@@ -362,6 +415,8 @@ class IOFile(Tabs.Tab):
         fProcessingLine1.pack(side=TOP, fill=X)
         fProcessingLine2 = Frame(fProcessing)#, border=1, relief=SUNKEN)
         fProcessingLine2.pack(side=TOP, fill=X)
+        fProcessingLine3 = Frame(fProcessing)#, border=1, relief=SUNKEN)
+        fProcessingLine3.pack(side=TOP, fill=X)
         
         Label(fProcessingLine1, text='Processing of molecules', font=self.font_Title).pack(side=LEFT)
 
@@ -370,6 +425,9 @@ class IOFile(Tabs.Tab):
         Radiobutton(fProcessingLine2, text='Sobolev', variable=self.AtomTypes, value="Sobolev", font=self.font_Text).pack(side=LEFT)
         Radiobutton(fProcessingLine2, text='Gaudreault', variable=self.AtomTypes, value="Gaudreault", font=self.font_Text).pack(side=LEFT, padx=10)
         Radiobutton(fProcessingLine2, text='Sybyl', variable=self.AtomTypes, value="Sybyl", font=self.font_Text).pack(side=LEFT)
+        
+        Checkbutton(fProcessingLine3, variable=self.Gen3D, text='Generate 3D conformation',
+                    font=self.font_Text, justify=LEFT).pack(side=LEFT)
 
         return self.fIOFile
         
@@ -394,27 +452,27 @@ class IOFile(Tabs.Tab):
         if not self.PyMOL:
             return
 
+        if self.top.ValidateWizardRunning():
+            return
+
         if self.LigandPath.get():
+                            
+            self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath.get(), self.top.Config2.Anchor.get())
             
-            if self.top.ActiveWizard is None:
-                
-                self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath.get(), self.top.Config2.Anchor.get())
-                
-                cmd.set_wizard(self.top.ActiveWizard)
-                self.top.ActiveWizard.Start()
-                
-            else:
-                self.DisplayMessage("A wizard is currently active", 2)
+            cmd.set_wizard(self.top.ActiveWizard)
+            self.top.ActiveWizard.Start()
 
     ''' ==================================================================================
     FUNCTION Btn_Input_Clicked: Selects the anchor atom of the ligand
     ==================================================================================  '''    
     def Btn_Input_Clicked(self):
 
-        #if not self.PyMOL:
-        #    return
-
-        Smi = Smiles.Smiles(self)
+        if not self.PyMOL:
+            return
+        
+        self.SmilesRunning(True)
+        
+        self.ChildWindow = Smiles.Smiles(self, self.SmilesString)
         
     ''' ==================================================================================
     FUNCTION Btn_Save : Save Ligand and Protein objects, object is reloaded automatically
@@ -534,7 +592,7 @@ class IOFile(Tabs.Tab):
                 if n < 3:
                     self.DisplayMessage("  ERROR for object '" + Name + "': The ligand must have at least (3) atoms)", 1)
                     return
-
+                
                 elif n > Constants.MAX_LIGAND_ATOMS:
                     self.DisplayMessage("  ERROR for object '" + Name + "': The ligand must have a maximum of (" + 
                                         Constants.MAX_LIGAND_ATOMS + ') atoms', 1)
@@ -548,17 +606,15 @@ class IOFile(Tabs.Tab):
             self.DisplayMessage("  Successfully loaded the ligand: '" + self.LigandName.get() + "'", 0)
 
 
-    def Load_ProcessedLigand(self):
+    def Load_ProcConvLigand(self, LigandFile):
         
         try:
             if self.PyMOL:
-                cmd.load(self.ReferencePath.get(), self.LigandName.get(), state=1)
+                cmd.load(LigandFile, self.LigandName.get(), state=1)
         except:
-            self.DisplayMessage('  ERROR: Could not load the PDB of the processed ligand', 1)
+            self.DisplayMessage('  ERROR: Could not load the ligand file in PyMOL', 1)
             return 1
         
-        self.fLoadProcessed = True
-
         return 0
 
            
@@ -632,6 +688,24 @@ class IOFile(Tabs.Tab):
             
         General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, [], None)
    
+    ''' ==================================================================================
+    FUNCTIONS Move_TempLigand(self):
+    ================================================================================== '''        
+    def Move_TempLigand(self):
+
+        MOL2Ligand = os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIG.mol2')
+        MOL2TempLigand = MOL2Ligand + '.tmp'
+        
+        try:
+            shutil.move(MOL2TempLigand, MOL2Ligand)
+        except IOError:
+            self.DisplayMessage("  ERROR: Could not move the temporary ligand file.", 2)
+            return 1
+        except shutil.Error:
+            pass
+            
+        return 0
+
     ''' ==================================================================================
     FUNCTIONS Display Ligand and Protein in pymol
     ================================================================================== '''        
@@ -715,7 +789,6 @@ class IOFile(Tabs.Tab):
             self.store_FlexBonds(flexInfo)
         
         self.Vars.LigandPathMD5 = self._LigandPathMD5
-        self.fStoreInfo = True
 
         return 0
 

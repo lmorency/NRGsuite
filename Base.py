@@ -22,8 +22,6 @@ from subprocess import Popen, PIPE
 
 import ctypes
 import os
-import os, sys
-import time
 
 import tkFont
 import Prefs
@@ -96,7 +94,7 @@ class Base:
         self.fMain.pack(expand=True)
 
         self.Frame_Main()
-        
+                
         self.Build_Tabs()
         self.MakeMenuBar()
 
@@ -133,7 +131,7 @@ class Base:
     def Btn_Default_Clicked(self):
         
         if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
-            self.ValidateWindowRunning:
+            self.ValidateWindowRunning():
             return
             
         self.ActiveFrame.Init_Vars()
@@ -257,10 +255,14 @@ class Base:
             self.Kill(self.Run.pid)
 
         # Close any Wizard interface in Pymol if started
-        if not self.ActiveWizard is None:
+        if self.ActiveWizard is not None:
             if self.PyMOL:
                 self.ActiveWizard.btn_Done()
         
+        # Close child windows if any
+        if self.ChildWindow is not None:
+            self.ChildWindow.Quit()
+
         #Delete the .run file
         RunPath = os.path.join(self.AlreadyRunning_Dir,self.RunFile)
         if os.path.isfile(RunPath):
