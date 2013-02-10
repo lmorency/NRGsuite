@@ -25,10 +25,85 @@ import os
 import os, sys
 import time
 
+import tkFont
+import Prefs
+import General
+
 class Base:
 
-    def __init__(self):
+    ''' ==================================================================================
+    FUNCTION __init__ : Initialization of the variables of the interface
+    ================================================================================== '''
+    def __init__(self, top, ActiveWizard, Project_Dir, Install_Dir, AlreadyRunning_Dir, OSid, PyMOL,
+                 Name, RunFile, WINDOWWIDTH, WINDOWHEIGHT):
     
+        self.Name = Name
+        self.RunFile = RunFile
+        self.OSid = OSid
+        self.PyMOL = PyMOL
+        
+        self.AlreadyRunning_Dir = AlreadyRunning_Dir
+        
+        self.Install_Dir = Install_Dir
+        self.Project_Dir = Project_Dir
+        self.Folders = [ self.Project_Dir ]
+
+        self.Set_Folders()
+        self.Validate_Folders()
+    
+        self.AppIsRunning()
+
+        self.Color_Green = '#CCFFCC'
+        self.Color_Grey = '#EDEDED'
+        self.Color_Blue = '#6699FF'
+        self.Color_Red = '#FF9999'
+        self.Color_White = '#FFFFFF'
+        self.Color_Black = 'black'
+
+        self.top = top
+        self.top.title(self.Name)
+
+        #self.top.geometry()   # Interface DIMENSIONS
+        #self.top.maxsize(WINDOWWIDTH,WINDOWHEIGHT)
+        #self.top.minsize(WINDOWWIDTH,WINDOWHEIGHT)
+        self.top.protocol('WM_DELETE_WINDOW', self.Quit)
+
+        General.CenterWindow(self.top,WINDOWWIDTH,WINDOWHEIGHT)
+
+        #================================================================================== 
+        #                 SET the default fonts of the interface
+        #==================================================================================
+        FontType = Prefs.GetFontType()
+        FontSize = Prefs.GetFontSize()
+        
+        self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)        
+        self.font_Title_H = tkFont.Font(family=FontType,size=FontSize + 2, weight=tkFont.BOLD)        
+        self.font_Text = tkFont.Font(family=FontType,size=FontSize)
+        self.font_Text_H = tkFont.Font(family=FontType,size=FontSize + 2)
+        self.font_Text_I = tkFont.Font(family=FontType,size=FontSize, slant=tkFont.ITALIC)
+        self.font_Text_U = tkFont.Font(family=FontType,size=FontSize, underline=True)       
+
+        self.ChildWindow = None
+        self.ActiveFrame = None
+        self.Run = None
+        
+        self.ActiveWizard = ActiveWizard
+        self.WizardError = False
+        self.WizardResult = 0
+        self.ProcessRunning = False
+
+        self.fMain = Frame(self.top)
+        self.fMain.pack(expand=True)
+
+        self.Frame_Main()
+        
+        self.Build_Tabs()
+        self.MakeMenuBar()
+
+        self.Def_Vars()
+        
+        self.After_Init()
+
         return
         
     ''' ==================================================================================
@@ -36,19 +111,29 @@ class Base:
     ==================================================================================  '''  
     def Frame_Main(self):
 
-            return
+        return
     
+    ''' ==================================================================================
+    FUNCTION Def_Vars: Define extra variables for the class
+    ==================================================================================  '''  
+    def Def_Vars(self):
+
+        return
+        
+    ''' ==================================================================================
+    FUNCTION Build_Tabs: Builds the tab' classes of the main frame
+    ==================================================================================  '''  
+    def Build_Tabs(self):
+
+        return
+
     ''' ==================================================================================
     FUNCTION Btn_Default_Clicked: Sets back the default config
     ================================================================================== '''    
     def Btn_Default_Clicked(self):
         
-        if self.ActiveWizard != None:
-            self.DisplayMessage("Cannot reset values while a Wizard is active", 2)
-            return
-
-        if self.ProcessRunning:
-            self.DisplayMessage("Cannot reset values while a Process is running", 2)
+        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
+            self.ValidateWindowRunning:
             return
             
         self.ActiveFrame.Init_Vars()
@@ -58,14 +143,10 @@ class Base:
     ================================================================================== '''    
     def SetActiveFrame(self, Frame):
 
-        if not self.ActiveWizard is None:
-            self.DisplayMessage("Cannot switch tab: A wizard is currently running...", 2)
+        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
+            self.ValidateWindowRunning():
             return
-
-        if self.ProcessRunning:
-            self.DisplayMessage("Cannot switch tab: A process is currently running...", 2)
-            return
-
+        
         if self.ActiveFrame != Frame:
 
             if not self.ActiveFrame is None:
@@ -90,8 +171,6 @@ class Base:
             self.ActiveFrame.Show()
             self.ActiveFrame.After_Show()
             self.ActiveFrame.Tab.config(bg=self.Color_Blue)
-
-        return
 
     ''' ==================================================================================
     FUNCTION AppIsRunning: Update or Create the Running File to BLOCK multiple GUI 
@@ -162,8 +241,8 @@ class Base:
             pkill = Popen(killcmd, shell=True, stdout=PIPE, stderr=PIPE)
             (out, err) = pkill.communicate()
             if err:
-                print("   An error occuring while killing the following process", self.Run)
-                pass
+                print("   An error occured while killing the following process", self.Run)
+
 
     ''' ==================================================================================
     FUNCTION Quit: Exit the application
@@ -204,3 +283,58 @@ class Base:
         for Tab in self.listTabs:
             Tab.Del_Trace()
 
+    ''' ==================================================================================
+    FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
+    ==================================================================================  '''        
+    def MakeMenuBar(self):
+    
+        return
+
+    ''' ==================================================================================
+    FUNCTION ValidateWizardRunning: Validates if a wizard is active
+    ================================================================================== '''    
+    def ValidateWizardRunning(self):
+
+        if self.ActiveWizard is not None:
+            self.DisplayMessage("  Cannot execute task because a wizard is currently running.", 2)
+            return 1
+
+        return 0
+        
+    ''' ==================================================================================
+    FUNCTION ValidateProcessRunning: Validates if a process is currently running
+    ================================================================================== '''    
+    def ValidateProcessRunning(self):
+
+        if self.ProcessRunning or self.Run is not None:
+            self.DisplayMessage("  Cannot execute task because a process is currently running.", 2)
+            return 1
+
+        return 0
+        
+    ''' ==================================================================================
+    FUNCTION ValidateWindowRunning: Validates if a child window is opened
+    ================================================================================== '''    
+    def ValidateWindowRunning(self):
+
+        if self.ChildWindow is not None:
+            self.DisplayMessage("  Cannot execute task because a child window is currently opened.", 2)
+            return 1
+
+        return 0
+
+    ''' ==================================================================================
+    FUNCTION Set_Folders: Builds the list of folders that will be built
+    ==================================================================================  '''  
+    def Set_Folders(self):
+
+            return
+
+    ''' ==================================================================================
+    FUNCTION Validate_Folders: Make all the folders necessary for running the project
+    ==================================================================================  '''
+    def Validate_Folders(self):
+
+        for Folder in self.Folders:
+            if not os.path.isdir(Folder):
+                os.makedirs(Folder)

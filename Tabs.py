@@ -33,6 +33,7 @@ class Tab:
 
         self.font_Text = self.top.font_Text
         self.font_Title = self.top.font_Title
+        self.font_Title_H = self.top.font_Title_H
 
         self.Color_Black = self.top.Color_Black
         self.Color_Blue = self.top.Color_Blue

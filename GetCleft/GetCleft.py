@@ -32,7 +32,6 @@ from Tkinter import *
 import os, sys
 import pickle
 import time
-import tkFont
 import tkFileDialog
 import tkMessageBox
 
@@ -58,32 +57,39 @@ if __debug__:
 '''                           ---   PARENT WINDOW  ---                                 '''
 #========================================================================================= 
 
-class displayGetCleft(Base.Base):
+class displayGetCleft(Base.Base):        
+
+    def Def_Vars(self):
+
+        # flag for saving unsaved clefts
+        self.CopySession = True
+        
+        # flag for saving unsaved calculated cleft volumes
+        self.EditSession = True
+
+    def After_Init(self):
     
-    ''' ==================================================================================
-    FUNCTION __init__ : Initialization of the variables of the interface
-    ================================================================================== '''
-    def __init__(self, top, ActiveWizard, Project_Dir, Install_Dir, AlreadyRunning_Dir, OSid, PyMOL):
-        
-        self.PyMOL = PyMOL
-        if self.PyMOL:
-            from pymol import cmd
-            import General_cmd
+        # Default view
+        self.Btn_Config_Clicked()
 
-        self.Name = 'GetCleft'
-        self.RunFile = '.grun'
-        self.OSid = OSid
-        
-        self.WINDOWWIDTH = 500
-        self.WINDOWHEIGHT = 550
+        # Remove all temporary clefts in Temporary Dir
+        self.Manage.Clean()
 
-        #================================================================================== 
-        ''' ROOT PATH TO THE FLEXAID DIRECTORY  '''
-        self.AlreadyRunning_Dir = AlreadyRunning_Dir
+    def Build_Tabs(self):
+    
+        # Build class objects of each tab
+        self.Default = Default.Default(self, self.PyMOL, self.Btn_Config, 'Default', None)
+        self.Manage = ManageFiles2.Manage(self)
+        self.Crop = CropCleft.CropCleft(self, self.PyMOL, self.Btn_CropCleft, 'Partition', None)
+        self.Volume = Volume.EstimateVolume(self, self.PyMOL, self.Btn_Volume, 'Volume', None)
         
-        self.Install_Dir = Install_Dir
-        self.Project_Dir = Project_Dir
-
+        self.listBtnTabs = [ self.Btn_Config, self.Btn_Volume, self.Btn_CropCleft ]
+        self.listTabs = [ self.Default, self.Crop, self.Volume ]
+    
+        return
+    
+    def Set_Folders(self):
+    
         self.GetCleftInstall_Dir = os.path.join(self.Install_Dir,'GetCleft')
 
         if self.OSid == 'WIN':
@@ -93,7 +99,6 @@ class displayGetCleft(Base.Base):
             self.GetCleftExecutable = os.path.join(self.GetCleftInstall_Dir,'WRK','GetCleft')
             self.VolumeExecutable = os.path.join(self.GetCleftInstall_Dir,'WRK','volume_calc')
 
-        self.Project_Dir = Project_Dir
         self.GetCleftProject_Dir = os.path.join(self.Project_Dir,'GetCleft')
         self.TargetProject_Dir = os.path.join(self.Project_Dir,'Target')
         self.CleftProject_Dir = os.path.join(self.Project_Dir,'Cleft')
@@ -101,82 +106,10 @@ class displayGetCleft(Base.Base):
         self.GetCleftSaveProject_Dir = os.path.join(self.GetCleftProject_Dir,'Save')
         self.GetCleftTempProject_Dir = os.path.join(self.GetCleftProject_Dir,'Temp')
 
-        #self.GetCleftTempCleftsProject_Dir = os.path.join(self.GetCleftTempProject_Dir,'Clefts')
-        #self.GetCleftTempAtomsProject_Dir = os.path.join(self.GetCleftTempProject_Dir,'Atoms')
+        self.Folders.extend( [  self.GetCleftProject_Dir, self.TargetProject_Dir, self.CleftProject_Dir,
+                                self.GetCleftSaveProject_Dir, self.GetCleftTempProject_Dir ] )
 
-        # Create the folders if the arent exist
-        self.ValidateFolders()
-               
-        self.AppIsRunning()
-
-        #self.MsgLineCounter = 2
-        
-        self.Color_Green = '#CCFFCC'
-        self.Color_Grey = '#EDEDED'
-        self.Color_Blue = '#6699FF'
-        self.Color_Red = '#FF9999'
-        self.Color_White = '#FFFFFF'
-        self.Color_Black = 'black'
-
-        self.top = top
-        self.top.title(self.Name)
-
-        General.CenterWindow(self.top,self.WINDOWWIDTH,self.WINDOWHEIGHT)
-
-        #self.top.geometry()   # Interface DIMENSIONS
-        #self.top.maxsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        #self.top.minsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        self.top.protocol('WM_DELETE_WINDOW', self.Quit)
-
-        #================================================================================== 
-        #                 SET the default fonts of the interface
-        #==================================================================================
-        FontType = Prefs.GetFontType()
-        FontSize = Prefs.GetFontSize()
-        
-        self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)        
-        self.font_Text = tkFont.Font(family=FontType,size=FontSize)
-        self.font_Text_I = tkFont.Font(family=FontType,size=FontSize, slant=tkFont.ITALIC)
-        self.font_Text_U = tkFont.Font(family=FontType,size=FontSize, underline=True)       
-        
-        #================================================================================== 
-        #                       FRAMES Settings and startup
-        #==================================================================================        
-        self.fMain = Frame(self.top)  # Main frame
-        self.fMain.pack(expand=True)
-
-        self.ActiveFrame = None
-        self.ActiveWizard = ActiveWizard
-        self.WizardError = False
-        self.WizardResult = 0
-
-        self.ProcessRunning = False
-        self.Run = None
-
-        # flag for saving unsaved clefts
-        self.CopySession = True
-        
-        # flag for saving unsaved calculated cleft volumes
-        self.EditSession = True
-
-        self.Frame_Main()
-
-        # Build class objects of each tab
-        self.Default = Default.Default(self, self.PyMOL, self.Btn_Config, 'Default', None)
-        self.Manage = ManageFiles2.Manage(self)
-        self.Crop = CropCleft.CropCleft(self, self.PyMOL, self.Btn_CropCleft, 'Partition', None)
-        self.Volume = Volume.EstimateVolume(self, self.PyMOL, self.Btn_Volume, 'Volume', None)
-        
-        self.MakeMenuBar()
-
-        self.listBtnTabs = [ self.Btn_Config, self.Btn_Volume, self.Btn_CropCleft ]
-        self.listTabs = [ self.Default, self.Crop, self.Volume ]
-
-        # Default view
-        self.Btn_Config_Clicked()
-
-        # Remove all temporary clefts in Temporary Dir
-        self.Manage.Clean()
+        return
 
     ''' ==================================================================================
     FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
@@ -318,23 +251,5 @@ class displayGetCleft(Base.Base):
 
         self.Btn_Config.config(bg=self.Color_Blue)
 
-    ''' ==================================================================================
-    FUNCTION ValidateFolders: Be sure the folders Exists 
-    ==================================================================================  '''    
-    def ValidateFolders(self):
-        
-        if not os.path.isdir(self.GetCleftProject_Dir):
-            os.makedirs(self.GetCleftProject_Dir)
             
-        if not os.path.isdir(self.TargetProject_Dir):
-            os.makedirs(self.TargetProject_Dir)
-
-        if not os.path.isdir(self.CleftProject_Dir):
-            os.makedirs(self.CleftProject_Dir)
-        
-        if not os.path.isdir(self.GetCleftSaveProject_Dir):
-            os.makedirs(self.GetCleftSaveProject_Dir)
-
-        if not os.path.isdir(self.GetCleftTempProject_Dir):
-            os.makedirs(self.GetCleftTempProject_Dir)
     

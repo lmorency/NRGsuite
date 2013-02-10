@@ -26,6 +26,7 @@ import Vars
 import Tabs
 import tkFileDialog
 import General
+import Smiles
 import Constants
 import ProcessLigand
 
@@ -71,7 +72,8 @@ class IOFile(Tabs.Tab):
     SupportedFormats = [ ('PDB File','*.pdb'),
                          ('MOL File','*.mol'),
                          ('MOL2 File','*.mol2'),
-                         ('SDF File','*.sdf') ]
+                         ('SDF File','*.sdf'),
+                         ('SMI File','*.smi') ]
     
     def Def_Vars(self):
         
@@ -159,6 +161,18 @@ class IOFile(Tabs.Tab):
             p = ProcessLigand.ProcLig(self, StartAtomIndex, self.AtomTypes.get(), self.top.Config2.Anchor.get())
 
         else:
+            self.Enable_Frame()
+
+    ''' ==================================================================================
+    FUNCTION SmilesRunning: Disables all controls when smiles windows is opened
+    ================================================================================== '''    
+    def SmilesRunning(self, boolRun, SmilesString):
+
+        if boolRun:
+            self.Disable_Frame()
+        else:
+            print "SmilesString is", SmilesString
+            
             self.Enable_Frame()
 
     ''' ==================================================================================
@@ -326,6 +340,7 @@ class IOFile(Tabs.Tab):
         Button(fPDBligandLine1, text='Load', command=self.Btn_LoadLigand_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Display', command=self.Btn_DisplayLigand_Clicked,font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Reset', command=self.Btn_ResetLigand_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDBligandLine1, text='Input', command=self.Btn_Input_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Anchor', command=self.Btn_Anchor_Clicked, font=self.font_Text).pack(side=LEFT)
         
         # Second line
@@ -382,7 +397,7 @@ class IOFile(Tabs.Tab):
         if self.LigandPath.get():
             
             if self.top.ActiveWizard is None:
-            
+                
                 self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath.get(), self.top.Config2.Anchor.get())
                 
                 cmd.set_wizard(self.top.ActiveWizard)
@@ -391,6 +406,15 @@ class IOFile(Tabs.Tab):
             else:
                 self.DisplayMessage("A wizard is currently active", 2)
 
+    ''' ==================================================================================
+    FUNCTION Btn_Input_Clicked: Selects the anchor atom of the ligand
+    ==================================================================================  '''    
+    def Btn_Input_Clicked(self):
+
+        #if not self.PyMOL:
+        #    return
+
+        Smi = Smiles.Smiles(self)
         
     ''' ==================================================================================
     FUNCTION Btn_Save : Save Ligand and Protein objects, object is reloaded automatically

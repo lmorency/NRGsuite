@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		1555D4F616C70CEF00F30037 /* Smiles.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = Smiles.py; sourceTree = "<group>"; };
 		156DDD1016BCA5CF00E42516 /* Base.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Base.py; path = ../Base.py; sourceTree = SOURCE_ROOT; };
 		158C859816A5C19C00E07CFF /* CleftObj.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CleftObj.py; path = ../CleftObj.py; sourceTree = SOURCE_ROOT; };
 		158C859916A5C19C00E07CFF /* Color.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Color.py; path = ../Color.py; sourceTree = SOURCE_ROOT; };
@@ -50,10 +51,6 @@
 		158C85D916A5C19C00E07CFF /* RunGetCleft.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = RunGetCleft.py; sourceTree = "<group>"; };
 		158C85DA16A5C19C00E07CFF /* Volume.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = Volume.py; sourceTree = "<group>"; };
 		158C85DE16A5C19C00E07CFF /* Grid.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Grid.py; path = ../Grid.py; sourceTree = SOURCE_ROOT; };
-		158C85E016A5C19C00E07CFF /* CfgIsoCleft.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CfgIsoCleft.py; sourceTree = "<group>"; };
-		158C85E116A5C19C00E07CFF /* Config.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = Config.py; sourceTree = "<group>"; };
-		158C85E216A5C19C00E07CFF /* IsoCleft.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = IsoCleft.py; sourceTree = "<group>"; };
-		158C85E416A5C19C00E07CFF /* IsoCleft */ = {isa = PBXFileReference; lastKnownFileType = text; path = IsoCleft; sourceTree = "<group>"; };
 		158C85E516A5C19C00E07CFF /* MessageBox.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MessageBox.py; path = ../MessageBox.py; sourceTree = SOURCE_ROOT; };
 		158C85E716A5C19C00E07CFF /* NRGsuite.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = NRGsuite.py; sourceTree = "<group>"; };
 		158C85E816A5C19C00E07CFF /* Prefs.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Prefs.py; path = ../Prefs.py; sourceTree = SOURCE_ROOT; };
@@ -61,7 +58,6 @@
 		158C85EB16A5C19C00E07CFF /* NewProject.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = NewProject.py; sourceTree = "<group>"; };
 		158C85EC16A5C19C00E07CFF /* Sphere.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Sphere.py; path = ../Sphere.py; sourceTree = SOURCE_ROOT; };
 		158C85ED16A5C19C00E07CFF /* SphereObj.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SphereObj.py; path = ../SphereObj.py; sourceTree = SOURCE_ROOT; };
-		158C85EE16A5C19C00E07CFF /* tkTable.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = tkTable.py; path = ../tkTable.py; sourceTree = SOURCE_ROOT; };
 		15BDCF2D16B8E418000F45F7 /* BindingSite.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = BindingSite.py; path = ../BindingSite.py; sourceTree = SOURCE_ROOT; };
 		15BDCF4916B8E7A3000F45F7 /* Vars.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Vars.py; path = ../Vars.py; sourceTree = SOURCE_ROOT; };
 		15BDCF4A16B8E7BF000F45F7 /* Tabs.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Tabs.py; path = ../Tabs.py; sourceTree = SOURCE_ROOT; };
@@ -78,6 +74,7 @@
 		15F34EAC16A9051A00BED5DE /* scr_bin.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = scr_bin.dat; sourceTree = "<group>"; };
 		15F34EAD16A9051A00BED5DE /* scr_mat.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = scr_mat.dat; sourceTree = "<group>"; };
 		15F34EAE16A9051A00BED5DE /* SYBYL_emat.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SYBYL_emat.dat; sourceTree = "<group>"; };
+		15F62C5816C6F9A8001CF626 /* MultiList.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MultiList.py; path = ../MultiList.py; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -86,7 +83,6 @@
 			children = (
 				158C859B16A5C19C00E07CFF /* FlexAID */,
 				158C85C916A5C19C00E07CFF /* GetCleft */,
-				158C85DF16A5C19C00E07CFF /* IsoCleft */,
 				158C85E616A5C19C00E07CFF /* Plugin */,
 				158C85E916A5C19C00E07CFF /* Project */,
 				156DDD1016BCA5CF00E42516 /* Base.py */,
@@ -99,11 +95,11 @@
 				158C85C816A5C19C00E07CFF /* Geometry.py */,
 				158C85DE16A5C19C00E07CFF /* Grid.py */,
 				158C85E516A5C19C00E07CFF /* MessageBox.py */,
+				15F62C5816C6F9A8001CF626 /* MultiList.py */,
 				158C85E816A5C19C00E07CFF /* Prefs.py */,
 				158C85EC16A5C19C00E07CFF /* Sphere.py */,
 				158C85ED16A5C19C00E07CFF /* SphereObj.py */,
 				15BDCF4A16B8E7BF000F45F7 /* Tabs.py */,
-				158C85EE16A5C19C00E07CFF /* tkTable.py */,
 				15BDCF4916B8E7A3000F45F7 /* Vars.py */,
 			);
 			sourceTree = "<group>";
@@ -130,6 +126,7 @@
 				158C85AA16A5C19C00E07CFF /* RunFlexAID.py */,
 				158C85AB16A5C19C00E07CFF /* Simulate.py */,
 				158C85AC16A5C19C00E07CFF /* Simulation.py */,
+				1555D4F616C70CEF00F30037 /* Smiles.py */,
 				158C85AD16A5C19C00E07CFF /* TargetFlex.py */,
 				158C85AE16A5C19C00E07CFF /* UpdateScreen.py */,
 			);
@@ -167,26 +164,6 @@
 				158C85D716A5C19C00E07CFF /* wait.png */,
 			);
 			path = images;
-			sourceTree = "<group>";
-		};
-		158C85DF16A5C19C00E07CFF /* IsoCleft */ = {
-			isa = PBXGroup;
-			children = (
-				158C85E016A5C19C00E07CFF /* CfgIsoCleft.py */,
-				158C85E116A5C19C00E07CFF /* Config.py */,
-				158C85E216A5C19C00E07CFF /* IsoCleft.py */,
-				158C85E316A5C19C00E07CFF /* WRK */,
-			);
-			name = IsoCleft;
-			path = ../IsoCleft;
-			sourceTree = SOURCE_ROOT;
-		};
-		158C85E316A5C19C00E07CFF /* WRK */ = {
-			isa = PBXGroup;
-			children = (
-				158C85E416A5C19C00E07CFF /* IsoCleft */,
-			);
-			path = WRK;
 			sourceTree = "<group>";
 		};
 		158C85E616A5C19C00E07CFF /* Plugin */ = {

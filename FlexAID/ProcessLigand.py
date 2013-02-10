@@ -42,7 +42,7 @@ from subprocess import Popen, PIPE
 class ProcLig:
 
 
-    def __init__(self, top, StartAtomIndex, AtomTypes, AnchorAtom):
+    def __init__(self, top, StartAtomIndex, AtomTypes, AnchorAtom, ConvertOnly):
         
         #threading.Thread.__init__(self)
 
@@ -55,6 +55,8 @@ class ProcLig:
         self.AtomTypes = AtomTypes
         self.AnchorAtom = AnchorAtom
 
+        self.ConvertOnly = ConvertOnly
+        
         self.FlexAIDWRKInstall_Dir = os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK')
 
         #Init the INP file path
@@ -128,20 +130,23 @@ class ProcLig:
             commandline = '"' + os.path.join(self.FlexAIDWRKInstall_Dir,'Process_Ligand') + '"'
 
         commandline += ' -f ' + '"' + self.SimLigPath + '"'
-        #commandline += ' -rh '
-        commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG') + '"' 
-        commandline += ' --atom_index ' + str(self.StartAtomIndex)
-        commandline += ' -ref'
+        commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG') + '"'
         
-        if self.AtomTypes == 'Sobolev':
-            commandline += ' --old_types'
-        elif self.AtomTypes == 'Gaudreault':
-            commandline += ' --new_types'
-        elif self.AtomTypes == 'Sybyl':
-            commandline += ' --babel_types'
-        
-        if self.AnchorAtom != -1:
-            commandline += ' --force_gpa ' + str(self.AnchorAtom)
+        if self.ConvertOnly:
+            commandline += ' -c'
+        else:
+            commandline += ' --atom_index ' + str(self.StartAtomIndex)
+            commandline += ' -ref'
+            
+            if self.AtomTypes == 'Sobolev':
+                commandline += ' --old_types'
+            elif self.AtomTypes == 'Gaudreault':
+                commandline += ' --new_types'
+            elif self.AtomTypes == 'Sybyl':
+                commandline += ' --babel_types'
+            
+            if self.AnchorAtom != -1:
+                commandline += ' --force_gpa ' + str(self.AnchorAtom)
         
         print(commandline)
         

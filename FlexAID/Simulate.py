@@ -91,9 +91,9 @@ class Simulate(Tabs.Tab):
         fTable.pack_propagate(0)
         
         self.Table = MultiList.Table(fTable, 5,
-                                   [ 'Color', 'TOP', 'Energy', 'Fitness', 'RMSD' ],
+                                   [ 'Color', 'TOP', 'Apparent CF', 'Fitness value', 'RMSD' ],
                                    [ 65, 65, 167, 167, 167 ],
-                                   [ 0, 6, 15, 15, 15 ],
+                                   [ 0, 6, 6, 6, 6 ],
                                    [ False, True, True, True, True ],
                                    self.top.font_Text,
                                    self.top.Color_Blue)

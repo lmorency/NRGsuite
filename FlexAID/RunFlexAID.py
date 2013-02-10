@@ -16,5 +16,6 @@ root = Tk()
 
 import FlexAID
 
-FlexAID = FlexAID.displayFlexAID(root, None, Project_Dir, Install_Dir, AlreadyRunning_Dir, 'MAC', 0)
+FlexAID = FlexAID.displayFlexAID(root, None, Project_Dir, Install_Dir, AlreadyRunning_Dir, 'MAC', 0,
+                                 'FlexAID', '.frun', 700, 600)
 root.mainloop()

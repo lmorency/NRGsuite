@@ -73,7 +73,9 @@ class displayLoadProject:
         FontSize = Prefs.GetFontSize()
        
         self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)        
+        self.font_Title_H = tkFont.Font(family=FontType,size=FontSize + 2, weight=tkFont.BOLD)        
         self.font_Text = tkFont.Font(family=FontType,size=FontSize)
+        self.font_Text_H = tkFont.Font(family=FontType,size=FontSize + 2)
         self.font_Text_I = tkFont.Font(family=FontType,size=FontSize, slant=tkFont.ITALIC)
         
         self.Color_Gray = '#EDEDED'

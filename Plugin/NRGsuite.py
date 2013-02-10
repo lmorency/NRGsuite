@@ -69,14 +69,12 @@ if OSid != 'UNKNOWN':
         Project_Path = os.path.join(RootDir,'Project')
         FlexAID_Path = os.path.join(RootDir,'FlexAID')
         GetCleft_Path = os.path.join(RootDir,'GetCleft')
-        IsoCleft_Path = os.path.join(RootDir,'IsoCleft')
         
-        if os.path.isdir(Project_Path) and os.path.isdir(FlexAID_Path) and os.path.isdir(GetCleft_Path) and os.path.isdir(IsoCleft_Path):
+        if os.path.isdir(Project_Path) and os.path.isdir(FlexAID_Path) and os.path.isdir(GetCleft_Path):
             
             if os.path.isfile(os.path.join(Project_Path,'NewProject.py'))  and \
                     os.path.isfile(os.path.join(FlexAID_Path,'FlexAID.py')) and \
-                    os.path.isfile(os.path.join(GetCleft_Path,'GetCleft.py')):# and \
-                    #os.path.isfile(IsoCleft_Path + 'IsoCleft.py'):
+                    os.path.isfile(os.path.join(GetCleft_Path,'GetCleft.py')):
         
                 sys.path.append(RootDir)
 
@@ -89,10 +87,7 @@ if OSid != 'UNKNOWN':
 
                 sys.path.append(GetCleft_Path)
                 import GetCleft
-                
-                sys.path.append(IsoCleft_Path)
-                import IsoCleft
-                
+                                
                 from Tkinter import *
                 from pymol import cmd
                 
@@ -110,11 +105,9 @@ if OSid != 'UNKNOWN':
                     self.UserPath = ''
                     self.UserFlexAID = ''
                     self.UserGetCleft = ''
-                    self.UserIsoCleft = ''
                     
                     self.RootFlexAID = None
                     self.RootGetCleft = None
-                    self.RootIsoCleft = None
                     self.ActiveWizard = None
 
                     # ADD a new main menu named Project to the menu bar
@@ -174,13 +167,6 @@ if OSid != 'UNKNOWN':
                                       label='   Open GetCleft...',
                                       command = lambda s=self : StartGetCleft(s))
                     
-                    #------------------------------------------------------------------
-                    # ADD a menu named Open IsoCleft to the NRGsuite main menuimport threading
-                    self.menuBar.addmenuitem('NRGsuite', 'command',
-                                      'CfgFile',
-                                      label='   Open IsoCleft...',
-                                      command = lambda s=self : StartIsoCleft(s))
-                    
                     EnableDisableMenu(self, False, True, '', '', '')
                  
                  
@@ -207,33 +193,8 @@ if OSid != 'UNKNOWN':
                     if Stopped:
                         print('   Starting GetCleft...')
                         self.RootGetCleft = Toplevel(self.root)
-                        GetCleft.displayGetCleft(self.RootGetCleft, self.ActiveWizard, self.UserPath, RootDir, RunDir_Path, OSid, True)
-                        
-                        
-                #================================================================================
-                # STARTING IsoCleft Conditional... 
-                #================================================================================  
-                def StartIsoCleft(self):
-                    
-                    Stopped = True
-                    
-                    #Detect is IsoCleft is already running...
-                    RunPath = os.path.join(RunDir_Path,'.irun')
-                    if os.path.isfile(RunPath):
-                        file = open(RunPath)
-                        Runfile = file.readline()
-                        file.close()                       
-                        
-                        ProcID = str(os.getpid())
-                        
-                        if Runfile.startswith(ProcID):
-                            Stopped = False
-                            print('\n   *** IsoCleft is ALREADY started! ***')
-                    
-                    if Stopped:
-                        print('   Starting IsoCleft...')
-                        self.RootIsoCleft = Toplevel(self.root)
-                        IsoCleft.displayIsoCleft(self.RootIsoCleft, self.UserPath, IsoCleft_Path, RootDir, RunDir_Path, OSid)
+                        GetCleft.displayGetCleft(self.RootGetCleft, self.ActiveWizard, self.UserPath, RootDir, RunDir_Path, OSid, True,
+                                                 'GetCleft','.grun', 500, 550)
                         
                         
                 #================================================================================
@@ -259,7 +220,8 @@ if OSid != 'UNKNOWN':
                     if Stopped:
                         print('   Starting FlexAID...')
                         self.RootFlexAID = Toplevel(self.root)
-                        FlexAID.displayFlexAID(self.RootFlexAID, self.ActiveWizard, self.UserPath, RootDir, RunDir_Path, OSid, True)
+                        FlexAID.displayFlexAID(self.RootFlexAID, self.ActiveWizard, self.UserPath, RootDir, RunDir_Path, OSid, True,
+                                            'FlexAID', '.frun', 700, 600)
                         
                 
                 #================================================================================        
@@ -289,7 +251,7 @@ if OSid != 'UNKNOWN':
                         self.menuBar.component('NRGsuite-menu').entryconfig(4, state='normal')
                         self.menuBar.component('NRGsuite-menu').entryconfig(6, state='normal')
                         self.menuBar.component('NRGsuite-menu').entryconfig(7, state='normal')
-                        self.menuBar.component('NRGsuite-menu').entryconfig(8, state='disabled')                       
+                        self.menuBar.component('NRGsuite-menu').entryconfig(8, state='normal')                       
                     else:
                         self.menuBar.component('NRGsuite-menu').entryconfig(0, state='normal')
                         self.menuBar.component('NRGsuite-menu').entryconfig(1, state='normal')
@@ -308,7 +270,6 @@ if OSid != 'UNKNOWN':
                     self.UserPath = UserPath
                     self.UserFlexAID = os.path.join(UserPath,'FlexAID')
                     self.UserGetCleft = os.path.join(UserPath,'GetCleft')
-                    self.UserIsoCleft = os.path.join(UserPath,'IsoCleft')
 
                 #================================================================================
                 # Loads the preferences menu to set the different options
@@ -365,22 +326,6 @@ if OSid != 'UNKNOWN':
                            self.RootGetCleft.destroy()
                            print('\n   *** CLOSING GetCleft! ***')
                            
-                    # Close IsoCleft
-                    IsoCleftRunPath = os.path.join(RunDir_Path,'.irun')
-                    if os.path.isfile(IsoCleftRunPath):
-                       file = open(IsoCleftRunPath)
-                       RunfileFlex = file.readline()
-                       file.close()
-                       
-                       if RunfileFlex.startswith(ProcID):
-                           try:
-                                os.remove(IsoCleftRunPath)
-                           except OSError:
-                                time.sleep(0.1)
-                                os.remove(IsoCleftRunPath)
-                
-                           self.RootIsoCleft.destroy()
-                           print('\n   *** CLOSING IsoCleft! ***')
                            
                     print('\n   CLOSING Project: ' + self.ProjectName)
             
@@ -399,15 +344,10 @@ if OSid != 'UNKNOWN':
                     tkMessageBox.showerror('FlexAID.py not found',
                                           'The FlexAID.py file need to be present at this location: ' + 
                                            os.path.join(FlexAID_Path,'FlexAID.py') + '\n\nInstallation CANCELLED...')
-
-                #elif not os.path.isfile(os.path.join(IsoCleft_Path,'IsoCleft.py')):
-                #    tkMessageBox.showerror('IsoCleft.py not found',
-                #                          'The IsoCleft.py file need to be present at this location: ' + 
-                #                           os.path.join(IsoCleft_Path,'IsoCleft.py') + '\n\nInstallation CANCELLED...')
            
         else:
             tkMessageBox.showerror('Programs MISSING',
-                                   'The FlexAID, GetCleft, and IsoCleft applications ' + 
+                                   'The FlexAID and GetCleft applications ' + 
                                    'need to be installed at this location: ' +
                                    RootDir + '\n\nInstallation CANCELLED...')
 

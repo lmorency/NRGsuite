@@ -156,7 +156,7 @@ class Config1(Tabs.Tab):
         self.fBindingSite = Frame(self.fConfig, border=2, relief=RAISED)
         self.fBindingSite.pack(fill=BOTH, side=TOP, padx=5, pady=5)
 
-        Label(self.fBindingSite, text='Binding-site definition', font=self.top.font_Title).pack(side=TOP, fill=X)
+        Label(self.fBindingSite, text='Binding-site definition', font=self.top.font_Title_H).pack(side=TOP, fill=X, pady=3)
 
         fConfBS = Frame(self.fBindingSite)
         fConfBS.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
@@ -258,7 +258,7 @@ class Config1(Tabs.Tab):
         fProtFlex = Frame(self.fConfig, border=2, relief=RAISED)
         fProtFlex.pack(fill=BOTH, side=TOP, padx=5, pady=5)
 
-        Label(fProtFlex, text='Target flexibility', font=self.top.font_Title).pack(side=TOP, fill=X)
+        Label(fProtFlex, text='Target flexibility', font=self.top.font_Title_H).pack(side=TOP, fill=X, pady=3)
 
         #==================================================================================
         # Pre-configured protein flexibility

@@ -386,52 +386,53 @@ class Default(Tabs.Tab):
     ==================================================================================  '''
     def Btn_StartGetCleft_Clicked(self):
 
-        if not self.top.ProcessRunning:
+        if self.top.ValidateProcessRunning():
+            return
             
-            if self.Validate_Fields():
-                self.DisplayMessage("  ERROR: Not all fields are validated.", 2)
-                return
-            
-            try:
-                TmpFile = os.path.join(self.top.GetCleftProject_Dir,'tmp.pdb')
+        if self.Validate_Fields():
+            self.DisplayMessage("  ERROR: Not all fields are validated.", 2)
+            return
+        
+        try:
+            TmpFile = os.path.join(self.top.GetCleftProject_Dir,'tmp.pdb')
 
-                if self.PyMOL:
-                    if cmd.count_atoms(self.defaultOption.get()) == 0:
-                        self.DisplayMessage("  ERROR: No atoms found for object/selection '" + self.defaultOption.get() + "'", 2)
-                        return
-                    
-                    cmd.save(TmpFile, self.defaultOption.get())
-
-            except:
-                self.DisplayMessage("  ERROR: Could not save the object/selection '" + self.defaultOption.get() + "'", 2)
-                return
-
-
-            if self.ResiduValue.get() != '':
-                
-                # with HETATM groups
-                if General.store_Residues(self.listResidues, TmpFile, 1) == -1:
-                    self.DisplayMessage("  ERROR: Could not retrieve list of residues for object/selection '" + self.defaultOption.get() + "'", 2)
-                    return            
-                
-                if self.listResidues.count(self.ResiduValue.get()) == 0:
-                    self.DisplayMessage("  ERROR: The residue entered could not be found in the object/selection '" + self.defaultOption.get() + "'", 2)
-                    self.EntryResidu.config(bg=self.top.Color_Red)
+            if self.PyMOL:
+                if cmd.count_atoms(self.defaultOption.get()) == 0:
+                    self.DisplayMessage("  ERROR: No atoms found for object/selection '" + self.defaultOption.get() + "'", 2)
                     return
+                
+                cmd.save(TmpFile, self.defaultOption.get())
 
-                self.EntryResidu.config(bg=self.top.Color_White)
+        except:
+            self.DisplayMessage("  ERROR: Could not save the object/selection '" + self.defaultOption.get() + "'", 2)
+            return
 
-            self.DisplayMessage("  Analyzing clefts for object/selection '" + self.defaultOption.get() + "'...", 0)
+
+        if self.ResiduValue.get() != '':
             
-            #TmpFile = '/Users/francisgaudreault/1stp.pdb'
-            Command_Line = '"' + self.top.GetCleftExecutable + '" -p "' + TmpFile + '"' + self.Get_Arguments()
+            # with HETATM groups
+            if General.store_Residues(self.listResidues, TmpFile, 1) == -1:
+                self.DisplayMessage("  ERROR: Could not retrieve list of residues for object/selection '" + self.defaultOption.get() + "'", 2)
+                return            
             
-            # Clear temporary clefts
-            self.Btn_Clear_Clicked()
-            
-            # Run GetCleft
-            StartRun = RunThread(self, self.defaultOption.get(), Command_Line)
-            
+            if self.listResidues.count(self.ResiduValue.get()) == 0:
+                self.DisplayMessage("  ERROR: The residue entered could not be found in the object/selection '" + self.defaultOption.get() + "'", 2)
+                self.EntryResidu.config(bg=self.top.Color_Red)
+                return
+
+            self.EntryResidu.config(bg=self.top.Color_White)
+
+        self.DisplayMessage("  Analyzing clefts for object/selection '" + self.defaultOption.get() + "'...", 0)
+        
+        #TmpFile = '/Users/francisgaudreault/1stp.pdb'
+        Command_Line = '"' + self.top.GetCleftExecutable + '" -p "' + TmpFile + '"' + self.Get_Arguments()
+        
+        # Clear temporary clefts
+        self.Btn_Clear_Clicked()
+        
+        # Run GetCleft
+        StartRun = RunThread(self, self.defaultOption.get(), Command_Line)
+        
 
     ''' ========================================================
                  Display all temporary clefts

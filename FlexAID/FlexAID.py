@@ -32,7 +32,6 @@ from Tkinter import *
 import os, sys
 import pickle
 import time
-import tkFont
 import tkFileDialog
 
 import Prefs
@@ -53,35 +52,44 @@ import Simulate
 
 class displayFlexAID(Base.Base):
     
-    ''' ==================================================================================
-    FUNCTION __init__ : Initialization of the variables of the interface
-    ================================================================================== '''
-    def __init__(self, top, ActiveWizard, Project_Dir, Install_Dir, AlreadyRunning_Dir, OSid, PyMOL):
+    BindingSiteDisplay = 'BINDING_SITE_AREA'
+    SphereDisplay = 'SPHERE_AREA'
+
+    def After_Init(self):
+                
+        # default Tab (IOFile)
+        self.Btn_IOFiles_Clicked()
+
+        # By default hide advanced tabs
+        self.bAdvancedView = False
+        self.Btn_Toggle_AdvView()
+
+    def Build_Tabs(self):
+    
+        # Build class objects of each tab
+        self.IOFile = IOFile.IOFile(self, self.PyMOL, self.Btn_IOFiles, 'IOFile', IOFile.IOFileVars())
+        self.Config1 = Config1.Config1(self, self.PyMOL, self.Btn_Config1, 'Config1', Config1.Config1Vars())
+        self.Config2 = Config2.Config2(self, self.PyMOL, self.Btn_Config2, 'Config2', Config2.Config2Vars())
+        self.Config3 = Config3.Config3(self, self.PyMOL, self.Btn_Config3, 'Config3', Config3.Config3Vars())
+        self.GAParam = GAParam.GAParam(self, self.PyMOL, self.Btn_GAParam, 'GAParam', GAParam.GAParamVars())
+        self.Simulate = Simulate.Simulate(self, self.PyMOL, self.Btn_Simulate, 'Simulate', Simulate.SimulateVars())
+
+        self.listTabs = [self.IOFile, self.Config1, self.Config2, self.Config3, self.GAParam, self.Simulate]
         
-        #print("New instance of FlexAID")
-        self.PyMOL = PyMOL
+        self.listBtnTabs = [self.Btn_IOFiles, self.Btn_Config1, self.Btn_Config2, 
+                            self.Btn_Config3, self.Btn_GAParam, self.Btn_Simulate]
 
-        self.Name = 'FlexAID'
-        self.RunFile = '.frun'
+        return
 
-        self.WINDOWWIDTH = 700
-        self.WINDOWHEIGHT = 600
+    def Set_Folders(self):
 
-        #================================================================================== 
-        ''' USER SAVE PATH DIRECTORY  '''
-        #================================================================================== 
-        self.AlreadyRunning_Dir = AlreadyRunning_Dir
-
-        self.Install_Dir = Install_Dir
         self.FlexAIDInstall_Dir = os.path.join(self.Install_Dir,'FlexAID')
 
-        self.OSid = OSid
         if self.OSid == 'WIN':
             self.FlexAIDExecutable = os.path.join(self.FlexAIDInstall_Dir,'WRK','FlexAID.exe')
         else:
             self.FlexAIDExecutable = os.path.join(self.FlexAIDInstall_Dir,'WRK','FlexAID')
 
-        self.Project_Dir = Project_Dir
         self.FlexAIDProject_Dir = os.path.join(self.Project_Dir,'FlexAID')
         self.GetCleftProject_Dir = os.path.join(self.Project_Dir,'GetCleft')
         self.GetCleftSaveProject_Dir = os.path.join(self.GetCleftProject_Dir,'Save')
@@ -96,99 +104,38 @@ class displayFlexAID(Base.Base):
         self.FlexAIDBindingSiteProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Binding_Site')
         self.FlexAIDTargetFlexProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Target_Flexibility')
 
-        self.LOGFILE = os.path.join(self.FlexAIDProject_Dir,'logfile.txt')
-        #self.LOGCOMMANDS = os.path.join(self.UserFlexAID,'logcmd.pml')
+        self.Folders.extend( [  self.FlexAIDProject_Dir, self.GetCleftProject_Dir, self.GetCleftSaveProject_Dir,
+                                self.CleftProject_Dir, self.TargetProject_Dir, self.FlexAIDLigandProject_Dir,
+                                self.FlexAIDSimulationProject_Dir, self.FlexAIDSessionProject_Dir, self.FlexAIDResultsProject_Dir,
+                                self.FlexAIDBindingSiteProject_Dir, self.FlexAIDTargetFlexProject_Dir ] )
+    
+        return
+
+    ''' ==================================================================================
+    FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
+    ==================================================================================  '''        
+    def MakeMenuBar(self):
         
-        self.ValidateFolders()      
-
-        #================================================================================== 
-        ''' ROOT PATH TO THE FLEXAID DIRECTORY  '''
-        #================================================================================== 
-        self.OSid = OSid
-
-        self.BindingSiteDisplay = 'BINDING_SITE_AREA'
-        self.SphereDisplay = 'SPHERE_AREA'
-                
-        self.AppIsRunning()
+        self.menubar = Menu(self.top)
         
-        #self.MsgLineCounter = 2
+        loadmenu = Menu(self.menubar, tearoff=0)
+        loadmenu.add_command(label="Load Session", command=self.Btn_Load_Session)
+        loadmenu.add_separator()
+        loadmenu.add_command(label="Load Results", command=self.Btn_Load_Results)
+        self.menubar.add_cascade(label="Load", menu=loadmenu)
+
+        savemenu = Menu(self.menubar, tearoff=0)        
+        savemenu.add_command(label="Save Session", command=self.Btn_Save_Session)
+        savemenu.add_separator()
+        savemenu.add_command(label="Save Results", command=self.Btn_Save_Results)
+        self.menubar.add_cascade(label="Save", menu=savemenu)
+
+        viewmenu = Menu(self.menubar, tearoff=0)
+        viewmenu.add_command(label="Advanced view", command=self.Btn_Toggle_AdvView)
+        self.menubar.add_cascade(label="View", menu=viewmenu)
         
-        self.Color_Green = '#CCFFCC'
-        self.Color_Grey = '#EDEDED'
-        self.Color_Blue = '#6699FF'
-        self.Color_Red = '#FF9999'
-        self.Color_White = '#FFFFFF'
-        self.Color_Black = 'black'                
-
-        #print("FlexAID: initializing window")
-        # Initialize the window
-        self.top = top        
-        self.top.title(self.Name)
-
-        #print("FlexAID: center window")
-        General.CenterWindow(self.top,self.WINDOWWIDTH,self.WINDOWHEIGHT)
-
-
-        #self.top.geometry()   # Interface DIMENSIONS
-        #self.top.maxsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        #self.top.minsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        self.top.protocol('WM_DELETE_WINDOW', self.Quit)
-
-        #================================================================================== 
-        #                 SET the default fonts of the interface
-        #==================================================================================
-        FontType = Prefs.GetFontType()
-        FontSize = Prefs.GetFontSize()
+        self.top.config(menu=self.menubar)
         
-        self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)        
-        self.font_Text = tkFont.Font(family=FontType,size=FontSize)
-        self.font_Text_I = tkFont.Font(family=FontType,size=FontSize, slant=tkFont.ITALIC)
-        self.font_Text_U = tkFont.Font(family=FontType,size=FontSize, underline=True)       
-        self.Img_Msg = list()        
-        
-        #================================================================================== 
-        #                       FRAMES Settings and startup
-        #==================================================================================
-                
-        self.frame = Frame(top)
-        self.frame.pack(expand=True)
-        self.curCursor = self.frame['cursor']
-        
-        #print "Main frame generated"
-
-        self.ActiveFrame = None
-        self.ActiveWizard = ActiveWizard
-        self.WizardError = False
-        self.WizardResult = 0
-
-        self.ProcessRunning = False
-        self.Run = None
-
-        self.Frame_Main()
-        
-        # Build class objects of each tab
-        self.IOFile = IOFile.IOFile(self, self.PyMOL, self.Btn_IOFiles, 'IOFile', IOFile.IOFileVars())
-        self.Config1 = Config1.Config1(self, self.PyMOL, self.Btn_Config1, 'Config1', Config1.Config1Vars())
-        self.Config2 = Config2.Config2(self, self.PyMOL, self.Btn_Config2, 'Config2', Config2.Config2Vars())
-        self.Config3 = Config3.Config3(self, self.PyMOL, self.Btn_Config3, 'Config3', Config3.Config3Vars())
-        self.GAParam = GAParam.GAParam(self, self.PyMOL, self.Btn_GAParam, 'GAParam', GAParam.GAParamVars())
-        self.Simulate = Simulate.Simulate(self, self.PyMOL, self.Btn_Simulate, 'Simulate', Simulate.SimulateVars())
-
-        self.MakeMenuBar()
-
-        self.listTabs = [self.IOFile, self.Config1, self.Config2, self.Config3, self.GAParam, self.Simulate]
-        self.listBtnTabs = [self.Btn_IOFiles, self.Btn_Config1, self.Btn_Config2, self.Btn_Config3, self.Btn_GAParam, self.Btn_Simulate]
-
-        #print "Created instances of all tab classes"
-
-        # default Tab (IOFile)
-        self.Btn_IOFiles_Clicked()
-
-        # By default hide advanced tabs
-        self.bAdvancedView = False
-        self.Btn_Toggle_AdvView()
-
-
     #=====================================================================================
     '''                     --- FRAME DISPLAY SETTINGS ---                             '''
     #=====================================================================================
@@ -227,7 +174,7 @@ class displayFlexAID(Base.Base):
         '''                  --- TOP MENU OF THE INTERFACE ---                          '''
         #==================================================================================
 
-        self.fTop = Frame(self.frame, relief=RIDGE, border=4, height=50)
+        self.fTop = Frame(self.fMain, relief=RIDGE, border=4, height=50)
         self.fTop.pack(fill=BOTH, expand=True)#, padx=10, pady=10, ipady=10, ipadx=10, side=TOP)
         self.fTop.pack_propagate(0)
 
@@ -259,7 +206,7 @@ class displayFlexAID(Base.Base):
         '''                MIDDLE DISPLAY SECTION OF THE INTERFACE                      '''
         #==================================================================================
            
-        self.fMiddle = Frame(self.frame)#, height=355)
+        self.fMiddle = Frame(self.fMain)#, height=355)
                 
         self.fMiddle.pack(fill=X, expand=True, padx=10, side=TOP)
         #self.fMiddle.config(takefocus=1)
@@ -270,7 +217,7 @@ class displayFlexAID(Base.Base):
         '''                 BOTTOM DISPLAY SECTION OF THE INTERFACE                     '''
         #==================================================================================
  
-        fBottom = Frame(self.frame, border=1, relief=SUNKEN)
+        fBottom = Frame(self.fMain, border=1, relief=SUNKEN)
         fBottom.pack(fill=BOTH, expand=True, padx=10, pady=10, ipadx=10, ipady=10, side=TOP)
 
         fBottomRight = Frame(fBottom)
@@ -304,110 +251,71 @@ class displayFlexAID(Base.Base):
         #self.Btn_Dummy.bind('<Button-1>', lambda event, arg=self.ActiveFrame: self.SwitchTab(event,arg))
     
     ''' ==================================================================================
-    FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
-    ==================================================================================  '''        
-    def MakeMenuBar(self):
-        
-        self.menubar = Menu(self.top)
-        
-        loadmenu = Menu(self.menubar, tearoff=0)
-        loadmenu.add_command(label="Load Session", command=self.Btn_Load_Session)
-        loadmenu.add_separator()
-        loadmenu.add_command(label="Load Results", command=self.Btn_Load_Results)
-        self.menubar.add_cascade(label="Load", menu=loadmenu)
-
-        savemenu = Menu(self.menubar, tearoff=0)        
-        savemenu.add_command(label="Save Session", command=self.Btn_Save_Session)
-        savemenu.add_separator()
-        savemenu.add_command(label="Save Results", command=self.Btn_Save_Results)
-        self.menubar.add_cascade(label="Save", menu=savemenu)
-
-        viewmenu = Menu(self.menubar, tearoff=0)
-        viewmenu.add_command(label="Advanced view", command=self.Btn_Toggle_AdvView)
-        self.menubar.add_cascade(label="View", menu=viewmenu)
-        
-        self.top.config(menu=self.menubar)
-        
-    ''' ==================================================================================
     FUNCTION Btn_Load_Session: Loads a previously saved session
     ==================================================================================  '''        
     def Btn_Load_Session(self):
 
-        if self.Run is None and not self.ProcessRunning:
-            if self.ActiveWizard is None:
+        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
+            self.ValidateWindowRunning:
+            return
 
-                LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDSessionProject_Dir,
-                                                        filetypes=[('NRG FlexAID Session','*.nrgfs')],
-                                                        title='Select the Session to load')
+        LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDSessionProject_Dir,
+                                                filetypes=[('NRG FlexAID Session','*.nrgfs')],
+                                                title='Select the Session to load')
 
-                if len(LoadFile) > 0:
-                    
-                    self.Btn_IOFiles_Clicked()
-                    
-                    LoadFile = os.path.normpath(LoadFile)
-                    
+        if len(LoadFile) > 0:
+            
+            self.Btn_IOFiles_Clicked()
+            
+            LoadFile = os.path.normpath(LoadFile)
+            
+            try:
+                in_ = open(LoadFile, 'r')
+                for Tab in self.listTabs:
                     try:
-                        in_ = open(LoadFile, 'r')
-                        for Tab in self.listTabs:
-                            try:
-                                Tab.Vars = pickle.load(in_)
-                                Tab.Vars.refresh()
-                                Tab.Load_Session()
-                            except:
-                                pass
-                        in_.close()
+                        Tab.Vars = pickle.load(in_)
+                        Tab.Vars.refresh()
+                        Tab.Load_Session()
                     except:
-                        self.DisplayMessage("  ERROR: Could not properly load the session", 2)
-                        self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
+                        pass
+                in_.close()
+            except:
+                self.DisplayMessage("  ERROR: Could not properly load the session", 2)
+                self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
 
-            else:
-                self.DisplayMessage("  Cannot save session while a wizard is active", 2)            
-        else:
-            self.DisplayMessage("  Cannot save session while a process is active", 2)
-        
     ''' ==================================================================================
     FUNCTION Btn_Load_Results: Loads a previously saved results
     ==================================================================================  '''        
     def Btn_Load_Results(self):
 
-        if self.Run is None and not self.ProcessRunning:
+        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
+            self.ValidateWindowRunning:
+            return
 
-            if self.ActiveWizard is None:
+        LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDResultsProject_Dir,
+                                                filetypes=[('NRG FlexAID Results','*.nrgfr')],
+                                                title='Select the Results to load')
 
-                LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDResultsProject_Dir,
-                                                        filetypes=[('NRG FlexAID Results','*.nrgfr')],
-                                                        title='Select the Results to load')
-
-                if len(LoadFile) > 0:
-                                        
-                    LoadFile = os.path.normpath(LoadFile)
+        if len(LoadFile) > 0:
+                                
+            LoadFile = os.path.normpath(LoadFile)
                     
-            else:
-                self.DisplayMessage("  Cannot save session while a wizard is active", 2)            
-        else:
-            self.DisplayMessage("  Cannot save session while a process is active", 2)
-        
     ''' ==================================================================================
     FUNCTION Btn_Save_Results: Saves the current results
     ==================================================================================  '''        
     def Btn_Save_Results(self):
 
-        if self.Run is None and not self.ProcessRunning:
-        
-            if self.ActiveWizard is None:
+        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
+            self.ValidateWindowRunning:
+            return
                 
-                SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDResultsProject_Dir,
-                                          title='Save the Results file', initialfile='default_results',
-                                          filetypes=[('NRG FlexAID Results','*.nrgfr')])
-            
-                if len(SaveFile) > 0:
+        SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDResultsProject_Dir,
+                                  title='Save the Results file', initialfile='default_results',
+                                  filetypes=[('NRG FlexAID Results','*.nrgfr')])
 
-                    SaveFile = os.path.normpath(SaveFile)
-            
-            else:
-                self.DisplayMessage("  Cannot save results while a wizard is active", 2)
-        else:
-            self.DisplayMessage("  Cannot save results while a process is active", 2)
+        if len(SaveFile) > 0:
+
+            SaveFile = os.path.normpath(SaveFile)
             
 
     ''' ==================================================================================
@@ -415,37 +323,33 @@ class displayFlexAID(Base.Base):
     ==================================================================================  '''        
     def Btn_Save_Session(self):
 
-        if self.Run is None and not self.ProcessRunning:
-        
-            if self.ActiveWizard is None:
-                
-                SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDSessionProject_Dir,
-                                          title='Save the Session file', initialfile='default_session',
-                                          filetypes=[('NRG FlexAID Session','*.nrgfs')])
+        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
+            self.ValidateWindowRunning:
+            return
             
-                if len(SaveFile) > 0:
-
-                    SaveFile = os.path.normpath(SaveFile)
-                    
-                    if SaveFile.find('.nrgfs') == -1:
-                        SaveFile = SaveFile + '.nrgfs'
-
-                    try:
-                        out = open(SaveFile, 'w')
-                        for Tab in self.listTabs:
-                            try:
-                                pickle.dump(Tab.Vars, out)
-                            except:
-                                pass
-                        out.close()
-                    except:
-                        self.DisplayMessage("  ERROR: Could not properly save the session:", 2)
-                        self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
-            else:
-                self.DisplayMessage("  Cannot save session while a wizard is active", 2)
-        else:
-            self.DisplayMessage("  Cannot save session while a process is active", 2)
+        SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDSessionProject_Dir,
+                                  title='Save the Session file', initialfile='default_session',
+                                  filetypes=[('NRG FlexAID Session','*.nrgfs')])
     
+        if len(SaveFile) > 0:
+
+            SaveFile = os.path.normpath(SaveFile)
+            
+            if SaveFile.find('.nrgfs') == -1:
+                SaveFile = SaveFile + '.nrgfs'
+
+            try:
+                out = open(SaveFile, 'w')
+                for Tab in self.listTabs:
+                    try:
+                        pickle.dump(Tab.Vars, out)
+                    except:
+                        pass
+                out.close()
+            except:
+                self.DisplayMessage("  ERROR: Could not properly save the session:", 2)
+                self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
+
     ''' ==================================================================================
     FUNCTION Btn_*_Clicked: Display the Tab options menu
     ================================================================================== '''    
@@ -548,35 +452,3 @@ class displayFlexAID(Base.Base):
         else:
             self.EntryResidu.config(bg=self.Color_White)
             
-    ''' ==================================================================================
-    FUNCTION ValidateFolders: Be sure the folders Exists 
-    ==================================================================================  '''    
-    def ValidateFolders(self):
-       
-        if not os.path.isdir(self.FlexAIDProject_Dir):
-            os.makedirs(self.FlexAIDProject_Dir)
-            
-        if not os.path.isdir(self.FlexAIDLigandProject_Dir):
-            os.makedirs(self.FlexAIDLigandProject_Dir)
-            
-        if not os.path.isdir(self.TargetProject_Dir):
-            os.makedirs(self.TargetProject_Dir)
-            
-        if not os.path.isdir(self.CleftProject_Dir):
-            os.makedirs(self.CleftProject_Dir)
-
-        if not os.path.isdir(self.FlexAIDSimulationProject_Dir):
-            os.makedirs(self.FlexAIDSimulationProject_Dir)
-            
-        if not os.path.isdir(self.FlexAIDSessionProject_Dir):
-            os.makedirs(self.FlexAIDSessionProject_Dir)
-
-        if not os.path.isdir(self.FlexAIDResultsProject_Dir):
-            os.makedirs(self.FlexAIDResultsProject_Dir)
-
-        if not os.path.isdir(self.FlexAIDBindingSiteProject_Dir):
-            os.makedirs(self.FlexAIDBindingSiteProject_Dir)
-            
-        if not os.path.isdir(self.FlexAIDTargetFlexProject_Dir):
-            os.makedirs(self.FlexAIDTargetFlexProject_Dir)
-

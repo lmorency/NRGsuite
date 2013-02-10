@@ -25,17 +25,20 @@
 @creation date:  feb. 18, 2011
 '''
 
-from Tkinter import *
-
 # FONT SETTINGS
 
+#FontType = 'arial'
+#FontType = 'times'
+
+FontType = 'helvetica'
+
+#FontSize = 11
+#FontSize = 12
+
+FontSize = 10
+
 def GetFontType():
-    #Possibility:
-    #    'helvetica'
-    #    'courrier'
-    FontType = 'helvetica'
     return FontType
 
 def GetFontSize():
-    FontSize = 10
     return FontSize
