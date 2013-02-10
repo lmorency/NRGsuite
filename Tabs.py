@@ -52,10 +52,16 @@ class Tab:
         self.fFrame = self.Frame()
         self.Trace()
                 
+    ''' ==================================================================================
+    FUNCTION Def_Vars: Define extra variables for the tab
+    ==================================================================================  '''  
     def Def_Vars(self):
     
         return
 
+    ''' ==================================================================================
+    FUNCTION Init_Vars: Sets the default values of the variables
+    ==================================================================================  '''  
     def Init_Vars(self):
     
         return
@@ -128,6 +134,10 @@ class Tab:
         
         ''' ==================================================================================
     FUNCTION Validator_Fail: Triggers visual events upon validation failure
+    =================================================================================  '''    
+    
+    ''' ==================================================================================
+    FUNCTION Validator_Fail: Runs actions when tab fails to validate
     =================================================================================  '''    
     def Validator_Fail(self):
 
@@ -206,7 +216,6 @@ class Tab:
             return False
     
         return True
-        
         
     ''' ==================================================================================
     FUNCTION Validate_Fields: Validate all fields of a frame before switching

@@ -69,7 +69,6 @@ class RunThread(threading.Thread):
         # Start the thread
         self.start()
 
-
     def run(self): 
        
         self.timeBegin = time()
@@ -141,7 +140,6 @@ class Default(Tabs.Tab):
 
         self.ColorList = list()
         self.ColorRGB = list()
-
 
     def Init_Vars(self):
 
@@ -433,7 +431,6 @@ class Default(Tabs.Tab):
         # Run GetCleft
         StartRun = RunThread(self, self.defaultOption.get(), Command_Line)
         
-
     ''' ========================================================
                  Display all temporary clefts
         ========================================================'''
@@ -510,7 +507,6 @@ class Default(Tabs.Tab):
 
         self.DisplayMessage('', 0)
         self.DisplayMessage('  Opened the default menu... ',0)        
-
 
     # Disable/enables the whole frames
     def GetCleftRunning(self, boolRun):
@@ -645,7 +641,6 @@ class Default(Tabs.Tab):
         else:
             self.top.DisplayMessage("  No clefts to save as 'clefts'", 2)
 
-    
     ''' ==================================================================================
     FUNCTION Load_Clefts: Loads the list of temp clefts
     ==================================================================================  '''        
@@ -753,7 +748,6 @@ class Default(Tabs.Tab):
                     self.DisplayMessage("  ERROR: Could not display sphere object '" + key + "'", 2)
                     continue
                     
-
     ''' ==================================================================================
     FUNCTION Btn_DownloadPDB_Clicked: Download a PDB from the internet and display the
                                       result in Pymol 

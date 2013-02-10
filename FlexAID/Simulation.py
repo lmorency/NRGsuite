@@ -45,7 +45,6 @@ import UpdateScreen
 
 # Start the simulation with FlexAID
 class Start(threading.Thread):
-#class Start():
 
     def __init__(self, top,commandline):
 
@@ -64,7 +63,6 @@ class Start(threading.Thread):
 
     # Start FlexAID on a side thread
     def run(self):        
-    #def start(self):        
         
         #print "FlexAID starting thread has begun."
         

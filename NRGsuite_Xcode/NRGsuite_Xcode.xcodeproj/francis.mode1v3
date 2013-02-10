@@ -279,7 +279,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 755}}</string>
+							<string>{{0, 205}, {186, 755}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -298,7 +298,7 @@
 							<real>186</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>8 53 1437 814 0 0 1440 878 </string>
+						<string>23 64 1437 814 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -328,42 +328,49 @@
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>1590F4FB16C76ADF00C570E9</string>
+										<string>1590F57916C797C600C570E9</string>
 										<key>history</key>
 										<array>
-											<string>15F62C5A16C6FA6D001CF626</string>
-											<string>15F62C5B16C6FA6D001CF626</string>
-											<string>15F62C6716C6FAA8001CF626</string>
-											<string>1590F39216C710A900C570E9</string>
-											<string>1590F3CB16C726EF00C570E9</string>
-											<string>1590F3CC16C726EF00C570E9</string>
-											<string>1590F3CD16C726EF00C570E9</string>
-											<string>1590F3D016C726EF00C570E9</string>
-											<string>1590F3D216C726EF00C570E9</string>
-											<string>1590F3F316C72C2500C570E9</string>
-											<string>1590F41316C7319C00C570E9</string>
-											<string>1590F41416C7319C00C570E9</string>
-											<string>1590F41816C7319C00C570E9</string>
-											<string>1590F41C16C7319C00C570E9</string>
-											<string>1590F41D16C7319C00C570E9</string>
-											<string>1590F44E16C7370300C570E9</string>
-											<string>1590F47316C7444900C570E9</string>
-											<string>1590F47516C7444900C570E9</string>
-											<string>1590F49116C74A0300C570E9</string>
-											<string>1590F49416C74AD100C570E9</string>
-											<string>1590F4C416C7541800C570E9</string>
-											<string>1590F4C516C7541800C570E9</string>
-											<string>1590F4C616C7541800C570E9</string>
-											<string>1590F4C716C7541800C570E9</string>
-											<string>1590F4C816C7541800C570E9</string>
-											<string>1590F4C916C7541800C570E9</string>
-											<string>1590F4CA16C7541800C570E9</string>
-											<string>1590F4CB16C7541800C570E9</string>
-											<string>1590F4CC16C7541800C570E9</string>
-											<string>1590F4CE16C7541800C570E9</string>
-											<string>1590F4DE16C7581F00C570E9</string>
-											<string>1590F4F716C767D500C570E9</string>
-											<string>1590F4F816C767D500C570E9</string>
+											<string>1590F51716C77AA900C570E9</string>
+											<string>1590F51816C77AA900C570E9</string>
+											<string>1590F51916C77AA900C570E9</string>
+											<string>1590F51A16C77AA900C570E9</string>
+											<string>1590F51B16C77AA900C570E9</string>
+											<string>1590F51C16C77AA900C570E9</string>
+											<string>1590F51D16C77AA900C570E9</string>
+											<string>1590F51E16C77AA900C570E9</string>
+											<string>1590F51F16C77AA900C570E9</string>
+											<string>1590F52016C77AA900C570E9</string>
+											<string>1590F52116C77AA900C570E9</string>
+											<string>1590F52216C77AA900C570E9</string>
+											<string>1590F52316C77AA900C570E9</string>
+											<string>1590F52416C77AA900C570E9</string>
+											<string>1590F52516C77AA900C570E9</string>
+											<string>1590F52616C77AA900C570E9</string>
+											<string>1590F52716C77AA900C570E9</string>
+											<string>1590F52916C77AA900C570E9</string>
+											<string>1590F52A16C77AA900C570E9</string>
+											<string>1590F52C16C77AA900C570E9</string>
+											<string>1590F52E16C77AA900C570E9</string>
+											<string>1590F52F16C77AA900C570E9</string>
+											<string>1590F53016C77AA900C570E9</string>
+											<string>1590F53216C77AA900C570E9</string>
+											<string>1590F53616C77AA900C570E9</string>
+											<string>1590F53716C77AA900C570E9</string>
+											<string>1590F53816C77AA900C570E9</string>
+											<string>1590F53916C77AA900C570E9</string>
+											<string>1590F53D16C77AA900C570E9</string>
+											<string>1590F54116C77B0F00C570E9</string>
+											<string>1590F54D16C77D1000C570E9</string>
+											<string>1590F54E16C77D1000C570E9</string>
+											<string>1590F55016C77D1000C570E9</string>
+											<string>1590F55116C77D1000C570E9</string>
+											<string>1590F55416C77D2600C570E9</string>
+											<string>1590F55D16C7802700C570E9</string>
+											<string>1590F55E16C7802700C570E9</string>
+											<string>1590F56A16C7833300C570E9</string>
+											<string>1590F56B16C7833300C570E9</string>
+											<string>1590F56C16C7833300C570E9</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -377,7 +384,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {1229, 502}}</string>
 								<key>RubberWindowFrame</key>
-								<string>8 53 1437 814 0 0 1440 878 </string>
+								<string>23 64 1437 814 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -397,7 +404,7 @@
 								<key>Frame</key>
 								<string>{{0, 507}, {1229, 266}}</string>
 								<key>RubberWindowFrame</key>
-								<string>8 53 1437 814 0 0 1440 878 </string>
+								<string>23 64 1437 814 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -564,7 +571,7 @@
 		<string>/Users/francisgaudreault/Development/NRGsuite/NRGsuite/NRGsuite_Xcode/NRGsuite_Xcode.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>8 53 1437 814 0 0 1440 878 </string>
+	<string>23 64 1437 814 0 0 1440 878 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>

@@ -52,7 +52,6 @@ class Config2Vars(Vars.Vars):
         self.dictFlexBonds = dict()
         self.dictNeighbours = dict()
     
-
 class Config2(Tabs.Tab):
     
     def Def_Vars(self):
@@ -124,6 +123,7 @@ class Config2(Tabs.Tab):
 
         if boolRun:
             self.Disable_Frame()
+            
         else:
             self.Enable_Frame()
             
@@ -135,7 +135,6 @@ class Config2(Tabs.Tab):
                 
             self.FlexStatus.set(Status)
 
-                    
     ''' ==================================================================================
     FUNCTION SAT_Toggle: Enables wizard to set atom types
     =================================================================================  '''    
@@ -201,7 +200,6 @@ class Config2(Tabs.Tab):
             
             self.ConsStatus.set(Status)
             
-
     ''' ==================================================================================
     FUNCTION Frame: Generate the Configuration Options frame in the the middle 
                     frame section

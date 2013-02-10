@@ -40,7 +40,6 @@ class Vars:
                 
         return dict_data
     
-        
     # UNPICKLING
     # First unpickle objects, list and dict
     # Then Vars because they are bound to controls

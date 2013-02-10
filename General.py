@@ -38,7 +38,6 @@ def validate_Float(sVal, Min, Max, nDec):
 
     return 0
     
-    
 ''' ==========================================================
   validate_Integer: validate the entry field (int value)  
 ==========================================================='''
@@ -154,7 +153,6 @@ def get_CenterGeometry(CG,PDBFile):
     CG[2] /= float(tot)
     
     return tot
-
 
 #=======================================================================
 ''' Store Residue List from PDB file '''

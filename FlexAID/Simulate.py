@@ -269,14 +269,6 @@ class Simulate(Tabs.Tab):
         self.SimStatus.set('Idle.')
 
     ''' =============================================================================== 
-    FUNCTION BindingSiteSim: BindingSite generation status
-    ===============================================================================  '''     
-    def BindingSiteStatus(self):
-
-        self.lblSimStatus.config(fg='yellow')
-        self.SimStatus.set('Generating binding-site...')
-
-    ''' =============================================================================== 
     FUNCTION InitStatus: Initializes necessary variables from FlexAID parsing thread   
     ===============================================================================  '''     
     def InitStatus(self):
@@ -355,10 +347,7 @@ class Simulate(Tabs.Tab):
         for key in range(1, nbTopChrom + 1):
             self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ], 
                             [ self.ColorList[key-1], None, None, None, None ] )
-            
-        #self.Table.Delete('1', 'TOP')
-        #self.Table.Set('5', 'TOP', 1.000, 'Energy')
-
+    
     ''' ==================================================================================
     FUNCTION update_DataList: Update the displayed Data List informations.
     ==================================================================================  '''                
@@ -399,8 +388,6 @@ class Simulate(Tabs.Tab):
                 
                 cmd.load(file, 'RESULT_' + str(TOP) + '__', state=1)
                 
-                
-        
     ''' =============================================================================== 
     FUNCTION Btn_PauseResumeSim: Pauses/Resumes the simulation   
     ===============================================================================  '''        
@@ -437,7 +424,6 @@ class Simulate(Tabs.Tab):
 
             self.RunStatus()
           
-        
     ''' =============================================================================== 
     FUNCTION Btn_AbortSim: Abort the simulation 
     ===============================================================================  '''    
@@ -461,7 +447,6 @@ class Simulate(Tabs.Tab):
             self.Parse.ParseFile = self.Manage.LOGFILE
             self.Results = False
 
-
     ''' =============================================================================== 
     FUNCTION Btn_StopSim: Stop the simulation 
     ===============================================================================  '''    
@@ -484,7 +469,6 @@ class Simulate(Tabs.Tab):
             self.StopStatus()
             self.Parse.ParseFile = self.Parse.LOGFILE
     
-        
     ''' ==================================================================================
     FUNCTION Click_RadioSIM: Change the way the ligand is displayed in Pymol
                              during a Simulation
@@ -537,7 +521,6 @@ class Simulate(Tabs.Tab):
             except:
                 self.DisplayMessage("  ERROR: Could not find object to modify", 1)
                 
-
 
     '''
     @summary: SUBROUTINE progressBarHandler: Update the progression bar in the interface                  

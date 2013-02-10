@@ -63,7 +63,6 @@ class IOFileVars(Vars.Vars):
         
         self.LigandPathMD5 = ''
     
-    
 class IOFile(Tabs.Tab):
     
     SupportedFormats = [ ('PDB File','*.pdb'),
@@ -71,6 +70,8 @@ class IOFile(Tabs.Tab):
                          ('MOL2 File','*.mol2'),
                          ('SDF File','*.sdf'),
                          ('SMI File','*.smi') ]
+    
+    SmilesLigand = 'SMILES_LIGAND__'
     
     def Def_Vars(self):
         
@@ -211,22 +212,27 @@ class IOFile(Tabs.Tab):
     ''' ==================================================================================
     FUNCTION SmilesRunning: Disables all controls when smiles windows is opened
     ================================================================================== '''    
-    def SmilesRunning(self, boolRun):
+    def SmilesRunning(self, boolRun, Convert):
 
         if boolRun:
             self.Disable_Frame()
+            
         else:
             # When a user inputs a SMILES string, need to first write to a .smi file
             
             self.Enable_Frame()
 
-            if self.SmilesString.get():
+            if Convert and self.SmilesString.get():
                 if not self.Write_Smiles() and not self.Convert_Smiles() and \
                    not self.Move_TempLigand():
                    
-                    self.LigandName.set('LIG')
-                    self.Load_ProcConvLigand(os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIG.mol2'))
+                    MOL2Ligand = os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIG.mol2')
+                    
+                    self.LigandName.set(self.SmilesLigand)
+                    if not self.Load_ProcConvLigand(MOL2Ligand):
+                        self.LigandPath.set(MOL2Ligand)
 
+            self.top.ChildWindow = None
             
     ''' ==================================================================================
                          ENABLE / DISABLE - Buttons
@@ -402,6 +408,9 @@ class IOFile(Tabs.Tab):
                             textvariable=self.LigandName, font=self.font_Text, justify=CENTER)
         EntLigand.pack(side=LEFT, fill=X)
         EntLigand.config(state='disabled')
+        Checkbutton(fPDBligandLine2, variable=self.Gen3D, text='Generate 3D conformation',
+            font=self.font_Text, justify=RIGHT).pack(side=LEFT, padx=10)
+
         Label(fPDBligandLine2, width=10, text='', font=self.font_Text).pack(side=LEFT)
 
         #==================================================================================
@@ -409,7 +418,7 @@ class IOFile(Tabs.Tab):
         #==================================================================================
 
         fProcessing = Frame(self.fIOFile)
-        fProcessing.pack(side=TOP, fill=X, pady=5, padx=5)
+        #fProcessing.pack(side=TOP, fill=X, pady=5, padx=5)
 
         fProcessingLine1 = Frame(fProcessing)#, border=1, relief=SUNKEN)
         fProcessingLine1.pack(side=TOP, fill=X)
@@ -418,19 +427,17 @@ class IOFile(Tabs.Tab):
         fProcessingLine3 = Frame(fProcessing)#, border=1, relief=SUNKEN)
         fProcessingLine3.pack(side=TOP, fill=X)
         
-        Label(fProcessingLine1, text='Processing of molecules', font=self.font_Title).pack(side=LEFT)
+        Label(fProcessingLine1, text='Processing of the ligand', font=self.font_Title).pack(side=LEFT)
 
-        Label(fProcessingLine2, text='Atom typing:', width=30, justify=RIGHT, font=self.font_Text).pack(side=LEFT, anchor=E)
+        Label(fProcessingLine2, text='Atom typing:', justify=RIGHT, font=self.font_Text).pack(side=LEFT, anchor=E, padx=10)
 
         Radiobutton(fProcessingLine2, text='Sobolev', variable=self.AtomTypes, value="Sobolev", font=self.font_Text).pack(side=LEFT)
         Radiobutton(fProcessingLine2, text='Gaudreault', variable=self.AtomTypes, value="Gaudreault", font=self.font_Text).pack(side=LEFT, padx=10)
         Radiobutton(fProcessingLine2, text='Sybyl', variable=self.AtomTypes, value="Sybyl", font=self.font_Text).pack(side=LEFT)
         
-        Checkbutton(fProcessingLine3, variable=self.Gen3D, text='Generate 3D conformation',
-                    font=self.font_Text, justify=LEFT).pack(side=LEFT)
 
         return self.fIOFile
-        
+    
     ''' ==================================================================================
     FUNCTIONS Reset Ligand and Protein textbox fields
     ================================================================================== '''
@@ -467,12 +474,11 @@ class IOFile(Tabs.Tab):
     ==================================================================================  '''    
     def Btn_Input_Clicked(self):
 
-        if not self.PyMOL:
-            return
+        if self.PyMOL:
         
-        self.SmilesRunning(True)
-        
-        self.ChildWindow = Smiles.Smiles(self, self.SmilesString)
+            self.SmilesRunning(True, False)
+            
+            self.top.ChildWindow = Smiles.Smiles(self, self.SmilesString)
         
     ''' ==================================================================================
     FUNCTION Btn_Save : Save Ligand and Protein objects, object is reloaded automatically
@@ -521,8 +527,6 @@ class IOFile(Tabs.Tab):
 
             self.DisplayMessage('  Successfully saved and loaded the ligand:  ' + self.LigandName.get() + "'", 0)
     
-            
-
     def Btn_SaveProt_Clicked(self):
         
         if not self.PyMOL:
@@ -560,8 +564,6 @@ class IOFile(Tabs.Tab):
             
             self.DisplayMessage('  Successfully saved and loaded the target: ' + self.ProtName.get(), 0)                                    
                 
-            
-
     ''' ==================================================================================
     FUNCTIONS Load Ligand and Protein and display the filename in the textbox
     ================================================================================== '''        
@@ -605,7 +607,6 @@ class IOFile(Tabs.Tab):
             self.LigandName.set(Name)
             self.DisplayMessage("  Successfully loaded the ligand: '" + self.LigandName.get() + "'", 0)
 
-
     def Load_ProcConvLigand(self, LigandFile):
         
         try:
@@ -617,7 +618,6 @@ class IOFile(Tabs.Tab):
         
         return 0
 
-           
     def Btn_LoadProt_Clicked(self):
         
         ProtPath = tkFileDialog.askopenfilename(filetypes=self.SupportedFormats, 
@@ -659,7 +659,6 @@ class IOFile(Tabs.Tab):
             if self.PyMOL:
                 cmd.load(FilePath, state=1)
 
-                
     ''' ==================================================================================
     FUNCTION Btn_DownloadPDB_Clicked: Download a PDB from the internet and display the
                                       result in Pymol 
@@ -722,7 +721,6 @@ class IOFile(Tabs.Tab):
                 cmd.center(self.LigandName.get())
                 cmd.zoom(self.LigandName.get())    
     
-        
     def Btn_DisplayProtein_Clicked(self):
         
         if not self.PyMOL:
@@ -735,9 +733,7 @@ class IOFile(Tabs.Tab):
             else:
                 cmd.center(self.ProtName.get())
                 cmd.zoom(self.ProtName.get())        
-            
-
-
+    
     #=======================================================================
     ''' Store inp file information (flexible bonds, atom types)  '''
     #=======================================================================   
@@ -832,7 +828,6 @@ class IOFile(Tabs.Tab):
         for atom in inpInfo.keys():
             self.top.Config2.Vars.dictAtomTypes[atom] = [inpInfo[atom][0], inpInfo[atom][0]]
 
-    
     #=======================================================================
     ''' Compares the file content of the ligand when the session was saved '''
     #=======================================================================   
@@ -868,7 +863,6 @@ class IOFile(Tabs.Tab):
                 self.fProcessLigand = False
 
             self.top.Config2.Anchor.set(self.top.WizardResult)
-
 
     # Welcome menu message
     def Load_Message(self):

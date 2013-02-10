@@ -259,7 +259,6 @@ class displayLoadProject:
         fBottom.pack(fill=X, expand=True, side=BOTTOM, anchor=S)
         fBottom.pack_propagate(0)        
         
-
     ''' ==================================================================================
     FUNCTION LoadProjectIsRunning: Update or Create the Running File to BLOCK multiple GUI 
     ==================================================================================  '''       
@@ -270,11 +269,7 @@ class displayLoadProject:
         RunFile = open(RunPath, 'w')
         RunFile.write(str(os.getpid()))
         RunFile.close()
-
-        #Load up NRG built-in functions
-        #cmd.do("run 
-        
-        
+                
     ''' ==================================================================================
     FUNCTION Delete_RunFile: Delete the run file.
     ==================================================================================  '''    
@@ -288,7 +283,6 @@ class displayLoadProject:
             except OSError:
                 time.sleep(0.1)
                 os.remove(RunPath)
-                
                 
     ''' ==================================================================================
     FUNCTION Fill_Table: Insert the possible project in the list boxes.
@@ -379,7 +373,6 @@ class displayLoadProject:
                
         return Date
     
-    
     ''' ==================================================================================
     FUNCTION ValidateBaseDir: Create if didnt exist the based path directory.
     ==================================================================================  '''            
@@ -413,7 +406,6 @@ class displayLoadProject:
             ProjFileUser.write(LineToAdd)
             ProjFileUser.close()
             
-
     ''' ==================================================================================
     FUNCTION Update_ProjectFile: Add the created project to the Project File list.
     ==================================================================================  '''            
@@ -451,7 +443,6 @@ class displayLoadProject:
         ProjFileUser.write(LineToAdd)
         ProjFileUser.close()
 
-        
     ''' ==================================================================================
     FUNCTION Btn_Cancel_Clicked: Cancel the project creation then quit the application.
     ==================================================================================  '''        
@@ -466,7 +457,6 @@ class displayLoadProject:
         
         self.top.destroy()        
         
-    
     ''' ==================================================================================
     FUNCTION Btn_Load_Clicked: Load a project then quit the application.
     ==================================================================================  '''        
@@ -485,7 +475,6 @@ class displayLoadProject:
         
         self.top.destroy()
         
-
     ''' ==================================================================================
     FUNCTION Btn_Browse_Clicked: Browse to specify the directory to install the project.
     ==================================================================================  '''        
@@ -497,9 +486,6 @@ class displayLoadProject:
             if os.path.isdir(src):
                 self.ActualDirPath = src             
                 self.ProjectDir.set(self.NameSpacer + src)
-                
-                # Get Project Name   
-        
 
     ''' ==================================================================================
     FUNCTION LoadProjectList: Load the projects list from the .proj file.
@@ -541,7 +527,6 @@ class displayLoadProject:
                     if os.path.isdir(Path):
                         self.dictProjectList[Seconds] = [ Name, LastUsed, Creation, Path ]
                                
-               
     ''' ==================================================================================
     FUNCTION DisplayMessage: Display the message  
     ==================================================================================  '''    
@@ -575,18 +560,3 @@ class displayLoadProject:
         
         self.TextMessage.config(state='disabled')
             
-#===================================================================================
-# REMOVE THE COMMENTS OF THIS SECTION TO BE ABLE TO SEE THIS INTERFACE IN CONSOLE
-#===================================================================================
-# root = Tk()
-# 
-# root.path_FlexAID = '/home/eugene/FlexAID/'
-# Button(root, text='Hello!').pack()
-# root.update()
-# 
-# d = displayCfgFile(root)
-# 
-# root.wait_window(d.top)
-#===================================================================================
-
-

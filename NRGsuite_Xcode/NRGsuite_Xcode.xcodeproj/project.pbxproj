@@ -34,7 +34,6 @@
 		158C85C616A5C19C00E07CFF /* General_cmd.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = General_cmd.py; path = ../General_cmd.py; sourceTree = SOURCE_ROOT; };
 		158C85C716A5C19C00E07CFF /* General.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = General.py; path = ../General.py; sourceTree = SOURCE_ROOT; };
 		158C85C816A5C19C00E07CFF /* Geometry.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Geometry.py; path = ../Geometry.py; sourceTree = SOURCE_ROOT; };
-		158C85CA16A5C19C00E07CFF /* AdvOptions.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = AdvOptions.py; sourceTree = "<group>"; };
 		158C85CB16A5C19C00E07CFF /* CropCleft.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CropCleft.py; sourceTree = "<group>"; };
 		158C85CC16A5C19C00E07CFF /* Default.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = Default.py; sourceTree = "<group>"; };
 		158C85CD16A5C19C00E07CFF /* GetCleft.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = GetCleft.py; sourceTree = "<group>"; };
@@ -50,8 +49,6 @@
 		158C85D816A5C19C00E07CFF /* ManageFiles2.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = ManageFiles2.py; sourceTree = "<group>"; };
 		158C85D916A5C19C00E07CFF /* RunGetCleft.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = RunGetCleft.py; sourceTree = "<group>"; };
 		158C85DA16A5C19C00E07CFF /* Volume.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = Volume.py; sourceTree = "<group>"; };
-		158C85DE16A5C19C00E07CFF /* Grid.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Grid.py; path = ../Grid.py; sourceTree = SOURCE_ROOT; };
-		158C85E516A5C19C00E07CFF /* MessageBox.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MessageBox.py; path = ../MessageBox.py; sourceTree = SOURCE_ROOT; };
 		158C85E716A5C19C00E07CFF /* NRGsuite.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = NRGsuite.py; sourceTree = "<group>"; };
 		158C85E816A5C19C00E07CFF /* Prefs.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Prefs.py; path = ../Prefs.py; sourceTree = SOURCE_ROOT; };
 		158C85EA16A5C19C00E07CFF /* LoadProject.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = LoadProject.py; sourceTree = "<group>"; };
@@ -93,8 +90,6 @@
 				158C85C616A5C19C00E07CFF /* General_cmd.py */,
 				158C85C716A5C19C00E07CFF /* General.py */,
 				158C85C816A5C19C00E07CFF /* Geometry.py */,
-				158C85DE16A5C19C00E07CFF /* Grid.py */,
-				158C85E516A5C19C00E07CFF /* MessageBox.py */,
 				15F62C5816C6F9A8001CF626 /* MultiList.py */,
 				158C85E816A5C19C00E07CFF /* Prefs.py */,
 				158C85EC16A5C19C00E07CFF /* Sphere.py */,
@@ -138,7 +133,6 @@
 			isa = PBXGroup;
 			children = (
 				158C85CE16A5C19C00E07CFF /* images */,
-				158C85CA16A5C19C00E07CFF /* AdvOptions.py */,
 				158C85CB16A5C19C00E07CFF /* CropCleft.py */,
 				158C85CC16A5C19C00E07CFF /* Default.py */,
 				158C85CD16A5C19C00E07CFF /* GetCleft.py */,

@@ -106,7 +106,6 @@ class displayFlexAID(Base.Base):
                                 self.FlexAIDSimulationProject_Dir, self.FlexAIDSessionProject_Dir, self.FlexAIDResultsProject_Dir,
                                 self.FlexAIDBindingSiteProject_Dir, self.FlexAIDTargetFlexProject_Dir ] )
     
-        return
 
     ''' ==================================================================================
     FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
@@ -161,7 +160,6 @@ class displayFlexAID(Base.Base):
             
             self.menubar.entryconfig(3,label="Hide")
             
-    
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
     ==================================================================================  '''  
@@ -243,9 +241,6 @@ class displayFlexAID(Base.Base):
 
         scrollBar.config(command=self.TextMessage.yview)
         self.TextMessage.config(state='disabled', yscrollcommand=scrollBar.set)                                       
-
-        #self.Btn_Dummy = Button(fBottomRight, text='Close', font=self.font_Text)
-        #self.Btn_Dummy.bind('<Button-1>', lambda event, arg=self.ActiveFrame: self.SwitchTab(event,arg))
     
     ''' ==================================================================================
     FUNCTION Btn_Load_Session: Loads a previously saved session
@@ -313,8 +308,7 @@ class displayFlexAID(Base.Base):
         if len(SaveFile) > 0:
 
             SaveFile = os.path.normpath(SaveFile)
-            
-
+    
     ''' ==================================================================================
     FUNCTION Btn_Save_Session: Saves the current session
     ==================================================================================  '''        

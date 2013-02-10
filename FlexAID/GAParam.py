@@ -45,7 +45,6 @@ class GAParamVars(Vars.Vars):
     AGAk3 = StringVar()
     AGAk4 = StringVar()
 
-
 class GAParam(Tabs.Tab):
 
     def Def_Vars(self):
@@ -70,7 +69,6 @@ class GAParam(Tabs.Tab):
         self.AGAk3 = self.Vars.AGAk3
         self.AGAk4 = self.Vars.AGAk4
 
-
     def Init_Vars(self):
                 
         self.NbTopChrom.set('5')
@@ -92,7 +90,6 @@ class GAParam(Tabs.Tab):
         self.AGAk2.set('0.10')
         self.AGAk3.set('0.95')
         self.AGAk4.set('0.10')
-
 
     ''' ==================================================================================
     FUNCTION Before_Kill_Frame: Actions related before killing a frame
@@ -443,5 +440,3 @@ class GAParam(Tabs.Tab):
         self.DisplayMessage('', 0)
         self.DisplayMessage('  FlexAID < GA Parameters > Menu.', 2)
         self.DisplayMessage('  INFO:   Set the different options of the Genetic Algorithm.', 2)
-
-    

@@ -81,7 +81,6 @@ def angle(pointA, pointB, pointC):
     
     return cosa
  
-
 '''*******************************************************************************
   SUBROUTINE dihedralAngle: Calculates the torsional angle between 4 consecutives atoms
 *******************************************************************************'''
@@ -137,7 +136,6 @@ def dihedralAngle(pointA, pointB, pointC, pointD):
     theta = q*theta*(180.0/math.pi)
     
     return theta
-
 
 '''
 @summary: SUBROUTINE buildcc: builds the cartesianlen( coordinates of the tot atoms
@@ -250,7 +248,6 @@ def buildcc(ListAtom,RecAtom,DisAngDih,Ori):
 
     #END of FOR(an)
     return PDBCoord    
-
 
 '''
 @summary: SUBROUTINE rmsd: calculates RMSD between predicted and reference

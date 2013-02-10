@@ -241,7 +241,6 @@ class Base:
             if err:
                 print("   An error occured while killing the following process", self.Run)
 
-
     ''' ==================================================================================
     FUNCTION Quit: Exit the application
     ==================================================================================  '''

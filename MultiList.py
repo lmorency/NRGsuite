@@ -27,7 +27,6 @@ class Table:
         # Dictionary 
         self.Columns = dict()
 
-
     # Draws the whole Widget
     def Draw(self):
 
@@ -53,7 +52,6 @@ class Table:
             self.Columns[self.ColNames[i]]['Highlight'] = self.Highlight[i]
             self.Columns[self.ColNames[i]]['Spacer'] = self.Spacer[i]
 
-            
     # Draws the header
     def draw_Header(self):
         
@@ -138,7 +136,6 @@ class Table:
                 self.Columns[col]['StringVar'].set(self.Columns[col]['List'].get(Index)[1:])
         
             self.current = Index
-            
             
     ''' ==================================================================================
     FUNCTION OnListboxMouseWheel: Scroll the Listboxes based on the mouse wheel event.

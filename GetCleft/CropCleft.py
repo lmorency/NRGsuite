@@ -49,11 +49,14 @@ if __debug__:
 '''                        ---  GETCLEFT's CROPCLEFT FRAME  ---                        '''
 #=========================================================================================     
 class CropCleft(Tabs.Tab):
+    
+    ScaleResolution = 0.50
+    PartitionDisplay = 'PARTITION_AREA__'    
+    SphereDisplay = 'SPHERE_PT_AREA__'
+    
+    Color_Default = '#d9d9d9'
 
     def Def_Vars(self):
-        
-        self.Img_Button = list()
-        self.Filename = list()
         
         self.Step1Selection = StringVar()
         self.LastStep1Selection = StringVar()
@@ -62,37 +65,24 @@ class CropCleft(Tabs.Tab):
         self.Step3Check = IntVar()
         self.dictSpheres = dict()
         self.SphereSize = DoubleVar()
-        self.SphereCoord = list()
 
     def Init_Vars(self):
         
         self.Step = 1
-        self.Filename = []
-
-        del self.Img_Button[:]
-        self.Img_Button.append(PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/stop.gif')))
-        self.Img_Button.append(PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/down.gif')))
-        self.Img_Button.append(PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/up.gif')))
-        self.Img_Button.append(PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/ok.gif')))
-
         self.Step1Selection.set('')
         self.LastStep1Selection.set('')
         self.Step2Selection.set('')
         self.Step3Output.set('')
-        self.Step3Check.set(1)
-
-        self.Color_Default = '#d9d9d9'
-        self.Color_Green = self.top.Color_Green
-        self.TempPartition = os.path.join(self.top.GetCleftProject_Dir,'tmppart.pdb')
- 
-        self.ScaleResolution = 0.50
-        self.PartitionDisplay = 'PARTITION_AREA__'
-        
-        self.SphereDisplay = 'SPHERE_PT_AREA__'
-        self.SphereCoord = []
+        self.Step3Check.set(1) 
         self.SphereSize.set(0.5)
+        
+        self.TempPartition = os.path.join(self.top.GetCleftProject_Dir,'tmppart.pdb')
 
-    
+        self.Img_Button = [ PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/stop.gif')),
+                            PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/down.gif')),
+                            PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/up.gif')),
+                            PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/ok.gif')) ]
+
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
     ==================================================================================  '''  
@@ -130,7 +120,6 @@ class CropCleft(Tabs.Tab):
         # update list of spheres added
         self.update_Spheres()
         
-
     ''' ==================================================================================
     FUNCTION Frame: Displays the Default Frame
     ==================================================================================  '''          
@@ -275,19 +264,19 @@ class CropCleft(Tabs.Tab):
     def highlight_Step(self, Step):
 
         if Step == 1:
-            self.color_Step(self.fCropStep1, self.Color_Green)
+            self.color_Step(self.fCropStep1, self.top.Color_Green)
             self.color_Step(self.fCropStep2, self.Color_Default)
             self.color_Step(self.fCropStep3, self.Color_Default)
 
         elif Step == 2:
             self.color_Step(self.fCropStep1, self.Color_Default)
-            self.color_Step(self.fCropStep2, self.Color_Green)
+            self.color_Step(self.fCropStep2, self.top.Color_Green)
             self.color_Step(self.fCropStep3, self.Color_Default)
 
         elif Step == 3:
             self.color_Step(self.fCropStep1, self.Color_Default)
             self.color_Step(self.fCropStep2, self.Color_Default)
-            self.color_Step(self.fCropStep3, self.Color_Green)
+            self.color_Step(self.fCropStep3, self.top.Color_Green)
 
     ''' ==========================================================
     activate_Step: activates the controls of the active step
@@ -335,7 +324,7 @@ class CropCleft(Tabs.Tab):
     def Flash(self, Sel):
 
         for i in range(0, 8):
-            General_cmd.Oscillate(Sel, 0.03)
+            General_cmd.Oscillate(Sel, 0.025)
 
     ''' ==========================================================
     Toggle_Step1: Disable/Enable the 'Next Step' Button
@@ -634,7 +623,6 @@ class CropCleft(Tabs.Tab):
         self.Step3Output.set('')
         self.displaySphere()
         
-
     # Shows the sphere in transparency
     def displaySphere(self):
         
@@ -674,13 +662,11 @@ class CropCleft(Tabs.Tab):
 
         General_cmd.Oscillate(self.Cleft.CleftName, 0.0)
 
-        
     # MoveResizeSphere = Get the scale value, then resize the sphere          
     def MoveResizeSphere(self, arg):
 
         if self.top.ActiveWizard is not None:
             self.top.ActiveWizard.ResizeSphere()
-
 
     ''' ==================================================================================
     FUNCTION write_Partition: Writes the new Partition cleft files

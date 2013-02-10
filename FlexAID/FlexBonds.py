@@ -121,7 +121,6 @@ class flexbond(Wizard):
         # remove any possible selection before selecting atoms
         cmd.deselect()
               
-
     #=======================================================================
     ''' Quits the wizard '''
     #=======================================================================    
@@ -234,8 +233,7 @@ class flexbond(Wizard):
             self.panelForceBond = 'Adv.: Force bond ON!'
         
         cmd.refresh_wizard()
-        
-          
+    
      #=======================================================================
     ''' Show the possible flexible bonds '''
     #=======================================================================        
@@ -354,7 +352,6 @@ class flexbond(Wizard):
          [ 2, 'Done','cmd.get_wizard().btn_Done()'],         
          ]
     
-
     #=======================================================================
     ''' Display the index of each atom of the ligand on the Pymol interface '''
     #=======================================================================

@@ -42,7 +42,6 @@ class Config3Vars(Vars.Vars):
     DeltaDihedral = StringVar()
     DeltaDihedralFlex = StringVar()
 
-
 class Config3(Tabs.Tab):
 
     def Def_Vars(self):
@@ -86,7 +85,6 @@ class Config3(Tabs.Tab):
         self.DeltaAngle.set('2.5')
         self.DeltaDihedral.set('2.5')
         self.DeltaDihedralFlex.set('10.0')
-
 
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars

@@ -102,7 +102,6 @@ class Manage:
         
         return
         
-
     # Copies the temporary Partition file
     def copy_TempPartition(self, PartitionFile, OutputFile):
         

@@ -39,7 +39,7 @@ class RunVolume(threading.Thread):
         self.Iterations = Iterations
         
         self.start()
-        
+    
     def run(self):        
     
         self.GetCleft.ProcessRunning = True
@@ -73,12 +73,11 @@ class RunVolume(threading.Thread):
                         self.top.Init_Table()
                         break
         
-                        
         self.GetCleft.Run = None
         self.GetCleft.ProcessRunning = False
         
         self.top.VolumeRunning(False)
-        
+    
 
 class EstimateVolume(Tabs.Tab):
 
@@ -107,7 +106,6 @@ class EstimateVolume(Tabs.Tab):
             self.Iterations.trace_vdelete('w', self.IterationsTrace)
         except:
             pass
-            
     
     ''' ==================================================================================
     FUNCTION After_Show: Actions related after showing the frame

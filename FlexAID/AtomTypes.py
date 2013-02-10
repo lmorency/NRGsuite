@@ -158,7 +158,6 @@ class setType(Wizard):
                 '10':'wheat',
                 }
 
-
     #=======================================================================
     ''' Executes the first steps of the Wizard '''
     #=======================================================================
@@ -217,7 +216,6 @@ class setType(Wizard):
         except:
             pass
 
-
     #=======================================================================
     ''' Displays the ligand to be modified '''
     #=======================================================================    
@@ -239,7 +237,6 @@ class setType(Wizard):
             return 1
 
         return 0
-
 
     #=======================================================================
     ''' Reset all the variables '''
@@ -407,7 +404,6 @@ class setType(Wizard):
          [ 2, 'Reset','cmd.get_wizard().reset()'],  
          [ 2, 'Done','cmd.get_wizard().btn_Done()'],         
          ]
-
 
     #=======================================================================
     ''' Display a message in the interface '''

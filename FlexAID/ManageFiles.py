@@ -68,7 +68,6 @@ class Manage():
         self.CONFIG = os.path.join(self.FlexAIDRunSimulationProject_Dir,'CONFIG.inp')
         self.ga_inp = os.path.join(self.FlexAIDRunSimulationProject_Dir,'ga_inp.dat')
 
-
     ''' ==============================================================================
     @summary: Create_Folders: Creation AND/OR copy of the required files  
     ============================================================================== '''          
@@ -82,7 +81,6 @@ class Manage():
 
         return True
  
-
     ''' ==============================================================================
     @summary: Executable_Exists: Check if FlexAID is present
     ============================================================================== '''          
@@ -243,7 +241,6 @@ class Manage():
 
         config_file.close()
         
-
     ''' ==================================================================================
     @summary: Create_ga_inp: Creation of the ga_inp.dat file  
     ================================================================================== '''
@@ -288,7 +285,6 @@ class Manage():
         gaInp_file.write('OUTGENER 1\n')
 
         gaInp_file.close()
-        
         
     ''' ==================================================================================
     FUNCTION Create_FlexFile: Create the Flex file list that contain the residue selected 
@@ -390,7 +386,6 @@ class Manage():
                     inpFile.write(ForcedLines)
                 inpFile.write(line)
             inpFile.close()
-
 
     ''' ==================================================================================
     FUNCTION Modify_Input: Changes the ICDATA line for the new path and changes the new types

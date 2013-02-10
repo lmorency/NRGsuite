@@ -244,5 +244,4 @@ class displayGetCleft(Base.Base):
 
         self.Btn_Config.config(bg=self.Color_Blue)
 
-            
     

@@ -234,7 +234,6 @@ class displayNewProject:
         fBottom.pack(fill=X, expand=True, side=BOTTOM, anchor=S)
         fBottom.pack_propagate(0)
         
-        
     ''' ==================================================================================
     FUNCTION NewProjectIsRunning: Update or Create the Running File to BLOCK multiple GUI 
     ==================================================================================  '''       
@@ -245,7 +244,6 @@ class displayNewProject:
         RunFile = open(RunPath, 'w')
         RunFile.write(str(os.getpid()))
         RunFile.close()
-        
         
     ''' ==================================================================================
     FUNCTION Delete_RunFile: Delete the run file.
@@ -261,7 +259,6 @@ class displayNewProject:
                 time.sleep(0.1)
                 os.remove(RunPath)
         
-        
     ''' ==================================================================================
     FUNCTION Btn_Cancel_Clicked: Cancel the project creation then quit the application.
     ==================================================================================  '''        
@@ -276,7 +273,6 @@ class displayNewProject:
         
         self.top.destroy()        
         
-    
     ''' ==================================================================================
     FUNCTION Btn_Create_Clicked: Create the new project then quit the application.
     ==================================================================================  '''        
@@ -308,7 +304,6 @@ class displayNewProject:
             
             self.top.destroy()
         
-
     ''' ==================================================================================
     FUNCTION Btn_Browse_Clicked: Browse to specify the directory to install the project.
     ==================================================================================  '''        
@@ -320,7 +315,6 @@ class displayNewProject:
             if os.path.isdir(src):
                 self.ActualDirPath = 'src'
                 self.ProjDirPath.set(os.path.join(self.NameSpacer,src))
-        
         
     ''' ==================================================================================
     FUNCTION Step3_Checked: The check box in the Step3 in Check or NOT.
@@ -338,7 +332,6 @@ class displayNewProject:
             self.ActualDirPath = self.HomeDir
             self.ProjDirPath.set(os.path.join(self.NameSpacer,self.ActualDirPath))
             
-
     ''' ==================================================================================
     FUNCTION Update_ProjectFile: Add the created project to the Project File list.
     ==================================================================================  '''            
@@ -375,7 +368,6 @@ class displayNewProject:
         ProjFileUser.write(LineToAdd)
         ProjFileUser.close()
         
-
     ''' ==================================================================================
     FUNCTION Get_Date: Return the actual date (mm/dd/yyyy - hh:mm:ss).
     ==================================================================================  '''    
@@ -418,7 +410,6 @@ class displayNewProject:
                
         return Date
                 
-            
     ''' ==================================================================================
     FUNCTION ValidateBaseDir: Create if didnt exist the based path directory.
     ==================================================================================  '''            
@@ -435,7 +426,6 @@ class displayNewProject:
             os.makedirs(Default)       # ADD the Directory       
             self.Update_ProjectFile(Default, 'Default')     # ADD the .proj Files         
                                 
-               
     ''' ==================================================================================
     FUNCTION DisplayMessage: Display the message  
     ==================================================================================  '''    

@@ -43,7 +43,7 @@ def is_ATOM(Residue,Prot):
         
     except:
         return -1
-
+        
     return 0
     
 
@@ -187,7 +187,6 @@ FUNCTION repeat: repeats a character N number of times
 def repeat(string, length):
     L = len(string)
     return string * (length // L) + string[:length % L]
-
 
 ''' ==================================================================================
 FUNCTION get_ID: retrieves atom number from an index and selection

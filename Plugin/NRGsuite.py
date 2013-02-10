@@ -169,7 +169,6 @@ if OSid != 'UNKNOWN':
                     
                     EnableDisableMenu(self, False, True, '', '', '')
                  
-                 
                 #================================================================================
                 # STARTING GetCleft Conditional... 
                 #================================================================================  
@@ -195,7 +194,6 @@ if OSid != 'UNKNOWN':
                         self.RootGetCleft = Toplevel(self.root)
                         GetCleft.displayGetCleft(self.RootGetCleft, self.ActiveWizard, self.UserPath, RootDir, RunDir_Path, OSid, True,
                                                  'GetCleft','.grun', 500, 550)
-                        
                         
                 #================================================================================
                 # STARTING FlexAID Conditional... 
@@ -223,7 +221,6 @@ if OSid != 'UNKNOWN':
                         FlexAID.displayFlexAID(self.RootFlexAID, self.ActiveWizard, self.UserPath, RootDir, RunDir_Path, OSid, True,
                                             'FlexAID', '.frun', 700, 600)
                         
-                
                 #================================================================================        
                 # Set the NRGsuite Menu Options to Enable when a Project is created or loaded.
                 # Set to disable at start up or when a project is closed.
@@ -235,12 +232,12 @@ if OSid != 'UNKNOWN':
                             self.menuBar.component('NRGsuite-menu').entryconfig(1, state='normal')
                         else:
                             self.menuBar.component('NRGsuite-menu').entryconfig(1, state='disabled')
-                            
+
                     elif SelProject == 'LoadProject':
                         if boolProj:
                             self.menuBar.component('NRGsuite-menu').entryconfig(0, state='normal')
                         else:
-                            self.menuBar.component('NRGsuite-menu').entryconfig(0, state='disabled')            
+                            self.menuBar.component('NRGsuite-menu').entryconfig(0, state='disabled')
                     
                     if boolEnable:
                         self.ProjectName = ProjectName
@@ -251,7 +248,7 @@ if OSid != 'UNKNOWN':
                         self.menuBar.component('NRGsuite-menu').entryconfig(4, state='normal')
                         self.menuBar.component('NRGsuite-menu').entryconfig(6, state='normal')
                         self.menuBar.component('NRGsuite-menu').entryconfig(7, state='normal')
-                        self.menuBar.component('NRGsuite-menu').entryconfig(8, state='normal')                       
+                        self.menuBar.component('NRGsuite-menu').entryconfig(8, state='normal')
                     else:
                         self.menuBar.component('NRGsuite-menu').entryconfig(0, state='normal')
                         self.menuBar.component('NRGsuite-menu').entryconfig(1, state='normal')
@@ -260,7 +257,7 @@ if OSid != 'UNKNOWN':
                         self.menuBar.component('NRGsuite-menu').entryconfig(6, state='disabled')
                         self.menuBar.component('NRGsuite-menu').entryconfig(7, state='disabled')
                         self.menuBar.component('NRGsuite-menu').entryconfig(8, state='disabled')
-                        
+            
                 
                 #================================================================================
                 # UpdatePath the General Path
@@ -329,7 +326,6 @@ if OSid != 'UNKNOWN':
                            
                     print('\n   CLOSING Project: ' + self.ProjectName)
             
-            
             #================================================================================
             # ERRORS!!
             #================================================================================
@@ -387,7 +383,6 @@ class projThread(threading.Thread):
             self.top.menuBar.component('NRGsuite-menu').entryconfig(0, state='disabled')   
             self.StartLoadProject()
             
-        
     #================================================================================
     # Start the Thread
     #================================================================================       
@@ -404,7 +399,6 @@ class projThread(threading.Thread):
         else:
             EnableDisableMenu(self.top, False, True, self.Selection, self.UserPath, self.ProjectName)
             
-
     #================================================================================
     # Create a New Project
     #================================================================================
@@ -432,7 +426,6 @@ class projThread(threading.Thread):
             print('\n   Create a new NRG suite Project...')
             NewProject.displayNewProject(self.top.root, self, Project_Path, HomeDir, RunDir_Path, OSid)
             self.start()
-            
             
     #================================================================================
     # Load an existing Project

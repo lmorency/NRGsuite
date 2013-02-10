@@ -189,7 +189,6 @@ class constraint(Wizard):
         
         return info
 
-
     #=======================================================================
     ''' Pick next atom in PyMOL Viewer '''
     #=======================================================================
@@ -231,7 +230,6 @@ class constraint(Wizard):
         elif self.pick_count == 1:
             return [ "Please click on the SECOND atom that defines the constraint." ]
         
-
     #=======================================================================
     ''' Analyze if constraint can be added '''
     #=======================================================================
@@ -286,7 +284,6 @@ class constraint(Wizard):
             return 1
 
         return 0
-
 
     #=======================================================================
     ''' Highlights the active constraint '''
@@ -371,9 +368,9 @@ class constraint(Wizard):
             
         if not Active:
             Active = First
-
+            
         self.Active.set(Active)
-
+        
         return 0
     
 

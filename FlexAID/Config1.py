@@ -55,7 +55,6 @@ class Config1Vars(Vars.Vars):
         self.BindingSite = BindingSite.BindingSite()
         self.TargetFlex = TargetFlex.TargetFlex()
     
-
 class Config1(Tabs.Tab):
 
     HIGHLIGHT_RELIEF = RAISED
@@ -675,7 +674,6 @@ class Config1(Tabs.Tab):
             self.DisplayMessage("Invalid residue entered (you need a '-' chain identifier when no chain is provided)", 2)
             self.EntryResidu.config(bg=self.top.Color_Red)
         
-    
     ''' ==================================================================================
     FUNCTION Btn_DelResidu_Clicked: Delete a residue name in the drop-down-list of flex. sc.
     ==================================================================================  '''        
@@ -796,7 +794,6 @@ class Config1(Tabs.Tab):
 
             self.SphereSize.set(self.Vars.BindingSite.Sphere.Radius)
             self.Display_BindingSite()
-            
     
     # ResizeSphere = Get the scale value, then resize the sphere          
     def ResizeSphere(self, *args):
@@ -926,7 +923,6 @@ class Config1(Tabs.Tab):
 
         except:
             self.DisplayMessage("  ERROR: while displaying the binding-site", 2)
-
 
     ''' ==================================================================================
     FUNCTION Generate_CleftBindingSite: Generate a file combining all clefts together

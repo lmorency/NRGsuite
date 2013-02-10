@@ -103,7 +103,8 @@ class flexSC(Wizard):
         cmd.deselect()
               
         self.ErrorCode += 1
-
+        
+        
     #=======================================================================
         ''' update_SelectedSC : updates the view of selected flexible sc. ''' 
     #=======================================================================       
@@ -151,7 +152,6 @@ class flexSC(Wizard):
         cmd.delete(self.ResidueDisplay)
         cmd.refresh_wizard()
             
-                
     #=======================================================================
     ''' Button Add Residue Clicked: Add the residue in the Flexible Side-Chains
                                    DDL in FlexAID '''
@@ -224,7 +224,6 @@ class flexSC(Wizard):
          [ 2, 'Delete the Residue','cmd.get_wizard().btn_DelResidue()'],       
          [ 2, 'Done','cmd.get_wizard().btn_Done()'],         
          ]
-
 
     #=======================================================================
     ''' Quits the wizard '''

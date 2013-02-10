@@ -24,7 +24,6 @@ import Geometry
 import Constants
 
 
-#class UpdateScreen(threading.Thread):
 class UpdateScreen():
 
     def __init__(self, top, ID, colNo, Line, State, TOP, Translation, Rotation):
@@ -69,13 +68,9 @@ class UpdateScreen():
         # start thread
         self.start()
 
-
-    #def run(self):
     def start(self):
     
         self.Update()
-        #self.top.Updating -= 1
-
 
     # Updates the PyMOL interface
     def Update(self):
