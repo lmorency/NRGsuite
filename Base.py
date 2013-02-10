@@ -301,6 +301,16 @@ class Base:
             return 1
 
         return 0
+
+    ''' ==================================================================================
+    FUNCTION WizardRunning: Checks if a wizard is running
+    ================================================================================== '''    
+    def WizardRunning(self):
+
+        if self.ActiveWizard is not None:
+            return 1
+
+        return 0
         
     ''' ==================================================================================
     FUNCTION ValidateProcessRunning: Validates if a process is currently running

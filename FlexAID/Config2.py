@@ -104,9 +104,6 @@ class Config2(Tabs.Tab):
         if not self.PyMOL:
             return
 
-        if self.top.ValidateWizardRunning():
-            return
-
         self.FlexStatus.set('')
         self.FlexBondsRunning(True)
 
@@ -115,7 +112,6 @@ class Config2(Tabs.Tab):
         cmd.set_wizard(self.top.ActiveWizard)
         self.top.ActiveWizard.Start()
             
-
     ''' ==================================================================================
     FUNCTION FlexBondsRunning: Disables/enables controls related to Flexible lig. wizard
     =================================================================================  '''    
@@ -142,9 +138,6 @@ class Config2(Tabs.Tab):
         
         if not self.PyMOL:
             return
-
-        if self.top.ValidateWizardRunning():
-            return
             
         self.SATStatus.set('')
 
@@ -154,7 +147,6 @@ class Config2(Tabs.Tab):
         cmd.set_wizard(self.top.ActiveWizard)
         self.top.ActiveWizard.Start()
             
-
     ''' ==================================================================================
     FUNCTION SATRunning: Disables/enables controls related to Flexible lig. wizard
     =================================================================================  '''    
@@ -171,9 +163,6 @@ class Config2(Tabs.Tab):
     def AddEditDel_Constraint(self):
 
         if not self.PyMOL:
-            return
-        
-        if self.top.ValidateWizardRunning():
             return
             
         self.ConsRunning(True)
@@ -337,7 +326,7 @@ class Config2(Tabs.Tab):
     ================================================================================== '''        
     def ActiveCons_Toggle(self, *args):
 
-        if not self.top.ValidateWizardRunning():
+        if not self.top.WizardRunning():
             return
             
         if self.ActiveCons.get():
@@ -353,7 +342,7 @@ class Config2(Tabs.Tab):
     ================================================================================== '''        
     def ConsDist_Toggle(self, *args):
 
-        if not self.top.ValidateWizardRunning():
+        if not self.top.WizardRunning():
             return
             
         self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()

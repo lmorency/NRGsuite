@@ -437,9 +437,6 @@ class Config1(Tabs.Tab):
         if not self.PyMOL:
             return
 
-        if self.top.ValidateWizardRunning():
-            return
-
         self.FlexSCRunning(True)
         self.top.ActiveWizard = FlexSideChain.flexSC(self)
         cmd.set_wizard(self.top.ActiveWizard)
@@ -761,15 +758,11 @@ class Config1(Tabs.Tab):
         if not self.PyMOL:
             return
 
-        if self.top.ValidateWizardRunning():
-            return
-
         self.SphereRunning(True)
 
         self.top.ActiveWizard = Sphere.Sphere(self, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize)
         cmd.set_wizard(self.top.ActiveWizard)
         self.top.ActiveWizard.Start()
-
 
     # Deletes the binding-site object
     def Delete_BindingSite(self):
@@ -798,7 +791,7 @@ class Config1(Tabs.Tab):
     # ResizeSphere = Get the scale value, then resize the sphere          
     def ResizeSphere(self, *args):
 
-        if not self.top.ValidateWizardRunning():
+        if not self.top.WizardRunning():
             return
             
         self.top.ActiveWizard.ResizeSphere()
@@ -809,7 +802,7 @@ class Config1(Tabs.Tab):
         if not self.PyMOL:
             return
         
-        if self.top.ValidateWizardRunning():
+        if not self.top.WizardRunning():
             return
 
         Center = General_cmd.Get_CenterOfMass2(sel, cmd.get_state())
@@ -819,7 +812,6 @@ class Config1(Tabs.Tab):
             self.top.ActiveWizard.DisplaySphere()
             self.defOptSphere.set(sel)
 
-     
     # Listbox Menu Refresh values  
     def Btn_OptSphRefresh_Clicked(self):
 

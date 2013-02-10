@@ -106,7 +106,6 @@ class displayFlexAID(Base.Base):
                                 self.FlexAIDSimulationProject_Dir, self.FlexAIDSessionProject_Dir, self.FlexAIDResultsProject_Dir,
                                 self.FlexAIDBindingSiteProject_Dir, self.FlexAIDTargetFlexProject_Dir ] )
     
-
     ''' ==================================================================================
     FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
     ==================================================================================  '''        

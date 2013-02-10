@@ -147,6 +147,9 @@ class IOFile(Tabs.Tab):
             else:
                 self.fProcessLigand = True
                 self.ResSeq.set(9999)
+                
+            self.fStoreInfo = False
+            self.fLoadProcessed = False
 
         # Store content of ligand input files
         if not self.fStoreInfo:
@@ -231,6 +234,7 @@ class IOFile(Tabs.Tab):
                     self.LigandName.set(self.SmilesLigand)
                     if not self.Load_ProcConvLigand(MOL2Ligand):
                         self.LigandPath.set(MOL2Ligand)
+                        self.fProcessLigand = False
 
             self.top.ChildWindow = None
             
@@ -457,9 +461,6 @@ class IOFile(Tabs.Tab):
     def Btn_Anchor_Clicked(self):
 
         if not self.PyMOL:
-            return
-
-        if self.top.ValidateWizardRunning():
             return
 
         if self.LigandPath.get():
