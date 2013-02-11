@@ -241,8 +241,8 @@ class IOFile(Tabs.Tab):
     ''' ==================================================================================
                          ENABLE / DISABLE - Buttons
     ================================================================================== '''             
-    def ValidateLigProt(self,*args):
-
+    def ValidateLigProt(self, *args):
+                
         if self.ProtName.get() and self.LigandName.get():
             self.top.Go_Step2()
         else:
@@ -604,7 +604,7 @@ class IOFile(Tabs.Tab):
             except:
                 self.DisplayMessage("  ERROR for file '" + LigandPath + "': Could not load the ligand file", 1)
                 return
-                
+            
             self.LigandName.set(Name)
             self.DisplayMessage("  Successfully loaded the ligand: '" + self.LigandName.get() + "'", 0)
 

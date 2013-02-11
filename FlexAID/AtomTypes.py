@@ -227,7 +227,7 @@ class setType(Wizard):
             # Display the atoms spheres
             cmd.show('spheres', self.LigDisplay)
             cmd.alter(self.LigDisplay,'vdw=0.25')
-            cmd.rebuild()
+            cmd.rebuild(self.LigDisplay)
         
             util.cbag(self.LigDisplay)
             cmd.translate(self.Translation,self.LigDisplay)

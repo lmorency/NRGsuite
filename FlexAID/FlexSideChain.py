@@ -34,7 +34,11 @@ import pymol
 import General_cmd
 
 class flexSC(Wizard):
-    
+
+    FlexSCDisplay = 'FLEXIBLE_SIDE_CHAINS__'   
+    ResidueDisplay = 'HIGHLIGHT_RESIDUE__'   
+    BackboneDisplay = 'BACKBONE_ATOMS__'
+
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
@@ -55,9 +59,10 @@ class flexSC(Wizard):
         self.ResidueName = '...'
         self.PanelResidue = '   Residue: '
         
-        self.FlexSCDisplay = 'FLEXIBLE_SIDE_CHAINS__'   
-        self.ResidueDisplay = 'HIGHLIGHT_RESIDUE__'   
-        self.BackboneDisplay = 'BACKBONE_ATOMS__'
+        # Initial view
+        self.View = cmd.get_view()
+        self.State = cmd.get_state()
+        self.auto_zoom = cmd.get("auto_zoom")
 
         # for get_prompt
         self.error = 0
@@ -78,10 +83,6 @@ class flexSC(Wizard):
     def Start(self):
         
         cmd.refresh_wizard()
-
-        # Initial view
-        self.View = cmd.get_view()
-        self.State = cmd.get_state()
 
         # Display all Selected Flexible Bonds
         if self.show_SelectedSC():
@@ -131,8 +132,6 @@ class flexSC(Wizard):
             selString += ' & ' + self.ProtName
             
             
-        cmd.delete(self.FlexSCDisplay)
-
         if selString != '' and self.highlight_FlexibleSC(selString):
             return 1
 
@@ -292,10 +291,13 @@ class flexSC(Wizard):
     #=======================================================================    
     def highlight_Residue(self, name):
 
-        try:
-            View = cmd.get_view()
-            
+        try:            
             cmd.delete(self.ResidueDisplay)
+        except:
+            pass
+            
+        try:
+            cmd.set("auto_zoom", 0)
             
             # Create new object from selection
             cmd.create(self.ResidueDisplay, name + ' & ! n. C+O+N', target_state=self.State)
@@ -313,18 +315,27 @@ class flexSC(Wizard):
             cmd.disable('TOP_*__')
             cmd.enable('TOP_*__')
 
-            cmd.set_view(View)
-
+            cmd.refresh()
+            
         except:
             self.FlexAID.DisplayMessage("  ERROR: Could not highlight residue upon selection", 2)
+
+        cmd.set("auto_zoom", self.auto_zoom)
 
     #=======================================================================   
     ''' highlight_FlexibleSC: Highlight flexible side-chains '''
     #=======================================================================    
     def highlight_FlexibleSC(self, selString):
 
+        Error = 0
+        
         try:
-            View = cmd.get_view()
+            cmd.delete(self.FlexSCDisplay)
+        except:
+            pass
+            
+        try:
+            cmd.set("auto_zoom", 0)
 
             # Create new object from selection
             #cmd.select('TEMP_SELECTION__', selString)
@@ -340,9 +351,11 @@ class flexSC(Wizard):
             cmd.disable('TOP_*__')
             cmd.enable('TOP_*__')
 
-            cmd.set_view(View)
-
+            cmd.refresh()
+            
         except:
-            return 1
+            Error = 1
 
-        return 0
+        cmd.set("auto_zoom", self.auto_zoom)
+
+        return Error

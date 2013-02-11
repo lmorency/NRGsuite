@@ -201,8 +201,7 @@ class Default(Tabs.Tab):
         
         if self.LastdefaultOption != '' and General_cmd.object_Exists(self.LastdefaultOption):
             self.defaultOption.set(self.LastdefaultOption)
-        
-
+    
     ''' ==================================================================================
     FUNCTION Frame: Displays the Default Frame
     ==================================================================================  '''          
@@ -224,7 +223,7 @@ class Default(Tabs.Tab):
         Label(fStructureLine1, text='Retrieve a structure', font=self.top.font_Title).pack(side=LEFT)
 
         # Get a PDB File from a file on your harddrive
-        Button(fStructureLine2, text='Open target', command=self.Btn_OpenPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=5)
+        #Button(fStructureLine2, text='Open target', command=self.Btn_OpenPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=5)
         
         # Download a PDB File from the internet
         Button(fStructureLine2, text='Download', command=self.Btn_DownloadPDB_Clicked, font=self.font_Text, width=10).pack(side=RIGHT, padx=5)
@@ -438,15 +437,10 @@ class Default(Tabs.Tab):
 
         self.SetColorList()
         self.DisplayColorChart()
-
-        View = cmd.get_view()
         
         self.Load_Clefts()
         self.Show_Clefts(self.ColorList)
-
-        # reset view
-        cmd.set_view(View)
-            
+        
     ''' ========================================================
                  Gets all arguments for the cmdline
         ========================================================'''
@@ -640,24 +634,30 @@ class Default(Tabs.Tab):
         
         else:
             self.top.DisplayMessage("  No clefts to save as 'clefts'", 2)
-
+    
     ''' ==================================================================================
     FUNCTION Load_Clefts: Loads the list of temp clefts
     ==================================================================================  '''        
     def Load_Clefts(self):
-
-        if not self.PyMOL:
-            return
             
-        for Cleft in iter(self.TempBindingSite.listClefts):
-                cmd.load(Cleft.CleftFile, Cleft.CleftName, state=1)
-                cmd.refresh()
+        auto_zoom = cmd.get("auto_zoom")
+        cmd.set("auto_zoom", 0)
+        
+        for Cleft in self.TempBindingSite.listClefts:
+                try:
+                    cmd.load(Cleft.CleftFile, Cleft.CleftName, state=1)
+                    cmd.refresh()
 
-                if Cleft.Partition and Cleft.PartitionParent != None and \
-                        General_cmd.object_Exists(Cleft.PartitionParent.CleftName):
+                    if Cleft.Partition and Cleft.PartitionParent != None and \
+                            General_cmd.object_Exists(Cleft.PartitionParent.CleftName):
+                        
+                        General_cmd.Oscillate(Cleft.PartitionParent.CleftName, 0.0)
+                except:
+                    self.top.DisplayMessage("  ERROR: Failed to load cleft object '" + Cleft.CleftName + "'", 2)
+                    continue
                     
-                    General_cmd.Oscillate(Cleft.PartitionParent.CleftName, 0.0)
-
+        cmd.set("auto_zoom", auto_zoom)
+        
     ''' ==================================================================================
     FUNCTION Update_TempBindingSite: Update cleft object with only those undeleted in PyMOL
     ==================================================================================  '''                 
@@ -669,23 +669,6 @@ class Default(Tabs.Tab):
         self.TempBindingSite.listClefts = \
             [ Cleft for Cleft in self.TempBindingSite.listClefts \
                 if General_cmd.object_Exists(Cleft.CleftName) ]
-
-    ''' ==================================================================================
-    FUNCTION Btn_OpenPDB_Clicked: Open a PDB file and display it in PyMOL 
-    ==================================================================================  '''                 
-    def Btn_OpenPDB_Clicked(self):
-        
-        FilePath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb'),('MOL File','*.mol'),('MOL2 File','*.mol2'),('SDF File','*.sdf')], initialdir=self.top.TargetProject_Dir, title='Select a PDB File to Load')
-        
-        if len(FilePath) > 0:
-            FilePath = os.path.normpath(FilePath)
-            
-            Name = os.path.basename(os.path.splitext(FilePath)[0])
-        
-            if self.PyMOL:
-                # Load the pdb file in Pymol
-                cmd.load(FilePath, state=1)
-                self.defaultOption.set(Name)
                 
     ''' ==================================================================================
     FUNCTION SetColorList: Reset the color lists
@@ -735,18 +718,19 @@ class Default(Tabs.Tab):
     def Show_Clefts(self, ColorList):
         
         i = 0
-        for Cleft in iter(self.TempBindingSite.listClefts):
-            if self.PyMOL:
-                try:
-                    cmd.hide('everything', Cleft.CleftName)
-                    cmd.show('surface', Cleft.CleftName)
-                    cmd.color(ColorList[i], Cleft.CleftName)
-                    cmd.refresh()
-            
-                    i += 1
-                except:
-                    self.DisplayMessage("  ERROR: Could not display sphere object '" + key + "'", 2)
-                    continue
+        for Cleft in self.TempBindingSite.listClefts:
+            try:
+                cmd.hide('everything', Cleft.CleftName)
+                cmd.color(ColorList[i], Cleft.CleftName)
+                cmd.refresh()
+
+                cmd.show('surface', Cleft.CleftName)
+                cmd.refresh()
+        
+                i += 1
+            except:
+                self.DisplayMessage("  ERROR: Could not display cleft object '" + key + "'", 2)
+                continue
                     
     ''' ==================================================================================
     FUNCTION Btn_DownloadPDB_Clicked: Download a PDB from the internet and display the

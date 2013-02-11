@@ -27,7 +27,7 @@ import General_cmd
 
 class Sphere(Wizard):
 
-    def __init__(self, top, Sphere, SphereDisplay, SphereSize):
+    def __init__(self, top, Sphere, SphereDisplay, SphereSize, ExtraPrompt):
 
         #print "New instance of flexsphere Wizard"
 
@@ -46,6 +46,12 @@ class Sphere(Wizard):
         self.SphereDisplay = SphereDisplay
 
         self.ErrorCode = 0
+
+        self.Prompt = [ "Press Shift + Mouse3 (Wheel Click) to move the sphere.",
+                        "Use the scaler in the " + self.App.Name + " interface to edit its radius." ]
+                        
+        if ExtraPrompt:
+            self.Prompt.append( ExtraPrompt )
 
     #=======================================================================
     ''' Execute the first steps of the wizard '''
@@ -125,7 +131,7 @@ class Sphere(Wizard):
             cmd.hide('everything', self.SphereDisplay)
             cmd.show('spheres', self.SphereDisplay)
         
-            cmd.rebuild()
+            cmd.rebuild(self.SphereDisplay)
             cmd.refresh()
  
         except:
@@ -142,20 +148,17 @@ class Sphere(Wizard):
 
         try:
             cmd.alter(self.SphereDisplay,'vdw=' + str(self.SphereView.Radius))
-            cmd.rebuild()
+            cmd.rebuild(self.SphereDisplay)
             cmd.refresh()
+            
         except:
             self.App.DisplayMessage("  ERROR: Could not resize the Sphere", 1)
             self.App.DisplayMessage("         The wizard will abort prematurely", 1)
             self.Quit_Wizard()
-        
-        return
-        
-        
+                    
     def get_prompt(self):
-        return ["Press Shift + Mouse3 (Wheel Click) to move the sphere.",
-                "Use the scaler in the " + self.App.Name + " interface to edit its radius." ]
-
+        
+        return self.Prompt
 
     def reset(self):
 
@@ -168,13 +171,11 @@ class Sphere(Wizard):
             self.Quit_Wizard()
             return
 
-
     def cancel(self):
 
         self.App.WizardResult = 1
         self.Quit_Wizard()
             
-
     def btn_Done(self):
 
         Center = General_cmd.Get_CenterOfMass2(self.SphereDisplay, self.State)
@@ -186,7 +187,6 @@ class Sphere(Wizard):
 
         self.App.WizardResult = 2
         self.Quit_Wizard()
-
 
     def get_panel(self):
         return [

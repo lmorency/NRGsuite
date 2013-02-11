@@ -54,6 +54,10 @@ class Config2Vars(Vars.Vars):
     
 class Config2(Tabs.Tab):
     
+    MIN_DIST_CONSTRAINT = 1.00
+    MAX_DIST_CONSTRAINT = 7.00
+    RESOLUTION_CONSTRAINT = 0.05
+    
     def Def_Vars(self):
 
         self.SATStatus = self.Vars.SATStatus
@@ -178,7 +182,10 @@ class Config2(Tabs.Tab):
     def ConsRunning(self, boolRun):
         
         if boolRun:
-            self.Disable_Frame()
+            if self.ActiveCons.get():
+                self.Disable_Frame(self.lblInteraction, self.sclConsDist)
+            else:
+                self.Disable_Frame(self.lblInteraction)
         else:
             self.Enable_Frame()
 
@@ -292,9 +299,11 @@ class Config2(Tabs.Tab):
         Entry(fConstraintLine3, text='', state='disabled', textvariable=self.ConsStatus, font=self.top.font_Text, 
                 disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT, fill=X, expand=True, anchor=NE)
 
-        Label(fConstraintLine4, text = 'Interaction distance (A):', font=self.top.font_Text).pack(side=LEFT, anchor=SW)
+        self.lblInteraction = Label(fConstraintLine4, text = 'Interaction distance (A):', font=self.top.font_Text)
+        self.lblInteraction.pack(side=LEFT, anchor=SW)
 
-        self.sclConsDist = Scale(fConstraintLine4, from_ = 0.25, to = 10.0, orient=HORIZONTAL, length=120, resolution=0.05, variable=self.ConsDist)
+        self.sclConsDist = Scale(fConstraintLine4, from_ = self.MIN_DIST_CONSTRAINT, to = self.MAX_DIST_CONSTRAINT,
+                                 orient=HORIZONTAL, length=120, resolution=self.RESOLUTION_CONSTRAINT, variable=self.ConsDist, showvalue=0)
         self.sclConsDist.pack(side=LEFT, fill=X, expand=True)
         self.sclConsDist.config(state='disabled')
         
@@ -302,18 +311,16 @@ class Config2(Tabs.Tab):
         return self.fConfig2
     
     ''' ==================================================================================
-    FUNCTION parse_cons: parses the constraint key from the dictConstraints
+    FUNCTION parse_cons: parses the constraint from the dictConstraints
     ================================================================================== '''        
-    def parse_cons(self, key):
+    def parse_cons(self, constraint):
 
-        l = list()
+        l = []
 
-        #l.append(key[1:key.find('(')])
-        l.append(key[1:key.find(' ')])
+        l.append(constraint[1:constraint.find(' ')])
 
-        #st = key.find(')')+2
-        st = key.find(' ') + 1
-        rnc = key[st:]
+        st = constraint.find(' ') + 1
+        rnc = constraint[st:]
 
         l.append(rnc[0:3])
         l.append(rnc[3:len(rnc)-1])
@@ -325,27 +332,25 @@ class Config2(Tabs.Tab):
     FUNCTION ActiveCons_Toggle: The active constraint is changed
     ================================================================================== '''        
     def ActiveCons_Toggle(self, *args):
-
-        if not self.top.WizardRunning():
-            return
-            
-        if self.ActiveCons.get():
-            self.sclConsDist.config(state='normal')
-            self.ConsDist.set(self.Vars.dictConstraints[self.ActiveCons.get()][5])
-        else:
-            self.sclConsDist.config(state='disabled')
         
-        self.top.ActiveWizard.refresh_display()
+        if self.top.WizardRunning():
+            
+            if self.ActiveCons.get():
+                self.sclConsDist.config(state='normal')
+                self.ConsDist.set(self.Vars.dictConstraints[self.ActiveCons.get()][5])
+            else:
+                self.sclConsDist.config(state='disabled')
+            
+            self.top.ActiveWizard.refresh_display()
 
     ''' ==================================================================================
     FUNCTION ConsDist_Toggle: The active constraint's interaction distance is changed
     ================================================================================== '''        
     def ConsDist_Toggle(self, *args):
 
-        if not self.top.WizardRunning():
-            return
+        if self.top.WizardRunning():
             
-        self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
+            self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
 
     ''' ==================================================================================
     FUNCTION Load_Message: Display the message based on the menu selected

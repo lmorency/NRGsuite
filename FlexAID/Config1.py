@@ -150,8 +150,8 @@ class Config1(Tabs.Tab):
         '''                        ---  FRAME -  TOP   SIDE  ---                        '''
         #==================================================================================      
 
-        self.fBindingSite = Frame(self.fConfig, border=2, relief=RAISED)
-        self.fBindingSite.pack(fill=BOTH, side=TOP, padx=5, pady=5)
+        self.fBindingSite = Frame(self.fConfig, relief=RAISED, border=1)
+        self.fBindingSite.pack(fill=BOTH, side=TOP, padx=5, pady=10)
 
         Label(self.fBindingSite, text='Binding-site definition', font=self.top.font_Title_H).pack(side=TOP, fill=X, pady=3)
 
@@ -174,86 +174,91 @@ class Config1(Tabs.Tab):
 
         self.fRangeOptLeft = Frame(fRangeOpt)
         self.fRangeOptLeft.pack(side=LEFT, padx=3, expand=True, fill=BOTH)
+        fRangeOptInLeft = Frame(self.fRangeOptLeft)
+        fRangeOptInLeft.pack(side=LEFT, padx=5, expand=True, fill=BOTH, pady=5)
 
-        fRangeOptLeftLine1 = Frame(self.fRangeOptLeft)
+        fRangeOptLeftLine1 = Frame(fRangeOptInLeft)
         fRangeOptLeftLine1.pack(side=TOP, fill=X)
-        fRangeOptLeftLine2 = Frame(self.fRangeOptLeft)
+        fRangeOptLeftLine2 = Frame(fRangeOptInLeft)
         fRangeOptLeftLine2.pack(side=TOP, fill=X)
-        fRangeOptLeftLine3 = Frame(self.fRangeOptLeft)
+        fRangeOptLeftLine3 = Frame(fRangeOptInLeft)
         fRangeOptLeftLine3.pack(side=TOP, fill=X)
 
         self.fRangeOptRight = Frame(fRangeOpt)
         self.fRangeOptRight.pack(side=LEFT, padx=3, expand=True, fill=BOTH)
+        fRangeOptInRight = Frame(self.fRangeOptRight)
+        fRangeOptInRight.pack(side=LEFT, padx=5, expand=True, fill=BOTH, pady=5)
 
-        fRangeOptRightLine1 = Frame(self.fRangeOptRight)
+        fRangeOptRightLine1 = Frame(fRangeOptInRight)
         fRangeOptRightLine1.pack(side=TOP, fill=X)
-        fRangeOptRightLine2 = Frame(self.fRangeOptRight)
+        fRangeOptRightLine2 = Frame(fRangeOptInRight)
         fRangeOptRightLine2.pack(side=TOP, fill=X)
-        fRangeOptRightLine3 = Frame(self.fRangeOptRight)
+        fRangeOptRightLine3 = Frame(fRangeOptInRight)
         fRangeOptRightLine3.pack(side=TOP, fill=X)
 
         #=====================================================================================
         #SPHERE Section        
         self.RadioBtn_Sphere = Radiobutton(fRangeOptLeftLine1, text='SPHERE', variable=self.RngOpt, value='LOCCEN', font=self.top.font_Text, disabledforeground=self.top.Color_White)
-        self.RadioBtn_Sphere.pack(side=TOP, anchor=N)
+        self.RadioBtn_Sphere.pack(side=TOP, anchor=N, pady=3)
 
-        self.lblRadius = Label(fRangeOptLeftLine2, text='Radius:', width=10, font=self.top.font_Text)
-        self.lblRadius.pack(side=LEFT, anchor=SE)
-
-        self.sclResizeSphere = Scale(fRangeOptLeftLine2, from_ = 0.5, to = 0.5, orient=HORIZONTAL, length=150, resolution=self.ScaleResolution, command=self.ResizeSphere, variable=self.SphereSize)
-        self.sclResizeSphere.pack(side=LEFT)
-        self.sclResizeSphere.config(state='disabled')
-
-        self.Btn_EditSphere = Button(fRangeOptLeftLine2, text='Edit', command=self.Btn_EditSphere_Clicked, font=self.top.font_Text)
-        self.Btn_EditSphere.pack(side=LEFT)
-        self.Btn_EditSphere.config(state='disabled')            
-        
-        self.lblCenter = Label(fRangeOptLeftLine3, text='Center with:', width=10, font=self.top.font_Text)
+        self.lblCenter = Label(fRangeOptLeftLine2, text='Center with:', width=10, font=self.top.font_Text)
         self.lblCenter.pack(side=LEFT)
         optionTuple = '',
-        self.OptMenuSphere = apply(OptionMenu, (fRangeOptLeftLine3, self.defOptSphere) + optionTuple)
+        self.OptMenuSphere = apply(OptionMenu, (fRangeOptLeftLine2, self.defOptSphere) + optionTuple)
         self.OptMenuSphere.config(state='disabled', width=15)
-        self.OptMenuSphere.pack(side=LEFT)
+        self.OptMenuSphere.pack(side=LEFT, fill=X, expand=True)
 
-        self.Btn_OptSphRefresh = Button(fRangeOptLeftLine3, text='Refresh', command=self.Btn_OptSphRefresh_Clicked, font=self.top.font_Text)
+        self.Btn_OptSphRefresh = Button(fRangeOptLeftLine2, text='Refresh', command=self.Btn_OptSphRefresh_Clicked, font=self.top.font_Text)
         self.Btn_OptSphRefresh.pack(side=LEFT)
         self.Btn_OptSphRefresh.config(state='disabled')            
-                        
+
+        self.lblRadius = Label(fRangeOptLeftLine3, text='Radius:', font=self.top.font_Text, justify=RIGHT)
+        self.lblRadius.pack(side=LEFT, anchor=SE)
+
+        self.sclResizeSphere = Scale(fRangeOptLeftLine3, showvalue=0, from_ = 0.5, to = 0.5, orient=HORIZONTAL, length=150,
+                                     resolution=self.ScaleResolution, command=self.ResizeSphere, variable=self.SphereSize)
+        self.sclResizeSphere.pack(side=LEFT, fill=X, expand=True)
+        self.sclResizeSphere.config(state='disabled')
+
+        self.Btn_EditSphere = Button(fRangeOptLeftLine3, text='Edit', command=self.Btn_EditSphere_Clicked, font=self.top.font_Text)
+        self.Btn_EditSphere.pack(side=LEFT, anchor=S)
+        self.Btn_EditSphere.config(state='disabled')
+                                
         #=====================================================================================
         # CLEFT Section
         #=====================================================================================        
         self.RadioBtn_Cleft = Radiobutton(fRangeOptRightLine1, text='CLEFT', variable=self.RngOpt, value='LOCCLF', font=self.top.font_Text, disabledforeground=self.top.Color_White)
-        self.RadioBtn_Cleft.pack(side=TOP, anchor=N)
+        self.RadioBtn_Cleft.pack(side=TOP, anchor=N, pady=3)
                 
         #Label(fRangeOptRightLine2, text='Clefts:', width=10, font=self.top.font_Text).pack(side=LEFT)
         
         self.Btn_ImportCleft = Button(fRangeOptRightLine2, text='Import clefts', command=self.Btn_Import_Clefts, font=self.top.font_Text, width=47)
-        self.Btn_ImportCleft.pack(side=RIGHT)
+        self.Btn_ImportCleft.pack(side=TOP, fill=X, expand=True)
         self.Btn_ImportCleft.config(state='disabled')
 
         self.Btn_ClearCleft = Button(fRangeOptRightLine3, text='Clear', command=self.Btn_ClearCleft_Clicked, font=self.top.font_Text)
         self.Btn_ClearCleft.pack(side=RIGHT)
         self.Btn_ClearCleft.config(state='disabled')
 
-        self.Btn_DeleteCleft = Button(fRangeOptRightLine3, text='Del.', command=self.Btn_DeleteCleft_Clicked, font=self.top.font_Text)
+        self.Btn_DeleteCleft = Button(fRangeOptRightLine3, text='Delete', command=self.Btn_DeleteCleft_Clicked, font=self.top.font_Text)
         self.Btn_DeleteCleft.pack(side=RIGHT)
         self.Btn_DeleteCleft.config(state='disabled')
 
-        self.Btn_DeleteOthersCleft = Button(fRangeOptRightLine3, text='Del. others', command=self.Btn_DeleteOthersCleft_Clicked, font=self.top.font_Text)
+        self.Btn_DeleteOthersCleft = Button(fRangeOptRightLine3, text='Delete others', command=self.Btn_DeleteOthersCleft_Clicked, font=self.top.font_Text)
         self.Btn_DeleteOthersCleft.pack(side=RIGHT)
         self.Btn_DeleteOthersCleft.config(state='disabled')
 
         optionTuple = '',
         self.OptMenuCleft = apply(OptionMenu, (fRangeOptRightLine3, self.defOptCleft) + optionTuple)
-        self.OptMenuCleft.config(state='disabled', width=15)
-        self.OptMenuCleft.pack(side=RIGHT)
+        self.OptMenuCleft.config(state='disabled')
+        self.OptMenuCleft.pack(side=RIGHT, fill=X, expand=True)
      
         #==================================================================================
         '''                        ---  FRAME - BOTTOM SIDE  ---                        '''
         #==================================================================================      
 
-        fProtFlex = Frame(self.fConfig, border=2, relief=RAISED)
-        fProtFlex.pack(fill=BOTH, side=TOP, padx=5, pady=5)
+        fProtFlex = Frame(self.fConfig, border=1, relief=RAISED)
+        fProtFlex.pack(fill=BOTH, side=TOP, padx=5, pady=10)
 
         Label(fProtFlex, text='Target flexibility', font=self.top.font_Title_H).pack(side=TOP, fill=X, pady=3)
 
@@ -304,7 +309,7 @@ class Config1(Tabs.Tab):
         # Normal-modes
         #==================================================================================
         fNormalModes = Frame(fProtFlex)
-        fNormalModes.pack(fill=X, side=TOP, padx=5, pady=5)
+        #fNormalModes.pack(fill=X, side=TOP, padx=5, pady=5)
 
         fNMrow1 = Frame(fNormalModes)
         fNMrow1.pack(fill=X, side=TOP)
@@ -316,7 +321,7 @@ class Config1(Tabs.Tab):
         Label(fNMrow2, text='Upcoming feature...', width=30, font=self.top.font_Text_I).pack(side=LEFT, anchor=W)
         
         return self.fConfig
-        
+    
     ''' ==================================================================================
     FUNCTION Get_TargetFlexPath: Returns the default path of target flexibility
     =================================================================================  '''    
@@ -755,14 +760,13 @@ class Config1(Tabs.Tab):
     ================================================================================== '''          
     def Sphere_Clicked(self):
 
-        if not self.PyMOL:
-            return
+        if self.PyMOL:
 
-        self.SphereRunning(True)
+            self.SphereRunning(True)
 
-        self.top.ActiveWizard = Sphere.Sphere(self, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize)
-        cmd.set_wizard(self.top.ActiveWizard)
-        self.top.ActiveWizard.Start()
+            self.top.ActiveWizard = Sphere.Sphere(self, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize, '')
+            cmd.set_wizard(self.top.ActiveWizard)
+            self.top.ActiveWizard.Start()
 
     # Deletes the binding-site object
     def Delete_BindingSite(self):
@@ -881,7 +885,8 @@ class Config1(Tabs.Tab):
         if not self.PyMOL:
             return
 
-        View = cmd.get_view()
+        auto_zoom = cmd.get("auto_zoom")
+        cmd.set("auto_zoom", 0)
         
         self.Delete_BindingSite()
 
@@ -909,13 +914,13 @@ class Config1(Tabs.Tab):
                 #cmd.set('transparency', 0.7, self.BindingSiteDisplay)
 
             cmd.color('purpleblue', self.BindingSiteDisplay)
-
-            # reset view
-            cmd.set_view(View)
+            cmd.refresh()
 
         except:
             self.DisplayMessage("  ERROR: while displaying the binding-site", 2)
 
+        cmd.set("auto_zoom", auto_zoom)
+        
     ''' ==================================================================================
     FUNCTION Generate_CleftBindingSite: Generate a file combining all clefts together
     ================================================================================== '''        

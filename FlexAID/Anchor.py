@@ -52,6 +52,7 @@ class anchor(Wizard):
         
         self.View = cmd.get_view()
         self.State = cmd.get_state()
+        self.auto_zoom = cmd.get("auto_zoom")
         
     #=======================================================================
     ''' Executes the first steps of the Wizard'''
@@ -96,9 +97,11 @@ class anchor(Wizard):
             cmd.set('mouse_selection_mode', self.selection_mode)
 
             cmd.delete(self.LigDisplay)
-            cmd.delete(self.AtomDisplay)         
-
+            cmd.delete(self.AtomDisplay)
+            cmd.refresh()
+            
             cmd.deselect()
+            
         except:
             pass
       
@@ -118,13 +121,17 @@ class anchor(Wizard):
     def DisplayLigand(self):
         
         try:
+            cmd.set("auto_zoom", 0)
             cmd.load(self.LigandPath, self.LigDisplay, state=self.State)
             cmd.translate(self.Translation,self.LigDisplay)
             cmd.zoom(self.LigDisplay)
-
+            cmd.refresh()
+            
         except:
             self.ErrorCode = 1
 
+        cmd.set("auto_zoom", self.auto_zoom)
+        
         return self.ErrorCode
 
     #=======================================================================
@@ -136,7 +143,7 @@ class anchor(Wizard):
             # Display the atoms spheres
             cmd.show('spheres', self.LigDisplay)
             cmd.alter(self.LigDisplay,'vdw=0.25')
-            cmd.rebuild()
+            cmd.rebuild(self.LigDisplay)
 
             util.cbag(self.LigDisplay)
             
@@ -144,8 +151,10 @@ class anchor(Wizard):
                 AtomSel = self.LigDisplay + ' & id ' + str(self.AnchorAtom)
                 cmd.color('white',AtomSel)
                 cmd.alter(AtomSel ,'vdw=0.30')
-                cmd.rebuild()
-                
+                cmd.rebuild(AtomSel)
+            
+            cmd.refresh()
+            
         except:
             self.ErrorCode = 1
 

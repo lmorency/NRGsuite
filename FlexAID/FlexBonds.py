@@ -37,6 +37,8 @@ import Geometry
 
 class flexbond(Wizard):
 
+    CYLINDER_WIDTH = 0.06
+    
     LigDisplay = 'FLEXIBLE_LIGAND__'
     PossFlexDisplay = 'POSS_FLEX_BONDS__'
     SelFlexDisplay = 'SELECTED_BONDS__'
@@ -61,6 +63,7 @@ class flexbond(Wizard):
 
         self.View = cmd.get_view()
         self.State = cmd.get_state()
+        self.auto_zoom = cmd.get("auto_zoom")
         
         self.pick_count = 0
         
@@ -120,7 +123,8 @@ class flexbond(Wizard):
         
         # remove any possible selection before selecting atoms
         cmd.deselect()
-              
+        cmd.unpick()
+        
     #=======================================================================
     ''' Quits the wizard '''
     #=======================================================================    
@@ -136,6 +140,7 @@ class flexbond(Wizard):
             cmd.delete(self.AtomDisplay)         
 
             cmd.deselect()
+            cmd.unpick()
         except:
             pass
       
@@ -149,6 +154,7 @@ class flexbond(Wizard):
 
         cmd.set_wizard()
         cmd.set_view(self.View)
+        cmd.refresh()
 
     #=======================================================================
     ''' Displays the ligand to be modified '''
@@ -156,22 +162,28 @@ class flexbond(Wizard):
     def DisplayLigand(self):
         
         try:
+            cmd.set("auto_zoom", 0)
+            
             cmd.load(self.RefLigand, self.LigDisplay, state=self.State)
             #print self.RefLigand
             
             # Display the atoms spheres
             cmd.show('spheres', self.LigDisplay)
             cmd.alter(self.LigDisplay,'vdw=0.25')
-            cmd.rebuild()
+            cmd.rebuild(self.LigDisplay)
             cmd.refresh()
         
             util.cbag(self.LigDisplay)
             cmd.translate(self.Translation,self.LigDisplay)
             cmd.zoom(self.LigDisplay)
-
+            
+            cmd.refresh()
+            
         except:
             self.ErrorCode = 1
 
+        cmd.set("auto_zoom", self.auto_zoom)
+        
         return self.ErrorCode
 
     #=======================================================================
@@ -243,8 +255,8 @@ class flexbond(Wizard):
         point2 = list()
 
         try:
-            View = cmd.get_view()
-
+            cmd.set("auto_zoom", 0)
+            
             PossFlexBonds = []
 
             for index in self.top.Vars.dictFlexBonds.keys():
@@ -271,12 +283,13 @@ class flexbond(Wizard):
                     PossFlexBonds.extend(self.highlight_Possible(point1, point2))
                     #print PossFlexBonds
                     
-            cmd.load_cgo(PossFlexBonds, self.PossFlexDisplay, state=self.State)   
+            cmd.load_cgo(PossFlexBonds, self.PossFlexDisplay, state=self.State)            
             cmd.refresh()
-            cmd.set_view(View)
-
+            
         except:
             self.ErrorCode = 1
+
+        cmd.set("auto_zoom", self.auto_zoom)
 
         return self.ErrorCode
 
@@ -289,7 +302,8 @@ class flexbond(Wizard):
         point2 = list()
 
         try:
-            View = cmd.get_view()
+            cmd.set("auto_zoom", 0)
+            
             cmd.delete(self.SelFlexDisplay)            
 
             SelFlexBonds = []
@@ -313,10 +327,12 @@ class flexbond(Wizard):
                     SelFlexBonds.extend(self.highlight_Selected(point1, point2))
                     
             cmd.load_cgo(SelFlexBonds, self.SelFlexDisplay, state=self.State)   
-            cmd.set_view(View)
-
+            cmd.refresh()
+            
         except:
             self.ErrorCode = 1
+            
+        cmd.set("auto_zoom", self.auto_zoom)
 
         return self.ErrorCode
 
@@ -382,7 +398,7 @@ class flexbond(Wizard):
 
         # Draw white cylinder
         return [ CYLINDER, float(x1), float(y1), float(z1), float(x2), float(y2), float(z2),
-                 0.08, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000 ]
+                 self.CYLINDER_WIDTH + 0.02 , 1.000, 1.000, 1.000, 1.000, 1.000, 1.000 ]
 
     #=======================================================================   
     ''' Highlight a possible flex bond '''
@@ -393,7 +409,7 @@ class flexbond(Wizard):
 
         # Draw orange cylinder
         return [ CYLINDER, float(x1), float(y1), float(z1), float(x2), float(y2), float(z2), 
-                 0.06, 0.800, 0.300, 0.000, 0.800, 0.300, 0.000 ]
+                 self.CYLINDER_WIDTH, 0.800, 0.300, 0.000, 0.800, 0.300, 0.000 ]
 
     #=======================================================================   
     ''' Highlight atom upon clicking '''

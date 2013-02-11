@@ -37,6 +37,13 @@ import General_cmd
 
 class constraint(Wizard):
 
+    CYLINDER_WIDTH = 0.06
+    
+    DefaultConsDist = '1.5'
+    
+    CONSTRAINT = 'CONSTRAINT_'
+    ACTIVE = 'ACTIVE_CONS__'
+
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
@@ -54,21 +61,12 @@ class constraint(Wizard):
         self.Scale = self.top.sclConsDist
         self.ScaleVar = self.top.ConsDist
         
-        self.DefaultConsDist = '1.5'
-        self.CONSTRAINT = 'CONSTRAINT_'
-        self.ACTIVE = 'ACTIVE_CONS__'
-
         self.pick_count = 0
         self.ErrorStatus = [ "The active constraint is shown as a solid white line.",
                              "Use the scaler in the interface to edit the interaction distance." ]
 
-        self.View = cmd.get_view()
         self.State = cmd.get_state()
-        
-        # Trigger controls state
-        self.Active.set(self.Active.get())
-        
-        cmd.rebuild()
+        self.auto_zoom = cmd.get("auto_zoom")
 
     #=======================================================================
     ''' Executes the first steps of the Wizard'''
@@ -83,7 +81,6 @@ class constraint(Wizard):
 
             # Mask objects
             self.exc = [ self.FlexAID.IOFile.ProtName.get(), self.FlexAID.IOFile.LigandName.get() ]
-            print self.exc
             General_cmd.mask_Objects(self.exc)
 
             self.ErrorCode = 0
@@ -117,6 +114,8 @@ class constraint(Wizard):
             cmd.delete(self.CONSTRAINT + '*')
 
             cmd.deselect()
+            cmd.unpick()
+            
         except:
             pass
 
@@ -129,7 +128,6 @@ class constraint(Wizard):
         self.FlexAID.ActiveWizard = None
         
         cmd.set_wizard()
-        cmd.set_view(self.View)
 
     #=======================================================================
     ''' Button Done selected '''
@@ -172,7 +170,7 @@ class constraint(Wizard):
                 atoms = cmd.get_model(name, state=self.State)
                 for at in atoms.atom:
                     info.extend([ at.index, at.resn, at.resi, at.chain, at.name,
-                                  at.coord[0], at.coord[1], at.coord[2] ])                  
+                                  at.coord[0], at.coord[1], at.coord[2] ])
             elif listlen > 1:
                 self.FlexAID.DisplayMessage("  ERROR: Multiple atoms were selected",1)
                 return info
@@ -182,7 +180,7 @@ class constraint(Wizard):
                 return info
                 
             cmd.deselect()
-
+            
         except:
             self.FlexAID.DisplayMessage("  ERROR: Could not retrieve atom info", 1)
             self.Quit_Wizard()
@@ -254,29 +252,39 @@ class constraint(Wizard):
             if atom2[3] != '-':
                 rightsel += ' & chain ' + atom2[3]
 
-            leftkey = '#' + str(General_cmd.get_ID(atom1[0], leftsel)) + ' ' + atom1[1] + atom1[2] + atom1[3]
-            rightkey = '#' + str(General_cmd.get_ID(atom2[0], rightsel)) + ' ' + atom2[1] + atom2[2] + atom2[3]
+            leftkey  = '#' + str(General_cmd.get_ID(atom1[0], leftsel))
+            while len(atom1[1]) != 3:
+                atom1[1] = atom1[1] + '-'
+            leftkey += ' ' + atom1[1] + atom1[2] + atom1[3]
+
+            rightkey  = '#' + str(General_cmd.get_ID(atom2[0], rightsel))
+            while len(atom2[1]) != 3:
+                atom2[1] = atom2[1] + '-'
+            rightkey += ' ' + atom2[1] + atom2[2] + atom2[3]
+            
             key = leftkey + ' :: ' + rightkey
             altkey = rightkey + ' :: ' + leftkey
             
             if leftkey == rightkey:
                 self.ErrorStatus = [ "Atoms selected are the same. Try again." ]
 
-            elif key in self.dictConstraints or altkey in self.dictConstraints:
+            elif len( [ cons for cons in self.dictConstraints if self.dictConstraints[cons][2] == key ] ) or \
+                 len( [ cons for cons in self.dictConstraints if self.dictConstraints[cons][2] == altkey ] ):
+                 
                 self.ErrorStatus = [ "The selected constraint already exists. Try again." ]
 
             else:
-
                 # Create new entry in dictionary
-                distobj = self.CONSTRAINT + str(len(self.dictConstraints) + 1) + '__'
-                self.dictConstraints[key] = [ leftkey, rightkey, 
-                                              distobj,                             # constraint name
-                                              [ atom1[5], atom1[6], atom1[7] ],    # coordinates of atom 1
-                                              [ atom2[5], atom2[6], atom2[7] ],    # coordinates of atom 2
-                                              self.DefaultConsDist ]               # value of slider
+                distobj = self.get_ConstraintID()
                 
+                self.dictConstraints[distobj] = [   leftkey, rightkey,
+                                                    key,                                 # constraint name
+                                                    [ atom1[5], atom1[6], atom1[7] ],    # coordinates of atom 1
+                                                    [ atom2[5], atom2[6], atom2[7] ],    # coordinates of atom 2
+                                                    self.DefaultConsDist ]               # value of slider
+                                
                 if not self.Active.get():
-                    self.Active.set(key)
+                    self.Active.set(distobj)
                 else:
                     self.refresh_display()
 
@@ -290,33 +298,50 @@ class constraint(Wizard):
     #=======================================================================
     def highlight_Active(self):
         
+        Error = 0
+        
         try:
-            View = cmd.get_view()
+            cmd.set("auto_zoom", 0)
             
-            for key in self.dictConstraints:
+            for key in self.dictConstraints.keys():
                 if key == self.Active.get():
                     
                     cons = self.dictConstraints[key]
                     
                     Highlight = []
-                    Highlight.extend([ CYLINDER, 
+                    Highlight.extend([ CYLINDER,
                                        float(cons[3][0]), float(cons[3][1]), float(cons[3][2]), 
                                        float(cons[4][0]), float(cons[4][1]), float(cons[4][2]),
-                                       0.05,
+                                       self.CYLINDER_WIDTH + 0.02,
                                        1.000, 1.000, 1.000,
                                        1.000, 1.000, 1.000 ])
 
                     cmd.load_cgo(Highlight, self.ACTIVE)
+                    cmd.refresh()
                     
-                    break
-
-            cmd.set_view(View)
-                
+                    break            
+    
         except:
-            return 1
+            Error = 1
 
-        return 0
+        cmd.set("auto_zoom", self.auto_zoom)
 
+        return Error
+
+    #=======================================================================
+    ''' Gets a unique constraint identifier '''
+    #=======================================================================
+    def get_ConstraintID(self):
+        
+        ID = 1
+        CONSTRAINT_ID = self.CONSTRAINT + str(ID) + '__'
+        
+        while CONSTRAINT_ID in self.dictConstraints:
+            ID = ID + 1
+            CONSTRAINT_ID = self.CONSTRAINT + str(ID) + '__'
+        
+        return CONSTRAINT_ID
+        
     #=======================================================================
     ''' Move up to the next active constraint '''
     #=======================================================================
@@ -326,7 +351,7 @@ class constraint(Wizard):
         First = ''
         Next = False
         
-        for key in sorted(self.dictConstraints, key=str.lower):
+        for key in sorted(self.dictConstraints.keys(), key=str.lower):
             
             if Next:
                 Active = key
@@ -335,15 +360,13 @@ class constraint(Wizard):
             if not First:
                 First = key
             
-            if key == self.Active:
+            if key == self.Active.get():
                 Next = True
             
         if not Active:
             Active = First
 
         self.Active.set(Active)
-
-        return 0
     
     #=======================================================================
     ''' Move up to the previous active constraint '''
@@ -354,7 +377,7 @@ class constraint(Wizard):
         First = ''
         Next = False
         
-        for key in reversed(sorted(self.dictConstraints, key=str.lower)):
+        for key in reversed(sorted(self.dictConstraints.keys(), key=str.lower)):
             
             if Next:
                 Active = key
@@ -363,15 +386,13 @@ class constraint(Wizard):
             if not First:
                 First = key
             
-            if key == self.Active:
+            if key == self.Active.get():
                 Next = True
             
         if not Active:
             Active = First
             
         self.Active.set(Active)
-        
-        return 0
     
 
     #=======================================================================
@@ -392,18 +413,18 @@ class constraint(Wizard):
             # Cleaning
             cmd.delete(self.ACTIVE)
             cmd.delete(self.CONSTRAINT + '*')
+            cmd.refresh()
         except:
             pass
             
         try:
             # Create if not exists constraint
-            for key in self.dictConstraints:
+            for key in self.dictConstraints.keys():
                 distobj = self.dictConstraints[key][2]
                 if not General_cmd.object_Exists(distobj) and self.create_cons(key):
                     return 1
             
             self.highlight_Active()
-            cmd.refresh()
             
         except:
             self.ErrorCode = 1
@@ -415,26 +436,31 @@ class constraint(Wizard):
     #=======================================================================
     def create_cons(self, key):
 
+        Error = 0
+        
         try:
-            atom1 = self.top.parse_cons(self.dictConstraints[key][0])
-            atom2 = self.top.parse_cons(self.dictConstraints[key][1])
+        
+            cmd.set("auto_zoom", 0)
+            
+            cons = self.dictConstraints[key]
 
-            sel1 = "id " + str(atom1[0]) + " & resn " + atom1[1] + " & resi " + atom1[2]
-            if atom1[3] != '-':
-                sel1 += " & chain " + atom1[3]
+            Highlight = []
+            Highlight.extend([ CYLINDER,
+                               float(cons[3][0]), float(cons[3][1]), float(cons[3][2]),
+                               float(cons[4][0]), float(cons[4][1]), float(cons[4][2]),
+                               self.CYLINDER_WIDTH,
+                               0.800, 0.300, 0.000,
+                               0.800, 0.300, 0.000 ])
 
-            sel2 = "id " + str(atom2[0]) + " & resn " + atom2[1] + " & resi " + atom2[2]
-            if atom2[3] != '-':
-                sel2 += " & chain " + atom2[3]
-
-            cmd.distance(self.dictConstraints[key][2], sel1, sel2)
-            cmd.hide('labels', self.dictConstraints[key][2])
-            cmd.color('white', self.dictConstraints[key][2])
+            cmd.load_cgo(Highlight, key)
+            cmd.refresh()
             
         except:
-            return 1
+            Error = 1
 
-        return 0
+        cmd.set("auto_zoom", self.auto_zoom)
+
+        return Error
 
     #=======================================================================
     ''' Panel displayed in the right side of the Pymol interface '''

@@ -45,7 +45,6 @@ def is_ATOM(Residue,Prot):
         return -1
         
     return 0
-    
 
 ''' ==========================================================
   mask_Objects: Mask ALL objects in list except those in exclude list  

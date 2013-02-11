@@ -51,7 +51,7 @@ if __debug__:
 class CropCleft(Tabs.Tab):
     
     ScaleResolution = 0.50
-    PartitionDisplay = 'PARTITION_AREA__'    
+    PartitionDisplay = 'PARTITION_AREA__'
     SphereDisplay = 'SPHERE_PT_AREA__'
     
     Color_Default = '#d9d9d9'
@@ -82,7 +82,7 @@ class CropCleft(Tabs.Tab):
                             PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/down.gif')),
                             PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/up.gif')),
                             PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/ok.gif')) ]
-
+    
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
     ==================================================================================  '''  
@@ -192,7 +192,9 @@ class CropCleft(Tabs.Tab):
 
         self.lblRadius = Label(fCropStep2Line3, text = 'Radius:', width=15, font=self.top.font_Text)
         self.lblRadius.pack(side=LEFT)
-        self.ResizeSphere = Scale(fCropStep2Line3, from_=0.5, to=0.5, resolution=self.ScaleResolution, variable=self.SphereSize, orient=HORIZONTAL, length=120, command=self.MoveResizeSphere, highlightthickness=0)
+        self.ResizeSphere = Scale(fCropStep2Line3, from_=0.5, to=0.5, resolution=self.ScaleResolution, variable=self.SphereSize, 
+                                    orient=HORIZONTAL, length=120, command=self.MoveResizeSphere, highlightthickness=0, 
+                                    showvalue=0)#, repeatdelay=1000, repeatinterval=1000)
         self.ResizeSphere.pack(side=LEFT, anchor=NW)
         self.ResizeSphere.config(state='disabled')
 
@@ -229,7 +231,7 @@ class CropCleft(Tabs.Tab):
         self.Step3bBtnCreate.pack(side=RIGHT, anchor=E)
 
         return self.fCrop
-
+    
     ''' ==================================================================================
     FUNCTION SphereRunning: Disables/Enables controls related to Sphere Wizard
     ==================================================================================  '''                 
@@ -421,6 +423,8 @@ class CropCleft(Tabs.Tab):
         DestFile = ''
         Output = self.Step3Output.get()
         
+        auto_zoom = cmd.get("auto_zoom")
+
         if Output != '':
             
             if not self.Vertex:
@@ -432,7 +436,8 @@ class CropCleft(Tabs.Tab):
                     return
                     
             try:
-                View = cmd.get_view()
+                
+                cmd.set("auto_zoom", 0)
                 
                 DestFile = os.path.join(self.top.GetCleftTempProject_Dir, Output + '.pdb')
                 self.top.Manage.copy_TempPartition(self.TempPartition, DestFile)
@@ -445,32 +450,32 @@ class CropCleft(Tabs.Tab):
                 cmd.color('partition', Output)
             
                 cmd.delete(self.PartitionDisplay)
-                cmd.set_view(View)            
                 
+                cmd.refresh()
+                
+                Cleft = CleftObj.CleftObj()
+                Cleft.CleftFile = DestFile
+                Cleft.CleftName = self.Step3Output.get()
+                Cleft.PartitionParent = self.Cleft
+                Cleft.Partition = True
+                Cleft.UTarget = self.Cleft.UTarget
+                Cleft.Set_CleftMD5()
+
+                self.top.Default.TempBindingSite.Add_Cleft(Cleft)
+                self.top.CopySession = False
+
+                # Put the partition cleft over its parent
+                General_cmd.Oscillate(self.Cleft.CleftName, 0.0)
+
+                self.Reset_Step1()
+
             except:
                 self.top.DisplayMessage("  ERROR: Could not create partition object: File not found.", 1)
-                return
-
+                
         else:
             self.top.DisplayMessage("  ERROR: Could not create partition object: Output is null.", 1)
-            return
             
-        
-        Cleft = CleftObj.CleftObj()
-        Cleft.CleftFile = DestFile
-        Cleft.CleftName = self.Step3Output.get()
-        Cleft.PartitionParent = self.Cleft
-        Cleft.Partition = True
-        Cleft.UTarget = self.Cleft.UTarget
-        Cleft.Set_CleftMD5()
-                
-        self.top.Default.TempBindingSite.Add_Cleft(Cleft)
-        self.top.CopySession = False
-
-        # Put the partition cleft over its parent
-        General_cmd.Oscillate(self.Cleft.CleftName, 0.0)
-        
-        self.Reset_Step1()
+        cmd.set("auto_zoom", auto_zoom)
 
     ''' ==========================================================
     Reset_Step1: Resets the partition interface
@@ -549,22 +554,22 @@ class CropCleft(Tabs.Tab):
     ==========================================================='''           
     def Step2_Add(self):
 
-        if not self.PyMOL:
-            return
+        if self.PyMOL:
 
-        if self.top.ActiveWizard is None:
-            
-            self.SphereID = self.Get_SphereID()
-            self.Sphere = SphereObj.SphereObj(self.Width/1.5, self.Width, self.Center)
-            
-            self.SphereRunning(True)
+            if self.top.ActiveWizard is None:
+                
+                self.SphereID = self.Get_SphereID()
+                self.Sphere = SphereObj.SphereObj(self.Width/1.5, self.Width, self.Center)
+                
+                self.SphereRunning(True)
 
-            self.top.ActiveWizard = Sphere.Sphere(self, self.Sphere, self.SphereID, self.SphereSize)
-            cmd.set_wizard(self.top.ActiveWizard)
-            self.top.ActiveWizard.Start()
+                self.top.ActiveWizard = Sphere.Sphere(self, self.Sphere, self.SphereID, self.SphereSize,
+                                                      "The grayed volume of the cleft is the volume that will be conserved.")
+                cmd.set_wizard(self.top.ActiveWizard)
+                self.top.ActiveWizard.Start()
 
-        else:
-            self.top.DisplayMessage("Could not execute task: A Wizard is active")
+            else:
+                self.top.DisplayMessage("Could not execute task: A Wizard is active")
 
     ''' ==========================================================
     Step2_Delete: Deletes a sphere for partitionning
@@ -637,12 +642,12 @@ class CropCleft(Tabs.Tab):
             cmd.hide('nonbonded',self.SphereDisplay)
             cmd.show('spheres', self.SphereDisplay)
             cmd.set('sphere_transparency', 0.7, self.SphereDisplay)
-            cmd.rebuild()
+            cmd.rebuild(self.SphereDisplay)
 
     # Shows the sphere in transparency
     def displayPartition(self):
 
-        View = cmd.get_view()
+        auto_zoom = cmd.get("auto_zoom")
 
         try:
             cmd.delete(self.PartitionDisplay)
@@ -650,20 +655,24 @@ class CropCleft(Tabs.Tab):
             pass
             
         try:
+            cmd.set("auto_zoom", 0)
+            
             cmd.load(self.TempPartition, self.PartitionDisplay, format='pdb')
             cmd.hide('everything', self.PartitionDisplay)
             cmd.color('grey60', self.PartitionDisplay)
             cmd.show('surface', self.PartitionDisplay)
+
+            cmd.refresh()
+            
+            General_cmd.Oscillate(self.Cleft.CleftName, 0.0)
+
         except:
             self.top.DisplayMessage("  ERROR: An error occured while displaying the partitionned cleft", 1)
-            return
-            
-        cmd.set_view(View)
 
-        General_cmd.Oscillate(self.Cleft.CleftName, 0.0)
-
+        cmd.set("auto_zoom", auto_zoom)
+    
     # MoveResizeSphere = Get the scale value, then resize the sphere          
-    def MoveResizeSphere(self, arg):
+    def MoveResizeSphere(self, *args):
 
         if self.top.ActiveWizard is not None:
             self.top.ActiveWizard.ResizeSphere()
@@ -719,4 +728,4 @@ class CropCleft(Tabs.Tab):
         TMPFile.close()
 
         return Vertex
-        
+    
