@@ -7,9 +7,6 @@
     <Filter Include="GetCleft">
       <UniqueIdentifier>{a58961b8-1fc4-4fee-8592-50bb2b0e2509}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IsoCleft">
-      <UniqueIdentifier>{9607f7b8-1a53-421b-aaa0-8b230b7e4886}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Project">
       <UniqueIdentifier>{8bd7f3e7-9a95-4bb6-bd6d-1eb1c5114ca0}</UniqueIdentifier>
     </Filter>
@@ -98,15 +95,6 @@
     </None>
     <None Include="..\..\GetCleft\RunGetCleft.py">
       <Filter>GetCleft</Filter>
-    </None>
-    <None Include="..\..\IsoCleft\IsoCleft.py">
-      <Filter>IsoCleft</Filter>
-    </None>
-    <None Include="..\..\IsoCleft\CfgIsoCleft.py">
-      <Filter>IsoCleft</Filter>
-    </None>
-    <None Include="..\..\IsoCleft\Config.py">
-      <Filter>IsoCleft</Filter>
     </None>
     <None Include="..\..\Plugin\NRGsuite.py">
       <Filter>Plugin</Filter>

@@ -47,9 +47,6 @@
     <None Include="..\..\GetCleft\RunGetCleft.py" />
     <None Include="..\..\GetCleft\Volume.py" />
     <None Include="..\..\Grid.py" />
-    <None Include="..\..\IsoCleft\CfgIsoCleft.py" />
-    <None Include="..\..\IsoCleft\Config.py" />
-    <None Include="..\..\IsoCleft\IsoCleft.py" />
     <None Include="..\..\MessageBox.py" />
     <None Include="..\..\MultiList.py" />
     <None Include="..\..\Plugin\NRGsuite.py" />
