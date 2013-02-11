@@ -156,11 +156,13 @@ class ProcLig:
             elif self.FlexAID.OSid == 'LINUX':
                 self.set_environment('LD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
                 self.set_environment('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
+                self.set_environment('BABEL_DATADIR', os.path.join(self.FlexAIDWRKInstall_Dir,'data'))
                 self.FlexAID.Run = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
                 
             elif self.FlexAID.OSid == 'MAC':
                 self.set_environment('DYLD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))
                 self.set_environment('BABEL_LIBDIR', os.path.join(self.FlexAIDWRKInstall_Dir,'formats'))
+                self.set_environment('BABEL_DATADIR', os.path.join(self.FlexAIDWRKInstall_Dir,'data'))
                 self.FlexAID.Run = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
 
             (out,err) = self.FlexAID.Run.communicate()
