@@ -39,7 +39,6 @@
     <None Include="..\..\General.py" />
     <None Include="..\..\General_cmd.py" />
     <None Include="..\..\Geometry.py" />
-    <None Include="..\..\GetCleft\AdvOptions.py" />
     <None Include="..\..\GetCleft\CropCleft.py" />
     <None Include="..\..\GetCleft\Default.py" />
     <None Include="..\..\GetCleft\GetCleft.py" />
@@ -47,7 +46,6 @@
     <None Include="..\..\GetCleft\RunGetCleft.py" />
     <None Include="..\..\GetCleft\Volume.py" />
     <None Include="..\..\Grid.py" />
-    <None Include="..\..\MessageBox.py" />
     <None Include="..\..\MultiList.py" />
     <None Include="..\..\Plugin\NRGsuite.py" />
     <None Include="..\..\Prefs.py" />

@@ -360,9 +360,9 @@ class IOFile(Tabs.Tab):
         #==================================================================================                
         fPDBsep = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=3)
 
-        fPDBprotein = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=70)
+        fPDBprotein = Frame(self.fIOFile, border=1, relief=RAISED) #, width=500, height=70)
         fPDBprotein.pack(side=TOP, pady=10)
-        fPDBprotein.pack_propagate(0)
+        #fPDBprotein.pack_propagate(0)
 
         fPDBproteinLine1 = Frame(fPDBprotein)
         fPDBproteinLine1.pack(side=TOP, fill=X, padx=3, pady=3)
@@ -371,7 +371,7 @@ class IOFile(Tabs.Tab):
         fPDBproteinLine2.pack(side=TOP, fill=X, padx=3, pady=3)
 
         # First line
-        Label(fPDBproteinLine1, width=30, text='THE TARGET', font=self.font_Title).pack(side=LEFT)
+        Label(fPDBproteinLine1, width=20, text='THE TARGET', font=self.font_Title).pack(side=LEFT)
         Button(fPDBproteinLine1, text='Load', command=self.Btn_LoadProt_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBproteinLine1, text='Display', command=self.Btn_DisplayProtein_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBproteinLine1, text='Reset', command=self.Btn_ResetProt_Clicked, font=self.font_Text).pack(side=LEFT)
@@ -388,9 +388,9 @@ class IOFile(Tabs.Tab):
         #                               SET LIGAND
         #==================================================================================   
 
-        fPDBligand = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=70)
+        fPDBligand = Frame(self.fIOFile, border=1, relief=RAISED) #, width=500, height=70)
         fPDBligand.pack(side=TOP, pady=10)
-        fPDBligand.pack_propagate(0)
+        #fPDBligand.pack_propagate(0)
 
         fPDBligandLine1 = Frame(fPDBligand)
         fPDBligandLine1.pack(side=TOP, fill=X, padx=3, pady=3)
@@ -399,7 +399,7 @@ class IOFile(Tabs.Tab):
         fPDBligandLine2.pack(side=TOP, fill=X, padx=3, pady=3)
 
         # First line
-        Label(fPDBligandLine1, width=30, text='THE LIGAND', font=self.font_Title).pack(side=LEFT)
+        Label(fPDBligandLine1, width=20, text='THE LIGAND', font=self.font_Title).pack(side=LEFT)
         Button(fPDBligandLine1, text='Load', command=self.Btn_LoadLigand_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Display', command=self.Btn_DisplayLigand_Clicked,font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Reset', command=self.Btn_ResetLigand_Clicked, font=self.font_Text).pack(side=LEFT)

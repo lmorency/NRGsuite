@@ -78,9 +78,6 @@
     <None Include="..\..\GetCleft\Volume.py">
       <Filter>GetCleft</Filter>
     </None>
-    <None Include="..\..\GetCleft\AdvOptions.py">
-      <Filter>GetCleft</Filter>
-    </None>
     <None Include="..\..\GetCleft\CropCleft.py">
       <Filter>GetCleft</Filter>
     </None>
@@ -114,7 +111,6 @@
     <None Include="..\..\General_cmd.py" />
     <None Include="..\..\Geometry.py" />
     <None Include="..\..\Grid.py" />
-    <None Include="..\..\MessageBox.py" />
     <None Include="..\..\Prefs.py" />
     <None Include="..\..\Sphere.py" />
     <None Include="..\..\SphereObj.py" />
