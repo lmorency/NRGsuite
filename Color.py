@@ -23,7 +23,7 @@
 
 @summary: Module that define all colors used from Pymol simulation.
 
-@contain: Get_Pymol_HeatColor, Get_RGB_HeatColor, GetHeatColorList, CreateNoList 
+@contain: Get_Pymol_HeatColor, Get_Hex_HeatColor, GetHeatColorList, CreateNoList 
 
 @organization: Najmanovich Research Group
 @creation date:  oct. 13, 2010
@@ -68,7 +68,7 @@ def Get_Pymol_HeatColor(pColorId):
         return ColorList[pColorId]
     
 
-def Get_RGB_HeatColor(pColorId):
+def Get_Hex_HeatColor(pColorId):
     
     #From RED=0 to BLUE=19
     ColorList = ['#FF0000',
@@ -103,18 +103,18 @@ def Get_RGB_HeatColor(pColorId):
                             list depending on the total of colors.
               Related link: http://www.pymolwiki.org/index.php/Color_Values  
 @param pTotColor: Integer
-@param boolRGB: Boolean - If RGB or NOT
-@return: List - List of colors (Name or RGB)
+@param boolHex: Boolean - If Hex or NOT
+@return: List - List of colors (Name or Hex)
 '''    
-def GetHeatColorList(pTotColor, boolRGB):
+def GetHeatColorList(pTotColor, boolHex):
     
     ColorList = []
     noList = list()
     TotalColorList = 20     # Total of colors available
     
     if (pTotColor == 1):
-        if boolRGB:
-            ColorList.append(Get_RGB_HeatColor(0))
+        if boolHex:
+            ColorList.append(Get_Hex_HeatColor(0))
         else:
             ColorList.append(Get_Pymol_HeatColor(0)) 
     
@@ -122,23 +122,19 @@ def GetHeatColorList(pTotColor, boolRGB):
          
         noList = CreateNoList(pTotColor, TotalColorList)
         
-        if boolRGB:
+        if boolHex:
             for no in noList:
-                ColorList.append(Get_RGB_HeatColor(no))
-                
+                ColorList.append(Get_Hex_HeatColor(no))
         else:
             for no in noList:
                 ColorList.append(Get_Pymol_HeatColor(no))
                 
     else:       # Number of color displayed higher then 20
                 
-        if boolRGB:
- 
+        if boolHex:
             for i in range(0, pTotColor):
-                ColorList.append(Get_RGB_HeatColor(i))
-                
+                ColorList.append(Get_Hex_HeatColor(i))
         else:
-            
             for i in range(0, pTotColor):
                 ColorList.append(Get_Pymol_HeatColor(i))
         
@@ -161,7 +157,7 @@ def CreateNoList(pTotColor, pTotalColorList):
         
     stepStart = 0
     stepEnd = pTotalColorList - 1
-        
+    
     for i in range(0, pTotColor):
     
         if ((i % 2) == 0):

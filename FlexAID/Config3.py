@@ -64,7 +64,7 @@ class Config3(Tabs.Tab):
         self.CompFct.set('VCT')
 
         self.UseDEE.set(0)
-        self.IncludeHET.set(0)
+        self.IncludeHET.set(1)
         self.ExcludeHOH.set(1)
 
         self.DEE_Clash_Threshold.set('0.50')

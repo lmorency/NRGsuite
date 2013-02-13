@@ -139,7 +139,7 @@ class Default(Tabs.Tab):
         self.listResidues = list()
 
         self.ColorList = list()
-        self.ColorRGB = list()
+        self.ColorHex = list()
 
     def Init_Vars(self):
 
@@ -174,8 +174,8 @@ class Default(Tabs.Tab):
                      
             self.NbCleftTrace = self.NbCleft.trace('w', lambda *args, **kwargs:
                                                         self.Validate_Field(input=self.EntryNbCleft, var=self.NbCleft, min=1,
-                                                        max=100, ndec=-1, tag='Number of clefts', _type=int))
-
+                                                        max=20, ndec=-1, tag='Number of clefts', _type=int))
+            
         except:
             pass
 
@@ -363,7 +363,7 @@ class Default(Tabs.Tab):
     def Btn_Clear_Clicked(self):
         
         # Delete Cleft/Sphere objects in PyMOL
-        for Cleft in iter(self.TempBindingSite.listClefts):
+        for Cleft in self.TempBindingSite.listClefts:
             if self.PyMOL:
                 try:
                     cmd.delete(Cleft.CleftName)
@@ -439,7 +439,7 @@ class Default(Tabs.Tab):
         self.DisplayColorChart()
         
         self.Load_Clefts()
-        self.Show_Clefts(self.ColorList)
+        self.Show_Clefts()
         
     ''' ========================================================
                  Gets all arguments for the cmdline
@@ -536,7 +536,7 @@ class Default(Tabs.Tab):
                 
             self.ChartBar.create_rectangle(LeftCoord, 0,
                                            RightCoord, self.ChartBar.cget('height'),
-                                           fill=self.ColorRGB[i])
+                                           fill=self.ColorHex[i])
             LeftCoord = RightCoord
 
     ''' ==================================================================================
@@ -609,18 +609,19 @@ class Default(Tabs.Tab):
             return
             
         if self.TempBindingSite.Count_Cleft() > 0:
-                        
+            
             self.Update_TempBindingSite()
             
             self.top.Manage.save_Temp()
             
-            for Cleft in self.TempBindingSite.listClefts:
-            
+            for CleftName in self.TempBindingSite.Get_SortedCleftNames():
+                
+                Cleft = self.TempBindingSite.Get_CleftName(CleftName)
                 CleftPath = os.path.join(self.top.CleftProject_Dir,Cleft.UTarget)
                 
                 if not os.path.isdir(CleftPath):
                     os.makedirs(CleftPath)
-
+                    
                 CleftSaveFile = os.path.join(CleftPath,os.path.basename(os.path.splitext(Cleft.CleftFile)[0]) + '.nrgclf')
 
                 try:
@@ -628,9 +629,10 @@ class Default(Tabs.Tab):
                     pickle.dump(Cleft, out)
                     out.close()
                     
-                    self.top.DisplayMessage("  Successfully saved '" + CleftSaveFile + "'", 0)
+                    #self.top.DisplayMessage("  Successfully saved '" + CleftSaveFile + "'", 0)
                 except:
-                    self.top.DisplayMessage("  ERROR: Could not save binding-site configuration", 1)
+                    self.top.DisplayMessage("  ERROR: Could not save binding-site '" + CleftSaveFile + "'", 1)
+                    continue
         
         else:
             self.top.DisplayMessage("  No clefts to save as 'clefts'", 2)
@@ -681,8 +683,8 @@ class Default(Tabs.Tab):
             nColor = Color.NBCOLOR
             
         self.ColorList = Color.GetHeatColorList(nColor, False)
-        self.ColorRGB = Color.GetHeatColorList(nColor, True)
-                
+        self.ColorHex = Color.GetHeatColorList(nColor, True)
+        
     ''' ==========================================================
     SetPartitionColor: sets a new color to the partition based on its parent
     ==========================================================='''           
@@ -696,40 +698,45 @@ class Default(Tabs.Tab):
             cmd.iterate( Sel, 'colors.append(color)', space=mycolors)
 
             for color in mycolors['colors']:
-                lRGB = list( cmd.get_color_tuple(color) )
+                one = list( cmd.get_color_tuple(color) )
                 break
 
             for i in range(0,3):
-                if lRGB[i] <= 0.80:
-                    lRGB[i] += 0.20
+                if one[i] <= 0.80:
+                    one[i] += 0.20
                 else:
-                    lRGB[i] -= 0.20
-         
-            cmd.set_color(self.PartitionColor, lRGB)
+                    one[i] -= 0.20
+            
+            cmd.set_color(self.PartitionColor, one)
+            partition_rgb = General.one_to_rgb(one)
             
         except:
-            return 1
+            return tuple()
 
-        return 0
+        return tuple(partition_rgb)
     
     ''' ==================================================================================
     FUNCTION Show_Clefts: Shows the 'Cleft' object a cavity
     ================================================================================== '''   
-    def Show_Clefts(self, ColorList):
+    def Show_Clefts(self):
         
         i = 0
-        for Cleft in self.TempBindingSite.listClefts:
+        for CleftName in self.TempBindingSite.Get_SortedCleftNames():
+            Cleft = self.TempBindingSite.Get_CleftName(CleftName)
+            
             try:
                 cmd.hide('everything', Cleft.CleftName)
-                cmd.color(ColorList[i], Cleft.CleftName)
-                cmd.refresh()
-
+                cmd.color(self.ColorList[i], Cleft.CleftName)
+                #cmd.refresh()
+                
                 cmd.show('surface', Cleft.CleftName)
                 cmd.refresh()
-        
+                
+                Cleft.Color = self.ColorHex[i]
+                
                 i += 1
             except:
-                self.DisplayMessage("  ERROR: Could not display cleft object '" + key + "'", 2)
+                self.DisplayMessage("  ERROR: Could not display cleft object '" + Cleft.CleftName + "'", 2)
                 continue
                     
     ''' ==================================================================================

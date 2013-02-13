@@ -21,6 +21,7 @@ from Tkinter import *
 from subprocess import Popen, PIPE
 
 import Tabs
+import tkMessageBox
 import MultiList
 import threading
 
@@ -163,10 +164,10 @@ class EstimateVolume(Tabs.Tab):
         fList.pack_propagate(0)
         
         self.Table = MultiList.Table(fList, 3,
-                                   [ 'Cleft object', 'Estimated', 'Volume' ],
-                                   [ 180, 70, 130 ],
-                                   [ 1, 6, 13 ],
-                                   [ True, True, True ],
+                                   [ 'Color', 'Cleft object', 'Volume' ],
+                                   [ 40, 200, 130 ],
+                                   [ 0, 6, 6 ],
+                                   [ False, True, True ],
                                    self.top.font_Text,
                                    self.top.Color_Blue)
         
@@ -179,7 +180,7 @@ class EstimateVolume(Tabs.Tab):
         fButtons2Line1 = Frame(fButtons2)
         fButtons2Line1.pack(side=TOP, fill=X)
 
-        Button(fButtons2Line1, text='Save volumes', font=self.top.font_Text).pack(side=RIGHT, padx=2)
+        Button(fButtons2Line1, text='Save volumes', font=self.top.font_Text, command=self.Save_Volume).pack(side=RIGHT, padx=2)
         Button(fButtons2Line1, text='Refresh clefts', font=self.top.font_Text, command=self.Init_Table).pack(side=RIGHT, padx=2)
 
         self.Validator = [ self.ValidIterations ]
@@ -193,10 +194,10 @@ class EstimateVolume(Tabs.Tab):
 
         if not self.Validate_Fields():
         
-            Selected = self.SelectedCleft.get()
+            Selected = self.SelectedCleft.get().lstrip()
             if Selected != '':
+            
                 Cleft = self.top.Default.TempBindingSite.Get_CleftName(Selected)
-                
                 if Cleft != None:
                     try:
                         self.VolumeRunning(True)
@@ -255,8 +256,8 @@ class EstimateVolume(Tabs.Tab):
         self.Table.Clear()
         
         for CleftName in self.top.Default.TempBindingSite.Get_SortedCleftNames():
-            self.Table.Add( [ CleftName, 'False', str(self.top.Default.TempBindingSite.Get_CleftName(CleftName).Volume) ],
-                            [ None, None, None ] )
+            self.Table.Add( [ '', CleftName, str(self.top.Default.TempBindingSite.Get_CleftName(CleftName).Volume) ],
+                            [ self.top.Default.TempBindingSite.Get_CleftName(CleftName).Color, None, None ] )
 
     ''' ==================================================================================
     FUNCTION VolumeRunning: Actives/Deactives controls when a process is running
@@ -267,3 +268,18 @@ class EstimateVolume(Tabs.Tab):
             self.Disable_Frame()
         else:
             self.Enable_Frame()
+            
+            self.Init_Table()
+
+    ''' ==================================================================================
+    FUNCTION SaveVolumes: Saves the calculated volume of the clefts
+    ==================================================================================  '''    
+    def Save_Volume(self):
+        
+        if not self.top.CopySession:
+            if tkMessageBox.askquestion("Question", message="The cleft(s) first need to be saved before you can save the volumes. Do you still want to proceed?",
+                                        icon='warning') == 'yes':
+                self.top.Default.Btn_Save_Clefts()
+        else:
+            self.top.Default.Btn_Save_Clefts()
+            

@@ -160,7 +160,6 @@ class Parse(threading.Thread):
         self.CreateTempPDB(self.FlexAID.FlexAIDSimulationProject_Dir)
 
         # Set the Colors
-        self.NBCOLOR = Color.NBCOLOR
         self.PymolColorList = Color.GetHeatColorList(self.NbTopChrom, False)
 
         #Creation of the dictionaries

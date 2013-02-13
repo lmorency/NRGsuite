@@ -76,7 +76,7 @@ class Manage:
     def save_Temp(self):
             
         nCopy = 0
-        for Cleft in iter(self.top.Default.TempBindingSite.listClefts):
+        for Cleft in self.top.Default.TempBindingSite.listClefts:
 
             SavePath = os.path.join(self.top.GetCleftSaveProject_Dir, Cleft.UTarget)
             

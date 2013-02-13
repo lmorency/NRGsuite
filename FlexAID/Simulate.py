@@ -340,14 +340,14 @@ class Simulate(Tabs.Tab):
         
         nbTopChrom = int(self.top.GAParam.NbTopChrom.get())
         self.ColorList = Color.GetHeatColorList(nbTopChrom, True)
-
+        
         # Empty table list
         self.Table.Clear()
-
+        
         for key in range(1, nbTopChrom + 1):
             self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ], 
                             [ self.ColorList[key-1], None, None, None, None ] )
-    
+        
     ''' ==================================================================================
     FUNCTION update_DataList: Update the displayed Data List informations.
     ==================================================================================  '''                

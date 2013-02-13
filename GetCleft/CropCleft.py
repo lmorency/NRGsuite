@@ -442,32 +442,37 @@ class CropCleft(Tabs.Tab):
                 DestFile = os.path.join(self.top.GetCleftTempProject_Dir, Output + '.pdb')
                 self.top.Manage.copy_TempPartition(self.TempPartition, DestFile)
                 
-                cmd.load(DestFile, Output, format='pdb', state=1)
+                cmd.load(DestFile, Output, state=1)
                 cmd.hide('everything', Output)
                 cmd.show('surface', Output)
                 
-                self.top.Default.SetPartitionColor(self.Cleft.CleftName)
-                cmd.color('partition', Output)
-            
-                cmd.delete(self.PartitionDisplay)
+                partition_rgb = self.top.Default.SetPartitionColor(self.Cleft.CleftName)
+                    
+                if len(partition_rgb):
                 
-                cmd.refresh()
-                
-                Cleft = CleftObj.CleftObj()
-                Cleft.CleftFile = DestFile
-                Cleft.CleftName = self.Step3Output.get()
-                Cleft.PartitionParent = self.Cleft
-                Cleft.Partition = True
-                Cleft.UTarget = self.Cleft.UTarget
-                Cleft.Set_CleftMD5()
+                    cmd.color('partition', Output)
+                    cmd.delete(self.PartitionDisplay)
+                    cmd.refresh()
+                    
+                    Cleft = CleftObj.CleftObj()
+                    Cleft.CleftFile = DestFile
+                    Cleft.CleftName = self.Step3Output.get()
+                    Cleft.PartitionParent = self.Cleft
+                    Cleft.Partition = True
+                    Cleft.UTarget = self.Cleft.UTarget
+                    Cleft.Set_CleftMD5()
+                    Cleft.Color = General.rgb_to_hex(partition_rgb)
+                    
+                    self.top.Default.TempBindingSite.Add_Cleft(Cleft)
+                    self.top.CopySession = False
 
-                self.top.Default.TempBindingSite.Add_Cleft(Cleft)
-                self.top.CopySession = False
+                    # Put the partition cleft over its parent
+                    General_cmd.Oscillate(self.Cleft.CleftName, 0.0)
 
-                # Put the partition cleft over its parent
-                General_cmd.Oscillate(self.Cleft.CleftName, 0.0)
-
-                self.Reset_Step1()
+                    self.Reset_Step1()
+                    
+                else:
+                    self.top.DisplayMessage("  ERROR: Cleft '" + self.Cleft.CleftName + "' could not be found to set partition color", 1)                
 
             except:
                 self.top.DisplayMessage("  ERROR: Could not create partition object: File not found.", 1)

@@ -72,6 +72,7 @@ class IOFile(Tabs.Tab):
                          ('SMI File','*.smi') ]
     
     SmilesLigand = 'SMILES_LIGAND__'
+    ReferenceLigand = 'REFERENCE_LIGAND__'
     
     def Def_Vars(self):
         
@@ -160,7 +161,7 @@ class IOFile(Tabs.Tab):
 
         # Loads the PDB of the processed ligand
         if not self.fLoadProcessed:
-            if self.Load_ProcConvLigand(self.ReferencePath.get()):
+            if self.Load_ProcConvLigand(self.ReferencePath.get(), self.ReferenceLigand):
                 return False
             else:
                 self.fLoadProcessed = True
@@ -231,8 +232,13 @@ class IOFile(Tabs.Tab):
                    
                     MOL2Ligand = os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIG.mol2')
                     
+                    try:
+                        cmd.delete(self.SmilesLigand)
+                    except:
+                        pass
+                    
                     self.LigandName.set(self.SmilesLigand)
-                    if not self.Load_ProcConvLigand(MOL2Ligand):
+                    if not self.Load_ProcConvLigand(MOL2Ligand, self.SmilesLigand):
                         self.LigandPath.set(MOL2Ligand)
                         self.fProcessLigand = False
 
@@ -348,21 +354,23 @@ class IOFile(Tabs.Tab):
         #Label(fPDB_options2Line2, text='Set as...', justify=RIGHT, font=self.font_Text).pack(side=RIGHT, anchor=E)
 
         # List of selections
-        Button(fPDB_options2Line2, text='LIGAND', command=self.Btn_SaveLigand_Clicked, font=self.font_Text, relief=RIDGE).pack(side=RIGHT)
-        Button(fPDB_options2Line2, text='TARGET', command=self.Btn_SaveProt_Clicked, font=self.font_Text, relief=RIDGE).pack(side=RIGHT)
+        Button(fPDB_options2Line2, text='Save as ligand', command=self.Btn_SaveLigand_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDB_options2Line2, text='Save as target', command=self.Btn_SaveProt_Clicked, font=self.font_Text).pack(side=LEFT)
 
-        Label(fPDB_options2Line2, text='Save as...', justify=RIGHT, font=self.font_Text).pack(side=RIGHT, anchor=E)
+        #Label(fPDB_options2Line2, text='Save as...', justify=RIGHT, font=self.font_Text).pack(side=RIGHT, anchor=E)
         
 
                
         #==================================================================================
         #                                SET TARGET
         #==================================================================================                
-        fPDBsep = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=3)
 
-        fPDBprotein = Frame(self.fIOFile, border=1, relief=RAISED) #, width=500, height=70)
-        fPDBprotein.pack(side=TOP, pady=10)
-        #fPDBprotein.pack_propagate(0)
+        #fPDBprotlig = Frame(self.fIOFile)
+        #fPDBprotlig.pack(fill=X, expand=True)
+        
+        fPDBprotein = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=70)
+        fPDBprotein.pack(side=TOP, pady=10, padx=10)#, fill=X, expand=True)
+        fPDBprotein.pack_propagate(0)
 
         fPDBproteinLine1 = Frame(fPDBprotein)
         fPDBproteinLine1.pack(side=TOP, fill=X, padx=3, pady=3)
@@ -373,13 +381,13 @@ class IOFile(Tabs.Tab):
         # First line
         Label(fPDBproteinLine1, width=20, text='THE TARGET', font=self.font_Title).pack(side=LEFT)
         Button(fPDBproteinLine1, text='Load', command=self.Btn_LoadProt_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDBproteinLine1, text='Display', command=self.Btn_DisplayProtein_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDBproteinLine1, text='Zoom', command=self.Btn_DisplayProtein_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBproteinLine1, text='Reset', command=self.Btn_ResetProt_Clicked, font=self.font_Text).pack(side=LEFT)
 
         # Second line
-        Label(fPDBproteinLine2, width=30, text='', font=self.font_Title).pack(side=LEFT)
+        Label(fPDBproteinLine2, width=20, text='', font=self.font_Title).pack(side=LEFT)
         EntProtein = Entry(fPDBproteinLine2, textvariable=self.ProtName, disabledbackground=self.Color_White, 
-                            disabledforeground=self.Color_Black, font=self.font_Text, justify=CENTER)
+                            disabledforeground=self.Color_Black, font=self.font_Text, justify=CENTER, width=20)
         EntProtein.pack(side=LEFT, fill=X)
         EntProtein.config(state='disabled')
         #Checkbutton(fPDBproteinLine2, variable=self.TargetRNA, width=10, text='RNA', font=self.font_Text, justify=LEFT).pack(side=LEFT)
@@ -388,9 +396,9 @@ class IOFile(Tabs.Tab):
         #                               SET LIGAND
         #==================================================================================   
 
-        fPDBligand = Frame(self.fIOFile, border=1, relief=RAISED) #, width=500, height=70)
-        fPDBligand.pack(side=TOP, pady=10)
-        #fPDBligand.pack_propagate(0)
+        fPDBligand = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=70)
+        fPDBligand.pack(side=TOP, pady=10, padx=10)
+        fPDBligand.pack_propagate(0)
 
         fPDBligandLine1 = Frame(fPDBligand)
         fPDBligandLine1.pack(side=TOP, fill=X, padx=3, pady=3)
@@ -401,21 +409,19 @@ class IOFile(Tabs.Tab):
         # First line
         Label(fPDBligandLine1, width=20, text='THE LIGAND', font=self.font_Title).pack(side=LEFT)
         Button(fPDBligandLine1, text='Load', command=self.Btn_LoadLigand_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDBligandLine1, text='Display', command=self.Btn_DisplayLigand_Clicked,font=self.font_Text).pack(side=LEFT)
+        Button(fPDBligandLine1, text='Zoom', command=self.Btn_DisplayLigand_Clicked,font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Reset', command=self.Btn_ResetLigand_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Input', command=self.Btn_Input_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Anchor', command=self.Btn_Anchor_Clicked, font=self.font_Text).pack(side=LEFT)
         
         # Second line
-        Label(fPDBligandLine2, width=30, text='', font=self.font_Title).pack(side=LEFT)
+        Label(fPDBligandLine2, width=20, text='', font=self.font_Title).pack(side=LEFT)
         EntLigand = Entry(fPDBligandLine2, disabledbackground=self.Color_White, disabledforeground=self.Color_Black, 
-                            textvariable=self.LigandName, font=self.font_Text, justify=CENTER)
+                            textvariable=self.LigandName, font=self.font_Text, justify=CENTER, width=20)
         EntLigand.pack(side=LEFT, fill=X)
         EntLigand.config(state='disabled')
         Checkbutton(fPDBligandLine2, variable=self.Gen3D, text='Generate 3D conformation',
-            font=self.font_Text, justify=RIGHT).pack(side=LEFT, padx=10)
-
-        Label(fPDBligandLine2, width=10, text='', font=self.font_Text).pack(side=LEFT)
+            font=self.font_Text, justify=RIGHT).pack(side=LEFT)
 
         #==================================================================================
         #                                 Processing of molecules
@@ -608,16 +614,23 @@ class IOFile(Tabs.Tab):
             self.LigandName.set(Name)
             self.DisplayMessage("  Successfully loaded the ligand: '" + self.LigandName.get() + "'", 0)
 
-    def Load_ProcConvLigand(self, LigandFile):
+    def Load_ProcConvLigand(self, LigandFile, ObjectName):
         
-        try:
-            if self.PyMOL:
-                cmd.load(LigandFile, self.LigandName.get(), state=1)
-        except:
-            self.DisplayMessage('  ERROR: Could not load the ligand file in PyMOL', 1)
-            return 1
+        Error = 0
         
-        return 0
+        auto_zoom = cmd.get("auto_zoom")
+        
+        if self.PyMOL:
+            try:
+                cmd.set("auto_zoom", 0)
+                cmd.load(LigandFile, ObjectName, state=1)
+            except:
+                self.DisplayMessage('  ERROR: Could not load the ligand file in PyMOL', 1)
+                Error = 1
+        
+        cmd.set("auto_zoom", auto_zoom)
+        
+        return Error
 
     def Btn_LoadProt_Clicked(self):
         
@@ -703,7 +716,7 @@ class IOFile(Tabs.Tab):
             return 1
         except shutil.Error:
             pass
-            
+        
         return 0
 
     ''' ==================================================================================
