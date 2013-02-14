@@ -20,7 +20,7 @@
 from collections import defaultdict
 
 
-MAX_LIGAND_ATOMS = 250
+MAX_LIGAND_ATOMS = 150
 
 nFlexBonds = dict(zip(('VAL','LEU','ILE','MET', 
                        'PHE','ASN','ASP','GLN',  

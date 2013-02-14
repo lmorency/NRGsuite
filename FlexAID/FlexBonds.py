@@ -76,6 +76,9 @@ class flexbond(Wizard):
         self.atom1 = list()
         self.atom2 = list()
 
+        self.ErrorStatus = [ "Flexible bonds of the ligand are shown in orange.",
+                             "Selected flexible bonds of the ligand are shown in white." ]
+                    
     #=======================================================================
     ''' Executes the first steps of the Wizard'''
     #=======================================================================    
@@ -487,13 +490,13 @@ class flexbond(Wizard):
                     info.extend([ at.index, at.resn, at.resi, at.chain, at.name,
                                   at.coord[0], at.coord[1], at.coord[2] ])                  
             else:
-                self.top.DisplayMessage("You must click in the object " + self.LigDisplay, 1)
+                self.ErrorStatus = [ "You can only select atoms from the object " + self.LigDisplay + ". Try again." ]
                 return info
                 
             cmd.deselect()
 
         except:
-            self.top.DisplayMessage("Error while retrieving atom info", 1)
+            self.ErrorStatus = [ "An error occured while retrieving atom info. Try again." ]
             self.Quit_Wizard()
         
         return info
@@ -620,9 +623,9 @@ class flexbond(Wizard):
                     self.pickNextAtom()
                     self.highlight_Atom(self.atom1)
                 else:
-                    self.top.DisplayMessage("You can only select atoms in the object " + self.LigDisplay, 2)
+                    self.ErrorStatus = [ "You can only select atoms from the object " + self.LigDisplay + ". Try again." ]
             else:
-                self.top.DisplayMessage("No atom could be selected in " + self.LigDisplay, 2)
+                self.ErrorStatus = [ "No atoms could be selected in the object " + self.LigDisplay + ". Try again." ]
 
         else:
             self.atom2 = self.get_Atom(name)
@@ -634,7 +637,7 @@ class flexbond(Wizard):
                     self.highlight_Atom(self.atom2)
 
                     if not self.is_Valid(self.atom1, self.atom2):
-                        self.top.DisplayMessage("The selected bond cannot be defined as flexible.", 2)
+                        self.ErrorStatus = [ "The selected bond cannot be set as flexible. Try again." ]
                     else:
                         # Already existing Possible Bond
                         if self.FlexIndex != 0:
@@ -656,10 +659,10 @@ class flexbond(Wizard):
                     cmd.refresh()
 
                 else:
-                    self.top.DisplayMessage("No atom could be selected in " + self.LigDisplay, 2)
+                    self.ErrorStatus = [ "No atoms could be selected in the object " + self.LigDisplay + ". Try again." ]
             
             else:
-                self.top.DisplayMessage("You can only select atoms in the object " + self.LigDisplay, 2)
+                self.ErrorStatus = [ "You can only select atoms from the object " + self.LigDisplay + ". Try again." ]
                 
     #=======================================================================
     ''' Display a message in the interface '''
@@ -667,7 +670,7 @@ class flexbond(Wizard):
     def get_prompt(self):
 
         if self.pick_count == 0:
-            return ["Flexible bonds of the ligand are shown in orange.",
-                    "Please click on the FIRST atom that defines the flexible bond." ]
+            return self.ErrorStatus + \
+                    [ "Please click on the FIRST atom that defines the flexible bond." ]
         elif self.pick_count == 1:
             return ["Please click on the SECOND atom that defines the flexible bond." ]

@@ -444,6 +444,7 @@ class Parse(threading.Thread):
                 self.top.ErrorStatus(self.ErrorMsg)
             else:
                 self.top.SuccessStatus()
+                self.top.Load_Results()
 
             print("FlexAID parsing thread has ended.")
 

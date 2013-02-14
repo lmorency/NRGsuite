@@ -43,7 +43,7 @@ class constraint(Wizard):
     DefaultConsDist = '1.5'
     LigDisplay = 'CONSTRAINT_LIGAND__'
     
-    CONSTRAINT = 'CONSTRAINT_'
+    CONSTRAINT = 'CONS_'
     ACTIVE = 'ACTIVE_CONS__'
 
     #=======================================================================
@@ -65,6 +65,7 @@ class constraint(Wizard):
         self.ErrorStatus = [ "The active constraint is shown as a solid white line.",
                              "Use the scaler in the interface to edit the interaction distance." ]
 
+        self.View = cmd.get_view()
         self.State = cmd.get_state()
         self.auto_zoom = cmd.get("auto_zoom")
 
@@ -114,9 +115,6 @@ class constraint(Wizard):
         try:
             cmd.set("auto_zoom", 0)
             
-            print self.RefLigand
-            print self.LigDisplay
-            print self.State
             cmd.load(self.RefLigand, self.LigDisplay, state=self.State)
             cmd.refresh()
 
@@ -130,11 +128,9 @@ class constraint(Wizard):
             util.cbag(self.LigDisplay)
             cmd.refresh()
 
-            print "ZOOM!"
             cmd.zoom(self.LigDisplay)            
             cmd.refresh()
-            print "DONE!"
-            
+
         except:
             self.ErrorCode = 1
 
@@ -158,6 +154,9 @@ class constraint(Wizard):
             cmd.delete(self.CONSTRAINT + '*')
             cmd.refresh()
 
+            cmd.delete(self.LigDisplay)
+            cmd.refresh()
+
             cmd.deselect()
             cmd.unpick()
             
@@ -170,6 +169,7 @@ class constraint(Wizard):
         self.top.ConsRunning(False)
         self.FlexAID.ActiveWizard = None
         
+        cmd.set_view(self.View)
         cmd.set_wizard()
 
     #=======================================================================
@@ -278,7 +278,7 @@ class constraint(Wizard):
         
         try:
             #        0     1      2     3     4
-            #atom1 [907, 'BTN', '300', 'A', 'O3', 14.692000389099121, -0.44600000977516174, -8.2049999237060547]
+            #atom1 [907, 'BTN', '300', 'A', 'O3', 14.692000389099121, -0.44600000977516174, -8.2049999237060547] + name
             #atom2 [234, 'SER', '45', 'A', 'OG', 14.543999671936035, 0.81300002336502075, -12.081999778747559]
             
             if atom1[3] == '': atom1[3] = '-'
@@ -290,52 +290,74 @@ class constraint(Wizard):
             leftsel = 'resn ' + atom1[1] + ' & resi ' + atom1[2]
             if atom1[3] != '-':
                 leftsel += ' & chain ' + atom1[3]
-            
-            rightsel = 'resn ' + atom2[1] + ' & resi ' + atom2[2]
-            if atom2[3] != '-':
-                rightsel += ' & chain ' + atom2[3]
-
-            leftkey  = '#' + str(General_cmd.get_ID(atom1[0], leftsel))
-            while len(atom1[1]) != 3:
-                atom1[1] = atom1[1] + '-'
-            leftkey += ' ' + atom1[1] + atom1[2] + atom1[3]
-
-            rightkey  = '#' + str(General_cmd.get_ID(atom2[0], rightsel))
-            while len(atom2[1]) != 3:
-                atom2[1] = atom2[1] + '-'
-            rightkey += ' ' + atom2[1] + atom2[2] + atom2[3]
-            
-            key = leftkey + ' :: ' + rightkey
-            altkey = rightkey + ' :: ' + leftkey
-            
-            if leftkey == rightkey:
-                self.ErrorStatus = [ "Atoms selected are the same. Try again." ]
-
-            elif len( [ cons for cons in self.dictConstraints if self.dictConstraints[cons][2] == key ] ) or \
-                 len( [ cons for cons in self.dictConstraints if self.dictConstraints[cons][2] == altkey ] ):
-                 
-                self.ErrorStatus = [ "The selected constraint already exists. Try again." ]
-
+            obj = self.Get_Prot_or_Lig(leftsel)
+            if not obj:
+                self.ErrorStatus = [ "You can only select atoms from the protein or the constraint ligand objects. Try again." ]
             else:
-                # Create new entry in dictionary
-                distobj = self.get_ConstraintID()
+                leftsel += obj
                 
-                self.dictConstraints[distobj] = [   leftkey, rightkey,
-                                                    key,                                 # constraint name
-                                                    [ atom1[5], atom1[6], atom1[7] ],    # coordinates of atom 1
-                                                    [ atom2[5], atom2[6], atom2[7] ],    # coordinates of atom 2
-                                                    self.DefaultConsDist ]               # value of slider
-                                
-                if not self.Active.get():
-                    self.Active.set(distobj)
+                rightsel = 'resn ' + atom2[1] + ' & resi ' + atom2[2]
+                if atom2[3] != '-':
+                    rightsel += ' & chain ' + atom2[3]
+                obj = self.Get_Prot_or_Lig(rightsel)
+                if not obj:
+                    self.ErrorStatus = [ "You can only select atoms from the protein or the constraint ligand objects. Try again." ]
                 else:
-                    self.refresh_display()
+                    rightsel += obj
+
+                    leftkey  = '#' + str(General_cmd.get_ID(atom1[0], leftsel))
+                    while len(atom1[1]) != 3:
+                        atom1[1] = atom1[1] + '-'
+                    leftkey += ' ' + atom1[1] + atom1[2] + atom1[3]
+
+                    rightkey  = '#' + str(General_cmd.get_ID(atom2[0], rightsel))
+                    while len(atom2[1]) != 3:
+                        atom2[1] = atom2[1] + '-'
+                    rightkey += ' ' + atom2[1] + atom2[2] + atom2[3]
+                    
+                    key = leftkey + ' :: ' + rightkey
+                    altkey = rightkey + ' :: ' + leftkey
+                    
+                    if leftkey == rightkey:
+                        self.ErrorStatus = [ "Atoms selected are the same. Try again." ]
+
+                    elif len( [ cons for cons in self.dictConstraints if self.dictConstraints[cons][2] == key ] ) or \
+                         len( [ cons for cons in self.dictConstraints if self.dictConstraints[cons][2] == altkey ] ):
+                         
+                        self.ErrorStatus = [ "The selected constraint already exists. Try again." ]
+
+                    else:
+                        # Create new entry in dictionary
+                        distobj = self.get_ConstraintID()
+                        
+                        self.dictConstraints[distobj] = [   leftkey, rightkey,
+                                                            key,                                 # constraint name
+                                                            [ atom1[5], atom1[6], atom1[7] ],    # coordinates of atom 1
+                                                            [ atom2[5], atom2[6], atom2[7] ],    # coordinates of atom 2
+                                                            self.DefaultConsDist ]               # value of slider
+                                        
+                        if not self.Active.get():
+                            self.Active.set(distobj)
+                        else:
+                            self.refresh_display()
 
         except:            
             return 1
 
         return 0
 
+    #=======================================================================
+    ''' Gets the right object '''
+    #=======================================================================
+    def Get_Prot_or_Lig(self, sele):
+
+        if cmd.count_atoms(sele + ' & ' + self.FlexAID.IOFile.ProtName.get()):
+            return ' & ' + self.FlexAID.IOFile.ProtName.get()
+        elif cmd.count_atoms(sele + ' & ' + self.LigDisplay):
+            return ' & ' + self.LigDisplay
+        else:
+            return ''
+    
     #=======================================================================
     ''' Highlights the active constraint '''
     #=======================================================================

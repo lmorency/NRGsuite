@@ -304,10 +304,9 @@ class displayNewProject:
                 self.inThread.ProjectName = name       
                 
                 self.Delete_RunFile()
-                
-                print('  Successfully created the project: \'' + name + '\'')
-                
                 self.top.destroy()
+
+                print('  Successfully created the project: \'' + name + '\'')
     
             else:
                 print('  The project: \'' + name + '\' already exists.' )
@@ -355,11 +354,11 @@ class displayNewProject:
         
         NotFound = True
         
-        if os.path.isfile(MainFilePath):        
+        if os.path.isfile(MainFilePath):
             # Add the project path to the .proj file
             file = open(MainFilePath, 'r')
             ProjFile = file.readlines()
-            file.close()            
+            file.close()
             
             for line in ProjFile:
                 if LineToAdd == line:

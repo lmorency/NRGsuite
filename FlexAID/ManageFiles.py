@@ -22,6 +22,9 @@ from datetime import datetime
 
 import shutil
 import os
+import glob
+import re
+import Result
 
 if __debug__:
     import Constraint
@@ -140,20 +143,22 @@ class Manage():
         return True
 
     ''' ==============================================================================
-    @summary: : Load_Results: Loads the results files after a simulation has terminated
+    @summary: : Load_ResultFiles: Loads the results files after a simulation terminated
     ============================================================================== '''          
-    def Load_Results(self):
+    def Load_ResultFiles(self):
 
+        print "loading result files...."
+        
         pattern = os.path.join(self.FlexAIDRunSimulationProject_Dir,'RESULT_*.pdb')
         for file in glob.glob(pattern):
-            
-            m = re.search("RESULT_(\d+)\.pdb$",file)
+                    
+            m = re.search("RESULT_(\d+)\.pdb$", file)
             if m:
                 TOP = int(m.group(1)) + 1
+                Res = Result.Result(file)
                 
-                cmd.load(file, 'RESULT_' + str(TOP) + '__', state=1)
-                cmd.refresh()
-
+                print "Loading", Res
+                self.top.Vars.ResultsContainer.Results.append(Res)
 
     ''' ==================================================================================
     @summary: Create_CONFIG: Creation of the CONFIG.inp
@@ -251,7 +256,7 @@ class Manage():
         config_file.write('NRGSUI\n')
         config_file.write('NRGOUT 60\n')
         
-        config_file.write('GRDBUF ' + str(self.top.GridBuffer) + '\n')
+        config_file.write('GRDBUF 1000\n')
 
         config_file.write('ENDINP\n')
 

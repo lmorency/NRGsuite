@@ -63,13 +63,14 @@ class flexSC(Wizard):
         self.View = cmd.get_view()
         self.State = cmd.get_state()
         self.auto_zoom = cmd.get("auto_zoom")
-
-        # for get_prompt
-        self.error = 0
         
         # for Quit_Wizard
         self.ErrorCode = 1
-                  
+        
+        self.ErrorStatus = [ "Side-chains shown in white are already set as flexible.",
+                             "Side-chains shown in orange are 'active' and are ready to be added." ]
+
+        
     #=======================================================================
     ''' Button Done selected '''
     #=======================================================================
@@ -172,12 +173,8 @@ class flexSC(Wizard):
     #=======================================================================
     def get_prompt(self):
      
-        if self.error == 0:
-            return ["Click on a side-chain of the protein.",
-                    "Side-chains shown in white are already set as flexible.",
-                    "Side-chains shown in orange are 'active' and ready to be added." ]
-        elif self.error == 1:
-            return ["Invalid side-chain selected. Please try again."]
+        return self.ErrorStatus + \
+                [ "Click on a side-chain of the protein object." ]
 
     #=======================================================================
     ''' Residue selection, then display the information related to it '''
@@ -201,14 +198,12 @@ class flexSC(Wizard):
                resn != 'ARG' and resn != 'HIS' and resn != 'PHE' and resn != 'TYR' and \
                resn != 'TRP':
                 
-                self.error = 1
+                self.ErrorStatus = [ "You can only selected side-chains with at least one dihedral angle." ]
                 
             else:
 
                 self.highlight_Residue(name)
                 self.ResidueName = resn + str(resi) + chain
-                
-                self.error = 0
 
         cmd.deselect()
         cmd.refresh_wizard()
@@ -281,13 +276,13 @@ class flexSC(Wizard):
                     break
 
             else:
-                self.FlexAID.DisplayMessage("  You must click in the protein object '" + self.ProtName + "'", 2)
+                self.ErrorStatus = [ "You can only select side-chains from the object " + self.ProtName + ". Try again." ]
                 return info
 
             cmd.deselect()
 
         except:
-            self.FlexAID.DisplayMessage("  ERROR: Could not retrieve atom info", 1)
+            self.ErrorStatus = [ "An error occured while retrieving atom info. Try again." ]
             self.Quit_Wizard()
         
         return info

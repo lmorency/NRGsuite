@@ -118,6 +118,8 @@ class anchor(Wizard):
         cmd.set_wizard()
         cmd.set_view(self.View)
 
+        self.ErrorStatus =  []
+        
     #=======================================================================
     ''' Displays the ligand to change anchor '''
     #=======================================================================    
@@ -237,7 +239,8 @@ class anchor(Wizard):
     #=======================================================================
     def get_prompt(self):
 
-        return ['Please click on a non-Hydrogen atom to define it as anchor.']
+        return self.ErrorStatus + \
+                ['Please click on a non-Hydrogen atom to define it as anchor.']
 
     #=======================================================================
     ''' Pick an anchor atom then highlight it '''
@@ -248,7 +251,7 @@ class anchor(Wizard):
         
         for t in lt:
             if t[0] != self.LigDisplay:
-                self.FlexAID.DisplayMessage("You can only select atoms in the object " + self.LigDisplay)
+                self.ErrorStatus = [ "You can only select an atom from the object " + self.LigDisplay + ". Try again." ]
             else:
                 self.AnchorAtom = General_cmd.get_ID(t[1],t[0])
                 self.RefreshDisplay()

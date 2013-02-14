@@ -25,6 +25,7 @@ import MultiList
 import General
 import Color
 import ManageFiles
+import Result
 import glob
 import Vars
 import Tabs 
@@ -39,7 +40,13 @@ if __debug__:
 
 class SimulateVars(Vars.Vars):
     
-    pass
+    SimDefDisplay = StringVar()
+    SimCartoonDisplay = IntVar()
+
+    def __init__(self):
+        
+        self.ResultsContainer = Result.ResultsContainer()
+    
 
 class Simulate(Tabs.Tab):
 
@@ -47,9 +54,11 @@ class Simulate(Tabs.Tab):
         
         self.SimStatus = StringVar()
         self.ProgBarText = StringVar()
-        self.SimDefDisplay = StringVar()
-        self.SimCartoonDisplay = IntVar()
         self.dictSimData = dict()
+
+        # vars class objects
+        self.SimDefDisplay = self.Vars.SimDefDisplay
+        self.SimCartoonDisplay = self.Vars.SimCartoonDisplay
 
     def Init_Vars(self):
 
@@ -59,7 +68,6 @@ class Simulate(Tabs.Tab):
         self.ProgBarText.set('... / ...')
         self.SimDefDisplay.set('sticks')
         self.SimCartoonDisplay.set(0)
-        self.GridBuffer = 1000
 
         self.BarWidth = 0
         self.BarHeight = 0
@@ -452,6 +460,13 @@ class Simulate(Tabs.Tab):
             self.StopStatus()
             self.Parse.ParseFile = self.Parse.LOGFILE
     
+    ''' ==================================================================================
+    FUNCTION: Loads all result files
+    ==================================================================================  '''               
+    def Load_Results(self):
+        
+        self.Manage.Load_ResultFiles()
+
     ''' ==================================================================================
     FUNCTION Click_RadioSIM: Change the way the ligand is displayed in Pymol
                              during a Simulation

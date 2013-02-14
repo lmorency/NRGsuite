@@ -73,6 +73,7 @@ class IOFile(Tabs.Tab):
     
     SmilesLigand = 'SMILES_LIGAND__'
     ReferenceLigand = 'REFERENCE_LIGAND__'
+    ExtractObject = 'EXTRACTED_OBJECT__'
     
     def Def_Vars(self):
         
@@ -161,7 +162,7 @@ class IOFile(Tabs.Tab):
 
         # Loads the PDB of the processed ligand
         if not self.fLoadProcessed:
-            if self.Load_ProcConvLigand(self.ReferencePath.get(), self.ReferenceLigand):
+            if self.Load_ProcConvLigand(self.ReferencePath.get(), self.ReferenceLigand, False):
                 return False
             else:
                 self.fLoadProcessed = True
@@ -238,9 +239,12 @@ class IOFile(Tabs.Tab):
                     except:
                         pass
                     
-                    self.LigandName.set(self.SmilesLigand)
-                    if not self.Load_ProcConvLigand(MOL2Ligand, self.SmilesLigand):
-                        self.LigandPath.set(MOL2Ligand)
+                    self.LigandPath.set(MOL2Ligand)
+                    
+                    if not self.Load_ProcConvLigand(MOL2Ligand, self.SmilesLigand, True) and \
+                       not self.Validate_ObjectSelection(self.SmilesLigand, 'Ligand', 1):
+                           
+                        self.LigandName.set(self.SmilesLigand)
                         self.fProcessLigand = False
 
             self.top.ChildWindow = None
@@ -355,8 +359,10 @@ class IOFile(Tabs.Tab):
         #Label(fPDB_options2Line2, text='Set as...', justify=RIGHT, font=self.font_Text).pack(side=RIGHT, anchor=E)
 
         # List of selections
+        Button(fPDB_options2Line2, text='Save as target', command=self.Btn_SaveProt_Clicked, font=self.font_Text).pack(side=LEFT, padx=10)
+        
         Button(fPDB_options2Line2, text='Save as ligand', command=self.Btn_SaveLigand_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDB_options2Line2, text='Save as target', command=self.Btn_SaveProt_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDB_options2Line2, text='Extract as ligand', command=self.Btn_ExtractLigand_Clicked, font=self.font_Text).pack(side=LEFT)
 
         #Label(fPDB_options2Line2, text='Save as...', justify=RIGHT, font=self.font_Text).pack(side=RIGHT, anchor=E)
         
@@ -489,6 +495,30 @@ class IOFile(Tabs.Tab):
             self.top.ChildWindow = Smiles.Smiles(self, self.SmilesString)
         
     ''' ==================================================================================
+    FUNCTION Validate_ObjectSelection: Validates whether the obj exists on the current state
+                                       and has at least N atoms
+    ==================================================================================  '''    
+    def Validate_ObjectSelection(self, sele, objtype, state):
+        
+        try:
+            n = cmd.count_atoms(sele + ' & ! n. H*' , state=state)
+            
+            if n < 5:
+                self.DisplayMessage("  ERROR for object/selection '" + sele + "': The object must have at least (5) heavy atoms)", 1)
+                return 1
+            
+            elif objtype == 'Ligand' and n > Constants.MAX_LIGAND_ATOMS:
+                self.DisplayMessage("  ERROR for object/selection '" + sele + "': The ligand must have a maximum of (" + 
+                                    Constants.MAX_LIGAND_ATOMS + ') atoms', 1)
+                return 1
+            
+        except:
+            self.DisplayMessage("  ERROR: object/selection '" + sele + "' does not exist on current state", 1)
+            return 1
+        
+        return 0
+        
+    ''' ==================================================================================
     FUNCTION Btn_Save : Save Ligand and Protein objects, object is reloaded automatically
     ==================================================================================  '''    
     def Btn_SaveLigand_Clicked(self):
@@ -496,29 +526,14 @@ class IOFile(Tabs.Tab):
         if not self.PyMOL:
             return
 
+        state = cmd.get_state()
+
         # Get the Drop Down List Selection Name
         ddlSelection = self.defaultOption.get()
 
-        if ddlSelection == '':
+        if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, 'Ligand', state):
             return
-
-        try:
-            state = cmd.get_state()
-            n = cmd.count_atoms(ddlSelection, state=state)
-
-            if n < 3:
-                self.DisplayMessage("  ERROR for object/selection '" + ddlSelection + "': The ligand must have at least (3) atoms)", 1)
-                return
-
-            elif n > Constants.MAX_LIGAND_ATOMS:
-                self.DisplayMessage("  ERROR for object/selection '" + ddlSelection + "': The ligand must have a maximum of (" + 
-                                    Constants.MAX_LIGAND_ATOMS + ') atoms', 1)
-                return
-
-        except:
-            self.DisplayMessage("  ERROR: object/selection '" + ddlSelection + "' does not exist on current state", 1)
-            return
-
+        
         LigandPath = tkFileDialog.asksaveasfilename(initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', 
                                                     initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
         
@@ -529,34 +544,31 @@ class IOFile(Tabs.Tab):
             if self.LigandPath.get().find('.pdb') == -1:
                 self.LigandPath.set(self.LigandPath.get() + '.pdb')
 
-            cmd.save(self.LigandPath.get(), ddlSelection, state, 'pdb') # Save the Selection
-            self.LigandName.set(os.path.basename(os.path.splitext(self.LigandPath.get())[0]))
+            try:
+                cmd.save(self.LigandPath.get(), ddlSelection, state, 'pdb') # Save the Selection
+                LigandName = os.path.basename(os.path.splitext(self.LigandPath.get())[0])
 
-            cmd.load(self.LigandPath.get(), state=1)
-            cmd.refresh()
-
+                cmd.load(self.LigandPath.get(), LigandName, state=1)
+                cmd.refresh()
+            except:
+                self.DisplayMessage("  ERROR: An error occured while saving the ligand object.", 1)
+                return
+                
+            self.LigandName.set(LigandName)
             self.DisplayMessage('  Successfully saved and loaded the ligand:  ' + self.LigandName.get() + "'", 0)
+    
     
     def Btn_SaveProt_Clicked(self):
         
         if not self.PyMOL:
             return
+        
+        state = cmd.get_state()
 
         # Get the Drop Down List Selection Name
         ddlSelection = self.defaultOption.get()
 
-        if ddlSelection == '':
-            return
-
-        try:
-            state = cmd.get_state()
-            n = cmd.count_atoms(ddlSelection, state=state)
-
-            if n < 3:
-                self.DisplayMessage("  ERROR for object/selection '" + ddlSelection + "': The protein must have at least (3) atoms)", 1)
-                return
-        except:
-            self.DisplayMessage(  "The object/selection '" + ddlSelection + "' does not exist on current state", 1)
+        if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, 'Target', state):
             return
                     
         ProtPath = tkFileDialog.asksaveasfilename(initialdir=self.top.TargetProject_Dir, title='Save the PDB File', initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
@@ -567,15 +579,60 @@ class IOFile(Tabs.Tab):
             
             if self.ProtPath.get().find('.pdb') == -1:
                 self.ProtPath.set(self.ProtPath.get() + '.pdb')
-
-            cmd.save(self.ProtPath.get(), ddlSelection, state, 'pdb') # Save the Selection
-            self.ProtName.set(os.path.basename(os.path.splitext(self.ProtPath.get())[0]))
-
-            cmd.load(self.ProtPath.get(), state=1)
-            cmd.refresh()
             
+            try:
+                cmd.save(self.ProtPath.get(), ddlSelection, state, 'pdb') # Save the Selection
+                ProtName = os.path.basename(os.path.splitext(self.ProtPath.get())[0])
+
+                cmd.load(self.ProtPath.get(), ProtName, state=1)
+                cmd.refresh()
+                
+            except:
+                self.DisplayMessage("  ERROR: An error occured while extracting the ligand object.", 1)
+                return
+                
+            self.ProtName.set(ProtName)
             self.DisplayMessage('  Successfully saved and loaded the target: ' + self.ProtName.get(), 0)                                    
                 
+    
+    def Btn_ExtractLigand_Clicked(self):
+        
+        if not self.PyMOL:
+            return
+        
+        state = cmd.get_state()
+
+        # Get the Drop Down List Selection Name
+        ddlSelection = self.defaultOption.get()
+        
+        if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, 'Ligand',state):
+            return
+        
+        LigandPath = tkFileDialog.asksaveasfilename(initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', 
+                                                    initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
+        
+        if len(LigandPath) > 0:
+            
+            self.LigandPath.set(os.path.normpath(LigandPath))
+            
+            if self.LigandPath.get().find('.pdb') == -1:
+                self.LigandPath.set(self.LigandPath.get() + '.pdb')
+            
+            try:
+                cmd.save(self.LigandPath.get(), ddlSelection, state, 'pdb')                 # Save the Selection
+                LigandName = os.path.basename(os.path.splitext(self.LigandPath.get())[0])
+
+                cmd.extract(self.ExtractObject, ddlSelection)
+                cmd.set_name(self.ExtractObject, LigandName)
+                
+            except:
+                self.DisplayMessage("  ERROR: An error occured while extracting the ligand object.", 1)
+                return
+            
+            self.LigandName.set(LigandName)
+            self.DisplayMessage('  Successfully extracted the ligand:  ' + self.LigandName.get() + "'", 0)
+        
+
     ''' ==================================================================================
     FUNCTIONS Load Ligand and Protein and display the filename in the textbox
     ================================================================================== '''        
@@ -600,20 +657,9 @@ class IOFile(Tabs.Tab):
                     cmd.load(self.LigandPath.get(), Name, state=1)
                     cmd.refresh()
                     
-                    n = cmd.count_atoms(Name, state=1)
-                else:
-                    # For testing purposes only
-                    n = 50
-
-                if n < 3:
-                    self.DisplayMessage("  ERROR for object '" + Name + "': The ligand must have at least (3) atoms)", 1)
-                    return
-                
-                elif n > Constants.MAX_LIGAND_ATOMS:
-                    self.DisplayMessage("  ERROR for object '" + Name + "': The ligand must have a maximum of (" + 
-                                        Constants.MAX_LIGAND_ATOMS + ') atoms', 1)
-                    return
-
+                    if self.Validate_ObjectSelection(Name, 'Ligand'):
+                        return
+                    
             except:
                 self.DisplayMessage("  ERROR for file '" + LigandPath + "': Could not load the ligand file", 1)
                 return
@@ -621,7 +667,8 @@ class IOFile(Tabs.Tab):
             self.LigandName.set(Name)
             self.DisplayMessage("  Successfully loaded the ligand: '" + self.LigandName.get() + "'", 0)
 
-    def Load_ProcConvLigand(self, LigandFile, ObjectName):
+  
+    def Load_ProcConvLigand(self, LigandFile, ObjectName, Zoom):
         
         Error = 0
         
@@ -633,6 +680,10 @@ class IOFile(Tabs.Tab):
                 
                 cmd.load(LigandFile, ObjectName, state=1)
                 cmd.refresh()
+                
+                if Zoom:
+                    cmd.zoom(ObjectName)
+                    cmd.refresh()
             except:
                 self.DisplayMessage('  ERROR: Could not load the ligand file in PyMOL', 1)
                 Error = 1
@@ -660,6 +711,9 @@ class IOFile(Tabs.Tab):
                     cmd.load(self.ProtPath.get(), Name, state=1)
                     cmd.refresh()
 
+                    if self.Validate_ObjectSelection(Name, 'Target'):
+                        return
+                
             except:
                 self.DisplayMessage("  ERROR for object '" + ProtPath + "': Could not load the target file", 1)
                 return
@@ -727,6 +781,7 @@ class IOFile(Tabs.Tab):
             self.DisplayMessage("  ERROR: Could not move the temporary ligand file.", 2)
             return 1
         except shutil.Error:
+            print "IM HERE!"
             pass
         
         return 0
