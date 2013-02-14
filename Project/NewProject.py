@@ -279,31 +279,40 @@ class displayNewProject:
     def Btn_Create_Clicked(self):
         
         name = self.ProjName.get().strip()
-        
         if name != '':
         
             words = name.split()
             for word in words:
-                if not re.match("^[A-Za-z0-9_-]*$", word):
-                    print('  ERROR: Invalid name for project. You can only use alphanumeric characters and spaces')
+                if not re.match('^[A-Za-z0-9_\-\.]*$', word):
+                    print('  ERROR: Invalid name for project.')
                     return
             
-            print('  Successfully created the Project: \'' + name + '\'')
-            
             userPath = os.path.join(self.ActualDirPath,name)
-            os.makedirs(userPath)
             
-            self.Update_ProjectFile(userPath, name)
-            
-            self.inThread.EnableMenu = True
-            self.inThread.StopThread = True
-            self.inThread.UserPath = userPath
-            self.inThread.ProjectName = name       
-            
-            self.Delete_RunFile()
-            
-            self.top.destroy()
-        
+            if not os.path.isdir(userPath):
+                try:
+                    os.makedirs(userPath)
+                except OSError:
+                    print('  ERROR: Could not create the project: \'' + name + '\' under that directory.')
+                    return 
+                    
+                self.Update_ProjectFile(userPath, name)
+                
+                self.inThread.EnableMenu = True
+                self.inThread.StopThread = True
+                self.inThread.UserPath = userPath
+                self.inThread.ProjectName = name       
+                
+                self.Delete_RunFile()
+                
+                print('  Successfully created the project: \'' + name + '\'')
+                
+                self.top.destroy()
+    
+            else:
+                print('  The project: \'' + name + '\' already exists.' )
+                
+                        
     ''' ==================================================================================
     FUNCTION Btn_Browse_Clicked: Browse to specify the directory to install the project.
     ==================================================================================  '''        
@@ -417,12 +426,12 @@ class displayNewProject:
         
         self.HomeDir = os.path.join(self.HomeDir,'Documents','NRGsuite')
         
-        if not(os.path.isdir(self.HomeDir)):
+        if not os.path.isdir(self.HomeDir):
             os.makedirs(self.HomeDir)
             
         # Be sure the Default directory exist
         Default = os.path.join(self.HomeDir,'Default')
-        if not(os.path.isdir(Default)):
+        if not os.path.isdir(Default):
             os.makedirs(Default)       # ADD the Directory       
             self.Update_ProjectFile(Default, 'Default')     # ADD the .proj Files         
                                 

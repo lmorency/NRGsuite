@@ -91,7 +91,7 @@ class Simulate(Tabs.Tab):
         fTable.pack_propagate(0)
         
         self.Table = MultiList.Table(fTable, 5,
-                                   [ 'Color', 'TOP', 'Apparent CF', 'Fitness value', 'RMSD' ],
+                                   [ 'Color', 'TOP', 'CF', 'Fitness value', 'RMSD' ],
                                    [ 65, 65, 167, 167, 167 ],
                                    [ 0, 6, 6, 6, 6 ],
                                    [ False, True, True, True, True ],
@@ -370,23 +370,6 @@ class Simulate(Tabs.Tab):
         self.Btn_PauseResume.config(state='disabled')
         self.Btn_Stop.config(state='disabled')
         self.Btn_Abort.config(state='disabled')
-
-    ''' =============================================================================== 
-    FUNCTION Display_Results(self): resets button states back to defaults
-    ===============================================================================  '''        
-    def Display_Results(self):
-
-        if not self.Results:
-            return
-        
-        pattern = os.path.join(self.Manage.FlexAIDRunSimulationProject_Dir,'RESULT_*.pdb')
-        for file in glob.glob(pattern):
-            
-            m = re.search("RESULT_(\d+)\.pdb$",file)
-            if m:
-                TOP = int(m.group(1)) + 1
-                
-                cmd.load(file, 'RESULT_' + str(TOP) + '__', state=1)
                 
     ''' =============================================================================== 
     FUNCTION Btn_PauseResumeSim: Pauses/Resumes the simulation   
@@ -485,14 +468,20 @@ class Simulate(Tabs.Tab):
         if self.SimDefDisplay.get() == 'spheres':
             try:
                 cmd.show('spheres', 'TOP_*__ & resn LIG')
+                cmd.refresh()
+
                 cmd.hide('sticks', 'TOP_*__ & resn LIG')
+                cmd.refresh()
             except:
                 self.DisplayMessage("  ERROR: Could not find object to modify", 1)
         
         elif self.SimDefDisplay.get() == 'sticks':
             try:
                 cmd.hide('spheres', 'TOP_*__ & resn LIG')
+                cmd.refresh()
+
                 cmd.show('sticks', 'TOP_*__ & resn LIG')
+                cmd.refresh()
             except:
                 self.DisplayMessage("  ERROR: Could not find object to modify", 1)
 
@@ -512,12 +501,14 @@ class Simulate(Tabs.Tab):
         if self.SimCartoonDisplay.get():
             try:
                 cmd.show('cartoon', 'TOP_*__ & ! resn LIG')
+                cmd.refresh()
             except:
                 self.DisplayMessage("  ERROR: Could not find object to modify", 1)
         else:   
             # Remove the Cartoon
             try:
                 cmd.hide('cartoon', 'TOP_*__ & ! resn LIG')
+                cmd.refresh()
             except:
                 self.DisplayMessage("  ERROR: Could not find object to modify", 1)
                 

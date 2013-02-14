@@ -90,8 +90,6 @@ class flexSC(Wizard):
             self.Quit_Wizard()
             return
 
-        cmd.refresh()
-
         #self.selection_mode = cmd.get_setting_legacy("mouse_selection_mode")
         self.selection_mode = cmd.get("mouse_selection_mode")
         cmd.set("mouse_selection_mode", 1) # set selection mode to residue
@@ -149,6 +147,8 @@ class flexSC(Wizard):
         self.show_SelectedSC()
 
         cmd.delete(self.ResidueDisplay)
+        cmd.refresh()
+
         cmd.refresh_wizard()
             
     #=======================================================================
@@ -163,6 +163,8 @@ class flexSC(Wizard):
         self.show_SelectedSC()
 
         cmd.delete(self.ResidueDisplay)
+        cmd.refresh()
+
         cmd.refresh_wizard()
      
     #=======================================================================
@@ -233,7 +235,11 @@ class flexSC(Wizard):
 
             #Delete the Residue objects
             cmd.delete(self.FlexSCDisplay)
+            cmd.refresh()
+
             cmd.delete(self.ResidueDisplay)
+            cmd.refresh()
+
             cmd.delete(self.BackboneDisplay)
             cmd.refresh()
 
@@ -293,6 +299,7 @@ class flexSC(Wizard):
 
         try:            
             cmd.delete(self.ResidueDisplay)
+            cmd.refresh()
         except:
             pass
             
@@ -301,20 +308,31 @@ class flexSC(Wizard):
             
             # Create new object from selection
             cmd.create(self.ResidueDisplay, name + ' & ! n. C+O+N', target_state=self.State)
+            cmd.refresh()
 
             # Visual appearance
             cmd.hide('lines', self.ResidueDisplay)
+            cmd.refresh()
+
             cmd.show('sticks', self.ResidueDisplay)
+            cmd.refresh()
+
             cmd.color('orange', self.ResidueDisplay)
+            cmd.refresh()
 
             cmd.mask(self.ResidueDisplay)
 
             # Toggle FlexSC obj to overlap ResidueDisplay
             cmd.disable(self.FlexSCDisplay)
-            cmd.enable(self.FlexSCDisplay)
-            cmd.disable('TOP_*__')
-            cmd.enable('TOP_*__')
+            cmd.refresh()
 
+            cmd.enable(self.FlexSCDisplay)
+            cmd.refresh()
+
+            cmd.disable('TOP_*__')
+            cmd.refresh()
+
+            cmd.enable('TOP_*__')
             cmd.refresh()
             
         except:
@@ -331,6 +349,7 @@ class flexSC(Wizard):
         
         try:
             cmd.delete(self.FlexSCDisplay)
+            cmd.refresh()
         except:
             pass
             
@@ -340,17 +359,24 @@ class flexSC(Wizard):
             # Create new object from selection
             #cmd.select('TEMP_SELECTION__', selString)
             cmd.create(self.FlexSCDisplay, selString, target_state=self.State)
+            cmd.refresh()
 
             # Visual appearance
             cmd.hide('lines', self.FlexSCDisplay)
+            cmd.refresh()
+
             cmd.show('sticks', self.FlexSCDisplay)
+            cmd.refresh()
+
             cmd.color('white', self.FlexSCDisplay)
+            cmd.refresh()
                 
             cmd.mask(self.FlexSCDisplay)
 
             cmd.disable('TOP_*__')
-            cmd.enable('TOP_*__')
+            cmd.refresh()
 
+            cmd.enable('TOP_*__')
             cmd.refresh()
             
         except:

@@ -95,10 +95,9 @@ class Sphere(Wizard):
             cmd.config_mouse(self.config_mouse)
 
             cmd.delete(self.SphereDisplay)
+            cmd.refresh()
         except:
             pass
-
-        cmd.refresh()
 
         # Catch error in App
         if self.ErrorCode > 0:
@@ -118,6 +117,7 @@ class Sphere(Wizard):
         try:
             # Display the Sphere
             cmd.delete(self.SphereDisplay)
+            cmd.refresh()
         except:
             pass
 
@@ -126,12 +126,15 @@ class Sphere(Wizard):
                            pos=self.SphereView.Center,
                            vdw=self.SphereView.Radius,
                            state=self.State)
+            cmd.refresh()
 
             cmd.color('oxygen', self.SphereDisplay)
+            cmd.refresh()
+
             cmd.hide('everything', self.SphereDisplay)
+            cmd.refresh()
+
             cmd.show('spheres', self.SphereDisplay)
-        
-            cmd.rebuild(self.SphereDisplay)
             cmd.refresh()
  
         except:
@@ -149,7 +152,6 @@ class Sphere(Wizard):
         try:
             cmd.alter(self.SphereDisplay,'vdw=' + str(self.SphereView.Radius))
             cmd.rebuild(self.SphereDisplay)
-            cmd.refresh()
             
         except:
             self.App.DisplayMessage("  ERROR: Could not resize the Sphere", 1)

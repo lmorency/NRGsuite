@@ -19,14 +19,43 @@
 
 from Tkinter import *
 
+from pymol import cmd
+
+class CF:
+
+    def __init__(self):
+    
+        self.sum = 0.0
+        self.app = 0.0
+        self.com = 0.0
+        self.wal = 0.0
+        self.sas = 0.0
+        self.con = 0.0
+    
+
 class Result:
     
+    def __init__(self):
+    
+        self.CF = CF()
+        self.ResultFile = ''
+    
+    # Reads the physical file to retrieve the CF information
+    def get_CF_info(self):
+    
+        return
+
+
+class ResultsContainer:
+    
     # Result PDB files
-    listResultFiles = list()
+    Results = []
     
     # File containing the parameters allowing to continue the simulation
     ResultParams = ''
     
     # If these results were generated from other results this will be set
     ParentResult = None
+    
+
     

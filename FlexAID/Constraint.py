@@ -30,6 +30,7 @@ from Tkinter import *
 from pymol.wizard import Wizard
 from pymol import cmd
 from pymol.cgo import *
+from pymol import util
 
 import pymol
 import General
@@ -40,6 +41,7 @@ class constraint(Wizard):
     CYLINDER_WIDTH = 0.06
     
     DefaultConsDist = '1.5'
+    LigDisplay = 'CONSTRAINT_LIGAND__'
     
     CONSTRAINT = 'CONSTRAINT_'
     ACTIVE = 'ACTIVE_CONS__'
@@ -54,12 +56,10 @@ class constraint(Wizard):
         self.top = top
         self.FlexAID = self.top.top
 
-        self.DisplayVar = BooleanVar()
+        self.RefLigand = self.FlexAID.IOFile.ReferencePath.get()
 
         self.Active = self.top.ActiveCons
         self.dictConstraints = self.top.Vars.dictConstraints
-        self.Scale = self.top.sclConsDist
-        self.ScaleVar = self.top.ConsDist
         
         self.pick_count = 0
         self.ErrorStatus = [ "The active constraint is shown as a solid white line.",
@@ -80,13 +80,19 @@ class constraint(Wizard):
             cmd.set("mouse_selection_mode", 0) # set selection mode to atomic
 
             # Mask objects
-            self.exc = [ self.FlexAID.IOFile.ProtName.get(), self.FlexAID.IOFile.LigandName.get() ]
+            self.exc = [ self.FlexAID.IOFile.ProtName.get() ]
             General_cmd.mask_Objects(self.exc)
 
             self.ErrorCode = 0
 
         except:
             self.FlexAID.DisplayMessage("  ERROR: Could not start the constraints wizard", 1)
+            self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.Quit_Wizard()
+            return
+
+        if self.Display_Ligand():
+            self.FlexAID.DisplayMessage("  ERROR: Could not display the ligand", 1)
             self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1)
             self.Quit_Wizard()
             return
@@ -101,6 +107,42 @@ class constraint(Wizard):
         cmd.deselect()
               
     #=======================================================================
+    ''' Displays the ligand to be modified '''
+    #=======================================================================    
+    def Display_Ligand(self):
+        
+        try:
+            cmd.set("auto_zoom", 0)
+            
+            print self.RefLigand
+            print self.LigDisplay
+            print self.State
+            cmd.load(self.RefLigand, self.LigDisplay, state=self.State)
+            cmd.refresh()
+
+            # Display the atoms spheres
+            cmd.show('spheres', self.LigDisplay)
+            cmd.refresh()
+
+            cmd.alter(self.LigDisplay,'vdw=0.25')
+            cmd.rebuild(self.LigDisplay)
+            
+            util.cbag(self.LigDisplay)
+            cmd.refresh()
+
+            print "ZOOM!"
+            cmd.zoom(self.LigDisplay)            
+            cmd.refresh()
+            print "DONE!"
+            
+        except:
+            self.ErrorCode = 1
+
+        cmd.set("auto_zoom", self.auto_zoom)
+        
+        return self.ErrorCode
+        
+    #=======================================================================
     ''' Quits the wizard '''
     #=======================================================================    
     def Quit_Wizard(self):
@@ -111,15 +153,16 @@ class constraint(Wizard):
             cmd.set("mouse_selection_mode", self.selection_mode)
             
             cmd.delete(self.ACTIVE)
+            cmd.refresh()
+
             cmd.delete(self.CONSTRAINT + '*')
+            cmd.refresh()
 
             cmd.deselect()
             cmd.unpick()
             
         except:
             pass
-
-        cmd.refresh()
 
         if self.ErrorCode > 0:
             self.FlexAID.WizardError = True
@@ -412,6 +455,8 @@ class constraint(Wizard):
         try:
             # Cleaning
             cmd.delete(self.ACTIVE)
+            cmd.refresh()
+
             cmd.delete(self.CONSTRAINT + '*')
             cmd.refresh()
         except:

@@ -135,17 +135,22 @@ class flexbond(Wizard):
             cmd.set('mouse_selection_mode', self.selection_mode)
 
             cmd.delete(self.LigDisplay)
+            cmd.refresh()
+
             cmd.delete(self.SelFlexDisplay)
+            cmd.refresh()
+
             cmd.delete(self.PossFlexDisplay)         
+            cmd.refresh()
+
             cmd.delete(self.AtomDisplay)         
+            cmd.refresh()
 
             cmd.deselect()
             cmd.unpick()
         except:
             pass
-      
-        cmd.refresh()
-        
+              
         if self.ErrorCode > 0:
             self.FlexAID.WizardError = True
         
@@ -165,18 +170,22 @@ class flexbond(Wizard):
             cmd.set("auto_zoom", 0)
             
             cmd.load(self.RefLigand, self.LigDisplay, state=self.State)
-            #print self.RefLigand
+            cmd.refresh()
             
             # Display the atoms spheres
             cmd.show('spheres', self.LigDisplay)
+            cmd.refresh()
+
             cmd.alter(self.LigDisplay,'vdw=0.25')
             cmd.rebuild(self.LigDisplay)
-            cmd.refresh()
         
             util.cbag(self.LigDisplay)
+            cmd.refresh()
+
             cmd.translate(self.Translation,self.LigDisplay)
+            cmd.refresh()
+
             cmd.zoom(self.LigDisplay)
-            
             cmd.refresh()
             
         except:
@@ -305,6 +314,7 @@ class flexbond(Wizard):
             cmd.set("auto_zoom", 0)
             
             cmd.delete(self.SelFlexDisplay)            
+            cmd.refresh()
 
             SelFlexBonds = []
 
@@ -374,6 +384,7 @@ class flexbond(Wizard):
     def show_AtomsNumber(self):
         
         cmd.label(self.LigDisplay, "\"%d\" % ID")        
+        cmd.refresh()
      
     #=======================================================================   
     ''' Display the name of each atom of the ligand on the Pymol interface '''
@@ -381,6 +392,7 @@ class flexbond(Wizard):
     def show_AtomsName(self):
               
         cmd.label(self.LigDisplay, "\"%s\" % name")
+        cmd.refresh()
     
     #=======================================================================   
     ''' Hide labels on the ligand '''
@@ -388,6 +400,7 @@ class flexbond(Wizard):
     def hide_Labels(self):
               
         cmd.hide('labels', self.LigDisplay)
+        cmd.refresh()
 
     #=======================================================================   
     ''' Highlight a selected flex bond '''
@@ -418,9 +431,16 @@ class flexbond(Wizard):
 
         try:
             cmd.pseudoatom(self.AtomDisplay, pos=atom[5:], vdw=0.30, color='white')
+            cmd.refresh()
+
             cmd.hide('nonbonded', self.AtomDisplay)
+            cmd.refresh()
+
             cmd.show('spheres', self.AtomDisplay)
+            cmd.refresh()
+
             cmd.mask(self.AtomDisplay)
+
         except:
             self.top.DisplayMessage("Failed to highlight atom upon selecting atom", 1)
             return
@@ -633,6 +653,7 @@ class flexbond(Wizard):
 
                     cmd.refresh_wizard()
                     cmd.delete(self.AtomDisplay)                    
+                    cmd.refresh()
 
                 else:
                     self.top.DisplayMessage("No atom could be selected in " + self.LigDisplay, 2)

@@ -20,6 +20,7 @@
 from Tkinter import *
 from pymol.wizard import Wizard
 from pymol import cmd
+from pymol.cgo import *
 from pymol import util
 
 import pymol
@@ -97,6 +98,8 @@ class anchor(Wizard):
             cmd.set('mouse_selection_mode', self.selection_mode)
 
             cmd.delete(self.LigDisplay)
+            cmd.refresh()
+
             cmd.delete(self.AtomDisplay)
             cmd.refresh()
             
@@ -123,7 +126,11 @@ class anchor(Wizard):
         try:
             cmd.set("auto_zoom", 0)
             cmd.load(self.LigandPath, self.LigDisplay, state=self.State)
+            cmd.refresh()
+
             cmd.translate(self.Translation,self.LigDisplay)
+            cmd.refresh()
+
             cmd.zoom(self.LigDisplay)
             cmd.refresh()
             
@@ -142,19 +149,22 @@ class anchor(Wizard):
         try:
             # Display the atoms spheres
             cmd.show('spheres', self.LigDisplay)
+            cmd.refresh()
+
             cmd.alter(self.LigDisplay,'vdw=0.25')
             cmd.rebuild(self.LigDisplay)
 
             util.cbag(self.LigDisplay)
+            cmd.refresh()
             
             if self.AnchorAtom != -1:
                 AtomSel = self.LigDisplay + ' & id ' + str(self.AnchorAtom)
                 cmd.color('white',AtomSel)
+                cmd.refresh()
+
                 cmd.alter(AtomSel ,'vdw=0.30')
                 cmd.rebuild(AtomSel)
-            
-            cmd.refresh()
-            
+                        
         except:
             self.ErrorCode = 1
 
@@ -197,13 +207,15 @@ class anchor(Wizard):
     def show_AtomsNumber(self):
         
         cmd.label(self.LigDisplay, "\"%d\" % ID")        
-     
+        cmd.refresh()
+
     #=======================================================================   
     ''' Display the name of each atom of the ligand on the Pymol interface '''
     #=======================================================================
     def show_AtomsName(self):
               
         cmd.label(self.LigDisplay, "\"%s\" % name")
+        cmd.refresh()
     
     #=======================================================================   
     ''' Hide labels on the ligand '''
@@ -211,6 +223,7 @@ class anchor(Wizard):
     def hide_Labels(self):
               
         cmd.hide('labels', self.LigDisplay)
+        cmd.refresh()
 
     #=======================================================================
     ''' Button Done selected '''

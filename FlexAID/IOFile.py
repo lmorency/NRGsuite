@@ -234,6 +234,7 @@ class IOFile(Tabs.Tab):
                     
                     try:
                         cmd.delete(self.SmilesLigand)
+                        cmd.refresh()
                     except:
                         pass
                     
@@ -530,7 +531,9 @@ class IOFile(Tabs.Tab):
 
             cmd.save(self.LigandPath.get(), ddlSelection, state, 'pdb') # Save the Selection
             self.LigandName.set(os.path.basename(os.path.splitext(self.LigandPath.get())[0]))
+
             cmd.load(self.LigandPath.get(), state=1)
+            cmd.refresh()
 
             self.DisplayMessage('  Successfully saved and loaded the ligand:  ' + self.LigandName.get() + "'", 0)
     
@@ -567,7 +570,9 @@ class IOFile(Tabs.Tab):
 
             cmd.save(self.ProtPath.get(), ddlSelection, state, 'pdb') # Save the Selection
             self.ProtName.set(os.path.basename(os.path.splitext(self.ProtPath.get())[0]))
+
             cmd.load(self.ProtPath.get(), state=1)
+            cmd.refresh()
             
             self.DisplayMessage('  Successfully saved and loaded the target: ' + self.ProtName.get(), 0)                                    
                 
@@ -593,6 +598,8 @@ class IOFile(Tabs.Tab):
 
                 if self.PyMOL:
                     cmd.load(self.LigandPath.get(), Name, state=1)
+                    cmd.refresh()
+                    
                     n = cmd.count_atoms(Name, state=1)
                 else:
                     # For testing purposes only
@@ -623,7 +630,9 @@ class IOFile(Tabs.Tab):
         if self.PyMOL:
             try:
                 cmd.set("auto_zoom", 0)
+                
                 cmd.load(LigandFile, ObjectName, state=1)
+                cmd.refresh()
             except:
                 self.DisplayMessage('  ERROR: Could not load the ligand file in PyMOL', 1)
                 Error = 1
@@ -649,6 +658,7 @@ class IOFile(Tabs.Tab):
                 Name = os.path.basename(os.path.splitext(self.ProtPath.get())[0])
                 if self.PyMOL:
                     cmd.load(self.ProtPath.get(), Name, state=1)
+                    cmd.refresh()
 
             except:
                 self.DisplayMessage("  ERROR for object '" + ProtPath + "': Could not load the target file", 1)
@@ -672,6 +682,7 @@ class IOFile(Tabs.Tab):
             
             if self.PyMOL:
                 cmd.load(FilePath, state=1)
+                cmd.refresh()
 
     ''' ==================================================================================
     FUNCTION Btn_DownloadPDB_Clicked: Download a PDB from the internet and display the
@@ -684,6 +695,7 @@ class IOFile(Tabs.Tab):
         try:            
             if self.PyMOL:
                 cmd.fetch(PdbCode, async=0)
+                cmd.refresh()
 
         except:
             self.DisplayMessage('You entered an invalid pdb code.', 1)
@@ -731,9 +743,13 @@ class IOFile(Tabs.Tab):
 
             if not General_cmd.object_Exists(self.LigandName.get()):
                 cmd.load(self.LigandPath.get(), state=1)                      # Load the pdb file in Pymol                     
+                cmd.refresh()
             else:
                 cmd.center(self.LigandName.get())
+                cmd.refresh()
+                
                 cmd.zoom(self.LigandName.get())    
+                cmd.refresh()
     
     def Btn_DisplayProtein_Clicked(self):
         
@@ -744,9 +760,13 @@ class IOFile(Tabs.Tab):
 
             if not General_cmd.object_Exists(self.ProtName.get()):
                 cmd.load(self.ProtPath.get(), state=1)                        # Load the pdb file in Pymol                     
+                cmd.refresh()
             else:
                 cmd.center(self.ProtName.get())
+                cmd.refresh()
+
                 cmd.zoom(self.ProtName.get())        
+                cmd.refresh()
     
     #=======================================================================
     ''' Store inp file information (flexible bonds, atom types)  '''

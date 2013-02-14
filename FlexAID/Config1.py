@@ -56,11 +56,11 @@ class Config1Vars(Vars.Vars):
         self.TargetFlex = TargetFlex.TargetFlex()
     
 class Config1(Tabs.Tab):
-
+    
     HIGHLIGHT_RELIEF = RAISED
     HIGHLIGHT_RELIEF = SUNKEN
     HIGHLIGHT_WIDTH = 2
-
+    
     BindingSiteDisplay = 'BINDINGSITE_AREA__'
     SphereDisplay = 'SPHERE__'
     ScaleResolution = 0.50
@@ -341,10 +341,13 @@ class Config1(Tabs.Tab):
             
             try:
                 cmd.color('purpleblue', self.BindingSiteDisplay)
+                cmd.refresh()
                 
                 if CleftName != '':
                     Cleft = self.Vars.BindingSite.Get_CleftName(CleftName)
                     cmd.color('oxygen', self.BindingSiteDisplay + ' & resi ' + str(Cleft.Index))
+                    cmd.refresh()
+                    
                     self.defOptCleft.set(CleftName)
             except:
                 pass
@@ -772,6 +775,7 @@ class Config1(Tabs.Tab):
     def Delete_BindingSite(self):
         try:
             cmd.delete(self.BindingSiteDisplay)
+            cmd.refresh()
         except:
             pass
 
@@ -897,20 +901,33 @@ class Config1(Tabs.Tab):
                                pos=self.Vars.BindingSite.Sphere.Center,
                                vdw=self.Vars.BindingSite.Sphere.Radius,
                                state=1)
+                cmd.refresh()
 
                 cmd.hide('everything', self.BindingSiteDisplay)
+                cmd.refresh()
+
                 cmd.show('spheres', self.BindingSiteDisplay)
+                cmd.refresh()
+
                 cmd.set('sphere_transparency', 0.7, self.BindingSiteDisplay)
+                cmd.refresh()
 
             elif self.Vars.BindingSite.Type == 2:
                 
                 self.Generate_CleftBindingSite()
 
                 cmd.load(self.CleftTmpPath, self.BindingSiteDisplay, state=1)
+                cmd.refresh()
+
                 cmd.hide('everything', self.BindingSiteDisplay)
+                cmd.refresh()
+
                 #cmd.show('surface', self.BindingSiteDisplay)
                 cmd.show('mesh', self.BindingSiteDisplay)
+                cmd.refresh()
+
                 cmd.alter(self.BindingSiteDisplay,'vdw=2.0')
+                cmd.refresh()
                 #cmd.set('transparency', 0.7, self.BindingSiteDisplay)
 
             cmd.color('purpleblue', self.BindingSiteDisplay)

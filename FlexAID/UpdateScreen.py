@@ -107,6 +107,8 @@ class UpdateScreen():
         try:
             # delete temporary protein PDB file
             cmd.delete(self.ProteinObj)
+            cmd.refresh()
+
             cmd.delete(self.LigandObj)
             cmd.refresh()
 
@@ -164,6 +166,7 @@ class UpdateScreen():
         #print "will load " + self.LigandObj + " in state " + str(self.State) 
         try:
             cmd.load(self.top.listTmpPDB[self.TOP+1], self.LigandObj, self.State)
+            cmd.refresh()
 
             # No flexible side-chain(s)
             if self.selSideChains == '':
@@ -177,20 +180,25 @@ class UpdateScreen():
             # Object contains the whole protein-ligand complex
             SolutionObj = "TOP_" + str(self.TOP+1) + "__"
             cmd.create(SolutionObj, selString, self.State, self.State)
+            cmd.refresh()
 
             # Color ligand of solution TOP
             cmd.color(self.top.PymolColorList[self.TOP], "(resn LIG & " + SolutionObj + " & present)")
+            cmd.refresh()
            
             # Color side-chains of solution TOP
             if self.selSideChains != '':
                 cmd.color(self.top.PymolColorList[self.TOP], self.selSideChains.replace(self.ProteinObj,SolutionObj))
+                cmd.refresh()
 
             #cmd.show(self.DefaultDisplay, "(resn LIG & sol_*__ & present)")
             cmd.show(self.top.DefaultDisplay, "(resn LIG & " + SolutionObj + " & present)")
+            cmd.refresh()
 
             if self.selSideChains != '':
                 #cmd.show("sticks", self.selSideChains.replace(self.protName__,"sol_*__"))
                 cmd.show("sticks", self.selSideChains.replace(self.ProteinObj,SolutionObj))
+                cmd.refresh()
 
         except:
             self.CriticalError("  ERROR: while editing view")
@@ -410,6 +418,7 @@ class UpdateScreen():
                                              self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+2]),
                                              self.Get_AtomString(Res,Num,Chn,Constants.setDihedrals[Res][4*k+3]),
                                              self.top.dictSideChainRotamers[residue][(IntVal-1)*nFlex+k], self.State)
+                            cmd.refresh()
 
                             
                     # Get next column starting index

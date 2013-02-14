@@ -71,4 +71,4 @@ class Smiles:
         #Test : CCC[C@@H](O)CC\C=C\C=C\C#CC#C\C=C\CO
         self.inputWindow.destroy()
         self.top.SmilesRunning(False, True)
-        
+    

@@ -151,9 +151,7 @@ class ProcLig:
         
             if self.FlexAID.OSid == 'WIN':
                 self.set_environment('BABEL_DATADIR', os.path.join(self.FlexAIDWRKInstall_Dir,'data'))
-                print(os.getenv('BABEL_DATADIR'))
                 self.FlexAID.Run = Popen(commandline, shell=False, stderr=PIPE, stdout=PIPE)
-                print(os.getenv('BABEL_DATADIR'))
                                                 
             elif self.FlexAID.OSid == 'LINUX':
                 self.set_environment('LD_LIBRARY_PATH', os.path.join(self.FlexAIDWRKInstall_Dir,'libs'))

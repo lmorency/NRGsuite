@@ -139,6 +139,22 @@ class Manage():
 
         return True
 
+    ''' ==============================================================================
+    @summary: : Load_Results: Loads the results files after a simulation has terminated
+    ============================================================================== '''          
+    def Load_Results(self):
+
+        pattern = os.path.join(self.FlexAIDRunSimulationProject_Dir,'RESULT_*.pdb')
+        for file in glob.glob(pattern):
+            
+            m = re.search("RESULT_(\d+)\.pdb$",file)
+            if m:
+                TOP = int(m.group(1)) + 1
+                
+                cmd.load(file, 'RESULT_' + str(TOP) + '__', state=1)
+                cmd.refresh()
+
+
     ''' ==================================================================================
     @summary: Create_CONFIG: Creation of the CONFIG.inp
     ================================================================================== '''
@@ -231,9 +247,9 @@ class Manage():
         config_file.write('DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n')
 
         config_file.write('MAXRES 10'  + '\n')
-
+        
         config_file.write('NRGSUI\n')
-        config_file.write('NRGOUT 30\n')
+        config_file.write('NRGOUT 60\n')
         
         config_file.write('GRDBUF ' + str(self.top.GridBuffer) + '\n')
 

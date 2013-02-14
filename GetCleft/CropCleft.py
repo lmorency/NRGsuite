@@ -241,6 +241,7 @@ class CropCleft(Tabs.Tab):
 
             try:
                 cmd.delete(self.SphereDisplay)
+                cmd.refresh()
             except:
                 pass
 
@@ -388,6 +389,7 @@ class CropCleft(Tabs.Tab):
 
             try:
                 cmd.delete(self.SphereDisplay)
+                cmd.refresh()
                 #cmd.delete(self.PartitionDisplay)
             except:
                 pass
@@ -410,7 +412,10 @@ class CropCleft(Tabs.Tab):
             self.Step = 1
 
             cmd.delete(self.PartitionDisplay)
+            cmd.refresh()
+
             cmd.delete(self.SphereDisplay)
+            cmd.refresh()
 
         else:
             self.top.DisplayMessage("Could not execute task: A Wizard is active")
@@ -443,14 +448,21 @@ class CropCleft(Tabs.Tab):
                 self.top.Manage.copy_TempPartition(self.TempPartition, DestFile)
                 
                 cmd.load(DestFile, Output, state=1)
+                cmd.refresh()
+                
                 cmd.hide('everything', Output)
+                cmd.refresh()
+
                 cmd.show('surface', Output)
+                cmd.refresh()
                 
                 partition_rgb = self.top.Default.SetPartitionColor(self.Cleft.CleftName)
                     
                 if len(partition_rgb):
                 
                     cmd.color('partition', Output)
+                    cmd.refresh()
+
                     cmd.delete(self.PartitionDisplay)
                     cmd.refresh()
                     
@@ -529,7 +541,7 @@ class CropCleft(Tabs.Tab):
             self.OptCleftStep1['menu'].add_command(label=CleftName, command=lambda temp = CleftName: self.OptCleftStep1.setvar(self.OptCleftStep1.cget("textvariable"), value = temp))
             CleftName_ = CleftName
 
-        self.Step1Selection.set(CleftName_)
+        #self.Step1Selection.set(CleftName_)
 
     ''' ==========================================================
     update_Spheres: Updates the Drop-Down-List of Spheres
@@ -586,6 +598,7 @@ class CropCleft(Tabs.Tab):
 
             try:
                 cmd.delete(self.SphereDisplay)
+                cmd.refresh()
             except:
                 pass
                 
@@ -604,8 +617,9 @@ class CropCleft(Tabs.Tab):
         if self.top.ActiveWizard is None and self.Sphere is not None:
             
             self.SphereRunning(True)
-            
-            self.top.ActiveWizard = Sphere.Sphere(self, self.Sphere, self.Step2Selection.get(), self.SphereSize)
+
+            self.top.ActiveWizard = Sphere.Sphere(self, self.Sphere, self.Step2Selection.get(), self.SphereSize,
+                                                    "The grayed volume of the cleft is the volume that will be conserved.")
             cmd.set_wizard(self.top.ActiveWizard)
             self.top.ActiveWizard.Start()
 
@@ -638,14 +652,21 @@ class CropCleft(Tabs.Tab):
         
         try:
             cmd.delete(self.SphereDisplay)
+            cmd.refresh()
         except:
             pass
         
         if self.Sphere != None:
             # Only display sphere in current state
             cmd.pseudoatom(self.SphereDisplay, pos=self.Sphere.Center, vdw=self.Sphere.Radius, color='purpleblue', state=cmd.get_state())
+            cmd.refresh()
+
             cmd.hide('nonbonded',self.SphereDisplay)
+            cmd.refresh()
+
             cmd.show('spheres', self.SphereDisplay)
+            cmd.refresh()
+
             cmd.set('sphere_transparency', 0.7, self.SphereDisplay)
             cmd.rebuild(self.SphereDisplay)
 
@@ -656,6 +677,7 @@ class CropCleft(Tabs.Tab):
 
         try:
             cmd.delete(self.PartitionDisplay)
+            cmd.refresh()
         except:
             pass
             
@@ -663,10 +685,15 @@ class CropCleft(Tabs.Tab):
             cmd.set("auto_zoom", 0)
             
             cmd.load(self.TempPartition, self.PartitionDisplay, format='pdb')
-            cmd.hide('everything', self.PartitionDisplay)
-            cmd.color('grey60', self.PartitionDisplay)
-            cmd.show('surface', self.PartitionDisplay)
+            cmd.refresh()
 
+            cmd.hide('everything', self.PartitionDisplay)
+            cmd.refresh()
+
+            cmd.show('surface', self.PartitionDisplay)
+            cmd.refresh()
+
+            cmd.color('grey60', self.PartitionDisplay)
             cmd.refresh()
             
             General_cmd.Oscillate(self.Cleft.CleftName, 0.0)

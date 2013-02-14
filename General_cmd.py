@@ -22,6 +22,15 @@ from pymol import cmd
 
 import pymol
 import time
+import re
+
+# Regular expression patterns
+RESERVED_NAMES =    'TOP_\d+__|' + \
+                    'RESULT_\d+__|' + \
+                    '.*_sph_.*|' + \
+                    'BINDINGSITE_AREA__|' + \
+                    'REFERENCE_LIGAND__'
+
 
 ''' ==========================================================
   is_ATOM: Determines whether a residue is an ATOM or HETATM  
@@ -37,9 +46,11 @@ def is_ATOM(Residue,Prot):
 
         if cmd.count_atoms("rtmp1__") == cmd.count_atoms("rtmp2__"):
             cmd.delete("rtmp*__")
+            cmd.refresh()
             return 1
 
         cmd.delete("rtmp*__")
+        cmd.refresh()
         
     except:
         return -1
@@ -139,6 +150,8 @@ def Refresh_DDL(widget, var, exc, fun):
         widget['menu'].delete(0, END)
 
         if len(list) > 0:
+            list = [ item for item in list if not re.match(RESERVED_NAMES, item) ]
+            
             for item in sorted(list, key=str.lower):
                 type = cmd.get_type(str(item))
                 
@@ -170,14 +183,18 @@ def Oscillate(sel, interval):
     
     if Visible:
         cmd.disable(sel)
+        cmd.refresh()
         time.sleep(interval)
         cmd.enable(sel)
+        cmd.refresh()
         time.sleep(interval)
 
     else:
         cmd.enable(sel)
+        cmd.refresh()
         time.sleep(interval)
         cmd.disable(sel)
+        cmd.refresh()
         time.sleep(interval)
 
 ''' ==================================================================================

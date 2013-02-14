@@ -215,7 +215,10 @@ class Parse(threading.Thread):
 
         # Set the auto_zoom to off
         cmd.set("auto_zoom", 0)
+
         cmd.delete("TOP_*__")
+        cmd.refresh()
+
         cmd.frame(1)
 
         self.top.InitStatus()
@@ -463,7 +466,11 @@ class Parse(threading.Thread):
         # Put back the auto_zoom to on
         cmd.set("auto_zoom", -1)
         cmd.disable("TOP_*__")
+        cmd.refresh()
+
         cmd.enable("RESULT_*")
+        cmd.refresh()
+
         cmd.frame(1)
 
 

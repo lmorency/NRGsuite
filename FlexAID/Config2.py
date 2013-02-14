@@ -303,7 +303,7 @@ class Config2(Tabs.Tab):
         self.lblInteraction.pack(side=LEFT, anchor=SW)
 
         self.sclConsDist = Scale(fConstraintLine4, from_ = self.MIN_DIST_CONSTRAINT, to = self.MAX_DIST_CONSTRAINT,
-                                 orient=HORIZONTAL, length=120, resolution=self.RESOLUTION_CONSTRAINT, variable=self.ConsDist, showvalue=0)
+                                 orient=HORIZONTAL, length=120, resolution=self.RESOLUTION_CONSTRAINT, variable=self.ConsDist, showvalue=1)
         self.sclConsDist.pack(side=LEFT, fill=X, expand=True)
         self.sclConsDist.config(state='disabled')
         

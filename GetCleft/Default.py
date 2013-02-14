@@ -144,7 +144,7 @@ class Default(Tabs.Tab):
     def Init_Vars(self):
 
         self.FetchPDB.set('')
-        self.NbCleft.set('10')
+        self.NbCleft.set('5')
         self.MinRadius.set('1.50')
         self.MaxRadius.set('4.00')
         self.OutputFileValue.set('')
@@ -367,6 +367,7 @@ class Default(Tabs.Tab):
             if self.PyMOL:
                 try:
                     cmd.delete(Cleft.CleftName)
+                    cmd.refresh()
                 except:
                     pass
         
@@ -649,7 +650,7 @@ class Default(Tabs.Tab):
                 try:
                     cmd.load(Cleft.CleftFile, Cleft.CleftName, state=1)
                     cmd.refresh()
-
+                    
                     if Cleft.Partition and Cleft.PartitionParent != None and \
                             General_cmd.object_Exists(Cleft.PartitionParent.CleftName):
                         
@@ -726,8 +727,10 @@ class Default(Tabs.Tab):
             
             try:
                 cmd.hide('everything', Cleft.CleftName)
+                cmd.refresh()
+
                 cmd.color(self.ColorList[i], Cleft.CleftName)
-                #cmd.refresh()
+                cmd.refresh()
                 
                 cmd.show('surface', Cleft.CleftName)
                 cmd.refresh()
@@ -750,6 +753,7 @@ class Default(Tabs.Tab):
         try:            
             if self.PyMOL:
                 cmd.fetch(PdbCode, async=0)
+                cmd.refresh()
         except:
             self.DisplayMessage('  You entered an invalid PDB code.', 1)
             
