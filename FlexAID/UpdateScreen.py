@@ -183,12 +183,12 @@ class UpdateScreen():
             cmd.refresh()
 
             # Color ligand of solution TOP
-            cmd.color(self.top.PymolColorList[self.TOP], "(resn LIG & " + SolutionObj + " & present)")
+            cmd.color(self.top.top.PymolColorList[self.TOP], "(resn LIG & " + SolutionObj + " & present)")
             cmd.refresh()
            
             # Color side-chains of solution TOP
             if self.selSideChains != '':
-                cmd.color(self.top.PymolColorList[self.TOP], self.selSideChains.replace(self.ProteinObj,SolutionObj))
+                cmd.color(self.top.top.PymolColorList[self.TOP], self.selSideChains.replace(self.ProteinObj,SolutionObj))
                 cmd.refresh()
 
             #cmd.show(self.DefaultDisplay, "(resn LIG & sol_*__ & present)")

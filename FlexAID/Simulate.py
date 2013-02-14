@@ -344,31 +344,42 @@ class Simulate(Tabs.Tab):
     FUNCTION Init_Table: Initialisation the dictionary that contain the energy 
                                                  and fitness for each solution.
     ==================================================================================  '''                
-    def Init_Table(self):
-        
-        nbTopChrom = int(self.top.GAParam.NbTopChrom.get())
-        self.ColorList = Color.GetHeatColorList(nbTopChrom, True)
+    def Init_Table(self, nbChrom):
+                
+        self.ColorList = Color.GetHeatColorList(nbChrom, True)
+        self.PymolColorList = Color.GetHeatColorList(nbChrom, False)
         
         # Empty table list
         self.Table.Clear()
         
-        for key in range(1, nbTopChrom + 1):
+        for key in range(1, nbChrom + 1):
             self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ], 
                             [ self.ColorList[key-1], None, None, None, None ] )
         
+    ''' ==================================================================================
+    FUNCTION update_DataResults: Updates the dictionary with the values of the results
+    ==================================================================================  '''                
+    def update_DataResults(self):
+
+        self.dictSimData.clear()
+        
+        for Result in self.Vars.ResultsContainer.Results:
+            
+            self.dictSimData[Result.ResultID] = [ Result.CF, 'N/A', Result.RMSD ]
+            
     ''' ==================================================================================
     FUNCTION update_DataList: Update the displayed Data List informations.
     ==================================================================================  '''                
     def update_DataList(self):
 
         self.Table.Clear()
-
+        
         i = 0
         for key in sorted(self.dictSimData.keys()):
-            self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], self.dictSimData[key][2] ], 
+            self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], self.dictSimData[key][2] ],
                             [ self.ColorList[i], None, None, None, None ] )
             i += 1
-                
+        
     ''' =============================================================================== 
     FUNCTION Reset_Buttons(self): resets button states back to defaults
     ===============================================================================  '''        
@@ -390,6 +401,7 @@ class Simulate(Tabs.Tab):
                 #Create the .pause file            
                 pause_file = open(self.Manage.PAUSE, 'w')
                 pause_file.close()
+                
             except OSError:
                 self.DisplayMessage('  ERROR: An error occured while trying to pause the simulation.', 0)
                 return
@@ -426,6 +438,7 @@ class Simulate(Tabs.Tab):
                 #Create the .abort file
                 abort_file = open(self.Manage.ABORT, 'w')
                 abort_file.close()
+                
             except OSError:
                 self.DisplayMessage('  ERROR: An error occured while trying to abort the simulation.', 0)
                 return
@@ -449,6 +462,7 @@ class Simulate(Tabs.Tab):
                 #Create the .stop file
                 stop_file = open(self.Manage.STOP, 'w')
                 stop_file.close()
+                
             except OSError:
                 self.DisplayMessage('  ERROR: An error occured while trying to stop the simulation.', 0)
                 return
@@ -467,6 +481,34 @@ class Simulate(Tabs.Tab):
         
         self.Manage.Load_ResultFiles()
 
+    ''' ==================================================================================
+    FUNCTION: Shows the result in the PyMOL viewer
+    ==================================================================================  '''               
+    def Show_Results(self):
+        
+        i = 0
+        
+        for Result in self.Vars.ResultsContainer.Results:
+            
+            try:
+                ResultName = 'RESULT_' + str(Result.ResultID) + '__'
+                
+                cmd.load(Result.ResultFile, ResultName, state=1)
+                cmd.refresh()
+                
+                cmd.color(self.PymolColorList[i], ResultName)
+                cmd.refresh()
+                
+            except:
+                continue
+            
+            i += 1
+            
+            #for opt in Result.Optimizable:
+        
+        self.Refresh_LigDisplay()
+        self.Refresh_CartoonDisplay()
+        
     ''' ==================================================================================
     FUNCTION Click_RadioSIM: Change the way the ligand is displayed in Pymol
                              during a Simulation
@@ -487,6 +529,13 @@ class Simulate(Tabs.Tab):
 
                 cmd.hide('sticks', 'TOP_*__ & resn LIG')
                 cmd.refresh()
+
+                cmd.show('spheres', 'RESULT_*__ & resn LIG')
+                cmd.refresh()
+
+                cmd.hide('sticks', 'RESULT_*__ & resn LIG')
+                cmd.refresh()
+
             except:
                 self.DisplayMessage("  ERROR: Could not find object to modify", 1)
         
@@ -496,6 +545,12 @@ class Simulate(Tabs.Tab):
                 cmd.refresh()
 
                 cmd.show('sticks', 'TOP_*__ & resn LIG')
+                cmd.refresh()
+
+                cmd.hide('spheres', 'RESULT_*__ & resn LIG')
+                cmd.refresh()
+
+                cmd.show('sticks', 'RESULT_*__ & resn LIG')
                 cmd.refresh()
             except:
                 self.DisplayMessage("  ERROR: Could not find object to modify", 1)
@@ -517,12 +572,18 @@ class Simulate(Tabs.Tab):
             try:
                 cmd.show('cartoon', 'TOP_*__ & ! resn LIG')
                 cmd.refresh()
+
+                cmd.show('cartoon', 'RESULT_*__ & ! resn LIG')
+                cmd.refresh()
             except:
                 self.DisplayMessage("  ERROR: Could not find object to modify", 1)
         else:   
             # Remove the Cartoon
             try:
                 cmd.hide('cartoon', 'TOP_*__ & ! resn LIG')
+                cmd.refresh()
+
+                cmd.hide('cartoon', 'RESULT_*__ & ! resn LIG')
                 cmd.refresh()
             except:
                 self.DisplayMessage("  ERROR: Could not find object to modify", 1)

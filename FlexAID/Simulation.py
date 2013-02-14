@@ -159,9 +159,6 @@ class Parse(threading.Thread):
 
         self.CreateTempPDB(self.FlexAID.FlexAIDSimulationProject_Dir)
 
-        # Set the Colors
-        self.PymolColorList = Color.GetHeatColorList(self.NbTopChrom, False)
-
         #Creation of the dictionaries
         self.RecAtom = self.dictRecAtom(self.top.Manage.INPFlexAIDRunSimulationProject_Dir)        # 3 Neighbors that lead to the middle atoms
         self.DisAngDih = self.dictDisAngDih(self.top.Manage.ICFlexAIDRunSimulationProject_Dir)     # Distance, Angle, Dihedral angle
@@ -211,7 +208,7 @@ class Parse(threading.Thread):
             return
         
         self.top.progressBarHandler(0,self.NbTotalGen)
-        self.top.Init_Table()
+        self.top.Init_Table(self.NbTopChrom)
 
         # Set the auto_zoom to off
         cmd.set("auto_zoom", 0)
@@ -445,6 +442,12 @@ class Parse(threading.Thread):
             else:
                 self.top.SuccessStatus()
                 self.top.Load_Results()
+                
+                self.top.Init_Table(self.top.Manage.NUMBER_RESULTS)
+                self.top.update_DataResults()
+                self.top.update_DataList()
+                
+                self.top.Show_Results()
 
             print("FlexAID parsing thread has ended.")
 

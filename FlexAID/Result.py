@@ -40,18 +40,28 @@ class Result:
     
         self.CF = 0.0
         self.CFapp = 0.0
+        
+        self.RMSD = 0.0
+        
         self.Optimizable = []
+        
+        self.ResultID = 0
         self.ResultFile = ''
     
-    def __init__(self, ResultFile):
+    def __init__(self, ResultFile, ResultID):
     
         self.CF = 0.0
         self.CFapp = 0.0
+        
+        self.RMSD = 0.0
+        
         self.Optimizable = []
+        
+        self.ResultID = ResultID
         self.ResultFile = ResultFile
         
         self.get_CF_info()
-            
+        
     # Reads the physical file to retrieve the CF information
     def get_CF_info(self):
     
@@ -75,7 +85,7 @@ class Result:
             '''
             
             for Line in Lines:
-                print Line
+                
                 if re.match('REMARK', Line):
                     
                     m = re.search('optimizable residue (.{3}) (.) (.{4})', Line)
@@ -90,52 +100,58 @@ class Result:
                         Res = Res.replace(' ','-')
                         Num = Num.replace(' ','')
                         
-                        self.CF = CF(Res + Num + C)
-                        self.Optimizable.append(self.CF)
+                        self.Opt = CF(Res + Num + C)
+                        self.Optimizable.append(self.Opt)
                         
                         continue
 
-                    m = re.search('CF=\s*(\w+)', Line)
+                    m = re.search('CF=\s*(\S+)', Line)
                     if m:
                         self.CF = float(m.group(1))
                         continue
 
-                    m = re.search('CF\.app=\s*(\w+)', Line)
+                    m = re.search('CF\.app=\s*(\S+)', Line)
                     if m:
                         self.CFapp = float(m.group(1))
                         continue
 
-                    m = re.search('CF\.con=\s*(\w+)', Line)
+                    m = re.search('CF\.con=\s*(\S+)', Line)
                     if m:
-                        self.CF.con = float(m.group(1))
+                        self.Opt.con = float(m.group(1))
                         continue
                         
-                    m = re.search('CF\.wal=\s*(\w+)', Line)
+                    m = re.search('CF\.wal=\s*(\S+)', Line)
                     if m:
-                        self.CF.wal = float(m.group(1))
+                        self.Opt.wal = float(m.group(1))
                         continue
                     
-                    m = re.search('CF\.sas=\s*(\w+)', Line)
+                    m = re.search('CF\.sas=\s*(\S+)', Line)
                     if m:
-                        self.CF.sas = float(m.group(1))
+                        self.Opt.sas = float(m.group(1))
                         continue
                         
-                    m = re.search('CF\.com=\s*(\w+)', Line)
+                    m = re.search('CF\.com=\s*(\S+)', Line)
                     if m:
-                        self.CF.com = float(m.group(1))
+                        self.Opt.com = float(m.group(1))
                         continue
-                        
+                    
+                    #REMARK  7.32206 RMSD to ref. structure    
+                    m = re.search('(\S+) RMSD to ref\. structure', Line)
+                    if m:
+                        self.RMSD = float(m.group(1))
+                        continue
+                    
                 elif re.match('ATOM  ', Line):
                     break
-                    
+    
 
 class ResultsContainer:
     
     def __init__(self):
 
         # Result PDB files
-        self.Results = [ ]
-        self.test = ''
+        self.Results = list()
+
         # File containing the parameters allowing to continue the simulation
         self.ResultParams = ''
         

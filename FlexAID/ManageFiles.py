@@ -29,7 +29,9 @@ import Result
 if __debug__:
     import Constraint
 
-class Manage():
+class Manage:
+
+    NUMBER_RESULTS = 10
 
     def __init__(self,top):
         
@@ -146,20 +148,17 @@ class Manage():
     @summary: : Load_ResultFiles: Loads the results files after a simulation terminated
     ============================================================================== '''          
     def Load_ResultFiles(self):
-
-        print "loading result files...."
         
         pattern = os.path.join(self.FlexAIDRunSimulationProject_Dir,'RESULT_*.pdb')
         for file in glob.glob(pattern):
-                    
+            
             m = re.search("RESULT_(\d+)\.pdb$", file)
             if m:
                 TOP = int(m.group(1)) + 1
-                Res = Result.Result(file)
+                Res = Result.Result(file, TOP)
                 
-                print "Loading", Res
                 self.top.Vars.ResultsContainer.Results.append(Res)
-
+    
     ''' ==================================================================================
     @summary: Create_CONFIG: Creation of the CONFIG.inp
     ================================================================================== '''
@@ -210,6 +209,9 @@ class Manage():
         if self.Config2.IntRotation.get():
             config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n')
         
+        if self.Config2.UseReference.get():
+            config_file.write('RMSDST ' + self.IOFile.ReferencePath.get() + '\n')
+
         # Ligand flexibility
         order = sorted(self.Config2.Vars.dictFlexBonds.keys())
         self.Add_FlexBonds(config_file,order)
@@ -246,12 +248,10 @@ class Manage():
 
         config_file.write('STATEP ' + self.FlexAIDRunSimulationProject_Dir  + '\n')
         config_file.write('TEMPOP ' + self.FlexAID.FlexAIDSimulationProject_Dir  + '\n')
-        
-        #config_file.write('OUTRNG\n')
-        
+                
         config_file.write('DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n')
 
-        config_file.write('MAXRES 10'  + '\n')
+        config_file.write('MAXRES ' + str(self.NUMBER_RESULTS) + '\n')
         
         config_file.write('NRGSUI\n')
         config_file.write('NRGOUT 60\n')

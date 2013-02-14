@@ -624,6 +624,7 @@ class IOFile(Tabs.Tab):
 
                 cmd.extract(self.ExtractObject, ddlSelection)
                 cmd.set_name(self.ExtractObject, LigandName)
+                cmd.delete(ddlSelection)
                 
             except:
                 self.DisplayMessage("  ERROR: An error occured while extracting the ligand object.", 1)
@@ -657,7 +658,7 @@ class IOFile(Tabs.Tab):
                     cmd.load(self.LigandPath.get(), Name, state=1)
                     cmd.refresh()
                     
-                    if self.Validate_ObjectSelection(Name, 'Ligand'):
+                    if self.Validate_ObjectSelection(Name, 'Ligand', 1):
                         return
                     
             except:
@@ -711,7 +712,7 @@ class IOFile(Tabs.Tab):
                     cmd.load(self.ProtPath.get(), Name, state=1)
                     cmd.refresh()
 
-                    if self.Validate_ObjectSelection(Name, 'Target'):
+                    if self.Validate_ObjectSelection(Name, 'Target', 1):
                         return
                 
             except:
