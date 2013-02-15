@@ -38,10 +38,10 @@ class Result:
     
     def __init__(self):
     
-        self.CF = 0.0
-        self.CFapp = 0.0
+        self.CF = 'N/A'
+        self.CFapp = 'N/A'
         
-        self.RMSD = 0.0
+        self.RMSD = 'N/A'
         
         self.Optimizable = []
         
@@ -50,10 +50,10 @@ class Result:
     
     def __init__(self, ResultFile, ResultID):
     
-        self.CF = 0.0
-        self.CFapp = 0.0
+        self.CF = 'N/A'
+        self.CFapp = 'N/A'
         
-        self.RMSD = 0.0
+        self.RMSD = 'N/A'
         
         self.Optimizable = []
         
@@ -135,7 +135,7 @@ class Result:
                         self.Opt.com = float(m.group(1))
                         continue
                     
-                    #REMARK  7.32206 RMSD to ref. structure    
+                    #REMARK  7.32206 RMSD to ref. structure
                     m = re.search('(\S+) RMSD to ref\. structure', Line)
                     if m:
                         self.RMSD = float(m.group(1))

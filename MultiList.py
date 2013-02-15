@@ -119,8 +119,11 @@ class Table:
     FUNCTION OnButtonClick: Selects identical index from the other lists
     ==================================================================================  '''            
     def OnButtonClick(self, event, List):
-                
-        Index = List.nearest(event.y)
+        
+        try:
+            Index = List.nearest(event.y)
+        except:
+            return
         
         if Index != self.current and Index != '':
             

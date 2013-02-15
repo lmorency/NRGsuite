@@ -628,7 +628,6 @@ class IOFile(Tabs.Tab):
 
                 cmd.extract(self.ExtractObject, ddlSelection)
                 cmd.set_name(self.ExtractObject, LigandName)
-                cmd.delete(ddlSelection)
                 
             except:
                 self.DisplayMessage("  ERROR: An error occured while extracting the ligand object.", 1)
