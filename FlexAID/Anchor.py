@@ -54,6 +54,8 @@ class anchor(Wizard):
         self.View = cmd.get_view()
         self.State = cmd.get_state()
         self.auto_zoom = cmd.get("auto_zoom")
+
+        self.ErrorStatus =  []
         
     #=======================================================================
     ''' Executes the first steps of the Wizard'''
@@ -117,8 +119,6 @@ class anchor(Wizard):
 
         cmd.set_wizard()
         cmd.set_view(self.View)
-
-        self.ErrorStatus =  []
         
     #=======================================================================
     ''' Displays the ligand to change anchor '''
@@ -240,7 +240,7 @@ class anchor(Wizard):
     def get_prompt(self):
 
         return self.ErrorStatus + \
-                ['Please click on a non-Hydrogen atom to define it as anchor.']
+                [ "Please click on a non-Hydrogen atom to define it as anchor." ]
 
     #=======================================================================
     ''' Pick an anchor atom then highlight it '''
