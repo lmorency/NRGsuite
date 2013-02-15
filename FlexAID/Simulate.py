@@ -345,7 +345,9 @@ class Simulate(Tabs.Tab):
                                                  and fitness for each solution.
     ==================================================================================  '''                
     def Init_Table(self, nbChrom):
-                
+        
+        self.dictSimData.clear()
+        
         self.ColorList = Color.GetHeatColorList(nbChrom, True)
         self.PymolColorList = Color.GetHeatColorList(nbChrom, False)
         

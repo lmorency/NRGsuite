@@ -214,6 +214,8 @@ class Parse(threading.Thread):
         cmd.set("auto_zoom", 0)
 
         cmd.delete("TOP_*__")
+        cmd.delete("RESULT_*")
+
         cmd.refresh()
 
         cmd.frame(1)
