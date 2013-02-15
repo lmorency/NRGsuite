@@ -61,9 +61,9 @@ class ProcLig:
         #Init the INP file path
         self.SimLigInpPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.inp')
         self.SimLigICPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.ic')
-
+        
         self.StartAtomIndex = StartAtomIndex
-
+        
         self.run()
 
 

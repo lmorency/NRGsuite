@@ -246,7 +246,13 @@ class IOFile(Tabs.Tab):
                            
                         self.LigandName.set(self.SmilesLigand)
                         self.fProcessLigand = False
-
+                    else:
+                        self.LigandPath.set('')
+                        self.LigandName.set('')
+                else:
+                    self.LigandPath.set('')
+                    self.LigandName.set('')
+                    
             self.top.ChildWindow = None
             
     ''' ==================================================================================
@@ -539,22 +545,22 @@ class IOFile(Tabs.Tab):
         
         if len(LigandPath) > 0:
             
-            self.LigandPath.set(os.path.normpath(LigandPath))
-            
-            if self.LigandPath.get().find('.pdb') == -1:
-                self.LigandPath.set(self.LigandPath.get() + '.pdb')
+            if LigandPath.find('.pdb') == -1:
+                LigandPath = LigandPath + '.pdb'
 
             try:
-                cmd.save(self.LigandPath.get(), ddlSelection, state, 'pdb') # Save the Selection
-                LigandName = os.path.basename(os.path.splitext(self.LigandPath.get())[0])
+                cmd.save(LigandPath, ddlSelection, state, 'pdb') # Save the Selection
+                LigandName = os.path.basename(os.path.splitext(LigandPath)[0])
 
-                cmd.load(self.LigandPath.get(), LigandName, state=1)
+                cmd.load(LigandPath, LigandName, state=1)
                 cmd.refresh()
             except:
                 self.DisplayMessage("  ERROR: An error occured while saving the ligand object.", 1)
                 return
                 
+            self.LigandPath.set(os.path.normpath(LigandPath))
             self.LigandName.set(LigandName)
+            
             self.DisplayMessage('  Successfully saved and loaded the ligand:  ' + self.LigandName.get() + "'", 0)
     
     
@@ -574,24 +580,24 @@ class IOFile(Tabs.Tab):
         ProtPath = tkFileDialog.asksaveasfilename(initialdir=self.top.TargetProject_Dir, title='Save the PDB File', initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
         
         if len(ProtPath) > 0:
-
-            self.ProtPath.set(os.path.normpath(ProtPath))
             
-            if self.ProtPath.get().find('.pdb') == -1:
-                self.ProtPath.set(self.ProtPath.get() + '.pdb')
+            if ProtPath.find('.pdb') == -1:
+                ProtPath = ProtPath + '.pdb'
             
             try:
-                cmd.save(self.ProtPath.get(), ddlSelection, state, 'pdb') # Save the Selection
-                ProtName = os.path.basename(os.path.splitext(self.ProtPath.get())[0])
+                cmd.save(ProtPath, ddlSelection, state, 'pdb') # Save the Selection
+                ProtName = os.path.basename(os.path.splitext(ProtPath)[0])
 
-                cmd.load(self.ProtPath.get(), ProtName, state=1)
+                cmd.load(ProtPath, ProtName, state=1)
                 cmd.refresh()
                 
             except:
                 self.DisplayMessage("  ERROR: An error occured while extracting the ligand object.", 1)
                 return
                 
+            self.ProtPath.set(os.path.normpath(ProtPath))
             self.ProtName.set(ProtName)
+            
             self.DisplayMessage('  Successfully saved and loaded the target: ' + self.ProtName.get(), 0)                                    
                 
     
@@ -605,7 +611,7 @@ class IOFile(Tabs.Tab):
         # Get the Drop Down List Selection Name
         ddlSelection = self.defaultOption.get()
         
-        if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, 'Ligand',state):
+        if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, 'Ligand', state):
             return
         
         LigandPath = tkFileDialog.asksaveasfilename(initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', 
@@ -613,14 +619,12 @@ class IOFile(Tabs.Tab):
         
         if len(LigandPath) > 0:
             
-            self.LigandPath.set(os.path.normpath(LigandPath))
-            
-            if self.LigandPath.get().find('.pdb') == -1:
-                self.LigandPath.set(self.LigandPath.get() + '.pdb')
+            if LigandPath.find('.pdb') == -1:
+                LigandPath = LigandPath + '.pdb'
             
             try:
-                cmd.save(self.LigandPath.get(), ddlSelection, state, 'pdb')                 # Save the Selection
-                LigandName = os.path.basename(os.path.splitext(self.LigandPath.get())[0])
+                cmd.save(LigandPath, ddlSelection, state, 'pdb')                 # Save the Selection
+                LigandName = os.path.basename(os.path.splitext(LigandPath)[0])
 
                 cmd.extract(self.ExtractObject, ddlSelection)
                 cmd.set_name(self.ExtractObject, LigandName)
@@ -630,7 +634,9 @@ class IOFile(Tabs.Tab):
                 self.DisplayMessage("  ERROR: An error occured while extracting the ligand object.", 1)
                 return
             
+            self.LigandPath.set(os.path.normpath(LigandPath))
             self.LigandName.set(LigandName)
+            
             self.DisplayMessage('  Successfully extracted the ligand:  ' + self.LigandName.get() + "'", 0)
         
 
@@ -648,14 +654,12 @@ class IOFile(Tabs.Tab):
             if LigandPath == self.LigandPath.get():
                 return
             
-            self.LigandPath.set(LigandPath)
-
             try:
 
-                Name = os.path.basename(os.path.splitext(self.LigandPath.get())[0])
+                Name = os.path.basename(os.path.splitext(LigandPath)[0])
 
                 if self.PyMOL:
-                    cmd.load(self.LigandPath.get(), Name, state=1)
+                    cmd.load(LigandPath, Name, state=1)
                     cmd.refresh()
                     
                     if self.Validate_ObjectSelection(Name, 'Ligand', 1):
@@ -665,7 +669,9 @@ class IOFile(Tabs.Tab):
                 self.DisplayMessage("  ERROR for file '" + LigandPath + "': Could not load the ligand file", 1)
                 return
             
+            self.LigandPath.set(LigandPath)
             self.LigandName.set(Name)
+            
             self.DisplayMessage("  Successfully loaded the ligand: '" + self.LigandName.get() + "'", 0)
 
   
@@ -704,12 +710,10 @@ class IOFile(Tabs.Tab):
             if ProtPath == self.ProtPath.get():
                 return
             
-            self.ProtPath.set(ProtPath)
-            
             try:
-                Name = os.path.basename(os.path.splitext(self.ProtPath.get())[0])
+                Name = os.path.basename(os.path.splitext(ProtPath)[0])
                 if self.PyMOL:
-                    cmd.load(self.ProtPath.get(), Name, state=1)
+                    cmd.load(ProtPath, Name, state=1)
                     cmd.refresh()
 
                     if self.Validate_ObjectSelection(Name, 'Target', 1):
@@ -718,8 +722,10 @@ class IOFile(Tabs.Tab):
             except:
                 self.DisplayMessage("  ERROR for object '" + ProtPath + "': Could not load the target file", 1)
                 return
-
+            
+            self.ProtPath.set(ProtPath)
             self.ProtName.set(Name)
+            
             self.DisplayMessage("  Successfully loaded the target: '" + self.ProtName.get() + "'", 0)
 
     ''' ==================================================================================
@@ -782,7 +788,6 @@ class IOFile(Tabs.Tab):
             self.DisplayMessage("  ERROR: Could not move the temporary ligand file.", 2)
             return 1
         except shutil.Error:
-            print "IM HERE!"
             pass
         
         return 0
