@@ -147,7 +147,7 @@ class Simulate(Tabs.Tab):
         fSim_ProgressLine3.pack(side=TOP, fill=X)
         
         self.lblSimStatus = Label(fSim_ProgressLine1, bg=self.Color_Black, textvariable=self.SimStatus, font=self.top.font_Title, fg=self.top.Color_Blue)
-        self.lblSimStatus.pack(side=LEFT, fill=X, expand=True, anchor=W) 
+        self.lblSimStatus.pack(side=LEFT, fill=X, expand=True, anchor=W)
 
         self.ProgressBar = Canvas(fSim_ProgressLine2, bg=self.top.Color_White, width=325, height=25, relief=RAISED, bd=1)
         self.ProgressBar.pack(side=LEFT, fill=BOTH, expand=True, anchor=W)
@@ -242,9 +242,10 @@ class Simulate(Tabs.Tab):
         
         # START PARSING AS THREAD
         self.DisplayMessage('   Starting parsing thread.', 2)
-        self.Parse = Simulation.Parse(self)
-
-        self.DisplayMessage("  *** For better performance you can disable object BINDINGSITE_AREA__", 0)
+        #self.Parse = Simulation.Parse(self)
+        self.Parse = Simulation.Parse2(self)
+        
+        #self.DisplayMessage("  *** For better performance you can disable object BINDINGSITE_AREA__", 0)
     
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
@@ -273,7 +274,7 @@ class Simulate(Tabs.Tab):
     ===============================================================================  '''     
     def IdleStatus(self):
 
-        self.lblSimStatus.config(fg='black')
+        self.lblSimStatus.config(fg="white")
         self.SimStatus.set('Idle.')
 
     ''' =============================================================================== 
@@ -281,8 +282,9 @@ class Simulate(Tabs.Tab):
     ===============================================================================  '''     
     def InitStatus(self):
 
-        self.lblSimStatus.config(fg='cyan')
-        self.SimStatus.set('Initializing...')
+        pass
+        #self.lblSimStatus.config(fg="cyan")
+        #self.SimStatus.set('Initializing...')
 
     ''' =============================================================================== 
     FUNCTION RunStatus: Signal given to parse genetic algorithm
@@ -474,6 +476,7 @@ class Simulate(Tabs.Tab):
             self.Btn_Abort.config(state='disabled')
 
             self.StopStatus()
+            self.Parse.ParseFile = self.Parse.LOGFILE
             self.Parse.ParseFile = self.Parse.LOGFILE
     
     ''' ==================================================================================

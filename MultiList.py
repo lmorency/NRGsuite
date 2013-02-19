@@ -167,10 +167,16 @@ class Table:
     def Clear(self):
 
         for col in self.Columns.keys():
-            self.Columns[col]['List'].selection_clear(0, END)
+	    try:
+                self.Columns[col]['List'].selection_clear(0, END)
+	    except:
+		continue
 
         for col in self.Columns.keys():
-            self.Columns[col]['List'].delete(0, END)
+	    try:
+                self.Columns[col]['List'].delete(0, END)
+	    except:
+		continue
         
         self.current = None
         

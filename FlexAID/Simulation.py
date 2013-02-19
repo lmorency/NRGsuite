@@ -93,9 +93,19 @@ class Start(threading.Thread):
             self.top.ProcessError = True
 
         print("FlexAID starting thread has ended.")
+        
+class Parse2(threading.Thread):
+    def __init__(self, top):
+        threading.Thread.__init__(self)
+        self.top = top
+        self.start()
+
+    def run(self):
+        self.top.InitStatus()
+        
 
 class Parse(threading.Thread):
-#class Parse():
+#class Parse:
 
     def __init__(self, top):
         threading.Thread.__init__(self)

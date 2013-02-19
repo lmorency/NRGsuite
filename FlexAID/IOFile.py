@@ -21,7 +21,7 @@ from Tkinter import *
 
 import math
 import os
-import hashlib
+#import hashlib
 import shutil
 
 import Vars
@@ -61,7 +61,8 @@ class IOFileVars(Vars.Vars):
     
     def __init__(self):
         
-        self.LigandPathMD5 = ''
+        #self.LigandPathMD5 = ''
+	pass
     
 class IOFile(Tabs.Tab):
     
@@ -110,7 +111,7 @@ class IOFile(Tabs.Tab):
         self.ResSeq.set(0)
         #self.top.Config2.Vars.Anchor.set(-1)
 
-        self.Vars.LigandPathMD5 = ''
+        #self.Vars.LigandPathMD5 = ''
         
         self.ProcessError = False
     
@@ -873,12 +874,12 @@ class IOFile(Tabs.Tab):
             self.DisplayMessage('  ERROR: Could not retrieve ligand input file', 1)
             return 1
 
-        if not self.Check_LigandPathMD5(inpFilePath):
-            self.store_Neighbours(inpInfo)
-            self.store_AtomTypes(inpInfo)
-            self.store_FlexBonds(flexInfo)
-        
-        self.Vars.LigandPathMD5 = self._LigandPathMD5
+        #if not self.Check_LigandPathMD5(inpFilePath):
+        self.store_Neighbours(inpInfo)
+        self.store_AtomTypes(inpInfo)
+        self.store_FlexBonds(flexInfo)
+
+        #self.Vars.LigandPathMD5 = self._LigandPathMD5
 
         return 0
 

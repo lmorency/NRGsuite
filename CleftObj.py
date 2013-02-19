@@ -1,5 +1,5 @@
 import copy
-import hashlib
+#import hashlib
 
 class CleftObj:
 
@@ -25,7 +25,8 @@ class CleftObj:
         self.Volume = 0.000
 
         self.Index = 0
-    
+
+    """    
     ''' ==================================================================================
     FUNCTION Set_CleftMD5: Provides a unique ID to a cleft file
     ================================================================================== '''
@@ -35,6 +36,7 @@ class CleftObj:
         md5.update(self.CleftFile)
         
         self.CleftMD5 = md5.digest()
+    """
 
     ''' ==================================================================================
     FUNCTION Copy: Copies an instance of a class
