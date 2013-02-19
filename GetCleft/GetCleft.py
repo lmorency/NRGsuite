@@ -60,7 +60,7 @@ class displayGetCleft(Base.Base):
         
         # flag for saving unsaved calculated cleft volumes
         self.EditSession = True
-
+    
     def After_Init(self):
     
         # Default view
@@ -110,17 +110,17 @@ class displayGetCleft(Base.Base):
     ==================================================================================  '''        
     def MakeMenuBar(self):
         
-        menubar = Menu(self.top)
+        menubar = Menu(self.root)
         
         loadmenu = Menu(menubar, tearoff=0)
         loadmenu.add_command(label="Load Clefts", command=self.Default.Btn_Load_Clefts)
         menubar.add_cascade(label="Load", menu=loadmenu)
 
-        savemenu = Menu(menubar, tearoff=0)        
+        savemenu = Menu(menubar, tearoff=0)
         savemenu.add_command(label="Save Clefts", command=self.Default.Btn_Save_Clefts)
         menubar.add_cascade(label="Save", menu=savemenu)
         
-        self.top.config(menu=menubar)
+        self.root.config(menu=menubar)
         
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
@@ -189,6 +189,14 @@ class displayGetCleft(Base.Base):
 
         scrollBar.config(command=self.TextMessage.yview)
         self.TextMessage.config(state='disabled', yscrollcommand=scrollBar.set)
+    
+    ''' ==================================================================================
+    FUNCTION Del_Trace: Deletes the trace of some variables
+    ================================================================================== '''    
+    def Del_Trace(self):
+    
+        for Tab in self.listTabs:
+            Tab.Del_Trace()
     
     ''' ==================================================================================
     FUNCTION Btn_Config_Clicked: Default configuration view

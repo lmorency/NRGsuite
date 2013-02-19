@@ -34,6 +34,7 @@ import pickle
 import tkFileDialog
 
 import Base
+import General
 import IOFile
 import Config1
 import Config2
@@ -50,6 +51,10 @@ class displayFlexAID(Base.Base):
     BindingSiteDisplay = 'BINDING_SITE_AREA'
     SphereDisplay = 'SPHERE_AREA'
 
+    def Init_Vars(self):
+                
+        self.SaveSessionFile = ''
+    
     def After_Init(self):
                 
         # default Tab (IOFile)
@@ -111,29 +116,34 @@ class displayFlexAID(Base.Base):
     ==================================================================================  '''        
     def MakeMenuBar(self):
         
-        self.menubar = Menu(self.top)
+        self.menubar = Menu(self.root)
         
         loadmenu = Menu(self.menubar, tearoff=0)
-        loadmenu.add_command(label="Load Session", command=self.Btn_Load_Session)
+        loadmenu.add_command(label="Load session", command=self.Btn_Load_Session)
         loadmenu.add_separator()
-        loadmenu.add_command(label="Load Results", command=self.Btn_Load_Results)
+        loadmenu.add_command(label="Load results", command=self.Btn_Load_Results)
         self.menubar.add_cascade(label="Load", menu=loadmenu)
 
         savemenu = Menu(self.menubar, tearoff=0)        
-        savemenu.add_command(label="Save Session", command=self.Btn_Save_Session)
+        savemenu.add_command(label="Save session", command=self.Btn_Save_Session)
+        savemenu.add_command(label="Save session as...", command=self.Btn_SaveAs_Session)
         savemenu.add_separator()
-        savemenu.add_command(label="Save Results", command=self.Btn_Save_Results)
+        savemenu.add_command(label="Save results", command=self.Btn_Save_Results)
         self.menubar.add_cascade(label="Save", menu=savemenu)
 
         viewmenu = Menu(self.menubar, tearoff=0)
         viewmenu.add_command(label="Advanced view", command=self.Btn_Toggle_AdvView)
         self.menubar.add_cascade(label="View", menu=viewmenu)
         
-        self.top.config(menu=self.menubar)
-        
-    #=====================================================================================
-    '''                     --- FRAME DISPLAY SETTINGS ---                             '''
-    #=====================================================================================
+        self.root.config(menu=self.menubar)
+    
+    ''' ==================================================================================
+    FUNCTION Del_Trace: Deletes the trace of some variables
+    ================================================================================== '''    
+    def Del_Trace(self):
+    
+        for Tab in self.listTabs:
+            Tab.Del_Trace()
     
     ''' ==================================================================================
     FUNCTION Btn_Toggle_AdvView: Hides/shows the advanced tabs (scoring + ga)
@@ -253,7 +263,7 @@ class displayFlexAID(Base.Base):
         LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDSessionProject_Dir,
                                                 filetypes=[('NRG FlexAID Session','*.nrgfs')],
                                                 title='Select the Session to load')
-
+        
         if len(LoadFile) > 0:
             
             self.Btn_IOFiles_Clicked()
@@ -270,6 +280,9 @@ class displayFlexAID(Base.Base):
                     except:
                         pass
                 in_.close()
+                
+                self.DisplayMessage("  The session '" + os.path.split(LoadFile)[1] + "' was loaded successfully.", 2)
+
             except:
                 self.DisplayMessage("  ERROR: Could not properly load the session", 2)
                 self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
@@ -303,30 +316,26 @@ class displayFlexAID(Base.Base):
         SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDResultsProject_Dir,
                                   title='Save the Results file', initialfile='default_results',
                                   filetypes=[('NRG FlexAID Results','*.nrgfr')])
-
+        
         if len(SaveFile) > 0:
 
             SaveFile = os.path.normpath(SaveFile)
     
     ''' ==================================================================================
-    FUNCTION Btn_Save_Session: Saves the current session
+    FUNCTION Save_Session: Saves the current session
     ==================================================================================  '''        
-    def Btn_Save_Session(self):
+    def Save_Session(self, SaveFile):
 
-        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
-            self.ValidateWindowRunning():
-            return
-            
-        SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDSessionProject_Dir,
-                                  title='Save the Session file', initialfile='default_session',
-                                  filetypes=[('NRG FlexAID Session','*.nrgfs')])
-    
         if len(SaveFile) > 0:
 
             SaveFile = os.path.normpath(SaveFile)
             
             if SaveFile.find('.nrgfs') == -1:
                 SaveFile = SaveFile + '.nrgfs'
+            
+            if General.validate_String(SaveFile, True, True, False):
+                self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
+                return
 
             try:
                 out = open(SaveFile, 'w')
@@ -336,10 +345,45 @@ class displayFlexAID(Base.Base):
                     except:
                         pass
                 out.close()
+                
+                self.SaveSessionFile = SaveFile
+                
+                self.DisplayMessage("  The session '" + os.path.split(SaveFile)[1] + "' was saved successfully.", 2)                
+                
             except:
                 self.DisplayMessage("  ERROR: Could not properly save the session:", 2)
                 self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
 
+        
+    ''' ==================================================================================
+    FUNCTION Btn_Save_Session: Saves the current session
+    ==================================================================================  '''        
+    def Btn_Save_Session(self):
+
+        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
+            self.ValidateWindowRunning():
+            return
+
+        if self.SaveSessionFile == '':
+            self.Btn_SaveAs_Session()
+        else:
+            self.Save_Session(self.SaveSessionFile)
+
+    ''' ==================================================================================
+    FUNCTION Btn_Save_Session: Saves the current session
+    ==================================================================================  '''        
+    def Btn_SaveAs_Session(self):
+
+        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
+            self.ValidateWindowRunning():
+            return
+        
+        SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDSessionProject_Dir,
+                                  title='Save the Session file', initialfile='default_session',
+                                  filetypes=[('NRG FlexAID Session','*.nrgfs')])
+        
+        self.Save_Session(SaveFile)
+        
     ''' ==================================================================================
     FUNCTION Btn_*_Clicked: Display the Tab options menu
     ================================================================================== '''    
@@ -395,15 +439,11 @@ class displayFlexAID(Base.Base):
         for Tab in self.listTabs:
             if Tab != self.IOFile:
                 Tab.Init_Vars()
-
-    #=====================================================================================
-    '''                            --- BUTTONS EVENT ---                               '''
-    #=====================================================================================     
-        
+    
     ''' ==================================================================================
     FUNCTION ValidateResiduValue: Validate the residue entered 
     ================================================================================== '''
-    def ValidateResiduValue(self, event):        
+    def ValidateResiduValue(self, event):
         
         term = self.ResiduValue.get().upper()
         self.ResiduValue.set(term)

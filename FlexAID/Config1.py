@@ -543,7 +543,7 @@ class Config1(Tabs.Tab):
                 os.makedirs(TargetFlexPath)
 
             SaveFile = tkFileDialog.asksaveasfilename(initialdir=TargetFlexPath,
-                                                      title='Save the TargetFlex file', initialfile='def_targetflex',
+                                                      title='Save the TargetFlex file', initialfile='default_targetflex',
                                                       filetypes=[('NRG TargetFlex','*.nrgtf')])
             
             if len(SaveFile) > 0:
@@ -552,6 +552,10 @@ class Config1(Tabs.Tab):
                 
                 if SaveFile.find('.nrgtf') == -1:
                     SaveFile = SaveFile + '.nrgtf'
+
+                if General.validate_String(SaveFile, True, True, False):
+                    self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
+                    return
 
                 try:
                     out = open(SaveFile, 'w')
@@ -638,7 +642,11 @@ class Config1(Tabs.Tab):
                 
                 if SaveFile.find('.nrgbs') == -1:
                     SaveFile = SaveFile + '.nrgbs'
-
+                    
+                if General.validate_String(SaveFile, True, True, False):
+                    self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
+                    return
+                    
                 try:
                     out = open(SaveFile, 'w')
                     pickle.dump(self.Vars.BindingSite, out)
@@ -757,7 +765,7 @@ class Config1(Tabs.Tab):
     def Btn_EditSphere_Clicked(self):
 
         self.Sphere_Clicked()
-
+    
     ''' ==================================================================================
                                   Sphere binding-site: Starts the wizard
     ================================================================================== '''          

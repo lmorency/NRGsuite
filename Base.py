@@ -29,51 +29,60 @@ import General
 
 class Base:
 
+    ActiveWizard = None
+    
+    WizardError = False
+    WizardResult = 0
+
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
     ================================================================================== '''
-    def __init__(self, top, ActiveWizard, Project_Dir, Install_Dir, AlreadyRunning_Dir, OSid, PyMOL,
-                 Name, RunFile, WINDOWWIDTH, WINDOWHEIGHT):
-    
+    def __init__(self, root, top, menuindex, Project_Dir, Install_Dir, NRGsuite_Dir, OSid, PyMOL, Name, WINDOWWIDTH, WINDOWHEIGHT):
+                
         self.Name = Name
-        self.RunFile = RunFile
         self.OSid = OSid
         self.PyMOL = PyMOL
         
-        self.AlreadyRunning_Dir = AlreadyRunning_Dir
-        
+        self.NRGsuite_Dir = NRGsuite_Dir
         self.Install_Dir = Install_Dir
         self.Project_Dir = Project_Dir
-        self.Folders = [ self.Project_Dir ]
-
+        
+        self.Folders = [ self.NRGsuite_Dir ]
+        if self.Project_Dir:
+            self.Folders.append(self.Project_Dir)
+        
         self.Set_Folders()
         self.Validate_Folders()
-    
-        self.AppIsRunning()
-
+        
         self.Color_Green = '#CCFFCC'
         self.Color_Grey = '#EDEDED'
+        self.Color_Gray = '#EDEDED'
         self.Color_Blue = '#6699FF'
         self.Color_Red = '#FF9999'
         self.Color_White = '#FFFFFF'
-        self.Color_Black = 'black'
+        self.Color_Black = '#000000'
+                
+        self.root = root
+        self.root.title(self.Name)
 
         self.top = top
-        self.top.title(self.Name)
+        
+        self.menuindex = menuindex
+        self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='disabled')
 
-        #self.top.geometry()   # Interface DIMENSIONS
-        #self.top.maxsize(WINDOWWIDTH,WINDOWHEIGHT)
-        #self.top.minsize(WINDOWWIDTH,WINDOWHEIGHT)
-        self.top.protocol('WM_DELETE_WINDOW', self.Quit)
+        #self.root.geometry()   # Interface DIMENSIONS
+        #self.root.maxsize(WINDOWWIDTH,WINDOWHEIGHT)
+        #self.root.minsize(WINDOWWIDTH,WINDOWHEIGHT)
+        self.root.protocol('WM_DELETE_WINDOW', self.Quit)
 
-        General.CenterWindow(self.top,WINDOWWIDTH,WINDOWHEIGHT)
-
+        General.CenterWindow(self.root,WINDOWWIDTH,WINDOWHEIGHT)
+        
         #================================================================================== 
         #                 SET the default fonts of the interface
         #==================================================================================
         FontType = Prefs.GetFontType()
         FontSize = Prefs.GetFontSize()
-        
+
         self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)        
         self.font_Title_H = tkFont.Font(family=FontType,size=FontSize + 1, weight=tkFont.BOLD)        
         self.font_Text = tkFont.Font(family=FontType,size=FontSize)
@@ -85,20 +94,18 @@ class Base:
         self.ActiveFrame = None
         self.Run = None
         
-        self.ActiveWizard = ActiveWizard
-        self.WizardError = False
-        self.WizardResult = 0
         self.ProcessRunning = False
 
-        self.fMain = Frame(self.top)
+        self.fMain = Frame(self.root)
         self.fMain.pack(expand=True)
-
+        
+        self.Def_Vars()
+        self.Init_Vars()
+        
         self.Frame_Main()
                 
         self.Build_Tabs()
         self.MakeMenuBar()
-
-        self.Def_Vars()
         
         self.After_Init()
 
@@ -112,12 +119,26 @@ class Base:
         return
     
     ''' ==================================================================================
+    FUNCTION After_Init: Generates actions after initializing variables
+    ==================================================================================  '''  
+    def After_Init(self):
+
+        return    
+
+    ''' ==================================================================================
     FUNCTION Def_Vars: Define extra variables for the class
     ==================================================================================  '''  
     def Def_Vars(self):
-
+    
         return
         
+    ''' ==================================================================================
+    FUNCTION Init_Vars: Initialize the extra variables
+    ==================================================================================  '''  
+    def Init_Vars(self):
+    
+        return
+
     ''' ==================================================================================
     FUNCTION Build_Tabs: Builds the tab' classes of the main frame
     ==================================================================================  '''  
@@ -171,23 +192,12 @@ class Base:
             self.ActiveFrame.Tab.config(bg=self.Color_Blue)
 
     ''' ==================================================================================
-    FUNCTION AppIsRunning: Update or Create the Running File to BLOCK multiple GUI 
-    ==================================================================================  '''       
-    def AppIsRunning(self):
-        
-        #Create the .run file
-        RunPath = os.path.join(self.AlreadyRunning_Dir,self.RunFile)
-        RunFile = open(RunPath, 'w')
-        RunFile.write(str(os.getpid()))
-        RunFile.close()
-
-    ''' ==================================================================================
     FUNCTION Restore: Restore the original default configuration
     ================================================================================== '''    
     def Restore(self):
         
         return
-
+    
     ''' ==================================================================================
     FUNCTION SaveDefault: Saves the current configuration as default
     ================================================================================== '''    
@@ -255,34 +265,41 @@ class Base:
 
         # Close any Wizard interface in Pymol if started
         if self.ActiveWizard is not None:
-            if self.PyMOL:
-                self.ActiveWizard.btn_Done()
+            self.ActiveWizard.btn_Done()
         
         # Close child windows if any
         if self.ChildWindow is not None:
             self.ChildWindow.Quit()
 
-        #Delete the .run file
-        RunPath = os.path.join(self.AlreadyRunning_Dir,self.RunFile)
-        if os.path.isfile(RunPath):
-            try:
-                os.remove(RunPath)
-            except OSError:
-                print('   An error occured while clearing running file for ' + self.Name)                
-                    
         self.Del_Trace()
         
-        self.top.destroy()        
+        self.root.destroy()
+        self.root = None
+        
+        self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='normal')
+                
+        print('  Closed ' + self.Name)
 
-        print('   Closed ' + self.Name)
+    ''' ==================================================================================
+    FUNCTION After_Quit: Do some tasks after killing a frame
+    ==================================================================================  '''
+    def After_Quit(self):
+        
+        return
+        
+    ''' ==================================================================================
+    FUNCTION Trace: Adds tracer to Tk variables
+    ================================================================================== '''    
+    def Trace(self):
+    
+        return
 
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes the trace of some variables
     ================================================================================== '''    
     def Del_Trace(self):
     
-        for Tab in self.listTabs:
-            Tab.Del_Trace()
+        return
 
     ''' ==================================================================================
     FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
@@ -333,7 +350,7 @@ class Base:
             return 1
 
         return 0
-
+    
     ''' ==================================================================================
     FUNCTION Set_Folders: Builds the list of folders that will be built
     ==================================================================================  '''  

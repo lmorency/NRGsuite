@@ -84,7 +84,7 @@ class Simulate(Tabs.Tab):
 
     ''' =============================================================================== 
     FUNCTION Frame: Generate the CSimulation frame in the the middle frame 
-                    section.   
+                    section.
     ===============================================================================  '''      
     def Frame(self):
         
@@ -186,7 +186,7 @@ class Simulate(Tabs.Tab):
         return self.fSimulate
     
     ''' =============================================================================== 
-    FUNCTION Btn_StartSim: Start the simulation (If requirements are meet...)   
+    FUNCTION Btn_StartSim: Start the simulation (If requirements are meet...)
     ===============================================================================  '''     
     def Btn_StartSim(self):
 
@@ -277,7 +277,7 @@ class Simulate(Tabs.Tab):
         self.SimStatus.set('Idle.')
 
     ''' =============================================================================== 
-    FUNCTION InitStatus: Initializes necessary variables from FlexAID parsing thread   
+    FUNCTION InitStatus: Initializes necessary variables from FlexAID parsing thread
     ===============================================================================  '''     
     def InitStatus(self):
 

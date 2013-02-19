@@ -28,95 +28,43 @@
 '''
 
 from Tkinter import *
-from pymol import cmd
 
-import General
-import tkFileDialog
-import tkFont
-import re
 import os
 import time
-import Prefs
+import tkFileDialog
+
+import Base
+import NRGsuite
+import General
 
 #=========================================================================================
 '''                           ---   PARENT WINDOW  ---                                 '''
 #========================================================================================= 
 
-class displayNewProject:
+class displayNewProject(Base.Base):
     
     ''' ==================================================================================
-    FUNCTION __init__ : Initialization of the variables of the interface
-    ================================================================================== '''
-    def __init__(self, parent, inThread, NewProjectPath, HomeDir, RunDir_Path, OSid):      
-        
-        self.WINDOWWIDTH = 400
-        self.WINDOWHEIGHT = 320
-
-        self.OSid = OSid
-        self.RunDir_Path = RunDir_Path
-        self.HomeDir = HomeDir
-        self.ValidateBaseDir()       
-        
-        self.inThread = inThread       
+    FUNCTION Def_Vars: Define extra variables for the class
+    ==================================================================================  '''  
+    def Def_Vars(self):
             
-        #================================================================================== 
-        ''' ROOT PATH TO THE FLEXAID DIRECTORY  '''        
-        self.NewProject_Path = NewProjectPath
-        
-        self.NewProjectIsRunning()
-               
-        #================================================================================== 
-        #                 SET the default fonts of the interface
-        #================================================================================== 
-        FontType = Prefs.GetFontType()
-        FontSize = Prefs.GetFontSize()
-       
-        self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)        
-        self.font_Title_H = tkFont.Font(family=FontType,size=FontSize + 2, weight=tkFont.BOLD)        
-        self.font_Text = tkFont.Font(family=FontType,size=FontSize)
-        self.font_Text_H = tkFont.Font(family=FontType,size=FontSize + 2)
-        self.font_Text_U = tkFont.Font(family=FontType,size=FontSize, slant=tkFont.ITALIC)
-        
-        self.Color_Gray = '#EDEDED'
-        self.Color_White = '#FFFFFF'
-        self.Color_Red = '#FF9999'
-        self.Color_Green = '#CCFFCC'
-        
-        #================================================================================== 
-        #                        Initialize the window
-        #================================================================================== 
-        top = self.top = Toplevel(parent)
-        top.title('NRGsuite - Project')
-        #top.geometry('')   # Interface DIMENSIONS
-        General.CenterWindow(self.top,self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        top.maxsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        top.minsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        self.top.protocol('WM_DELETE_WINDOW', self.Btn_Cancel_Clicked)
-        
+        self.ProjDirPath = StringVar()
+        self.ProjName = StringVar()
+        self.useDefault = IntVar()
+    
+    ''' ==================================================================================
+    FUNCTION Init_Vars: Initialize the extra variables
+    ==================================================================================  '''  
+    def Init_Vars(self):
         
         self.NameSpacer = '  '
-        self.ActualDirPath = self.HomeDir
-        
-        self.ProjDirPath = StringVar()
-        self.ProjDirPath.set(os.path.join(self.NameSpacer,self.ActualDirPath)) 
-        
-        self.useDefault = IntVar()
-        self.useDefault.set(1)
-        
-        self.ProjName = StringVar()
+        self.ActualDirPath = self.NRGsuite_Dir
+
         self.ProjName.set('')
+        self.ProjDirPath.set(os.path.join(self.NameSpacer,self.ActualDirPath))         
         
-        self.ClearMsg = False
-        self.BtnCreateStatus = 'disabled'       
-        
-        #================================================================================== 
-        #                       FRAMES Settings and startup
-        #==================================================================================
-        self.frame = Frame(top)  # Main frame
-        self.frame.pack(expand='true')
-
-        self.Frame_Main() 
-
+        self.useDefault.set(1)
+    
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
     ==================================================================================  '''        
@@ -126,7 +74,7 @@ class displayNewProject:
         '''                  --- TOP FRAME OF THE INTERFACE ---                          '''
         #==================================================================================
         
-        self.fTop = Frame(self.frame, relief=RIDGE, border=0, width=400, height=260)        
+        self.fTop = Frame(self.fMain, relief=RIDGE, border=0, width=400, height=260)        
 
         fTitle = Frame(self.fTop, relief=RIDGE, border=1, width=400, height=40, bg=self.Color_White)
         
@@ -218,12 +166,12 @@ class displayNewProject:
         '''                  --- BOTTOM FRAME OF THE INTERFACE ---                          '''
         #==================================================================================
         
-        fBottom = Frame(self.frame, relief=RIDGE, border=0, width=400, height=60)
+        fBottom = Frame(self.fMain, relief=RIDGE, border=0, width=400, height=60)
         
         # Messages Box
         fMsg = Frame(fBottom, border=1, width=380, height=50, relief=SUNKEN)        
 
-        self.TextMessage = Text(fMsg, width=380, height=5, background=self.Color_Gray)
+        self.TextMessage = Text(fMsg, width=380, height=5, background=self.Color_Grey)
         self.TextMessage.pack(side=LEFT, anchor=S)
         self.TextMessage['font'] = self.font_Text
         self.TextMessage.config(state='disabled')
@@ -233,46 +181,25 @@ class displayNewProject:
 
         fBottom.pack(fill=X, expand=True, side=BOTTOM, anchor=S)
         fBottom.pack_propagate(0)
-        
-    ''' ==================================================================================
-    FUNCTION NewProjectIsRunning: Update or Create the Running File to BLOCK multiple GUI 
-    ==================================================================================  '''       
-    def NewProjectIsRunning(self):
-        
-        #Create the .run file
-        RunPath = os.path.join(self.RunDir_Path,'.nrun')
-        RunFile = open(RunPath, 'w')
-        RunFile.write(str(os.getpid()))
-        RunFile.close()
-        
-    ''' ==================================================================================
-    FUNCTION Delete_RunFile: Delete the run file.
-    ==================================================================================  '''    
-    def Delete_RunFile(self):
-        
-        #Delete the .run file
-        RunPath = os.path.join(self.RunDir_Path,'.nrun')
-        if (os.path.isfile(RunPath)):
-            try:
-                os.remove(RunPath)
-            except OSError:
-                time.sleep(0.1)
-                os.remove(RunPath)
-        
+    
     ''' ==================================================================================
     FUNCTION Btn_Cancel_Clicked: Cancel the project creation then quit the application.
     ==================================================================================  '''        
     def Btn_Cancel_Clicked(self):
+            
+        self.top.Project_Dir = ''
         
-        print('   CANCELLED the creation of a New Project...')
-        self.inThread.EnableMenu = False
-        self.inThread.StopThread = True
-        self.inThread.UserPath = ''
+        self.Quit()
         
-        self.Delete_RunFile()
+        print('  The creation of a New Project was cancelled.')
+
+    ''' ==================================================================================
+    FUNCTION After_Quit: Do some tasks after killing a frame
+    ==================================================================================  '''
+    def After_Quit(self):
         
-        self.top.destroy()        
-        
+        NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal' ] )    
+
     ''' ==================================================================================
     FUNCTION Btn_Create_Clicked: Create the new project then quit the application.
     ==================================================================================  '''        
@@ -281,49 +208,45 @@ class displayNewProject:
         name = self.ProjName.get().strip()
         if name != '':
         
-            words = name.split()
-            for word in words:
-                if not re.match('^[A-Za-z0-9_\-\.]*$', word):
-                    print('  ERROR: Invalid name for project.')
-                    return
+            if General.validate_String(name, False, True, False):
+                print('  ERROR: The name \'' + name + '\' is invalid. Try again.')
+                return
             
-            userPath = os.path.join(self.ActualDirPath,name)
+            Project_Dir = os.path.join(self.ActualDirPath,name)
             
-            if not os.path.isdir(userPath):
+            if not os.path.isdir(Project_Dir):
                 try:
-                    os.makedirs(userPath)
+                    os.makedirs(Project_Dir)
                 except OSError:
                     print('  ERROR: Could not create the project: \'' + name + '\' under that directory.')
                     return 
                     
-                self.Update_ProjectFile(userPath, name)
+                self.Update_ProjectFile(Project_Dir, name)
                 
-                self.inThread.EnableMenu = True
-                self.inThread.StopThread = True
-                self.inThread.UserPath = userPath
-                self.inThread.ProjectName = name       
+                self.top.Project_Dir = Project_Dir
+                self.top.ProjectName = name       
                 
-                self.Delete_RunFile()
-                self.top.destroy()
-
+                self.Quit()
+                self.After_Quit()
+                
                 print('  Successfully created the project: \'' + name + '\'')
+                print('  The project was loaded by default.')
     
             else:
-                print('  The project: \'' + name + '\' already exists.' )
-                
-                        
+                print('  The project: \'' + name + '\' already exists.')
+    
     ''' ==================================================================================
     FUNCTION Btn_Browse_Clicked: Browse to specify the directory to install the project.
     ==================================================================================  '''        
     def Btn_Browse_Clicked(self):
 
-        src = tkFileDialog.askdirectory(initialdir=self.HomeDir, title='Select a directory')
+        src = tkFileDialog.askdirectory(initialdir=self.NRGsuite_Dir, title='Select a directory')
 
         if len(src) > 0:
             if os.path.isdir(src):
                 self.ActualDirPath = 'src'
                 self.ProjDirPath.set(os.path.join(self.NameSpacer,src))
-        
+    
     ''' ==================================================================================
     FUNCTION Step3_Checked: The check box in the Step3 in Check or NOT.
     ==================================================================================  '''        
@@ -331,26 +254,25 @@ class displayNewProject:
         
         if self.useDefault.get() == 0:
             self.Btn_Browse.config(state='normal')
-            self.DirPath.config(state='normal')
-            self.DirPath['font'] = self.font_Text
+            self.DirPath.config(state='normal', font=self.font_Text)
         else:
             self.Btn_Browse.config(state='disabled')
-            self.DirPath.config(state='disabled')
-            self.DirPath['font'] = self.font_Text_U
-            self.ActualDirPath = self.HomeDir
+            self.DirPath.config(state='disabled', font=self.font_Text)
+
+            self.ActualDirPath = self.self.NRGsuite_Dir
             self.ProjDirPath.set(os.path.join(self.NameSpacer,self.ActualDirPath))
             
     ''' ==================================================================================
     FUNCTION Update_ProjectFile: Add the created project to the Project File list.
     ==================================================================================  '''            
-    def Update_ProjectFile(self, userPath, ProjName):
+    def Update_ProjectFile(self, Project_Dir, ProjName):
         
-        MainFilePath = os.path.join(self.HomeDir,'.proj')
-        UserFilePath = os.path.join(userPath,'.proj')
-        Date = self.Get_Date()
+        MainFilePath = os.path.join(self.NRGsuite_Dir,'.proj')
+        UserFilePath = os.path.join(Project_Dir,'.proj')
+        Date = General.Get_Date()
         Seconds = time.time()
         
-        LineToAdd = 'Name: ' + ProjName + ' Seconds: ' + str(Seconds) + ' LastUsed: ' + Date + ' Creation: ' + Date + ' Path: ' + userPath + '\n'
+        LineToAdd = 'Name: ' + ProjName + ' Seconds: ' + str(Seconds) + ' LastUsed: ' + Date + ' Creation: ' + Date + ' Path: ' + Project_Dir + '\n'
         
         NotFound = True
         
@@ -376,96 +298,3 @@ class displayNewProject:
         ProjFileUser.write(LineToAdd)
         ProjFileUser.close()
         
-    ''' ==================================================================================
-    FUNCTION Get_Date: Return the actual date (mm/dd/yyyy - hh:mm:ss).
-    ==================================================================================  '''    
-    def Get_Date(self):
-            
-        timeNow = time.localtime()
-
-        Date = ''
-        
-        month = int(timeNow.tm_mon)
-        day = int(timeNow.tm_mday)
-        hour = int(timeNow.tm_hour)
-        minute = int(timeNow.tm_min)
-        second = int(timeNow.tm_sec)
-        
-        if month < 10:
-            Date += '0'
-            
-        Date += str(month) + '/'
-        
-        if day < 10:
-            Date += '0'
-            
-        Date += str(day) + '/' + str(timeNow.tm_year) + ' - '
-
-        if hour < 10:
-            Date += '0'
-            
-        Date += str(hour) + ':'
-        
-        if minute < 10:
-            Date += '0'
-            
-        Date += str(minute) + ':'
-            
-        if second < 10:
-            Date += '0'
-            
-        Date += str(second) 
-               
-        return Date
-                
-    ''' ==================================================================================
-    FUNCTION ValidateBaseDir: Create if didnt exist the based path directory.
-    ==================================================================================  '''            
-    def ValidateBaseDir(self):
-        
-        self.HomeDir = os.path.join(self.HomeDir,'Documents','NRGsuite')
-        
-        if not os.path.isdir(self.HomeDir):
-            os.makedirs(self.HomeDir)
-            
-        # Be sure the Default directory exist
-        Default = os.path.join(self.HomeDir,'Default')
-        if not os.path.isdir(Default):
-            os.makedirs(Default)       # ADD the Directory       
-            self.Update_ProjectFile(Default, 'Default')     # ADD the .proj Files         
-                                
-    ''' ==================================================================================
-    FUNCTION DisplayMessage: Display the message  
-    ==================================================================================  '''    
-    def DisplayMessage(self, msg, priority):
-        
-        NBCHARMAX = 45
-        self.TextMessage.config(state='normal')
- 
-        lineNo = '1'
-        insNo = lineNo + '.0'      
-
-        if msg != '':
-            # Verify if the message need to be split
-            NbChar = len(msg)
-
-            #self.TextMessage.config(font='red')
-            self.TextMessage.insert(INSERT, '\n' + msg)
-            
-            if priority == 1:
-                self.TextMessage.tag_add('warn', '0.0', '2.' + str(NbChar))
-                self.TextMessage.tag_config('warn', foreground='red')
-            elif priority == 2:
-                self.TextMessage.tag_add('notice', '0.0', '2.' + str(NbChar))
-                self.TextMessage.tag_config('notice', foreground='blue')   
-                
-            self.TextMessage.yview(INSERT)
-
-        else:
-            # Skip a line...
-            self.TextMessage.delete(1.0,END)   
-        
-        self.TextMessage.config(state='disabled')
-            
-
-

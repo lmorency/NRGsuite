@@ -99,10 +99,10 @@ class Result:
                         
                         Res = Res.replace(' ','-')
                         Num = Num.replace(' ','')
+                        ResNumC = Res + Num + C
                         
-                        self.Opt = CF(Res + Num + C)
+                        self.Opt = CF(ResNumC)
                         self.Optimizable.append(self.Opt)
-                        
                         continue
 
                     m = re.search('CF=\s*(\S+)', Line)
@@ -157,6 +157,4 @@ class ResultsContainer:
         
         # If these results were generated from other results this will be set
         self.ParentResult = None
-    
-
-    
+        

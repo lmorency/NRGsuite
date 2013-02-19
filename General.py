@@ -19,6 +19,51 @@
 
 from Tkinter import *
 
+import re
+import time
+import os
+
+''' ==================================================================================
+FUNCTION Get_Date: Return the actual date (mm/dd/yyyy - hh:mm:ss).
+==================================================================================  '''    
+def Get_Date():
+        
+    timeNow = time.localtime()
+
+    Date = ''
+    
+    month = int(timeNow.tm_mon)
+    day = int(timeNow.tm_mday)
+    hour = int(timeNow.tm_hour)
+    minute = int(timeNow.tm_min)
+    second = int(timeNow.tm_sec)
+    
+    if month < 10:
+        Date += '0'
+        
+    Date += str(month) + '/'
+    
+    if day < 10:
+        Date += '0'
+        
+    Date += str(day) + '/' + str(timeNow.tm_year) + ' - '
+
+    if hour < 10:
+        Date += '0'
+        
+    Date += str(hour) + ':'
+    
+    if minute < 10:
+        Date += '0'
+        
+    Date += str(minute) + ':'
+        
+    if second < 10:
+        Date += '0'
+        
+    Date += str(second) 
+           
+    return Date
 
 ''' ==========================================================
   validate_Float: validate the entry field (float value)  
@@ -56,8 +101,23 @@ def validate_Integer(sVal, Min, Max):
 ''' ==========================================================
   validate_String: validate the entry field (str value)  
 ==========================================================='''
-def validate_String(sVal):
-
+def validate_String(sVal, bPath, bSpaces, bPyMOL):
+    
+    # Does sVal is a path (bPath)
+    # If so, only analyze the basefilename
+    if bPath:
+        sVal = os.path.split(sVal)[1]
+    
+    # Are spaces allowed (bSpaces)
+    if bSpaces and not re.match('^[A-Za-z0-9_\-\. ]*$', sVal):
+        return 1
+    elif not bSpaces and not re.match('^[A-Za-z0-9_\-\.]*$', sVal):
+        return 1
+    
+    # If the name is a pymol object, the name must begin with alphanumeric
+    if bPyMOL and not re.match('[A-Za-z0-9]', sVal):
+        return 1
+    
     return 0
 
 ''' ==========================================================
@@ -202,7 +262,7 @@ def store_Residues(listResidues, PDBFile, HETATM):
 
 ''' ==================================================================================
 FUNCTION repeat: repeats a character N number of times
-==================================================================================  '''            
+==================================================================================  '''
 def repeat(string, length):
     L = len(string)
     return string * (length // L) + string[:length % L]

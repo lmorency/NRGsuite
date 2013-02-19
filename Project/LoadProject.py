@@ -28,103 +28,51 @@
 '''
 
 from Tkinter import *
-from pymol import cmd
 
+import os
+import time
+import tkFileDialog
+
+import Base
+import NRGsuite
 import General
 import MultiList
-import tkFileDialog
-import tkFont
-import time
-import os
-import Prefs
 
 #=========================================================================================
 '''                           ---   PARENT WINDOW  ---                                 '''
 #========================================================================================= 
 
-class displayLoadProject:
+class displayLoadProject(Base.Base):
     
     ''' ==================================================================================
-    FUNCTION __init__ : Initialization of the variables of the interface
+    FUNCTION After_Init: Initialization of extra variables for the class
     ================================================================================== '''
-    def __init__(self, parent, inThread, LoadProjectPath, HomeDir, RunDir_Path, OSid):      
+    def After_Init(self):
         
-        self.WINDOWHEIGHT = 350
-        self.WINDOWWIDTH = 460
+        self.LoadProjectList()
+        self.Fill_Table()    
+        self.Trace()
 
-        self.OSid = OSid
-        self.RunDir_Path = RunDir_Path
-        self.HomeDir = HomeDir
-        self.ValidateBaseDir()
-
-        self.inThread = inThread       
+    ''' ==================================================================================
+    FUNCTION Def_Vars: Define extra variables for the class
+    ==================================================================================  '''  
+    def Def_Vars(self):
             
-        #================================================================================== 
-        ''' ROOT PATH TO THE FLEXAID DIRECTORY  '''        
-        self.LoadProject_Path = LoadProjectPath
+        self.ProjectPath = StringVar()        
+        self.dictProjectList = {}
         
-        self.LoadProjectIsRunning()
-               
-        #================================================================================== 
-        #                 SET the default fonts of the interfaceself.current = None
+    ''' ==================================================================================
+    FUNCTION Init_Vars: Initialize the extra variables
+    ==================================================================================  '''  
+    def Init_Vars(self):
 
-        #==================================================================================
-        FontType = Prefs.GetFontType()
-        FontSize = Prefs.GetFontSize()
-       
-        self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)        
-        self.font_Title_H = tkFont.Font(family=FontType,size=FontSize + 2, weight=tkFont.BOLD)        
-        self.font_Text = tkFont.Font(family=FontType,size=FontSize)
-        self.font_Text_H = tkFont.Font(family=FontType,size=FontSize + 2)
-        self.font_Text_I = tkFont.Font(family=FontType,size=FontSize, slant=tkFont.ITALIC)
-        
-        self.Color_Gray = '#EDEDED'
-        self.Color_White = '#FFFFFF'
-        self.Color_Red = '#FF9999'
-        self.Color_Green = '#CCFFCC'
-        self.Color_Blue = '#4477CC'
-        
-        #================================================================================== 
-        #                        Initialize the window
-        #================================================================================== 
-        top = self.top = Toplevel(parent)
-        top.title('NRG suite - Project')
-
-        General.CenterWindow(self.top,self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        #top.geometry('460x350')   # Interface DIMENSIONS
-        
-        top.maxsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        top.minsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
-        self.top.protocol('WM_DELETE_WINDOW', self.Btn_Cancel_Clicked)
-        
         self.NameSpacer = '  '
         self.ActualDirPath = ''
         self.ActualFileName = ''
         self.ActualKey = ''
-       
-        self.useDefault = IntVar()
-        self.useDefault.set(1)
-        
-        self.ProjectDir = StringVar()
-        self.ProjectDir.set('')
-        
-        self.dictProjectList = {}
-        self.LoadProjectList()
-        
-        self.ClearMsg = False
-        self.BtnCreateStatus = 'disabled'
-        self.current = None
-        
-        #================================================================================== 
-        #                       FRAMES Settings and startup
-        #==================================================================================
-        self.frame = Frame(top)  # Main frame
-        self.frame.pack(expand='true')
 
-        self.Frame_Main() 
-        self.Fill_Table()
-
-        self.Trace()
+        self.ProjectPath.set('')
+        self.dictProjectList.clear()
 
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
@@ -134,15 +82,14 @@ class displayLoadProject:
         #==================================================================================
         '''                  --- TOP FRAME OF THE INTERFACE ---                          '''
         #==================================================================================
-        
-        fTitle = Frame(self.frame, relief=RIDGE, border=1, width=460, height=40, bg=self.Color_White)
+        fTitle = Frame(self.fMain, relief=RIDGE, border=1, width=460, height=40, bg=self.Color_White)
         fTitle.pack(fill=X, expand=True)
         fTitle.pack_propagate(0)        
         
         Title = Label(fTitle, text='Load an existing NRG suite project.', bg=self.Color_White, font=self.font_Title)
         Title.pack(padx=10, side=LEFT, anchor=W)        
         
-        self.fTop = Frame(self.frame, relief=RIDGE, border=0, width=460, height=240)        
+        self.fTop = Frame(self.fMain, relief=RIDGE, border=0, width=460, height=240)        
         self.fTop.pack(fill=X, expand=True, padx=10)
         self.fTop.pack_propagate(0) 
         
@@ -212,7 +159,7 @@ class displayLoadProject:
         fProjPath_L.pack(fill=X, expand=True, side=LEFT)
         fProjPath_L.pack_propagate(0)     
         
-        self.PathVal = Entry(fProjPath_R, textvariable=self.ProjectDir, background='white',
+        self.PathVal = Entry(fProjPath_R, textvariable=self.ProjectPath, background='white',
                              disabledbackground='white', disabledforeground='black')
         self.PathVal.pack(side=LEFT, anchor=N, padx=4, fill=X, expand=True)
         self.PathVal['font'] = self.font_Text
@@ -244,12 +191,12 @@ class displayLoadProject:
         '''                  --- BOTTOM FRAME OF THE INTERFACE ---                      '''
         #==================================================================================
         
-        fBottom = Frame(self.frame, relief=RIDGE, border=0, width=460, height=60)
+        fBottom = Frame(self.fMain, relief=RIDGE, border=0, width=460, height=60)
         
         # Messages Box
         fMsg = Frame(fBottom, border=1, width=440, height=50, relief=SUNKEN)        
 
-        self.TextMessage = Text(fMsg, width=440, height=5, background=self.Color_Gray, font=self.font_Text)
+        self.TextMessage = Text(fMsg, width=440, height=5, background=self.Color_Grey, font=self.font_Text)
         self.TextMessage.pack(side=LEFT, anchor=S)
         self.TextMessage.config(state='disabled')
 
@@ -258,41 +205,14 @@ class displayLoadProject:
 
         fBottom.pack(fill=X, expand=True, side=BOTTOM, anchor=S)
         fBottom.pack_propagate(0)        
-        
-    ''' ==================================================================================
-    FUNCTION LoadProjectIsRunning: Update or Create the Running File to BLOCK multiple GUI 
-    ==================================================================================  '''       
-    def LoadProjectIsRunning(self):
-        
-        #Create the .run file
-        RunPath = os.path.join(self.RunDir_Path,'.lrun')
-        RunFile = open(RunPath, 'w')
-        RunFile.write(str(os.getpid()))
-        RunFile.close()
-                
-    ''' ==================================================================================
-    FUNCTION Delete_RunFile: Delete the run file.
-    ==================================================================================  '''    
-    def Delete_RunFile(self):
-        
-        #Delete the .run file
-        RunPath = os.path.join(self.RunDir_Path,'.lrun')
-        if (os.path.isfile(RunPath)):
-            try:
-                os.remove(RunPath)
-            except OSError:
-                time.sleep(0.1)
-                os.remove(RunPath)
-                
+    
     ''' ==================================================================================
     FUNCTION Fill_Table: Insert the possible project in the list boxes.
     ==================================================================================  '''                
     def Fill_Table(self):
-        
-        Keys = self.dictProjectList.keys()
-        Keys.sort(reverse=True)
 
-        for key in Keys:
+        for key in reversed(sorted(self.dictProjectList.keys())):
+        
             self.Table.Add( [ self.dictProjectList[key][0], self.dictProjectList[key][1], self.dictProjectList[key][2] ], 
                             [ None, None, None ] )
         
@@ -301,15 +221,29 @@ class displayLoadProject:
     =================================================================================  '''    
     def Trace(self):
         
-        self.ProjectNameTrace = self.ProjectName.trace('w',self.ProjectName_Toggle)
-        self.ProjectDirTrace = self.ProjectDir.trace('w',self.ProjectDir_Toggle)
+        try:
+            self.ProjectNameTrace = self.ProjectName.trace('w',self.ProjectName_Toggle)
+            self.ProjectPathTrace = self.ProjectPath.trace('w',self.ProjectPath_Toggle)
+        except:
+            pass
 
     ''' ==================================================================================
-    FUNCTION ProjectDir_Toggle: Callback function when the path is changed
+    FUNCTION Del_Trace: Deletes the trace of some variables
+    ================================================================================== '''    
+    def Del_Trace(self):
+    
+        try:
+            self.ProjectName.trace_vdelete('w',self.ProjectNameTrace)
+            self.ProjectPath.trace_vdelete('w',self.ProjectPathTrace)
+        except:
+            pass
+        
+    ''' ==================================================================================
+    FUNCTION ProjectPath_Toggle: Callback function when the path is changed
     =================================================================================  '''    
-    def ProjectDir_Toggle(self, *args):
+    def ProjectPath_Toggle(self, *args):
 
-        if self.ProjectDir.get() != '':
+        if self.ProjectPath.get() != '':
             # Loadable project
             self.Btn_Load.config(state='normal')
         else:
@@ -329,91 +263,16 @@ class displayLoadProject:
         if self.ActualKey != '':
             self.ActualDirPath = self.dictProjectList[self.ActualKey][3]
             self.ActualFileName = self.dictProjectList[self.ActualKey][0]
-            self.ProjectDir.set(str(' ' + self.ActualDirPath))
-
-    ''' ==================================================================================
-    FUNCTION Get_Date: Return the actual date (mm/dd/yyyy - hh:mm:ss).
-    ==================================================================================  '''    
-    def Get_Date(self):
-            
-        timeNow = time.localtime()
-
-        Date = ''
-        
-        month = int(timeNow.tm_mon)
-        day = int(timeNow.tm_mday)
-        hour = int(timeNow.tm_hour)
-        minute = int(timeNow.tm_min)
-        second = int(timeNow.tm_sec)
-        
-        if month < 10:
-            Date += '0'
-            
-        Date += str(month) + '/'
-        
-        if day < 10:
-            Date += '0'
-            
-        Date += str(day) + '/' + str(timeNow.tm_year) + ' - '
-
-        if hour < 10:
-            Date += '0'
-            
-        Date += str(hour) + ':'
-        
-        if minute < 10:
-            Date += '0'
-            
-        Date += str(minute) + ':'
-            
-        if second < 10:
-            Date += '0'
-            
-        Date += str(second) 
-               
-        return Date
-    
-    ''' ==================================================================================
-    FUNCTION ValidateBaseDir: Create if didnt exist the based path directory.
-    ==================================================================================  '''            
-    def ValidateBaseDir(self):
-        
-        self.HomeDir = os.path.join(self.HomeDir,'Documents','NRGsuite')
-        
-        if not os.path.isdir(self.HomeDir):
-            os.makedirs(self.HomeDir)
-            
-        # Be sure the Default directory exist
-        Default = os.path.join(self.HomeDir,'Default')
-        if not os.path.isdir(Default):
-            os.makedirs(Default)       # ADD the Directory
-            
-            MainFilePath = os.path.join(self.HomeDir,'.proj')
-            UserFilePath = os.path.join(Default,'.proj')
-            Date = self.Get_Date()
-            Seconds = time.time()
-
-            LineToAdd = 'Name: Default Seconds: ' + str(Seconds) + ' LastUsed: ' + \
-                        Date + ' Creation: ' + Date + ' Path: ' + Default + '\n'
-
-            # Add the project path to the .proj file
-            ProjFileMain = open(MainFilePath, 'w')
-            ProjFileMain.write(LineToAdd)
-            ProjFileMain.close()
-
-            # Add the project path to the .proj file
-            ProjFileUser = open(UserFilePath, 'w')
-            ProjFileUser.write(LineToAdd)
-            ProjFileUser.close()
-            
+            self.ProjectPath.set(str(' ' + self.ActualDirPath))
+                
     ''' ==================================================================================
     FUNCTION Update_ProjectFile: Add the created project to the Project File list.
     ==================================================================================  '''            
     def Update_ProjectFile(self):
        
-        MainFilePath = os.path.join(self.HomeDir,'.proj')
+        MainFilePath = os.path.join(self.NRGsuite_Dir,'.proj')
         UserFilePath = os.path.join(self.ActualDirPath,'.proj')
-        Date = self.Get_Date()
+        Date = General.Get_Date()
         Seconds = time.time()
         
         # Add the project path to the .proj file
@@ -447,52 +306,50 @@ class displayLoadProject:
     FUNCTION Btn_Cancel_Clicked: Cancel the project creation then quit the application.
     ==================================================================================  '''        
     def Btn_Cancel_Clicked(self):
-        
-        print('   CANCELLED the loading of a Project...')
-        self.inThread.EnableMenu = False
-        self.inThread.StopThread = True
-        self.inThread.UserPath = ''
-        
-        self.Delete_RunFile()
-        
-        self.top.destroy()        
+                
+        self.Quit()
         
     ''' ==================================================================================
     FUNCTION Btn_Load_Clicked: Load a project then quit the application.
     ==================================================================================  '''        
     def Btn_Load_Clicked(self):
         
-        print('   Loaded the Project ' + self.ActualFileName)
-
         self.Update_ProjectFile()
         
-        self.inThread.EnableMenu = True
-        self.inThread.StopThread = True
-        self.inThread.UserPath = self.ActualDirPath
-        self.inThread.ProjectName = self.ActualFileName
+        self.top.Project_Dir = self.ActualDirPath
+        self.top.ProjectName = self.ActualFileName
         
-        self.Delete_RunFile()
+        self.Quit()
+
+        self.After_Quit()
+
+        print('  Successfully loaded the project \'' + self.ActualFileName + '\'')
+            
+    ''' ==================================================================================
+    FUNCTION After_Quit: Do some tasks after killing a frame
+    ==================================================================================  '''
+    def After_Quit(self):
         
-        self.top.destroy()
-        
+        NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal' ] )    
+
     ''' ==================================================================================
     FUNCTION Btn_Browse_Clicked: Browse to specify the directory to install the project.
     ==================================================================================  '''        
     def Btn_Browse_Clicked(self):
 
-        src = tkFileDialog.askdirectory(initialdir=self.HomeDir, title='Select a directory')
+        src = tkFileDialog.askdirectory(initialdir=self.NRGsuite_Dir, title='Select a directory')
 
         if len(src) > 0:
             if os.path.isdir(src):
                 self.ActualDirPath = src             
-                self.ProjectDir.set(self.NameSpacer + src)
+                self.ProjectPath.set(self.NameSpacer + src)
 
     ''' ==================================================================================
     FUNCTION LoadProjectList: Load the projects list from the .proj file.
     ==================================================================================  '''   
     def LoadProjectList(self):
             
-        MainFilePath = os.path.join(self.HomeDir,'.proj')
+        MainFilePath = os.path.join(self.NRGsuite_Dir,'.proj')
         
         if os.path.isfile(MainFilePath):
         
@@ -527,36 +384,3 @@ class displayLoadProject:
                     if os.path.isdir(Path):
                         self.dictProjectList[Seconds] = [ Name, LastUsed, Creation, Path ]
                                
-    ''' ==================================================================================
-    FUNCTION DisplayMessage: Display the message  
-    ==================================================================================  '''    
-    def DisplayMessage(self, msg, priority):
-        
-        NBCHARMAX = 45
-        self.TextMessage.config(state='normal')
- 
-        lineNo = '1'
-        insNo = lineNo + '.0'      
-
-        if msg != '':
-            # Verify if the message need to be split
-            NbChar = len(msg)
-
-            #self.TextMessage.config(font='red')
-            self.TextMessage.insert(INSERT, '\n' + msg)
-            
-            if priority == 1:
-                self.TextMessage.tag_add('warn', '0.0', '2.' + str(NbChar))
-                self.TextMessage.tag_config('warn', foreground='red')
-            elif priority == 2:
-                self.TextMessage.tag_add('notice', '0.0', '2.' + str(NbChar))
-                self.TextMessage.tag_config('notice', foreground='blue')   
-                
-            self.TextMessage.yview(INSERT)
-
-        else:
-            # Skip a line...
-            self.TextMessage.delete(1.0,END)   
-        
-        self.TextMessage.config(state='disabled')
-            
