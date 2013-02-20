@@ -150,9 +150,8 @@ class UpdateScreen():
 
             self.dictSimData[self.TOP+1].append(RMSD)
 
-
         except:
-            self.CriticalError("  ERROR: while updating data list")
+            self.CriticalError("Could not update data list")
             return 1
 
         return 0
@@ -174,7 +173,6 @@ class UpdateScreen():
             else:
                 selString = self.selSideChains + " or " + self.selLigand + " or " + self.selProtein                         
             #print selString
-
 
             # Create solution object
             # Object contains the whole protein-ligand complex
@@ -201,7 +199,7 @@ class UpdateScreen():
                 cmd.refresh()
 
         except:
-            self.CriticalError("  ERROR: while editing view")
+            self.CriticalError("Could not edit view")
             return 1
 
         return 0
@@ -221,7 +219,7 @@ class UpdateScreen():
             #print "writing to " + self.top.listTmpPDB[self.TOP+1]
             text_file = open(self.top.listTmpPDB[self.TOP+1], 'w')
             
-            for pdbLine in self.top.ReferenceFile:
+            for pdbLine in self.top.ReferenceLines:
                 
                 type = pdbLine[0:6].strip()
                 if type == 'HETATM' or type == 'ATOM':
@@ -247,7 +245,7 @@ class UpdateScreen():
             text_file.close()                               
 
         except IOError:
-            self.CriticalError("  ERROR: while writing PDB ligand file.")
+            self.CriticalError("Could not write PDB ligand file.")
             return 1
 
         return 0
@@ -316,7 +314,7 @@ class UpdateScreen():
                                     # SET the 2nd ATOM Dihedral Angle...
                                     self.top.DisAngDih[int(ATflex_B)][2] = ColValue
         except:
-            self.CriticalError("  ERROR: while updating ligand flexibility")
+            self.CriticalError("Could not update ligand flexibility")
             return 1
 
         return 0
@@ -354,7 +352,7 @@ class UpdateScreen():
                 self.colNo += 33
 
         except:
-            self.CriticalError("  ERROR: while updating ligand anchor point")
+            self.CriticalError(" Could not update ligand anchor point")
             return 1
 
         return 0
@@ -433,7 +431,7 @@ class UpdateScreen():
 
         except:
 
-            self.CriticalError("  ERROR: while updating side-chain conformations")
+            self.CriticalError("Could not update side-chain conformations")
     
     '''=========================================================================
       Get_AtomString: Retrives the PyMOL atom selection string
@@ -454,7 +452,7 @@ class UpdateScreen():
     ========================================================================='''
     def CriticalError(self, text):
 
-        self.top.FlexAID.DisplayMessage("  CRITICAL ERROR: " + text, 1)
+        print("  CRITICAL ERROR: " + text)
     
         #Create the .abort file
         abort_file = open(self.top.top.Manage.ABORT, 'w')

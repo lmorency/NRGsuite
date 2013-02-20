@@ -21,12 +21,14 @@ from Tkinter import *
 
 import os
 import re
+import glob
+import Queue
+
 import MultiList
 import General
 import Color
 import ManageFiles
 import Result
-import glob
 import Vars
 import Tabs 
 
@@ -50,6 +52,9 @@ class SimulateVars(Vars.Vars):
 
 class Simulate(Tabs.Tab):
 
+    # in milliseconds
+    TKINTER_UPDATE_INTERVAL = 100
+    
     def Def_Vars(self):
         
         self.SimStatus = StringVar()
@@ -63,7 +68,9 @@ class Simulate(Tabs.Tab):
     def Init_Vars(self):
 
         self.Manage = ManageFiles.Manage(self)
+        
         self.ProcessError = False
+        self.ProcessParsing = False
 
         self.ProgBarText.set('... / ...')
         self.SimDefDisplay.set('sticks')
@@ -73,7 +80,7 @@ class Simulate(Tabs.Tab):
         self.BarHeight = 0
 
         self.dictSimData = {}
-
+        
     ''' ==================================================================================
     FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
@@ -81,7 +88,7 @@ class Simulate(Tabs.Tab):
 
         self.IdleStatus()
         self.Reset_Buttons()
-
+    
     ''' =============================================================================== 
     FUNCTION Frame: Generate the CSimulation frame in the the middle frame 
                     section.
@@ -212,12 +219,18 @@ class Simulate(Tabs.Tab):
 
                 
         self.DisplayMessage('   Will create input files...', 2)
+        self.DisplayMessage('   CONFIG.inp file...', 2)
         self.Manage.Create_CONFIG()
-
-        self.DisplayMessage('   CONFIG.inp file created.', 2)
+        self.DisplayMessage('   ga_inp.dat file...', 2)
         self.Manage.Create_ga_inp()
-        self.DisplayMessage('   ga_inp.dat file created.', 2)
-        self.Manage.Modify_Input()
+        
+        self.DisplayMessage('   Savinga and modifying input files...', 2)
+        #self.Manage.Modify_Input()
+        self.Manage.CreateTempPDB()
+        self.Manage.Get_CoordRef()
+        self.Manage.Get_VarAtoms()
+        self.Manage.Get_DisAngDih()
+        self.Manage.Get_RecAtom()
 
         self.DisplayMessage('   RESULT file(s) will be saved in: ', 0)
         self.DisplayMessage(self.Manage.FlexAIDRunSimulationProject_Dir, 0)
@@ -228,6 +241,10 @@ class Simulate(Tabs.Tab):
         self.Btn_Stop.config(state='normal')
         self.Btn_Abort.config(state='normal')
 
+        self.ColorList = Color.GetHeatColorList(int(self.top.GAParam.NbTopChrom.get()), True)
+        self.PymolColorList = Color.GetHeatColorList(int(self.top.GAParam.NbTopChrom.get()), False)
+        self.Init_Table()
+        
         # START FLEXAID AS THREAD
         commandline =   '"%s" "%s" "%s" "%s"' % (   self.top.FlexAIDExecutable,
                                                     self.Manage.CONFIG,
@@ -237,16 +254,18 @@ class Simulate(Tabs.Tab):
         self.Results = True
         
         # START SIMULATION
-        self.DisplayMessage('   Starting executable thread.', 2)
+        self.DisplayMessage('  Starting executable thread.', 2)
         self.Start = Simulation.Start(self, commandline)
-        
+
+        # Stacking up tasks related to updating Tkinter
+        self.queue = Queue.Queue()
+
         # START PARSING AS THREAD
-        self.DisplayMessage('   Starting parsing thread.', 2)
-        #self.Parse = Simulation.Parse(self)
-        self.Parse = Simulation.Parse2(self)
+        self.DisplayMessage('  Starting parsing thread.', 2)
+        self.Parse = Simulation.Parse(self, self.queue)
         
-        #self.DisplayMessage("  *** For better performance you can disable object BINDINGSITE_AREA__", 0)
-    
+        self.Update_Tkinter()
+        
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
     ==================================================================================  '''  
@@ -274,7 +293,7 @@ class Simulate(Tabs.Tab):
     ===============================================================================  '''     
     def IdleStatus(self):
 
-        self.lblSimStatus.config(fg="white")
+        self.lblSimStatus.config(fg='white')
         self.SimStatus.set('Idle.')
 
     ''' =============================================================================== 
@@ -282,9 +301,8 @@ class Simulate(Tabs.Tab):
     ===============================================================================  '''     
     def InitStatus(self):
 
-        pass
-        #self.lblSimStatus.config(fg="cyan")
-        #self.SimStatus.set('Initializing...')
+        self.lblSimStatus.config(fg='cyan')
+        self.SimStatus.set('Initializing...')
 
     ''' =============================================================================== 
     FUNCTION RunStatus: Signal given to parse genetic algorithm
@@ -346,17 +364,14 @@ class Simulate(Tabs.Tab):
     FUNCTION Init_Table: Initialisation the dictionary that contain the energy 
                                                  and fitness for each solution.
     ==================================================================================  '''                
-    def Init_Table(self, nbChrom):
+    def Init_Table(self):
         
         self.dictSimData.clear()
-        
-        self.ColorList = Color.GetHeatColorList(nbChrom, True)
-        self.PymolColorList = Color.GetHeatColorList(nbChrom, False)
-        
+                
         # Empty table list
         self.Table.Clear()
         
-        for key in range(1, nbChrom + 1):
+        for key in range(1, len(self.ColorList) + 1):
             self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ], 
                             [ self.ColorList[key-1], None, None, None, None ] )
         
@@ -388,7 +403,7 @@ class Simulate(Tabs.Tab):
     FUNCTION Reset_Buttons(self): resets button states back to defaults
     ===============================================================================  '''        
     def Reset_Buttons(self):
-    
+        
         self.Btn_Start.config(state='normal')
         self.Btn_PauseResume.config(state='disabled')
         self.Btn_Stop.config(state='disabled')
@@ -515,8 +530,7 @@ class Simulate(Tabs.Tab):
         self.Refresh_CartoonDisplay()
         
     ''' ==================================================================================
-    FUNCTION Click_RadioSIM: Change the way the ligand is displayed in Pymol
-                             during a Simulation
+    FUNCTION Click_RadioSIM: Change the way the ligand is displayed during a Simulation
     ==================================================================================  '''               
     def Click_RadioSIM(self, *args):
         
@@ -542,8 +556,8 @@ class Simulate(Tabs.Tab):
                 cmd.refresh()
 
             except:
-                self.DisplayMessage("  ERROR: Could not find object to modify", 1)
-        
+                pass
+            
         elif self.SimDefDisplay.get() == 'sticks':
             try:
                 cmd.hide('spheres', 'TOP_*__ & resn LIG')
@@ -557,8 +571,9 @@ class Simulate(Tabs.Tab):
 
                 cmd.show('sticks', 'RESULT_*__ & resn LIG')
                 cmd.refresh()
+                
             except:
-                self.DisplayMessage("  ERROR: Could not find object to modify", 1)
+                pass
 
     ''' ==================================================================================
     FUNCTION Check_CartoonSIM: Change the protein display adding or removing the cartoon
@@ -580,8 +595,10 @@ class Simulate(Tabs.Tab):
 
                 cmd.show('cartoon', 'RESULT_*__ & ! resn LIG')
                 cmd.refresh()
+                
             except:
-                self.DisplayMessage("  ERROR: Could not find object to modify", 1)
+                pass
+            
         else:   
             # Remove the Cartoon
             try:
@@ -591,8 +608,7 @@ class Simulate(Tabs.Tab):
                 cmd.hide('cartoon', 'RESULT_*__ & ! resn LIG')
                 cmd.refresh()
             except:
-                self.DisplayMessage("  ERROR: Could not find object to modify", 1)
-                
+                pass                
 
     '''
     @summary: SUBROUTINE progressBarHandler: Update the progression bar in the interface                  
@@ -616,12 +632,40 @@ class Simulate(Tabs.Tab):
 
             self.ProgressBar.coords(self.RectPB, 0, 0, barValue, self.BarHeight)
             self.ProgressBar.itemconfigure(self.TextPB, text=text)
-            #self.ProgressBar.update_idletasks()
 
         except:
             pass
 
         return
+
+    ''' ==================================================================================
+    FUNCTION Update_Tkinter: update the tkinter interface (tasks queued from the worker)
+    ==================================================================================  '''               
+    def Update_Tkinter(self):
+        
+        # Check every 100 ms if there is something new in the queue.
+        while self.queue.qsize():
+            try:
+                func = self.queue.get()
+                func()
+            except Queue.Empty:
+                pass
+        
+        if self.top.ProcessRunning or self.ProcessParsing:
+            self.top.root.after(self.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
+            
+        else:
+            self.Load_Results()
+            
+            self.ColorList = Color.GetHeatColorList(self.Manage.NUMBER_RESULTS, True)
+            self.PymolColorList = Color.GetHeatColorList(self.Manage.NUMBER_RESULTS, False)
+            self.Init_Table()
+            
+            self.update_DataResults()
+            self.Show_Results()
+            self.update_DataList()
+
+            self.Reset_Buttons()
 
     ''' ==================================================================================
     FUNCTION Load_Message: Display the message based on the menu selected

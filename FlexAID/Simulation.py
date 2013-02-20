@@ -46,7 +46,7 @@ import UpdateScreen
 # Start the simulation with FlexAID
 class Start(threading.Thread):
 
-    def __init__(self, top,commandline):
+    def __init__(self, top, commandline):
 
         #print "New instance of Start Class"
 
@@ -59,16 +59,14 @@ class Start(threading.Thread):
         self.FlexAID = self.top.top
 
         self.top.ProcessError = False
+        self.FlexAID.ProcessRunning = True
+
         self.start()
 
     # Start FlexAID on a side thread
     def run(self):        
         
-        #print "FlexAID starting thread has begun."
-        
-        #print("Process list", [psutil.Process(i).name for i in psutil.get_pid_list()])
-
-        self.FlexAID.ProcessRunning = True
+        print("FlexAID starting thread has begun.")
  
         try:
             logfile = open(self.top.Manage.LOGFILE, "w")
@@ -82,105 +80,104 @@ class Start(threading.Thread):
             
             if self.FlexAID.Run.returncode != 0:
                 self.top.ProcessError = True
-
-            self.FlexAID.Run = None
-            self.FlexAID.ProcessRunning = False
- 
-        except:
-
-            self.top.DisplayMessage('   Fatal error: Could not run the executable FlexAID', 1)
-            self.top.DisplayMessage('   Make sure you downloaded NRGsuite for the right platform', 1)
+                        
+        except IOError:
+            print('  FATAL ERROR: Could not open logfile for FlexAID.')
             self.top.ProcessError = True
+            
+        except:
+            print('  FATAL ERROR: Could not run the executable FlexAID.')
+            print('  Make sure you downloaded NRGsuite for the right platform.')
+            self.top.ProcessError = True
+            
+        else:
+            logfile.close()
+        
+        self.FlexAID.Run = None
+        self.FlexAID.ProcessRunning = False
 
         print("FlexAID starting thread has ended.")
-        
-class Parse2(threading.Thread):
-    def __init__(self, top):
-        threading.Thread.__init__(self)
-        self.top = top
-        self.start()
-
-    def run(self):
-        self.top.InitStatus()
         
 
 class Parse(threading.Thread):
 #class Parse:
+    
+    # 100 msec
+    INTERVAL = 0.10
+    
+    # 1 minute timeout
+    TIMEOUT = INTERVAL * 600
 
-    def __init__(self, top):
+    def __init__(self, top, queue):
+        
         threading.Thread.__init__(self)
         
         #print "New instance of Parse Class"
 
         self.top = top
         self.FlexAID = self.top.top
+        self.queue = queue
 
-        self.FlexStatus = self.FlexAID.Config2.FlexStatus.get()
-        self.OSid = self.FlexAID.OSid
-        self.BindingSiteDisplay = self.FlexAID.Config1.BindingSiteDisplay
-                
-        self.NbTopChrom = int(self.FlexAID.GAParam.NbTopChrom.get())
-        
-        self.dictFlexBonds = self.FlexAID.Config2.Vars.dictFlexBonds
-
-        self.RngOpt = self.FlexAID.Config1.RngOpt.get()  # Possibility: GLOBAL, LOCCEN, LOCCLF
-        
-        self.NbTotalGen = int(self.FlexAID.GAParam.NbGen.get())
-        self.DefaultDisplay = self.top.SimDefDisplay.get()
-        
         self.READ = self.top.Manage.READ
         self.UPDATE = self.top.Manage.UPDATE
         self.LOGFILE = self.top.Manage.LOGFILE
         self.LOGFILETMP = self.top.Manage.LOGFILETMP
+        self.ParseFile = self.LOGFILE
 
-        self.Generation = -1
-        self.Best = ''
-        self.TOP = -1
-        self.GridVertex = {}
+        self.ReferencePath = self.FlexAID.IOFile.ReferencePath.get()
+        self.listSideChain = self.FlexAID.Config1.Vars.TargetFlex.listSideChain
+        self.BindingSiteDisplay = self.FlexAID.Config1.BindingSiteDisplay
+                
+        self.FlexStatus = self.FlexAID.Config2.FlexStatus.get()
+        self.dictFlexBonds = self.FlexAID.Config2.Vars.dictFlexBonds
+        self.RngOpt = self.FlexAID.Config1.RngOpt.get()
+        self.NbTotalGen = int(self.FlexAID.GAParam.NbGen.get())
+        self.DefaultDisplay = self.top.SimDefDisplay.get()
 
         self.Translation = self.FlexAID.Config2.IntTranslation.get()
         self.Rotation = self.FlexAID.Config2.IntRotation.get()
+
+        self.NbGen = ' / ' + str(self.FlexAID.GAParam.NbGen.get())
+        self.FloatNbGen = float(self.FlexAID.GAParam.NbGen.get())        
+        self.NbGenFreq = int(self.FlexAID.GAParam.NbGenFreq.get())      # Draw every XX generation
+        self.NbTopChrom = int(self.FlexAID.GAParam.NbTopChrom.get())    # Number of Lines READ per Generation
+
+        self.Error = False
+        self.ErrorMsg = '*FlexAID ERROR: An unexpected error occured.'
+            
+        self.Generation = -1
+        self.Best = ''
+        self.TOP = -1
         
-        self.State = 0
+        self.State = 1
         self.CurrentState = 0
 
-        self.PrevTextValue = 0
-        self.StrCount = '   0'
-        self.NbGen = ' / ' + str(self.FlexAID.GAParam.NbGen.get())
-        self.FloatNbGen = float(self.FlexAID.GAParam.NbGen.get())
+        self.Ori =  [ 0.0, 0.0, 0.0 ]    # Origin coordinate
+        self.OriX = [ 0.0, 0.0, 0.0 ]   # Origin coordinate with X+1
+        self.OriY = [ 0.0, 0.0, 0.0 ]   # Origin coordinate with Y+1
+
         self.ParseGA = False
-        self.FixedAngle = {}
 
-        self.ReferencePath = self.FlexAID.IOFile.ReferencePath.get()
-
-        self.listSideChain = self.FlexAID.Config1.Vars.TargetFlex.listSideChain
-        self.dictSideChainNRot = {}
-        self.dictSideChainRotamers = {}
-
+        self.nRead = dict()
+        self.ListAtom = list()
+        self.dictSideChainNRot = dict()
+        self.dictSideChainRotamers = dict()
+        self.GridVertex = dict()
+        self.FixedAngle = dict()
+        
+        # References
         self.dictSimData = self.top.dictSimData
 
-        self.NbGenFreq = int(self.FlexAID.GAParam.NbGenFreq.get())     # Draw every XX generation        
-        self.NbTopChrom = int(self.FlexAID.GAParam.NbTopChrom.get())    # Number of Lines READ per Generation        
+        self.ReferenceLines = self.top.Manage.ReferenceLines
+        self.VarAtoms = self.top.Manage.VarAtoms
+        self.RecAtom = self.top.Manage.RecAtom
+        self.DisAngDih = self.top.Manage.DisAngDih
+        self.dictCoordRef = self.top.Manage.dictCoordRef
+        self.listTmpPDB = self.top.Manage.listTmpPDB
 
-        self.listTmpPDB = list()
-        self.dictCoordRef = dict()
-
-        self.CreateTempPDB(self.FlexAID.FlexAIDSimulationProject_Dir)
-
-        #Creation of the dictionaries
-        self.RecAtom = self.dictRecAtom(self.top.Manage.INPFlexAIDRunSimulationProject_Dir)        # 3 Neighbors that lead to the middle atoms
-        self.DisAngDih = self.dictDisAngDih(self.top.Manage.ICFlexAIDRunSimulationProject_Dir)     # Distance, Angle, Dihedral angle
-
-        self.Ori = [0.0, 0.0, 0.0]    # Origin coordinate
-        self.OriX = [0.0, 0.0, 0.0]   # Origin coordinate with X+1
-        self.OriY = [0.0, 0.0, 0.0]   # Origin coordinate with Y+1
-        
-        self.ListAtom = []           # List of the atoms of the ligand
-
-        # In order, atoms that need their values to be modified
-        self.VarAtoms = self.getVarAtoms(self.top.Manage.INPFlexAIDRunSimulationProject_Dir)    # 1st = 3 positions, 2nd = 2 positions, 3rd = 1 position
-        
-        #time.sleep(1)
+        self.nbAtoms = len(self.DisAngDih)
+                
+        self.top.ProcessParsing = True
 
         self.start()
         
@@ -188,82 +185,47 @@ class Parse(threading.Thread):
     @summary: SUBROUTINE run: Start the simulation
     '''    
     def run(self):
-    #def start(self):
         
-        #print "FlexAID parsing thread has begun."
-
-        # 100 msec
-        INTERVAL = 0.10
-        # 1 minute timeout
-        TIMEOUT = INTERVAL * 600
-
-        # Number of ligand atoms
-        nbAtoms = len(self.DisAngDih)
-
-        # Always print docking results in frame range (1...Xn)
-        self.State = 1
-
-        try:
-            file = open(self.ReferencePath,'r')
-            self.ReferenceFile = file.readlines()
-            file.close()
-
-            if self.FlexAID.Config2.UseReference.get():
-                self.dictCoordRef = self.Get_CoordRef()
-
-        except:
-            self.top.DisplayMessage("Could not read ligand PDB File",1)
-            return
-        
-        self.top.progressBarHandler(0,self.NbTotalGen)
-        self.top.Init_Table(self.NbTopChrom)
+        print("FlexAID parsing thread has begun.")
 
         # Set the auto_zoom to off
         cmd.set("auto_zoom", 0)
-
         cmd.delete("TOP_*__")
         cmd.delete("RESULT_*")
-
         cmd.refresh()
-
         cmd.frame(1)
-
-        self.top.InitStatus()
-
-        self.Error = False
-        self.ErrorMsg = '*FlexAID ERROR: An unexpected error occured.'
         
-        self.ParseFile = self.LOGFILE
-    
-        nRead = {}
+        self.queue.put(lambda: self.top.InitStatus())
+        self.queue.put(lambda: self.top.progressBarHandler(0, self.NbTotalGen))
         
         while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
-
-            time.sleep(INTERVAL)
+            
+            time.sleep(self.INTERVAL)
             
             # Once copied cannot go change file (safe-protection)
             ParseFile = self.ParseFile 
             
             if self.top.SimStatus.get() == 'Paused.':
                 continue
-            
-            elif self.CopyRead(ParseFile, INTERVAL, TIMEOUT):
+                
+            elif self.CopyRead(ParseFile):
                 self.Error = True
                 self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files.'
                 break
                 
-            if nRead.get(ParseFile):
+            if self.nRead.get(ParseFile):
                 # Resume a file that was not read completely
-                self.Lines = self.Lines[nRead[ParseFile]:]
+                self.Lines = self.Lines[self.nRead[ParseFile]:]
             else:
-                nRead[ParseFile] = 0
+                self.nRead[ParseFile] = 0
+            
             
             for Line in self.Lines:
                 
                 # check line completion
                 m = re.search('\n', Line)
                 if m:
-                    nRead[ParseFile] = nRead[ParseFile] + 1
+                    self.nRead[ParseFile] = self.nRead[ParseFile] + 1
                 else:
                     # EOF signal - will resume from here next time
                     break
@@ -316,12 +278,12 @@ class Parse(threading.Thread):
                             #print Line
                             Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
                                                                 self.Translation, self.Rotation )
-
+                            
                             if (self.TOP+1) == self.NbTopChrom:
                                 self.State = self.CurrentState
 
                                 # Update energy/fitness table
-                                self.top.update_DataList()
+                                self.queue.put(lambda: self.top.update_DataList())
 
                                 self.top.Refresh_LigDisplay()
                                 self.top.Refresh_CartoonDisplay()
@@ -329,13 +291,13 @@ class Parse(threading.Thread):
                         # Ready to read another file
                         if (self.TOP+1) == self.NbTopChrom:
                         
-                            nRead[ParseFile] = 0
+                            self.nRead[ParseFile] = 0
                                 
                             if self.Generation == self.NbTotalGen:
                                 self.ParseFile = self.LOGFILE
                                 
                             else:
-                                if self.Remove_UPDATE(INTERVAL, TIMEOUT):
+                                if self.Remove_UPDATE():
                                     self.Error = True
                                     self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temp files.'
                                     break
@@ -351,8 +313,7 @@ class Parse(threading.Thread):
                     self.CurrentState = self.State + 1
 
                     #print "will update progressbar"
-                    # ProgressionBar Handler
-                    self.top.progressBarHandler(self.Generation, self.NbTotalGen)
+                    self.queue.put(lambda: self.top.progressBarHandler(self.Generation, self.NbTotalGen))
 
                     continue
 
@@ -367,7 +328,7 @@ class Parse(threading.Thread):
                 m = re.match("clustering all individuals", Line)
                 if m:
                     #print Line
-                    self.top.ClusterStatus()
+                    self.queue.put(lambda: self.top.ClusterStatus())
 
                     continue
 
@@ -378,9 +339,7 @@ class Parse(threading.Thread):
                     continue
 
                 m = re.match("Done.", Line)
-                if m:                        
-                    self.Error = False
-                    
+                if m:                    
                     continue
 
                 m = re.match("shiftval=", Line)
@@ -396,7 +355,7 @@ class Parse(threading.Thread):
                 m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
                 if m:                        
                     self.ListAtom.append(int(m.group(1)))
-                    if len(self.ListAtom) == nbAtoms:
+                    if len(self.ListAtom) == self.nbAtoms:
                         # Order the FLEDIH based on the atoms occurences
                         self.OrderFledih()
                 
@@ -421,8 +380,8 @@ class Parse(threading.Thread):
                 m = re.match("SIGMA_SHARE", Line)
                 if m:                            
                     # send ready to simulate signal  
-                    self.top.DisplayMessage("  Signal sent to start simulation", 2)
-                    self.top.RunStatus()
+                    print('  Signal sent to start simulation')
+                    self.queue.put(lambda: self.top.RunStatus())
 
                     #self.ParseGA = True
                     self.ParseFile = self.UPDATE
@@ -444,49 +403,23 @@ class Parse(threading.Thread):
 
             if self.Error:
                 break
-            
-        # Simulation might have been shut down by closing main frame
-        try:
-            if self.top.ProcessError or self.Error:
-                self.top.ErrorStatus(self.ErrorMsg)
-            else:
-                self.top.SuccessStatus()
-                self.top.Load_Results()
-                
-                self.top.Init_Table(self.top.Manage.NUMBER_RESULTS)
-                self.top.update_DataResults()
-                self.top.update_DataList()
-                
-                self.top.Show_Results()
-
-            print("FlexAID parsing thread has ended.")
-
-            self.FlexAID.ProcessRunning = False
-
-            # Empty rotamers data
-            self.dictSideChainNRot.clear()
-            self.dictSideChainRotamers.clear()
-
-            # Re-enable buttons
-            self.top.Btn_Start.config(state='normal') 
-            self.top.Btn_PauseResume.config(state='disabled')
-            self.top.Btn_Stop.config(state='disabled')
-            self.top.Btn_Abort.config(state='disabled')
-
-            self.top.Display_Results()
-        except:
-            pass
-
+        
+        if self.top.ProcessError or self.Error:
+            self.queue.put(lambda: self.top.ErrorStatus(self.ErrorMsg))
+        else:
+            self.queue.put(lambda: self.top.SuccessStatus())
+        
         # Put back the auto_zoom to on
         cmd.set("auto_zoom", -1)
         cmd.disable("TOP_*__")
         cmd.refresh()
-
         cmd.enable("RESULT_*")
         cmd.refresh()
-
         cmd.frame(1)
 
+        self.top.ProcessParsing = False
+
+        print("FlexAID parsing thread has ended.")
 
     '''
     @summary: SUBROUTINE OrderFledih: Order the FLEDIH atoms number based on
@@ -560,117 +493,14 @@ class Parse(threading.Thread):
         self.dictSideChainNRot[words[2]] += 1
         
         #print "%s now has %d rotamer(s)" % (words[2], self.dictSideChainNRot[words[2]])
-            
-    '''
-    @summary: SUBROUTINE getVarAtoms: Get the atoms that need their values to be modified                  
-    @return: listAtVar - list
-    '''
-    def getVarAtoms(self, inpPath):
-        
-        NoAtom3 = 0
-        NoAtom2 = 0
-        NoAtom1 = 0
-
-        file = open(inpPath)
-        inpFile = file.readlines()
-        file.close()
-        
-        # Creation of a dictionary containing the 3 neighbors of each atoms
-        for line in inpFile:
-            if line.startswith('HETTYP'):
-                noAtom = int(line[7:11])
-                if int(line[32:36]) == 0:
-                    if int(line[27:31]) == 0:
-                        if int(line[22:26]) == 0:
-                            NoAtom3 = noAtom
-                        else:
-                            NoAtom2 = noAtom
-                    else:
-                        NoAtom1 = noAtom
-                        
-                
-        return [NoAtom3, NoAtom2, NoAtom1]
     
-
-    '''
-    @summary: SUBROUTINE Get_CoordRef: Get the list of initial coordinates of the reference
-    '''
-    def Get_CoordRef(self):
-
-        dictCoordRef = {}
-
-        for Line in self.ReferenceFile:
-            
-            if Line.startswith('HETATM'):
-                index = int(Line[6:11].strip())
-                CoordX = float(Line[30:38].strip())
-                CoordY = float(Line[38:46].strip())
-                CoordZ = float(Line[46:54].strip())
-
-                dictCoordRef[index] = [ CoordX, CoordY, CoordZ ]
-
-        return dictCoordRef
-    
-    '''
-    @summary: SUBROUTINE dictRecAtom: Create a dictionary containing the neighbors of
-              each atoms for the reconstruction.                  
-    @param inpPath: Path to the inp file
-    @return: RecAtom - dictionary
-    '''
-    def dictRecAtom(self, inpPath):
-        RecAtom = {}
-
-        file = open(inpPath)
-        inpFile = file.readlines()
-        file.close()
-        
-        # Creation of a dictionary containing the 3 neighbors of each atoms
-        for line in inpFile:
-            if line.startswith('HETTYP'):
-                noLine = int(line[7:11])
-                RecAtom[noLine] = [int(line[22:26]), int(line[27:31]), int(line[32:36])]
-                
-        return RecAtom
-
-    '''
-    @summary: SUBROUTINE dictRecAtom: Create a dictionary containing the neighbors of
-              each atoms.                  
-    @param icPath: Path to the ic file
-    @return: DisAngDih - dictionary
-    '''
-    def dictDisAngDih(self, icPath):
-
-        DisAngDih = {}        
-                
-        file = open(icPath)
-        icFile = file.readlines()
-        file.close()
-        
-        # Creation of a dictionary containing the 3 neighbors of each atoms
-        for line in icFile:
-            if line[0:6] != 'REFPCG':
-                noLine = int(line[1:5])
-                DisAngDih[noLine] = [float(line[7:15]), float(line[16:24]), float(line[25:33])]
-                    
-        return DisAngDih
-    
-    '''
-    @summary: SUBROUTINE CreateTempPDB: Create X copy of the ligand PDB file                  
-    '''   
-    def CreateTempPDB(self, Path):
-        
-        # Create the custom path for the temporary pdb files
-        for i in range (self.NbTopChrom + 1):
-            self.listTmpPDB.append(os.path.join(Path,'LIG' + str(i) + '.pdb'))
-            #print Path + "/LIG" + str(i) + '.pdb'
-
     '''
     @summary: SUBROUTINE: Remove_UPDATE: Tries to remove the .update to be able to generate another one
     '''   
-    def Remove_UPDATE(self, INTERVAL, TIMEOUT):
+    def Remove_UPDATE(self):
     
         TIME = 0
-        while TIME < TIMEOUT:
+        while TIME < self.TIMEOUT:
             try:
                 os.remove(self.UPDATE)
                 break
@@ -678,11 +508,11 @@ class Parse(threading.Thread):
             except OSError:
                 pass
             
-            time.sleep(INTERVAL)
+            time.sleep(self.INTERVAL)
 
-            TIME = TIME + INTERVAL
+            TIME = TIME + self.INTERVAL
             
-        if TIME >= TIMEOUT:
+        if TIME >= self.TIMEOUT:
             return 1
             
         return 0
@@ -690,10 +520,10 @@ class Parse(threading.Thread):
     '''
     @summary: SUBROUTINE: CopyRead_UPDATE: Tries to copy then read the .read (log.txt OR .update) file
     '''   
-    def CopyRead(self, ParseFile, INTERVAL, TIMEOUT):
+    def CopyRead(self, ParseFile):
     
         TIME = 0
-        while TIME < TIMEOUT:
+        while TIME < self.TIMEOUT:
             
             try:
                 shutil.copy(ParseFile, self.READ)
@@ -709,11 +539,11 @@ class Parse(threading.Thread):
             except IOError:
                 pass
             
-            time.sleep(INTERVAL)
+            time.sleep(self.INTERVAL)
 
-            TIME = TIME + INTERVAL
+            TIME = TIME + self.INTERVAL
             
-        if TIME >= TIMEOUT:
+        if TIME >= self.TIMEOUT:
             return 1
             
         return 0

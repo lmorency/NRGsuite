@@ -33,7 +33,7 @@ from Tkinter import *
 import General
 
 class Smiles:
-
+    
     def __init__(self, top, SmilesString):
     
         self.top = top

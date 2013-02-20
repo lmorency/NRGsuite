@@ -134,7 +134,7 @@ class Config2(Tabs.Tab):
                 Status = ' (' + str(self.top.WizardResult) + ') flexible bond(s) set'
                 
             self.FlexStatus.set(Status)
-
+    
     ''' ==================================================================================
     FUNCTION SAT_Toggle: Enables wizard to set atom types
     =================================================================================  '''    
@@ -160,7 +160,7 @@ class Config2(Tabs.Tab):
             self.Disable_Frame()
         else:
             self.Enable_Frame()
-
+    
     ''' ==================================================================================
     FUNCTION AddEditDel_Constraint: Opens the Constraint Wizard.
     =================================================================================  '''    

@@ -33,7 +33,7 @@ class Manage:
 
     NUMBER_RESULTS = 10
 
-    def __init__(self,top):
+    def __init__(self, top):
         
         #print("New instance of Manage Class")
         self.top = top
@@ -73,6 +73,12 @@ class Manage:
         self.CONFIG = os.path.join(self.FlexAIDRunSimulationProject_Dir,'CONFIG.inp')
         self.ga_inp = os.path.join(self.FlexAIDRunSimulationProject_Dir,'ga_inp.dat')
 
+        self.VarAtoms = list()
+        self.listTmpPDB = list()
+        self.RecAtom = dict()
+        self.DisAngDih = dict()
+        self.dictCoordRef = dict()
+        
     ''' ==============================================================================
     @summary: Create_Folders: Creation AND/OR copy of the required files  
     ============================================================================== '''          
@@ -211,7 +217,7 @@ class Manage:
         
         if self.Config2.UseReference.get():
             config_file.write('RMSDST ' + self.IOFile.ReferencePath.get() + '\n')
-
+        
         # Ligand flexibility
         order = sorted(self.Config2.Vars.dictFlexBonds.keys())
         self.Add_FlexBonds(config_file,order)
@@ -306,7 +312,7 @@ class Manage:
         gaInp_file.write('OUTGENER 1\n')
 
         gaInp_file.close()
-        
+    
     ''' ==================================================================================
     FUNCTION Create_FlexFile: Create the Flex file list that contain the residue selected 
                               for the Flexible Side Chain.
@@ -414,18 +420,134 @@ class Manage:
     def Modify_Input(self):
 
         # Store file content
-        inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'r')
-        lines = inpFile.readlines()
-        inpFile.close()
+        try:
+            inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'r')
+            lines = inpFile.readlines()
+            inpFile.close()
 
-        # Re-write file
-        inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'w')
-        for line in lines:
+            # Re-write file
+            inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'w')
+            for line in lines:
+                if line.startswith('HETTYP'):
+                    index = line[6:11].strip()
+                    newline = line[:11] + self.Config2.Vars.dictAtomTypes[index][1].rjust(2, ' ') +  line[13:]
+                    inpFile.write(newline)
+                else:
+                    inpFile.write(line)
+
+            inpFile.close()
+            
+        except:
+            return 1
+            
+        return 0
+        
+    ''' ==================================================================================
+    FUNCTION Get_CoordRef: Get the list of initial coordinates of the reference
+    ==================================================================================  '''          
+    def Get_CoordRef(self):
+
+        self.dictCoordRef.clear()
+
+        try:
+            file = open(self.IOFile.ReferencePath.get(),'r')
+            self.ReferenceLines = file.readlines()
+            file.close()
+
+            for Line in self.ReferenceLines:
+                
+                if Line.startswith('HETATM'):
+                    index = int(Line[6:11].strip())
+                    CoordX = float(Line[30:38].strip())
+                    CoordY = float(Line[38:46].strip())
+                    CoordZ = float(Line[46:54].strip())
+
+                    self.dictCoordRef[index] = [ CoordX, CoordY, CoordZ ]
+                    
+        except:
+            return 1
+            
+        return 0
+        
+    ''' ==================================================================================
+    FUNCTION CreateTempPDB: Create X copy of the ligand PDB file
+    ==================================================================================  '''          
+    def CreateTempPDB(self):
+        
+        # Create the custom path for the temporary pdb files
+        for i in range (int(self.GAParam.NbTopChrom.get()) + 1):
+            self.listTmpPDB.append(os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG' + str(i) + '.pdb'))
+    
+    ''' ==================================================================================
+    FUNCTION Get_RecAtom: Create a dictionary containing the atoms neighbours
+    ==================================================================================  '''
+    def Get_RecAtom(self):
+    
+        self.RecAtom.clear()
+
+        try:
+            file = open(self.INPFlexAIDSimulationProject_Dir)
+            inpLines = file.readlines()
+            file.close()
+            
+            # Creation of a dictionary containing the 3 neighbours of each atom
+            for line in inpLines:
+                if line.startswith('HETTYP'):
+                    noLine = int(line[7:11])
+                    self.RecAtom[noLine] = [int(line[22:26]), int(line[27:31]), int(line[32:36])]
+        except:
+            return 1
+                
+        return 0
+    
+    ''' ==================================================================================
+    FUNCTION Get_DisAngDih: Create a dictionary containing the internal coordinates
+    ==================================================================================  '''
+    def Get_DisAngDih(self):
+
+        self.DisAngDih.clear()
+                
+        try:
+            file = open(self.ICFlexAIDSimulationProject_Dir)
+            icLines = file.readlines()
+            file.close()
+            
+            # Creation of a dictionary containing the 3 neighbors of each atoms
+            for line in icLines:
+                if line[0:6] != 'REFPCG':
+                    noLine = int(line[1:5])
+                    self.DisAngDih[noLine] = [float(line[7:15]), float(line[16:24]), float(line[25:33])]
+        except:
+            return 1
+            
+        return 0
+
+    ''' ==================================================================================
+    FUNCTION Get_VarAtoms: Get the atoms that need their values to be modified
+    ==================================================================================  '''
+    def Get_VarAtoms(self):
+        
+        del self.VarAtoms[:]
+        
+        NoAtom3 = 0
+        NoAtom2 = 0
+        NoAtom1 = 0
+
+        file = open(self.INPFlexAIDSimulationProject_Dir)
+        inpLines = file.readlines()
+        file.close()
+        
+        # Creation of a dictionary containing the 3 neighbors of each atoms
+        for line in inpLines:
             if line.startswith('HETTYP'):
-                index = line[6:11].strip()
-                newline = line[:11] + self.Config2.Vars.dictAtomTypes[index][1].rjust(2, ' ') +  line[13:]
-                inpFile.write(newline)
-            else:
-                inpFile.write(line)
-
-        inpFile.close()
+                noAtom = int(line[7:11])
+                if int(line[32:36]) == 0:
+                    if int(line[27:31]) == 0:
+                        if int(line[22:26]) == 0:
+                            NoAtom3 = noAtom
+                        else:
+                            NoAtom2 = noAtom
+                    else:
+                        NoAtom1 = noAtom
+        
+        self.VarAtoms.extend( [ NoAtom3, NoAtom2, NoAtom1 ] )
