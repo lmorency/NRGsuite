@@ -315,7 +315,7 @@ class displayFlexAID(Base.Base):
                 
         SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDResultsProject_Dir,
                                   title='Save the Results file', initialfile='default_results',
-                                  filetypes=[('NRG FlexAID Results','*.nrgfr')])
+                                  filetypes=[('NRG FlexAID Results','*.nrgfr')], defaultextension='.nrgfr')
         
         if len(SaveFile) > 0:
 
@@ -329,9 +329,6 @@ class displayFlexAID(Base.Base):
         if len(SaveFile) > 0:
 
             SaveFile = os.path.normpath(SaveFile)
-            
-            if SaveFile.find('.nrgfs') == -1:
-                SaveFile = SaveFile + '.nrgfs'
             
             if General.validate_String(SaveFile, True, True, False):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
@@ -347,8 +344,7 @@ class displayFlexAID(Base.Base):
                 out.close()
                 
                 self.SaveSessionFile = SaveFile
-                
-                self.DisplayMessage("  The session '" + os.path.split(SaveFile)[1] + "' was saved successfully.", 2)                
+                self.DisplayMessage("  The session '" + os.path.split(SaveFile)[1] + "' was saved successfully.", 2)
                 
             except:
                 self.DisplayMessage("  ERROR: Could not properly save the session:", 2)
@@ -377,10 +373,10 @@ class displayFlexAID(Base.Base):
         if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
             self.ValidateWindowRunning():
             return
-        
+
         SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDSessionProject_Dir,
                                   title='Save the Session file', initialfile='default_session',
-                                  filetypes=[('NRG FlexAID Session','*.nrgfs')])
+                                  filetypes=[('NRG FlexAID Session','*.nrgfs')], defaultextension='.nrgfs')
         
         self.Save_Session(SaveFile)
         

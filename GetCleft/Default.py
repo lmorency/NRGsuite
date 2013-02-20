@@ -429,7 +429,6 @@ class Default(Tabs.Tab):
         while self.queue.qsize():
             try:
                 func = self.queue.get()
-                print func
                 func()
             except Queue.Empty:
                 pass
@@ -597,7 +596,7 @@ class Default(Tabs.Tab):
 
         
         LoadFiles = tkFileDialog.askopenfilename(filetypes=[('Cleft file','*.nrgclf')],
-                                                 initialdir=CleftPath, title='Select cleft file(s) to load',
+                                                 initialdir=CleftPath, title='Load cleft file(s)',
                                                  multiple=1)
         
         if len(LoadFiles) > 0:

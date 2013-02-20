@@ -544,14 +544,11 @@ class Config1(Tabs.Tab):
 
             SaveFile = tkFileDialog.asksaveasfilename(initialdir=TargetFlexPath,
                                                       title='Save the TargetFlex file', initialfile='default_targetflex',
-                                                      filetypes=[('NRG TargetFlex','*.nrgtf')])
+                                                      filetypes=[('NRG TargetFlex','*.nrgtf')], defaultextension='.nrgtf')
             
             if len(SaveFile) > 0:
 
                 SaveFile = os.path.normpath(SaveFile)
-                
-                if SaveFile.find('.nrgtf') == -1:
-                    SaveFile = SaveFile + '.nrgtf'
 
                 if General.validate_String(SaveFile, True, True, False):
                     self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
@@ -585,7 +582,7 @@ class Config1(Tabs.Tab):
             BindingSitePath = self.top.FlexAIDBindingSiteProject_Dir
         
         LoadPath = tkFileDialog.askopenfilename(filetypes=[('NRG BindingSite','*.nrgbs')],
-                                                initialdir=BindingSitePath, title='Select a BindingSite file to load')
+                                                initialdir=BindingSitePath, title='Load a BindingSite file')
         
         if len(LoadPath) > 0:
             
@@ -634,14 +631,11 @@ class Config1(Tabs.Tab):
 
             SaveFile = tkFileDialog.asksaveasfilename(initialdir=BindingSitePath,
                                                       title='Save the BindingSite file', initialfile='my_default_bindingsite',
-                                                      filetypes=[('NRG BindingSite','*.nrgbs')])
+                                                      filetypes=[('NRG BindingSite','*.nrgbs')], defaultextension='.nrgbs')
             
             if len(SaveFile) > 0:
 
                 SaveFile = os.path.normpath(SaveFile)
-                
-                if SaveFile.find('.nrgbs') == -1:
-                    SaveFile = SaveFile + '.nrgbs'
                     
                 if General.validate_String(SaveFile, True, True, False):
                     self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)

@@ -540,12 +540,10 @@ class IOFile(Tabs.Tab):
             return
         
         LigandPath = tkFileDialog.asksaveasfilename(initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', 
-                                                    initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
+                                                    initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')],
+                                                    defaultextension='.pdb')
         
         if len(LigandPath) > 0:
-            
-            if LigandPath.find('.pdb') == -1:
-                LigandPath = LigandPath + '.pdb'
 
             try:
                 cmd.save(LigandPath, ddlSelection, state, 'pdb') # Save the Selection
@@ -576,12 +574,11 @@ class IOFile(Tabs.Tab):
         if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, 'Target', state):
             return
                     
-        ProtPath = tkFileDialog.asksaveasfilename(initialdir=self.top.TargetProject_Dir, title='Save the PDB File', initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
+        ProtPath = tkFileDialog.asksaveasfilename(initialdir=self.top.TargetProject_Dir, title='Save the PDB File', 
+                                                  initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')],
+                                                  defaultextension='.pdb')
         
         if len(ProtPath) > 0:
-            
-            if ProtPath.find('.pdb') == -1:
-                ProtPath = ProtPath + '.pdb'
             
             try:
                 cmd.save(ProtPath, ddlSelection, state, 'pdb') # Save the Selection
@@ -614,12 +611,10 @@ class IOFile(Tabs.Tab):
             return
         
         LigandPath = tkFileDialog.asksaveasfilename(initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', 
-                                                    initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')])
+                                                    initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')],
+                                                    defaultextension='.pdb')
         
         if len(LigandPath) > 0:
-            
-            if LigandPath.find('.pdb') == -1:
-                LigandPath = LigandPath + '.pdb'
             
             try:
                 cmd.save(LigandPath, ddlSelection, state, 'pdb')                 # Save the Selection
@@ -672,7 +667,7 @@ class IOFile(Tabs.Tab):
             
             self.DisplayMessage("  Successfully loaded the ligand: '" + self.LigandName.get() + "'", 0)
 
-  
+
     def Load_ProcConvLigand(self, LigandFile, ObjectName, Zoom):
         
         Error = 0
