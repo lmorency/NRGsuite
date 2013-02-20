@@ -112,8 +112,6 @@ class IOFile(Tabs.Tab):
         #self.top.Config2.Vars.Anchor.set(-1)
 
         #self.Vars.LigandPathMD5 = ''
-        
-        self.ProcessError = False
     
         # flags
         self.fProcessLigand = False
@@ -133,7 +131,7 @@ class IOFile(Tabs.Tab):
     =================================================================================  '''    
     def Before_Kill_Frame(self):
         
-        self.ProcessError = False
+        self.top.ProcessError = False
         
         # Process ligand
         if not self.fProcessLigand:
@@ -145,7 +143,7 @@ class IOFile(Tabs.Tab):
             self.ProcessLigand( True, AtomIndex + 1, self.AtomTypes.get(), self.top.Config2.Anchor.get(),
                                 False, self.Gen3D.get())
 
-            if self.ProcessError:
+            if self.top.ProcessError:
                 return False
             else:
                 self.fProcessLigand = True
@@ -191,7 +189,7 @@ class IOFile(Tabs.Tab):
         
         self.ProcessLigand( True, 0, '', 0, True, 1)
         
-        if self.ProcessError:
+        if self.top.ProcessError:
             return 1
             
         return 0

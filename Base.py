@@ -34,6 +34,9 @@ class Base:
     WizardError = False
     WizardResult = 0
 
+    # in milliseconds
+    TKINTER_UPDATE_INTERVAL = 100
+
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
     ================================================================================== '''
@@ -94,6 +97,7 @@ class Base:
         self.ActiveFrame = None
         self.Run = None
         
+        self.ProcessError = False
         self.ProcessRunning = False
 
         self.fMain = Frame(self.root)

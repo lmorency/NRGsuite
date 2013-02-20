@@ -21,29 +21,37 @@ from Tkinter import *
 from subprocess import Popen, PIPE
 
 import Tabs
+
 import tkMessageBox
 import MultiList
 import threading
+import Queue
 
 if __debug__:
     import General_cmd
 
 class RunVolume(threading.Thread):
 
-    def __init__(self, top, Clefts, Iterations):
+    def __init__(self, top, queue, Clefts, Iterations):
         
         threading.Thread.__init__(self)
 
         self.top = top
         self.GetCleft = self.top.top
+        
+        self.queue = queue
+        
         self.Clefts = Clefts
         self.Iterations = Iterations
         
+        self.GetCleft.ProcessError = False
+        self.GetCleft.ProcessRunning = True
+        
         self.start()
-    
+        
     def run(self):        
     
-        self.GetCleft.ProcessRunning = True
+        print("volume_calc starting thread has begun.")
 
         for Cleft in self.Clefts:
         
@@ -52,34 +60,38 @@ class RunVolume(threading.Thread):
             cmdline += ' -t ' + self.Iterations
             print(cmdline)
         
-            if self.GetCleft.OSid == 'WIN':
-                self.GetCleft.Run = Popen(cmdline, shell=False, stdout=PIPE)
-            else:
-                self.GetCleft.Run = Popen(cmdline, shell=True, stdout=PIPE)
+            try:
+                if self.GetCleft.OSid == 'WIN':
+                    self.GetCleft.Run = Popen(cmdline, shell=False, stdout=PIPE)
+                else:
+                    self.GetCleft.Run = Popen(cmdline, shell=True, stdout=PIPE)
+                    
+                # Wait for task to end in thread
+                (out,err) = self.GetCleft.Run.communicate()
                 
-            # Wait for task to end in thread
-            (out,err) = self.GetCleft.Run.communicate()
+                if self.GetCleft.Run.returncode != 0:
+                    self.GetCleft.ProcessError = True
+            except:
+                print('  FATAL ERROR: Could not run the executable volume_calc.')
+                print('  Make sure you downloaded NRGsuite for the right platform.')
+                self.GetCleft.ProcessError = True
+                break
             
-            if self.GetCleft.Run.returncode != 0:
-                self.top.ProcessError = True
-                self.top.DisplayMessage("  ERROR: An error occured while executing volume_calc.", 1)
-                
             else:
-                #self.top.DisplayMessage("Thread terminated for " + self.Cleft.CleftName, 0)
-                
                 Lines = out.splitlines()
                 for Line in Lines:
                     if Line.startswith('Volume'):
                         Cleft.Volume = float(Line[8:].strip())
-                        self.top.Init_Table()
+                        self.queue.put(lambda: self.top.Init_Table())
                         break
         
         self.GetCleft.Run = None
         self.GetCleft.ProcessRunning = False
         
-        self.top.VolumeRunning(False)
+        self.queue.put(lambda: self.top.VolumeRunning(False))
+        
+        print("volume_calc starting thread has ended.")
     
-
 class EstimateVolume(Tabs.Tab):
 
     def Def_Vars(self):
@@ -89,7 +101,6 @@ class EstimateVolume(Tabs.Tab):
         
     def Init_Vars(self):
 
-        self.ProcessError = False
         self.Iterations.set('3')
         
     def Trace(self):
@@ -188,6 +199,37 @@ class EstimateVolume(Tabs.Tab):
         return self.fVolume
         
     ''' ==================================================================================
+    FUNCTION Calc_Volume: Calculates the volume of a cleft
+    ==================================================================================  '''    
+    def Calc_Volume(self, Clefts, Iterations):
+
+        self.VolumeRunning(True)
+        
+        self.queue = Queue.Queue()
+        
+        Process = RunVolume(self, self.queue, Clefts, Iterations)
+        
+        self.Update_Tkinter()
+        
+    ''' ==================================================================================
+    FUNCTION Update_Tkinter: update the tkinter interface (tasks queued from the worker)
+    ==================================================================================  '''               
+    def Update_Tkinter(self):
+        
+        # Check every 100 ms if there is something new in the queue.
+        while self.queue.qsize():
+            try:
+                func = self.queue.get()
+                func()
+            except Queue.Empty:
+                pass
+        
+        if self.top.ProcessRunning:
+            self.top.root.after(self.top.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
+        else:
+            return
+
+    ''' ==================================================================================
     FUNCTION Calculates the volume of the selected cleft only 
     ==================================================================================  '''    
     def Btn_Selected_Clicked(self):
@@ -199,14 +241,9 @@ class EstimateVolume(Tabs.Tab):
             
                 Cleft = self.top.Default.TempBindingSite.Get_CleftName(Selected)
                 if Cleft != None:
-                    try:
-                        self.VolumeRunning(True)
-                        
-                        Process = RunVolume(self, [ Cleft ], self.Iterations.get())
-                    except:
-                        self.DisplayMessage("The cleft file for '" + self.Cleft.CleftFile + "' no longer exists", 2)
+                    self.Calc_Volume( [ Cleft ], self.Iterations.get() )
                 else:
-                    self.DisplayMessage("The cleft object '" + Selected + "' no longer exists", 2)                    
+                    self.DisplayMessage("The cleft object '" + Selected + "' no longer exists", 2)
     
     ''' ==================================================================================
     FUNCTION Calculates the volume of remaining clefts (volume=0) in the list
@@ -221,13 +258,12 @@ class EstimateVolume(Tabs.Tab):
                 Cleft = self.top.Default.TempBindingSite.Get_CleftName(item.lstrip())
                 if Cleft != None and Cleft.Volume == 0.0:
                     Clefts.append(Cleft)
+                else:
+                    self.DisplayMessage("The cleft object '" + item.lstrip() + "' no longer exists", 2)
             
-            try:
-                self.VolumeRunning(True)
-                Process = RunVolume(self, Clefts, self.Iterations.get())
-            except:
-                pass
-    
+            if len(Clefts):
+                self.Calc_Volume( Clefts, self.Iterations.get() )
+        
     ''' ==================================================================================
     FUNCTION Calculates the volume of all clefts in the list
     ==================================================================================  '''    
@@ -241,12 +277,11 @@ class EstimateVolume(Tabs.Tab):
                 Cleft = self.top.Default.TempBindingSite.Get_CleftName(item.lstrip())
                 if Cleft != None:
                     Clefts.append(Cleft)                
+                else:
+                    self.DisplayMessage("The cleft object '" + item.lstrip() + "' no longer exists", 2)
 
-            try:
-                self.VolumeRunning(True)
-                Process = RunVolume(self, Clefts, self.Iterations.get())
-            except:
-                pass
+            if len(Clefts):
+                self.Calc_Volume( Clefts, self.Iterations.get() )
     
     ''' ==================================================================================
     FUNCTION Init_Table: updates the list of cleft in the table
@@ -270,7 +305,7 @@ class EstimateVolume(Tabs.Tab):
             self.Enable_Frame()
             
             self.Init_Table()
-
+    
     ''' ==================================================================================
     FUNCTION SaveVolumes: Saves the calculated volume of the clefts
     ==================================================================================  '''    

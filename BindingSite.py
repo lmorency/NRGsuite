@@ -47,10 +47,12 @@ class BindingSite:
     ================================================================================== '''
     def Add_Cleft(self, NewCleft):
         
+        '''
         for Cleft in self.listClefts:
             if Cleft.CleftMD5 == NewCleft.CleftMD5:
                 return
-
+        '''
+        
         self.listClefts.append(NewCleft)
         self.Index_Cleft()
 
@@ -82,9 +84,9 @@ class BindingSite:
     def Remove_Cleft(self, RemCleft):
         
         for Cleft in self.listClefts:
-            if Cleft.CleftMD5 == RemCleft.CleftMD5:
-                self.listClefts.remove(Cleft)
-                break
+            #if Cleft.CleftMD5 == RemCleft.CleftMD5:
+            self.listClefts.remove(Cleft)
+            break
 
         self.Index_Cleft()
 

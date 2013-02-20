@@ -218,7 +218,7 @@ class displayGetCleft(Base.Base):
     def Btn_CropCleft_Clicked(self):
         
         self.SetActiveFrame(self.Crop)
-
+    
     ''' ==================================================================================
     FUNCTION Before_Quit: Execute tasks before exitting the application
     ==================================================================================  '''

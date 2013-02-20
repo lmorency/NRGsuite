@@ -51,9 +51,6 @@ class SimulateVars(Vars.Vars):
     
 
 class Simulate(Tabs.Tab):
-
-    # in milliseconds
-    TKINTER_UPDATE_INTERVAL = 100
     
     def Def_Vars(self):
         
@@ -69,7 +66,6 @@ class Simulate(Tabs.Tab):
 
         self.Manage = ManageFiles.Manage(self)
         
-        self.ProcessError = False
         self.ProcessParsing = False
 
         self.ProgBarText.set('... / ...')
@@ -259,7 +255,7 @@ class Simulate(Tabs.Tab):
 
         # Stacking up tasks related to updating Tkinter
         self.queue = Queue.Queue()
-
+        
         # START PARSING AS THREAD
         self.DisplayMessage('  Starting parsing thread.', 2)
         self.Parse = Simulation.Parse(self, self.queue)
@@ -408,7 +404,7 @@ class Simulate(Tabs.Tab):
         self.Btn_PauseResume.config(state='disabled')
         self.Btn_Stop.config(state='disabled')
         self.Btn_Abort.config(state='disabled')
-                
+        
     ''' =============================================================================== 
     FUNCTION Btn_PauseResumeSim: Pauses/Resumes the simulation   
     ===============================================================================  '''        
@@ -652,7 +648,7 @@ class Simulate(Tabs.Tab):
                 pass
         
         if self.top.ProcessRunning or self.ProcessParsing:
-            self.top.root.after(self.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
+            self.top.root.after(self.top.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
             
         else:
             self.Load_Results()

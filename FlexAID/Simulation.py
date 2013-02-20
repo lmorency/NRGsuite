@@ -58,7 +58,7 @@ class Start(threading.Thread):
         self.top = top
         self.FlexAID = self.top.top
 
-        self.top.ProcessError = False
+        self.FlexAID.ProcessError = False
         self.FlexAID.ProcessRunning = True
 
         self.start()
@@ -79,16 +79,16 @@ class Start(threading.Thread):
             self.FlexAID.Run.wait()
             
             if self.FlexAID.Run.returncode != 0:
-                self.top.ProcessError = True
-                        
+                self.FlexAID.ProcessError = True
+                
         except IOError:
             print('  FATAL ERROR: Could not open logfile for FlexAID.')
-            self.top.ProcessError = True
+            self.FlexAID.ProcessError = True
             
         except:
             print('  FATAL ERROR: Could not run the executable FlexAID.')
             print('  Make sure you downloaded NRGsuite for the right platform.')
-            self.top.ProcessError = True
+            self.FlexAID.ProcessError = True
             
         else:
             logfile.close()
@@ -404,7 +404,7 @@ class Parse(threading.Thread):
             if self.Error:
                 break
         
-        if self.top.ProcessError or self.Error:
+        if self.FlexAID.ProcessError or self.Error:
             self.queue.put(lambda: self.top.ErrorStatus(self.ErrorMsg))
         else:
             self.queue.put(lambda: self.top.SuccessStatus())

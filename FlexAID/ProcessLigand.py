@@ -83,7 +83,7 @@ class ProcLig:
                     self.FlexAID.DisplayMessage("  The ligand was processed successfully", 0)
 
             else:
-                self.top.ProcessError = True
+                self.FlexAID.ProcessError = True
 
                 if self.ConvertOnly:
                     self.FlexAID.DisplayMessage("  ERROR: The ligand could not be converted", 1)
@@ -92,7 +92,7 @@ class ProcLig:
 
         else:
             # could not copy file
-            self.top.ProcessError = True
+            self.FlexAID.ProcessError = True
 
             self.FlexAID.DisplayMessage("  ERROR: The ligand could not be copied", 1)
 
@@ -168,7 +168,7 @@ class ProcLig:
             (out,err) = self.FlexAID.Run.communicate()
 
             if self.FlexAID.Run.returncode != 0:
-                self.top.ProcessError = True
+                self.FlexAID.ProcessError = True
             
         except:
             return 1

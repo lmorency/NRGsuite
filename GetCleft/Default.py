@@ -40,6 +40,7 @@ import CleftObj
 import BindingSite
 
 import threading
+import Queue
 import Color
 import pickle
 
@@ -50,72 +51,55 @@ if __debug__:
 #=========================================================================================
 '''                        ---   STARTING GETCLEFT  ---                                '''
 #=========================================================================================
-class RunThread(threading.Thread):
+class Start(threading.Thread):
 
-    def __init__(self, top, selection, cmdline):
+    # in milliseconds
+    TKINTER_UPDATE_INTERVAL = 100
+    
+    def __init__(self, top, queue, cmdline):
                  
         threading.Thread.__init__(self)
 
         self.top = top
-
-        self.Selection = selection
+        self.queue = queue
+        
         self.GetCleft = self.top.top
 
         self.cmdline = cmdline
         print(self.cmdline)
         
-        self.top.GetCleftRunning(True)
+        self.GetCleft.ProcessError = False
+        self.GetCleft.ProcessRunning = True
 
         # Start the thread
         self.start()
 
-    def run(self): 
+    def run(self):
        
-        self.timeBegin = time()
+        print("GetCleft starting thread has begun.")
+        
+        try:
+            if self.GetCleft.OSid == 'WIN':
+                self.GetCleft.Run = Popen(self.cmdline, shell=False, stderr=PIPE)
+            else:
+                self.GetCleft.Run = Popen(self.cmdline, shell=True, stderr=PIPE)
+                
+            self.GetCleft.Run.wait()
 
-        self.top.ProcessRunning = True
-        if self.GetCleft.OSid == 'WIN':
-            self.GetCleft.Run = Popen(self.cmdline, shell=False, stderr=PIPE)
-        else:
-            self.GetCleft.Run = Popen(self.cmdline, shell=True, stderr=PIPE)
-        self.GetCleft.Run.wait()
-
-        if self.GetCleft.Run.returncode != 0:
-            self.top.DisplayMessage("  ERROR: An error occured while executing GetCleft:", 1)
-            self.top.DisplayMessage(self.GetCleft.Run.stderr.read(), 1)
-            
-        else:
-
-            duration = str(time() - self.timeBegin)
-            duration = '%.2f' % float(duration)
-            
-            self.top.DisplayMessage('  Process completed in ' + str(duration) + ' seconds ...', 2)
-
+            if self.GetCleft.Run.returncode != 0:
+                self.GetCleft.ProcessError = True
+                
+        except:
+            print('  FATAL ERROR: Could not run the executable GetCleft.')
+            print('  Make sure you downloaded NRGsuite for the right platform.')
+            self.GetCleft.ProcessError = True
+        
         self.GetCleft.Run = None
+        self.GetCleft.ProcessRunning = False
+                
+        self.queue.put(lambda: self.top.GetCleftRunning(False))
 
-        # Store clefts and show them
-        self.GetCleft.Manage.delete_Temp()
-        #self.GetCleft.Manage.rename_Temp()
-        self.GetCleft.Manage.store_Temp(self.top.LastdefaultOption)
-            
-        nCleft = self.top.TempBindingSite.Count_Cleft()
-        if nCleft > 0:
-            self.top.DisplayMessage("  Stored (" + str(nCleft) + 
-                                    ") cleft objects from object/selection '" +
-                                    self.Selection + "'", 0)
-
-            self.top.Display_Temp()
-            self.GetCleft.Go_Step2()
-            self.GetCleft.CopySession = False
-            self.GetCleft.EditSession = False
-
-            self.GetCleft.Crop.Reset_Step1()
-
-        else:
-            self.top.DisplayMessage("  No clefts found for object/selection '" +
-                                    self.Selection + "'", 0)
-            
-        self.top.GetCleftRunning(False)
+        print("GetCleft starting thread has ended.")
         
 #=========================================================================================
 '''                        ---  GETCLEFT's DEFAULT FRAME  ---                          '''
@@ -155,7 +139,7 @@ class Default(Tabs.Tab):
         self.listResidues = []
         self.PartitionColor = 'partition'
         self.LastdefaultOption = ''
-    
+        
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
     ==================================================================================  '''  
@@ -427,10 +411,54 @@ class Default(Tabs.Tab):
         
         # Clear temporary clefts
         self.Btn_Clear_Clicked()
+        self.GetCleftRunning(True)
+        
+        self.queue = Queue.Queue()
         
         # Run GetCleft
-        StartRun = RunThread(self, self.defaultOption.get(), Command_Line)
+        StartRun = Start(self, self.queue, Command_Line)
         
+        self.Update_Tkinter()
+        
+    ''' ==================================================================================
+    FUNCTION Update_Tkinter: update the tkinter interface (tasks queued from the worker)
+    ==================================================================================  '''               
+    def Update_Tkinter(self):
+        
+        # Check every 100 ms if there is something new in the queue.
+        while self.queue.qsize():
+            try:
+                func = self.queue.get()
+                print func
+                func()
+            except Queue.Empty:
+                pass
+        
+        if self.top.ProcessRunning:
+            self.top.root.after(self.top.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
+        else:
+            # Store clefts and show them
+            self.top.Manage.delete_Temp()
+            self.top.Manage.store_Temp(self.LastdefaultOption)
+            
+            nCleft = self.TempBindingSite.Count_Cleft()
+            if nCleft > 0:
+                
+                self.DisplayMessage("  Stored (" + str(nCleft) + 
+                                    ") cleft objects from object/selection '" +
+                                    self.LastdefaultOption + "'", 0)
+
+                self.Display_Temp()
+                self.top.Go_Step2()
+                self.top.CopySession = False
+                self.top.EditSession = False
+
+                self.top.Crop.Reset_Step1()
+
+            else:
+                self.DisplayMessage("  No clefts found for object/selection '" +
+                                    self.LastdefaultOption + "'", 0)
+
     ''' ========================================================
                  Display all temporary clefts
         ========================================================'''
