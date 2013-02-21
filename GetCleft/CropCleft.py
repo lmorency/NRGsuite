@@ -428,7 +428,7 @@ class CropCleft(Tabs.Tab):
         DestFile = ''
         Output = self.Step3Output.get()
         
-        if General.validate_String(Output, False, False, True):
+        if General.validate_String(Output, '', False, False, True):
             self.DisplayMessage("  ERROR: Could not save the partition file because you entered an invalid name.", 2)
             return
 

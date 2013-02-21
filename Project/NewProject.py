@@ -207,8 +207,8 @@ class displayNewProject(Base.Base):
         
         name = self.ProjName.get().strip()
         if name != '':
-        
-            if General.validate_String(name, False, True, False):
+            
+            if General.validate_String(name, '', False, True, False):
                 print('  ERROR: The name \'' + name + '\' is invalid. Try again.')
                 return
             

@@ -332,7 +332,7 @@ class displayFlexAID(Base.Base):
 
             SaveFile = os.path.normpath(SaveFile)
             
-            if General.validate_String(SaveFile, True, True, False):
+            if General.validate_String(SaveFile, '.nrgfs', True, True, False):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                 return
 

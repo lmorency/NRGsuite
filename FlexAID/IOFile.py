@@ -519,7 +519,7 @@ class IOFile(Tabs.Tab):
             
             cmd.set_wizard(self.top.ActiveWizard)
             self.top.ActiveWizard.Start()
-
+    
     ''' ==================================================================================
     FUNCTION Btn_Input_Clicked: Selects the anchor atom of the ligand
     ==================================================================================  '''    
@@ -577,6 +577,10 @@ class IOFile(Tabs.Tab):
         
         if len(LigandPath) > 0:
 
+            if General.validate_String(LigandPath, '.pdb', True, False, True):
+                self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
+                return
+            
             try:
                 cmd.save(LigandPath, ddlSelection, state, 'pdb') # Save the Selection
                 LigandName = os.path.basename(os.path.splitext(LigandPath)[0])
@@ -611,10 +615,16 @@ class IOFile(Tabs.Tab):
         
         if len(ProtPath) > 0:
             
+            print ProtPath
+            
+            if General.validate_String(ProtPath, '.pdb', True, False, True):
+                self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
+                return
+            
             try:
                 cmd.save(ProtPath, ddlSelection, state, 'pdb') # Save the Selection
                 ProtName = os.path.basename(os.path.splitext(ProtPath)[0])
-
+                
                 cmd.load(ProtPath, ProtName, state=1)
                 cmd.refresh()
                 
@@ -646,6 +656,10 @@ class IOFile(Tabs.Tab):
         
         if len(LigandPath) > 0:
             
+            if General.validate_String(LigandPath, '.pdb', True, False, True):
+                self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
+                return
+
             try:
                 cmd.save(LigandPath, ddlSelection, state, 'pdb')                 # Save the Selection
                 LigandName = os.path.basename(os.path.splitext(LigandPath)[0])
@@ -672,6 +686,10 @@ class IOFile(Tabs.Tab):
 
         if len(LigandPath) > 0:
             LigandPath = os.path.normpath(LigandPath)
+
+            if General.validate_String(LigandPath, '', True, False, True):
+                self.DisplayMessage("  ERROR: Could not load the file because it has an invalid name.", 2)
+                return
 
             if LigandPath == self.LigandPath.get():
                 return
@@ -727,6 +745,10 @@ class IOFile(Tabs.Tab):
         
         if len(ProtPath) > 0:
             ProtPath = os.path.normpath(ProtPath)
+
+            if General.validate_String(ProtPath, '', True, False, True):
+                self.DisplayMessage("  ERROR: Could not load the file because it has an invalid name.", 2)
+                return
 
             if ProtPath == self.ProtPath.get():
                 return

@@ -97,16 +97,20 @@ def validate_Integer(sVal, Min, Max):
         return 3
 
     return 0
-    
+
 ''' ==========================================================
   validate_String: validate the entry field (str value)  
 ==========================================================='''
-def validate_String(sVal, bPath, bSpaces, bPyMOL):
+def validate_String(sVal, bExt, bPath, bSpaces, bPyMOL):
     
     # Does sVal is a path (bPath)
     # If so, only analyze the basefilename
     if bPath:
         sVal = os.path.split(sVal)[1]
+    
+    # Does extension match
+    if bExt and bExt != os.path.splitext(sVal)[1]:
+        return 1
     
     # Are spaces allowed (bSpaces)
     if bSpaces and not re.match('^[A-Za-z0-9_\-\. ]*$', sVal):

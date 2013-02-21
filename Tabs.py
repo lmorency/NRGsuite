@@ -189,11 +189,6 @@ class Tab:
                     max = 100
 
             rv = General.validate_Integer(var.get(), min, max)
-            
-        elif _type == str:
-        
-            rv = General.validate_String(var.get())
-
         
         # Return-value testing
         if rv == 0:

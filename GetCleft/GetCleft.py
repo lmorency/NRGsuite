@@ -211,7 +211,7 @@ class displayGetCleft(Base.Base):
     def Btn_Volume_Clicked(self):
         
         self.SetActiveFrame(self.Volume)
-        
+    
     ''' ==================================================================================
     FUNCTION Btn_CropCleft_Clicked: Opens the crop cleft menu 
     ==================================================================================  '''                 
