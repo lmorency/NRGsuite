@@ -93,7 +93,7 @@ class UpdateScreen():
             self.selSideChains = self.UpdateSideChainConformations()
             
             if self.WriteOutLigand() or self.EditView() or self.UpdateDataList():
-                self.Delete_Object()            
+                self.Delete_Object()
 
         self.Delete_Object()
         
@@ -143,10 +143,13 @@ class UpdateScreen():
                 self.dictSimData[self.TOP+1].append('N/A')
 
             # RMSD of ligand
-            RMSD = Geometry.rmsd(self.dictCoord, self.dictCoordRef)
-
-            if RMSD != 'N/A':
-                RMSD = '%.3f' % RMSD
+            if self.top.Reference:
+                RMSD = Geometry.rmsd(self.dictCoord, self.dictCoordRef)
+                
+                if RMSD != 'N/A':
+                    RMSD = '%.3f' % RMSD
+            else:
+                RMSD = 'N/A'
 
             self.dictSimData[self.TOP+1].append(RMSD)
 

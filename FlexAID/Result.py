@@ -143,7 +143,7 @@ class Result:
                     
                 elif re.match('ATOM  ', Line):
                     break
-    
+                    
 
 class ResultsContainer:
     

@@ -42,7 +42,6 @@ from subprocess import Popen, PIPE
 
 class ProcLig:
 
-
     def __init__(self, top, StartAtomIndex, AtomTypes, AnchorAtom, ConvertOnly, ProcessOnly, Gen3D):
         
         self.top = top
@@ -66,7 +65,6 @@ class ProcLig:
         self.StartAtomIndex = StartAtomIndex
         
         self.run()
-
 
     def run(self):
         
@@ -100,7 +98,6 @@ class ProcLig:
         self.top.ProcessLigand(False, 0, '', 0, False, False, 0)
         self.FlexAID.ProcessRunning = False
 
-
     def Copy_LigandFile(self):
         
         try:
@@ -114,7 +111,6 @@ class ProcLig:
 
         return 0
 
-       
     '''
     @summary: process: Processes the ligand (generates input files for FlexAID)
     '''  
@@ -184,8 +180,7 @@ class ProcLig:
             return 0
         
         return 1
-        
-    
+
     '''
     @summary: set_environment sets a environment variable
     '''  
@@ -193,4 +188,5 @@ class ProcLig:
 
         os.putenv(variable, value)
         if os.getenv(variable) != value:
-            os.environ[variable] = value        
+            os.environ[variable] = value
+    

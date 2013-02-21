@@ -385,6 +385,8 @@ class Simulate(Tabs.Tab):
         for Result in self.Vars.ResultsContainer.Results:
             
             self.dictSimData[Result.ResultID] = [ Result.CF, 'N/A', Result.RMSD ]
+            print Result.ResultID
+            print self.dictSimData[Result.ResultID]
             
     ''' ==================================================================================
     FUNCTION update_DataList: Update the displayed Data List informations.

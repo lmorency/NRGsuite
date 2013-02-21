@@ -164,6 +164,15 @@ class Manage:
                 Res = Result.Result(file, TOP)
                 
                 self.top.Vars.ResultsContainer.Results.append(Res)
+                continue
+            
+            m = re.search("RESULT_INI\.pdb$", file)
+            if m:
+                Res = Result.Result(file, 'REF')
+                
+                if self.Config2.UseReference.get():
+                    self.top.Vars.ResultsContainer.Results.append(Res)
+                    continue                
     
     ''' ==================================================================================
     @summary: Create_CONFIG: Creation of the CONFIG.inp

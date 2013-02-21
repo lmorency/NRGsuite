@@ -154,13 +154,13 @@ class constraint(Wizard):
             cmd.delete(self.ACTIVE)
             cmd.refresh()
 
+            cmd.delete(self.MiddleDisplay)
+            cmd.refresh()
+
             cmd.delete(self.CONSTRAINT + '*')
             cmd.refresh()
 
             cmd.delete(self.LigDisplay)
-            cmd.refresh()
-
-            cmd.delete(self.MiddleDisplay)
             cmd.refresh()
 
             cmd.deselect()
@@ -387,6 +387,14 @@ class constraint(Wizard):
     def highlight_Active(self):
         
         Error = 0
+
+        
+        try:
+            # Cleaning
+            cmd.delete(self.ACTIVE)
+            cmd.refresh()
+        except:
+            pass
         
         try:
             cmd.set("auto_zoom", 0)
@@ -500,10 +508,6 @@ class constraint(Wizard):
     def refresh_display(self):
         
         try:
-            # Cleaning
-            cmd.delete(self.ACTIVE)
-            cmd.refresh()
-
             cmd.delete(self.CONSTRAINT + '*')
             cmd.refresh()
         except:
@@ -541,6 +545,9 @@ class constraint(Wizard):
                            pos=self.dictConstraints[self.ActiveCons.get()][6],
                            vdw=self.MiddleRadius,
                            state=self.State)
+            cmd.refresh()
+            
+            cmd.hide('nonbonded', self.MiddleDisplay)
             cmd.refresh()
             
             dist = '%.2f' % self.dictConstraints[self.ActiveCons.get()][5]

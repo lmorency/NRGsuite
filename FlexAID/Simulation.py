@@ -136,6 +136,7 @@ class Parse(threading.Thread):
 
         self.Translation = self.FlexAID.Config2.IntTranslation.get()
         self.Rotation = self.FlexAID.Config2.IntRotation.get()
+        self.Reference = self.FlexAID.Config2.UseReference.get()
 
         self.NbGen = ' / ' + str(self.FlexAID.GAParam.NbGen.get())
         self.FloatNbGen = float(self.FlexAID.GAParam.NbGen.get())        
