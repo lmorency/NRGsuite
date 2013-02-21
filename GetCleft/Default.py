@@ -635,7 +635,7 @@ class Default(Tabs.Tab):
 
         if not self.PyMOL:
             return
-            
+        
         if self.TempBindingSite.Count_Cleft() > 0:
             
             self.Update_TempBindingSite()

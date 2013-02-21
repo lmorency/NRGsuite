@@ -223,11 +223,19 @@ class displayGetCleft(Base.Base):
     FUNCTION Before_Quit: Execute tasks before exitting the application
     ==================================================================================  '''
     def Before_Quit(self):
-    
-        if not self.CopySession:
-            if tkMessageBox.askquestion("Question", message="One or more cleft(s) are unsaved. Would you like to save them before leaving?",
-                                        icon='warning') == 'yes':
+        
+        if not self.CopySession:                                    
+            answer = tkMessageBox.askquestion("Question",
+                                              message="One or more cleft(s) are unsaved. Would you like to save them before leaving?",
+                                              icon='warning', type=tkMessageBox.YESNOCANCEL)
+            
+            if str(answer) == 'yes':
                 self.Default.Btn_Save_Clefts()
+                
+            elif str(answer) == 'cancel':
+                return 1
+        
+        return 0
     
     ''' ==================================================================================
     FUNCTION Go_Step1: Enables/Disables buttons for step 1

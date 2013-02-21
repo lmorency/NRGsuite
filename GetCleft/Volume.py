@@ -312,8 +312,10 @@ class EstimateVolume(Tabs.Tab):
     def Save_Volume(self):
         
         if not self.top.CopySession:
-            if tkMessageBox.askquestion("Question", message="The cleft(s) first need to be saved before you can save the volumes. Do you still want to proceed?",
-                                        icon='warning') == 'yes':
+            answer = tkMessageBox.askquestion("Question", 
+                                              message="The cleft(s) first need to be saved before you can save the volumes. Do you still want to proceed?",
+                                              icon='warning')
+            if str(answer) == 'yes':
                 self.top.Default.Btn_Save_Clefts()
         else:
             self.top.Default.Btn_Save_Clefts()

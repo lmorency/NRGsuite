@@ -261,7 +261,8 @@ class Base:
     ==================================================================================  '''
     def Quit(self):
         
-        self.Before_Quit()
+        if self.Before_Quit():
+            return
         
         # Cannot quit while process is running
         if self.ProcessRunning and self.Run is not None:

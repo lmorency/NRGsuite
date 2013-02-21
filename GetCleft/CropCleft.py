@@ -441,9 +441,12 @@ class CropCleft(Tabs.Tab):
                 return
             
             if General_cmd.object_Exists(Output):
-                if tkMessageBox.askquestion("Question", message="An object with that name already exists. Would you like to overwrite it?",icon='warning') == 'no':
+                answer = tkMessageBox.askquestion("Question", 
+                                                  message="An object with that name already exists. Would you like to overwrite it?",
+                                                  icon='warning')
+                if str(answer) == 'no':
                     return
-                    
+                
             try:
                 
                 cmd.set("auto_zoom", 0)
