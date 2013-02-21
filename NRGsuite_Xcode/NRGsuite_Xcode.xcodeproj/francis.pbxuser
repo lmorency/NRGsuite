@@ -215,7 +215,7 @@
 		fRef = 158C85A916A5C19C00E07CFF /* ProcessLigand.py */;
 		name = "ProcessLigand.py: 141";
 		rLen = 0;
-		rLoc = 4272;
+		rLoc = 4288;
 		rType = 0;
 		vrLen = 1251;
 		vrLoc = 3468;
@@ -235,7 +235,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 669";
 		rLen = 0;
-		rLoc = 28501;
+		rLoc = 28929;
 		rType = 0;
 		vrLen = 2894;
 		vrLoc = 25647;
@@ -285,7 +285,7 @@
 		fRef = 158C85A116A5C19C00E07CFF /* Constraint.py */;
 		name = "Constraint.py: 155";
 		rLen = 0;
-		rLoc = 5055;
+		rLoc = 5063;
 		rType = 0;
 		vrLen = 1003;
 		vrLoc = 4582;
@@ -443,7 +443,7 @@
 		fRef = 158C85A916A5C19C00E07CFF /* ProcessLigand.py */;
 		name = "ProcessLigand.py: 183";
 		rLen = 0;
-		rLoc = 6379;
+		rLoc = 6395;
 		rType = 0;
 		vrLen = 2486;
 		vrLoc = 1067;
@@ -473,7 +473,7 @@
 		fRef = 158C85A116A5C19C00E07CFF /* Constraint.py */;
 		name = "Constraint.py: 192";
 		rLen = 0;
-		rLoc = 6068;
+		rLoc = 6076;
 		rType = 0;
 		vrLen = 1397;
 		vrLoc = 5478;
@@ -483,7 +483,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 502";
 		rLen = 0;
-		rLoc = 22491;
+		rLoc = 22661;
 		rType = 0;
 		vrLen = 1574;
 		vrLoc = 22223;
@@ -583,7 +583,7 @@
 		fRef = 158C85A916A5C19C00E07CFF /* ProcessLigand.py */;
 		name = "ProcessLigand.py: 183";
 		rLen = 0;
-		rLoc = 6379;
+		rLoc = 6395;
 		rType = 0;
 		vrLen = 2474;
 		vrLoc = 1079;
@@ -613,7 +613,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 521";
 		rLen = 0;
-		rLoc = 23196;
+		rLoc = 23366;
 		rType = 0;
 		vrLen = 1483;
 		vrLoc = 22223;
@@ -663,7 +663,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 516";
 		rLen = 0;
-		rLoc = 23003;
+		rLoc = 23173;
 		rType = 0;
 		vrLen = 1877;
 		vrLoc = 27196;
@@ -753,7 +753,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 516";
 		rLen = 0;
-		rLoc = 23003;
+		rLoc = 23173;
 		rType = 0;
 		vrLen = 2612;
 		vrLoc = 26461;
@@ -763,7 +763,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 388";
 		rLen = 0;
-		rLoc = 17707;
+		rLoc = 17636;
 		rType = 0;
 		vrLen = 2712;
 		vrLoc = 16392;
@@ -773,7 +773,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 388";
 		rLen = 0;
-		rLoc = 17707;
+		rLoc = 17636;
 		rType = 0;
 		vrLen = 2712;
 		vrLoc = 16392;
@@ -783,7 +783,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 388";
 		rLen = 0;
-		rLoc = 17707;
+		rLoc = 17636;
 		rType = 0;
 		vrLen = 2712;
 		vrLoc = 16392;
@@ -793,7 +793,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 388";
 		rLen = 0;
-		rLoc = 17650;
+		rLoc = 17636;
 		rType = 0;
 		vrLen = 2712;
 		vrLoc = 16392;
@@ -803,7 +803,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 388";
 		rLen = 0;
-		rLoc = 17650;
+		rLoc = 17636;
 		rType = 0;
 		vrLen = 2712;
 		vrLoc = 16392;
@@ -813,7 +813,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 388";
 		rLen = 0;
-		rLoc = 17650;
+		rLoc = 17636;
 		rType = 0;
 		vrLen = 2712;
 		vrLoc = 16392;
@@ -823,7 +823,7 @@
 		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
 		name = "Simulate.py: 387";
 		rLen = 0;
-		rLoc = 17581;
+		rLoc = 17595;
 		rType = 0;
 		vrLen = 2712;
 		vrLoc = 16392;
@@ -833,7 +833,7 @@
 		fRef = 158C85A116A5C19C00E07CFF /* Constraint.py */;
 		name = "Constraint.py: 192";
 		rLen = 0;
-		rLoc = 6068;
+		rLoc = 6076;
 		rType = 0;
 		vrLen = 1367;
 		vrLoc = 5478;
@@ -843,7 +843,7 @@
 		fRef = 158C85A116A5C19C00E07CFF /* Constraint.py */;
 		name = "Constraint.py: 556";
 		rLen = 0;
-		rLoc = 19831;
+		rLoc = 19853;
 		rType = 0;
 		vrLen = 1333;
 		vrLoc = 18863;
@@ -853,7 +853,7 @@
 		fRef = 158C85A116A5C19C00E07CFF /* Constraint.py */;
 		name = "Constraint.py: 548";
 		rLen = 0;
-		rLoc = 19562;
+		rLoc = 19599;
 		rType = 0;
 		vrLen = 1333;
 		vrLoc = 18863;
@@ -863,7 +863,7 @@
 		fRef = 158C85A116A5C19C00E07CFF /* Constraint.py */;
 		name = "Constraint.py: 604";
 		rLen = 0;
-		rLoc = 21530;
+		rLoc = 21552;
 		rType = 0;
 		vrLen = 1398;
 		vrLoc = 20227;
@@ -873,10 +873,770 @@
 		fRef = 158C85A116A5C19C00E07CFF /* Constraint.py */;
 		name = "Constraint.py: 604";
 		rLen = 0;
-		rLoc = 21530;
+		rLoc = 21552;
 		rType = 0;
 		vrLen = 1398;
 		vrLoc = 20227;
+	};
+	1565E7B716D6AA500025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A116A5C19C00E07CFF /* Constraint.py */;
+		name = "Constraint.py: 128";
+		rLen = 0;
+		rLoc = 4299;
+		rType = 0;
+		vrLen = 1197;
+		vrLoc = 3628;
+	};
+	1565E7B816D6AB190025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A116A5C19C00E07CFF /* Constraint.py */;
+		name = "Constraint.py: 345";
+		rLen = 3;
+		rLoc = 12255;
+		rType = 0;
+		vrLen = 2199;
+		vrLoc = 11501;
+	};
+	1565E7B916D6AB190025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A916A5C19C00E07CFF /* ProcessLigand.py */;
+		name = "ProcessLigand.py: 183";
+		rLen = 0;
+		rLoc = 6395;
+		rType = 0;
+		vrLen = 2474;
+		vrLoc = 1079;
+	};
+	1565E7BA16D6AB190025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A916A5C19C00E07CFF /* ProcessLigand.py */;
+		name = "ProcessLigand.py: 183";
+		rLen = 0;
+		rLoc = 6395;
+		rType = 0;
+		vrLen = 2474;
+		vrLoc = 1079;
+	};
+	1565E7BB16D6AC420025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A916A5C19C00E07CFF /* ProcessLigand.py */;
+		name = "ProcessLigand.py: 113";
+		rLen = 0;
+		rLoc = 3480;
+		rType = 0;
+		vrLen = 5699;
+		vrLoc = 696;
+	};
+	1565E7BC16D6AC420025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
+		name = "Simulation.py: 139";
+		rLen = 0;
+		rLoc = 4286;
+		rType = 0;
+		vrLen = 1165;
+		vrLoc = 4779;
+	};
+	1565E7BD16D6AC420025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A016A5C19C00E07CFF /* Config3.py */;
+		name = "Config3.py: 88";
+		rLen = 0;
+		rLoc = 2799;
+		rType = 0;
+		vrLen = 7944;
+		vrLoc = 824;
+	};
+	1565E7BE16D6AC420025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C859E16A5C19C00E07CFF /* Config1.py */;
+		name = "Config1.py: 99";
+		rLen = 0;
+		rLoc = 2768;
+		rType = 0;
+		vrLen = 1396;
+		vrLoc = 1847;
+	};
+	1565E7BF16D6AC420025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C859F16A5C19C00E07CFF /* Config2.py */;
+		name = "Config2.py: 71";
+		rLen = 0;
+		rLoc = 1969;
+		rType = 0;
+		vrLen = 1210;
+		vrLoc = 1310;
+	};
+	1565E7C016D6AC420025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 15BDD04116B98BD0000F45F7 /* Result.py */;
+		name = "Result.py: 137";
+		rLen = 0;
+		rLoc = 4054;
+		rType = 0;
+		vrLen = 1306;
+		vrLoc = 3462;
+	};
+	1565E7C116D6AC420025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 391";
+		rLen = 0;
+		rLoc = 17669;
+		rType = 0;
+		vrLen = 2122;
+		vrLoc = 17427;
+	};
+	1565E7C216D6AC420025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 174";
+		rLen = 0;
+		rLoc = 6664;
+		rType = 0;
+		vrLen = 2942;
+		vrLoc = 4036;
+	};
+	1565E7C316D6AC420025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 174";
+		rLen = 0;
+		rLoc = 6625;
+		rType = 0;
+		vrLen = 2703;
+		vrLoc = 4273;
+	};
+	1565E7C416D6AC630025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 174";
+		rLen = 0;
+		rLoc = 6625;
+		rType = 0;
+		vrLen = 2703;
+		vrLoc = 4273;
+	};
+	1565E7C516D6AC650025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 174";
+		rLen = 0;
+		rLoc = 6625;
+		rType = 0;
+		vrLen = 2703;
+		vrLoc = 4273;
+	};
+	1565E7C616D6AC690025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 174";
+		rLen = 0;
+		rLoc = 6625;
+		rType = 0;
+		vrLen = 2703;
+		vrLoc = 4273;
+	};
+	1565E7C716D6AC790025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 169";
+		rLen = 0;
+		rLoc = 6536;
+		rType = 0;
+		vrLen = 2703;
+		vrLoc = 4273;
+	};
+	1565E7C816D6AD090025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 175";
+		rLen = 0;
+		rLoc = 6768;
+		rType = 0;
+		vrLen = 2446;
+		vrLoc = 4822;
+	};
+	1565E7C916D6AD3B0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 175";
+		rLen = 0;
+		rLoc = 6760;
+		rType = 0;
+		vrLen = 10577;
+		vrLoc = 5756;
+	};
+	1565E7CA16D6AD3B0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AE16A5C19C00E07CFF /* UpdateScreen.py */;
+		name = "UpdateScreen.py: 138";
+		rLen = 0;
+		rLoc = 4412;
+		rType = 0;
+		vrLen = 1427;
+		vrLoc = 4022;
+	};
+	1565E7CB16D6AD3B0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AE16A5C19C00E07CFF /* UpdateScreen.py */;
+		name = "UpdateScreen.py: 145";
+		rLen = 0;
+		rLoc = 4702;
+		rType = 0;
+		vrLen = 1427;
+		vrLoc = 4022;
+	};
+	1565E7CC16D6AD630025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AE16A5C19C00E07CFF /* UpdateScreen.py */;
+		name = "UpdateScreen.py: 145";
+		rLen = 0;
+		rLoc = 4702;
+		rType = 0;
+		vrLen = 1427;
+		vrLoc = 4022;
+	};
+	1565E7CD16D6ADAE0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AE16A5C19C00E07CFF /* UpdateScreen.py */;
+		name = "UpdateScreen.py: 132";
+		rLen = 0;
+		rLoc = 4198;
+		rType = 0;
+		vrLen = 1527;
+		vrLoc = 4446;
+	};
+	1565E7CE16D6ADAE0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 391";
+		rLen = 0;
+		rLoc = 17669;
+		rType = 0;
+		vrLen = 2122;
+		vrLoc = 17427;
+	};
+	1565E7CF16D6ADAE0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 388";
+		rLen = 0;
+		rLoc = 17636;
+		rType = 0;
+		vrLen = 1615;
+		vrLoc = 10428;
+	};
+	1565E7D016D6AFA80025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
+		name = "Simulation.py: 173";
+		rLen = 0;
+		rLoc = 5514;
+		rType = 0;
+		vrLen = 1134;
+		vrLoc = 4779;
+	};
+	1565E7D116D6AFA80025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 397";
+		rLen = 0;
+		rLoc = 18292;
+		rType = 0;
+		vrLen = 4669;
+		vrLoc = 16484;
+	};
+	1565E7D216D6AFA80025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 666";
+		rLen = 0;
+		rLoc = 28545;
+		rType = 0;
+		vrLen = 1721;
+		vrLoc = 27484;
+	};
+	1565E7D316D6B0460025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AA16A5C19C00E07CFF /* RunFlexAID.py */;
+		name = "RunFlexAID.py: 19";
+		rLen = 120;
+		rLoc = 451;
+		rType = 0;
+		vrLen = 587;
+		vrLoc = 0;
+	};
+	1565E7D416D6B0460025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 15BDD04116B98BD0000F45F7 /* Result.py */;
+		name = "Result.py: 137";
+		rLen = 0;
+		rLoc = 4054;
+		rType = 0;
+		vrLen = 1306;
+		vrLoc = 3462;
+	};
+	1565E7D516D6B0460025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 666";
+		rLen = 0;
+		rLoc = 28495;
+		rType = 0;
+		vrLen = 1723;
+		vrLoc = 27484;
+	};
+	1565E7D616D6B0460025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 401";
+		rLen = 0;
+		rLoc = 18292;
+		rType = 0;
+		vrLen = 3009;
+		vrLoc = 16274;
+	};
+	1565E7D716D6B08B0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 401";
+		rLen = 0;
+		rLoc = 18292;
+		rType = 0;
+		vrLen = 3009;
+		vrLoc = 16274;
+	};
+	1565E7D816D6B0910025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 400";
+		rLen = 0;
+		rLoc = 18204;
+		rType = 0;
+		vrLen = 3009;
+		vrLoc = 16274;
+	};
+	1565E7D916D6B1280025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 400";
+		rLen = 0;
+		rLoc = 18204;
+		rType = 0;
+		vrLen = 3009;
+		vrLoc = 16274;
+	};
+	1565E7DA16D6B1950025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 398";
+		rLen = 0;
+		rLoc = 18085;
+		rType = 0;
+		vrLen = 3009;
+		vrLoc = 16274;
+	};
+	1565E7DB16D6B19B0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 398";
+		rLen = 0;
+		rLoc = 18085;
+		rType = 0;
+		vrLen = 3009;
+		vrLoc = 16274;
+	};
+	1565E7DC16D6B22D0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 399";
+		rLen = 0;
+		rLoc = 18057;
+		rType = 0;
+		vrLen = 2908;
+		vrLoc = 16274;
+	};
+	1565E7DD16D6B23A0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 399";
+		rLen = 0;
+		rLoc = 18057;
+		rType = 0;
+		vrLen = 2908;
+		vrLoc = 16274;
+	};
+	1565E7DE16D6B27C0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 388";
+		rLen = 0;
+		rLoc = 17553;
+		rType = 0;
+		vrLen = 4409;
+		vrLoc = 16274;
+	};
+	1565E7DF16D6B2D90025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 387";
+		rLen = 0;
+		rLoc = 17635;
+		rType = 0;
+		vrLen = 5232;
+		vrLoc = 15243;
+	};
+	1565E7E016D6B2D90025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 175";
+		rLen = 0;
+		rLoc = 6760;
+		rType = 0;
+		vrLen = 10475;
+		vrLoc = 5756;
+	};
+	1565E7E116D6B2D90025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 174";
+		rLen = 0;
+		rLoc = 6747;
+		rType = 0;
+		vrLen = 8698;
+		vrLoc = 4909;
+	};
+	1565E7E216D6B3820025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 174";
+		rLen = 0;
+		rLoc = 6698;
+		rType = 0;
+		vrLen = 3975;
+		vrLoc = 2773;
+	};
+	1565E7E316D6B3820025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A916A5C19C00E07CFF /* ProcessLigand.py */;
+		name = "ProcessLigand.py: 113";
+		rLen = 0;
+		rLoc = 3480;
+		rType = 0;
+		vrLen = 5624;
+		vrLoc = 771;
+	};
+	1565E7E416D6B3820025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AA16A5C19C00E07CFF /* RunFlexAID.py */;
+		name = "RunFlexAID.py: 19";
+		rLen = 120;
+		rLoc = 451;
+		rType = 0;
+		vrLen = 587;
+		vrLoc = 0;
+	};
+	1565E7E516D6B3820025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 15BDD04116B98BD0000F45F7 /* Result.py */;
+		name = "Result.py: 137";
+		rLen = 0;
+		rLoc = 4054;
+		rType = 0;
+		vrLen = 1418;
+		vrLoc = 2885;
+	};
+	1565E7E616D6B3820025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 399";
+		rLen = 0;
+		rLoc = 18182;
+		rType = 0;
+		vrLen = 2724;
+		vrLoc = 16046;
+	};
+	1565E7E716D6B3820025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 399";
+		rLen = 0;
+		rLoc = 18190;
+		rType = 0;
+		vrLen = 2726;
+		vrLoc = 16046;
+	};
+	1565E7E816D6B7650025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 397";
+		rLen = 0;
+		rLoc = 18055;
+		rType = 0;
+		vrLen = 2989;
+		vrLoc = 16180;
+	};
+	1565E7E916D6B7650025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AE16A5C19C00E07CFF /* UpdateScreen.py */;
+		name = "UpdateScreen.py: 132";
+		rLen = 0;
+		rLoc = 4198;
+		rType = 0;
+		vrLen = 1373;
+		vrLoc = 4446;
+	};
+	1565E7EA16D6B7650025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AE16A5C19C00E07CFF /* UpdateScreen.py */;
+		name = "UpdateScreen.py: 154";
+		rLen = 0;
+		rLoc = 5018;
+		rType = 0;
+		vrLen = 1340;
+		vrLoc = 4310;
+	};
+	1565E7EB16D6B7910025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AE16A5C19C00E07CFF /* UpdateScreen.py */;
+		name = "UpdateScreen.py: 138";
+		rLen = 0;
+		rLoc = 4412;
+		rType = 0;
+		vrLen = 1340;
+		vrLoc = 4310;
+	};
+	1565E7EC16D6B7B50025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AE16A5C19C00E07CFF /* UpdateScreen.py */;
+		name = "UpdateScreen.py: 187";
+		rLen = 0;
+		rLoc = 6379;
+		rType = 0;
+		vrLen = 1542;
+		vrLoc = 4965;
+	};
+	1565E7ED16D6B8EB0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AE16A5C19C00E07CFF /* UpdateScreen.py */;
+		name = "UpdateScreen.py: 170";
+		rLen = 0;
+		rLoc = 5559;
+		rType = 0;
+		vrLen = 1542;
+		vrLoc = 4965;
+	};
+	1565E7EE16D6B8EB0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 15BDD04116B98BD0000F45F7 /* Result.py */;
+		name = "Result.py: 137";
+		rLen = 0;
+		rLoc = 4054;
+		rType = 0;
+		vrLen = 1418;
+		vrLoc = 2885;
+	};
+	1565E7EF16D6B8EB0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 15BDD04116B98BD0000F45F7 /* Result.py */;
+		name = "Result.py: 91";
+		rLen = 0;
+		rLoc = 2305;
+		rType = 0;
+		vrLen = 1317;
+		vrLoc = 1829;
+	};
+	1565E7F016D6B97B0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 15BDD04116B98BD0000F45F7 /* Result.py */;
+		name = "Result.py: 91";
+		rLen = 0;
+		rLoc = 2305;
+		rType = 0;
+		vrLen = 1317;
+		vrLoc = 1829;
+	};
+	1565E7F116D6B9CE0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 15BDD04116B98BD0000F45F7 /* Result.py */;
+		name = "Result.py: 91";
+		rLen = 0;
+		rLoc = 2335;
+		rType = 0;
+		vrLen = 1167;
+		vrLoc = 1540;
+	};
+	1565E7F216D6BCBA0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 15BDD04116B98BD0000F45F7 /* Result.py */;
+		name = "Result.py: 156";
+		rLen = 17;
+		rLoc = 4616;
+		rType = 0;
+		vrLen = 1220;
+		vrLoc = 3548;
+	};
+	1565E7F316D6BCBA0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 181";
+		rLen = 0;
+		rLoc = 6971;
+		rType = 0;
+		vrLen = 7924;
+		vrLoc = 6193;
+	};
+	1565E7F416D6BCBA0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A916A5C19C00E07CFF /* ProcessLigand.py */;
+		name = "ProcessLigand.py: 113";
+		rLen = 0;
+		rLoc = 3480;
+		rType = 0;
+		vrLen = 5624;
+		vrLoc = 771;
+	};
+	1565E7F516D6BCBA0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 416";
+		rLen = 0;
+		rLoc = 19032;
+		rType = 0;
+		vrLen = 6058;
+		vrLoc = 16274;
+	};
+	1565E7F616D6BD220025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 680";
+		rLen = 0;
+		rLoc = 28836;
+		rType = 0;
+		vrLen = 1255;
+		vrLoc = 27726;
+	};
+	1565E7F716D6BD940025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 680";
+		rLen = 0;
+		rLoc = 28836;
+		rType = 0;
+		vrLen = 1013;
+		vrLoc = 0;
+	};
+	1565E7F816D6BDB20025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 24";
+		rLen = 0;
+		rLoc = 819;
+		rType = 0;
+		vrLen = 1001;
+		vrLoc = 0;
+	};
+	1565E7F916D6BDBC0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 24";
+		rLen = 0;
+		rLoc = 819;
+		rType = 0;
+		vrLen = 1001;
+		vrLoc = 0;
+	};
+	1565E7FA16D6BDBE0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 24";
+		rLen = 0;
+		rLoc = 819;
+		rType = 0;
+		vrLen = 1001;
+		vrLoc = 0;
+	};
+	1565E7FB16D6BE0B0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 681";
+		rLen = 0;
+		rLoc = 28836;
+		rType = 0;
+		vrLen = 1733;
+		vrLoc = 27848;
+	};
+	1565E7FC16D6BE3E0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 681";
+		rLen = 0;
+		rLoc = 28836;
+		rType = 0;
+		vrLen = 1733;
+		vrLoc = 27848;
+	};
+	1565E7FD16D6BE4E0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 681";
+		rLen = 0;
+		rLoc = 28836;
+		rType = 0;
+		vrLen = 1733;
+		vrLoc = 27848;
+	};
+	1565E7FE16D6BE5C0025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 681";
+		rLen = 0;
+		rLoc = 28836;
+		rType = 0;
+		vrLen = 1733;
+		vrLoc = 27848;
+	};
+	1565E7FF16D6BE860025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 684";
+		rLen = 0;
+		rLoc = 28916;
+		rType = 0;
+		vrLen = 1345;
+		vrLoc = 27848;
+	};
+	1565E80016D6BED20025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 681";
+		rLen = 0;
+		rLoc = 28916;
+		rType = 0;
+		vrLen = 1759;
+		vrLoc = 27848;
+	};
+	1565E80116D6BEE80025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 681";
+		rLen = 0;
+		rLoc = 28873;
+		rType = 0;
+		vrLen = 1759;
+		vrLoc = 27848;
+	};
+	1565E80216D6BFF80025A72D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 682";
+		rLen = 0;
+		rLoc = 28929;
+		rType = 0;
+		vrLen = 11180;
+		vrLoc = 1027;
 	};
 	156DDD1016BCA5CF00E42516 /* Base.py */ = {
 		uiCtxt = {
@@ -1007,6 +1767,82 @@
 			1565E7B416D6A80E0025A72D /* PBXTextBookmark */ = 1565E7B416D6A80E0025A72D /* PBXTextBookmark */;
 			1565E7B516D6A86A0025A72D /* PBXTextBookmark */ = 1565E7B516D6A86A0025A72D /* PBXTextBookmark */;
 			1565E7B616D6A8C00025A72D /* PBXTextBookmark */ = 1565E7B616D6A8C00025A72D /* PBXTextBookmark */;
+			1565E7B716D6AA500025A72D /* PBXTextBookmark */ = 1565E7B716D6AA500025A72D /* PBXTextBookmark */;
+			1565E7B816D6AB190025A72D /* PBXTextBookmark */ = 1565E7B816D6AB190025A72D /* PBXTextBookmark */;
+			1565E7B916D6AB190025A72D /* PBXTextBookmark */ = 1565E7B916D6AB190025A72D /* PBXTextBookmark */;
+			1565E7BA16D6AB190025A72D /* PBXTextBookmark */ = 1565E7BA16D6AB190025A72D /* PBXTextBookmark */;
+			1565E7BB16D6AC420025A72D /* PBXTextBookmark */ = 1565E7BB16D6AC420025A72D /* PBXTextBookmark */;
+			1565E7BC16D6AC420025A72D /* PBXTextBookmark */ = 1565E7BC16D6AC420025A72D /* PBXTextBookmark */;
+			1565E7BD16D6AC420025A72D /* PBXTextBookmark */ = 1565E7BD16D6AC420025A72D /* PBXTextBookmark */;
+			1565E7BE16D6AC420025A72D /* PBXTextBookmark */ = 1565E7BE16D6AC420025A72D /* PBXTextBookmark */;
+			1565E7BF16D6AC420025A72D /* PBXTextBookmark */ = 1565E7BF16D6AC420025A72D /* PBXTextBookmark */;
+			1565E7C016D6AC420025A72D /* PBXTextBookmark */ = 1565E7C016D6AC420025A72D /* PBXTextBookmark */;
+			1565E7C116D6AC420025A72D /* PBXTextBookmark */ = 1565E7C116D6AC420025A72D /* PBXTextBookmark */;
+			1565E7C216D6AC420025A72D /* PBXTextBookmark */ = 1565E7C216D6AC420025A72D /* PBXTextBookmark */;
+			1565E7C316D6AC420025A72D /* PBXTextBookmark */ = 1565E7C316D6AC420025A72D /* PBXTextBookmark */;
+			1565E7C416D6AC630025A72D /* PBXTextBookmark */ = 1565E7C416D6AC630025A72D /* PBXTextBookmark */;
+			1565E7C516D6AC650025A72D /* PBXTextBookmark */ = 1565E7C516D6AC650025A72D /* PBXTextBookmark */;
+			1565E7C616D6AC690025A72D /* PBXTextBookmark */ = 1565E7C616D6AC690025A72D /* PBXTextBookmark */;
+			1565E7C716D6AC790025A72D /* PBXTextBookmark */ = 1565E7C716D6AC790025A72D /* PBXTextBookmark */;
+			1565E7C816D6AD090025A72D /* PBXTextBookmark */ = 1565E7C816D6AD090025A72D /* PBXTextBookmark */;
+			1565E7C916D6AD3B0025A72D /* PBXTextBookmark */ = 1565E7C916D6AD3B0025A72D /* PBXTextBookmark */;
+			1565E7CA16D6AD3B0025A72D /* PBXTextBookmark */ = 1565E7CA16D6AD3B0025A72D /* PBXTextBookmark */;
+			1565E7CB16D6AD3B0025A72D /* PBXTextBookmark */ = 1565E7CB16D6AD3B0025A72D /* PBXTextBookmark */;
+			1565E7CC16D6AD630025A72D /* PBXTextBookmark */ = 1565E7CC16D6AD630025A72D /* PBXTextBookmark */;
+			1565E7CD16D6ADAE0025A72D /* PBXTextBookmark */ = 1565E7CD16D6ADAE0025A72D /* PBXTextBookmark */;
+			1565E7CE16D6ADAE0025A72D /* PBXTextBookmark */ = 1565E7CE16D6ADAE0025A72D /* PBXTextBookmark */;
+			1565E7CF16D6ADAE0025A72D /* PBXTextBookmark */ = 1565E7CF16D6ADAE0025A72D /* PBXTextBookmark */;
+			1565E7D016D6AFA80025A72D /* PBXTextBookmark */ = 1565E7D016D6AFA80025A72D /* PBXTextBookmark */;
+			1565E7D116D6AFA80025A72D /* PBXTextBookmark */ = 1565E7D116D6AFA80025A72D /* PBXTextBookmark */;
+			1565E7D216D6AFA80025A72D /* PBXTextBookmark */ = 1565E7D216D6AFA80025A72D /* PBXTextBookmark */;
+			1565E7D316D6B0460025A72D /* PBXTextBookmark */ = 1565E7D316D6B0460025A72D /* PBXTextBookmark */;
+			1565E7D416D6B0460025A72D /* PBXTextBookmark */ = 1565E7D416D6B0460025A72D /* PBXTextBookmark */;
+			1565E7D516D6B0460025A72D /* PBXTextBookmark */ = 1565E7D516D6B0460025A72D /* PBXTextBookmark */;
+			1565E7D616D6B0460025A72D /* PBXTextBookmark */ = 1565E7D616D6B0460025A72D /* PBXTextBookmark */;
+			1565E7D716D6B08B0025A72D /* PBXTextBookmark */ = 1565E7D716D6B08B0025A72D /* PBXTextBookmark */;
+			1565E7D816D6B0910025A72D /* PBXTextBookmark */ = 1565E7D816D6B0910025A72D /* PBXTextBookmark */;
+			1565E7D916D6B1280025A72D /* PBXTextBookmark */ = 1565E7D916D6B1280025A72D /* PBXTextBookmark */;
+			1565E7DA16D6B1950025A72D /* PBXTextBookmark */ = 1565E7DA16D6B1950025A72D /* PBXTextBookmark */;
+			1565E7DB16D6B19B0025A72D /* PBXTextBookmark */ = 1565E7DB16D6B19B0025A72D /* PBXTextBookmark */;
+			1565E7DC16D6B22D0025A72D /* PBXTextBookmark */ = 1565E7DC16D6B22D0025A72D /* PBXTextBookmark */;
+			1565E7DD16D6B23A0025A72D /* PBXTextBookmark */ = 1565E7DD16D6B23A0025A72D /* PBXTextBookmark */;
+			1565E7DE16D6B27C0025A72D /* PBXTextBookmark */ = 1565E7DE16D6B27C0025A72D /* PBXTextBookmark */;
+			1565E7DF16D6B2D90025A72D /* PBXTextBookmark */ = 1565E7DF16D6B2D90025A72D /* PBXTextBookmark */;
+			1565E7E016D6B2D90025A72D /* PBXTextBookmark */ = 1565E7E016D6B2D90025A72D /* PBXTextBookmark */;
+			1565E7E116D6B2D90025A72D /* PBXTextBookmark */ = 1565E7E116D6B2D90025A72D /* PBXTextBookmark */;
+			1565E7E216D6B3820025A72D /* PBXTextBookmark */ = 1565E7E216D6B3820025A72D /* PBXTextBookmark */;
+			1565E7E316D6B3820025A72D /* PBXTextBookmark */ = 1565E7E316D6B3820025A72D /* PBXTextBookmark */;
+			1565E7E416D6B3820025A72D /* PBXTextBookmark */ = 1565E7E416D6B3820025A72D /* PBXTextBookmark */;
+			1565E7E516D6B3820025A72D /* PBXTextBookmark */ = 1565E7E516D6B3820025A72D /* PBXTextBookmark */;
+			1565E7E616D6B3820025A72D /* PBXTextBookmark */ = 1565E7E616D6B3820025A72D /* PBXTextBookmark */;
+			1565E7E716D6B3820025A72D /* PBXTextBookmark */ = 1565E7E716D6B3820025A72D /* PBXTextBookmark */;
+			1565E7E816D6B7650025A72D /* PBXTextBookmark */ = 1565E7E816D6B7650025A72D /* PBXTextBookmark */;
+			1565E7E916D6B7650025A72D /* PBXTextBookmark */ = 1565E7E916D6B7650025A72D /* PBXTextBookmark */;
+			1565E7EA16D6B7650025A72D /* PBXTextBookmark */ = 1565E7EA16D6B7650025A72D /* PBXTextBookmark */;
+			1565E7EB16D6B7910025A72D /* PBXTextBookmark */ = 1565E7EB16D6B7910025A72D /* PBXTextBookmark */;
+			1565E7EC16D6B7B50025A72D /* PBXTextBookmark */ = 1565E7EC16D6B7B50025A72D /* PBXTextBookmark */;
+			1565E7ED16D6B8EB0025A72D /* PBXTextBookmark */ = 1565E7ED16D6B8EB0025A72D /* PBXTextBookmark */;
+			1565E7EE16D6B8EB0025A72D /* PBXTextBookmark */ = 1565E7EE16D6B8EB0025A72D /* PBXTextBookmark */;
+			1565E7EF16D6B8EB0025A72D /* PBXTextBookmark */ = 1565E7EF16D6B8EB0025A72D /* PBXTextBookmark */;
+			1565E7F016D6B97B0025A72D /* PBXTextBookmark */ = 1565E7F016D6B97B0025A72D /* PBXTextBookmark */;
+			1565E7F116D6B9CE0025A72D /* PBXTextBookmark */ = 1565E7F116D6B9CE0025A72D /* PBXTextBookmark */;
+			1565E7F216D6BCBA0025A72D /* PBXTextBookmark */ = 1565E7F216D6BCBA0025A72D /* PBXTextBookmark */;
+			1565E7F316D6BCBA0025A72D /* PBXTextBookmark */ = 1565E7F316D6BCBA0025A72D /* PBXTextBookmark */;
+			1565E7F416D6BCBA0025A72D /* PBXTextBookmark */ = 1565E7F416D6BCBA0025A72D /* PBXTextBookmark */;
+			1565E7F516D6BCBA0025A72D /* PBXTextBookmark */ = 1565E7F516D6BCBA0025A72D /* PBXTextBookmark */;
+			1565E7F616D6BD220025A72D /* PBXTextBookmark */ = 1565E7F616D6BD220025A72D /* PBXTextBookmark */;
+			1565E7F716D6BD940025A72D /* PBXTextBookmark */ = 1565E7F716D6BD940025A72D /* PBXTextBookmark */;
+			1565E7F816D6BDB20025A72D /* PBXTextBookmark */ = 1565E7F816D6BDB20025A72D /* PBXTextBookmark */;
+			1565E7F916D6BDBC0025A72D /* PBXTextBookmark */ = 1565E7F916D6BDBC0025A72D /* PBXTextBookmark */;
+			1565E7FA16D6BDBE0025A72D /* PBXTextBookmark */ = 1565E7FA16D6BDBE0025A72D /* PBXTextBookmark */;
+			1565E7FB16D6BE0B0025A72D /* PBXTextBookmark */ = 1565E7FB16D6BE0B0025A72D /* PBXTextBookmark */;
+			1565E7FC16D6BE3E0025A72D /* PBXTextBookmark */ = 1565E7FC16D6BE3E0025A72D /* PBXTextBookmark */;
+			1565E7FD16D6BE4E0025A72D /* PBXTextBookmark */ = 1565E7FD16D6BE4E0025A72D /* PBXTextBookmark */;
+			1565E7FE16D6BE5C0025A72D /* PBXTextBookmark */ = 1565E7FE16D6BE5C0025A72D /* PBXTextBookmark */;
+			1565E7FF16D6BE860025A72D /* PBXTextBookmark */ = 1565E7FF16D6BE860025A72D /* PBXTextBookmark */;
+			1565E80016D6BED20025A72D /* PBXTextBookmark */ = 1565E80016D6BED20025A72D /* PBXTextBookmark */;
+			1565E80116D6BEE80025A72D /* PBXTextBookmark */ = 1565E80116D6BEE80025A72D /* PBXTextBookmark */;
+			1565E80216D6BFF80025A72D /* PBXTextBookmark */ = 1565E80216D6BFF80025A72D /* PBXTextBookmark */;
 		};
 		sourceControlManager = 158C859016A5C17300E07CFF /* Source Control */;
 		userBuildSettings = {
@@ -1066,34 +1902,34 @@
 	};
 	158C859E16A5C19C00E07CFF /* Config1.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 16432}}";
-			sepNavSelRange = "{1417, 0}";
-			sepNavVisRange = "{2165, 1423}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 16416}}";
+			sepNavSelRange = "{2768, 0}";
+			sepNavVisRange = "{1847, 1396}";
 		};
 	};
 	158C859F16A5C19C00E07CFF /* Config2.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1372, 5840}}";
-			sepNavSelRange = "{15489, 0}";
-			sepNavVisRange = "{14303, 1978}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 6608}}";
+			sepNavSelRange = "{1969, 0}";
+			sepNavVisRange = "{1310, 1210}";
 			sepNavWindowFrame = "{{84, 36}, {1056, 774}}";
 		};
 	};
 	158C85A016A5C19C00E07CFF /* Config3.py */ = {
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{920, 367}\";\n            s = 0;\n        },\n                {\n            r = \"{1338, 609}\";\n            s = 0;\n        },\n                {\n            r = \"{1973, 825}\";\n            s = 0;\n        },\n                {\n            r = \"{3056, 2600}\";\n            s = 0;\n        },\n                {\n            r = \"{5923, 790}\";\n            s = 0;\n        },\n                {\n            r = \"{7024, 153}\";\n            s = 0;\n        },\n                {\n            r = \"{7476, 496}\";\n            s = 0;\n        },\n                {\n            r = \"{8278, 489}\";\n            s = 0;\n        },\n                {\n            r = \"{9078, 154}\";\n            s = 0;\n        },\n                {\n            r = \"{9554, 7374}\";\n            s = 0;\n        },\n                {\n            r = \"{17229, 201}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 17433}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 1280}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 1312}}";
 			sepNavSelRange = "{1001, 0}";
-			sepNavVisRange = "{836, 1611}";
+			sepNavVisRange = "{824, 1623}";
 			sepNavWindowFrame = "{{15, 99}, {1056, 774}}";
 		};
 	};
 	158C85A116A5C19C00E07CFF /* Constraint.py */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{5796, 95}\";\n            s = 0;\n        },\n                {\n            r = \"{15934, 266}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 21625}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 9520}}";
-			sepNavSelRange = "{21171, 0}";
-			sepNavVisRange = "{19868, 1398}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{5804, 95}\";\n            s = 0;\n        },\n                {\n            r = \"{15942, 266}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 21647}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 8912}}";
+			sepNavSelRange = "{12161, 3}";
+			sepNavVisRange = "{11407, 2199}";
 		};
 	};
 	158C85A216A5C19C00E07CFF /* FlexAID.py */ = {
@@ -1149,41 +1985,41 @@
 	};
 	158C85A816A5C19C00E07CFF /* ManageFiles.py */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{3567, 221}\";\n            s = 0;\n        },\n                {\n            r = \"{4092, 180}\";\n            s = 0;\n        },\n                {\n            r = \"{4540, 280}\";\n            s = 0;\n        },\n                {\n            r = \"{5092, 662}\";\n            s = 0;\n        },\n                {\n            r = \"{11703, 1886}\";\n            s = 0;\n        },\n                {\n            r = \"{13976, 583}\";\n            s = 0;\n        },\n                {\n            r = \"{15882, 177}\";\n            s = 0;\n        },\n                {\n            r = \"{17490, 550}\";\n            s = 0;\n        },\n                {\n            r = \"{19394, 590}\";\n            s = 0;\n        },\n                {\n            r = \"{20368, 251}\";\n            s = 0;\n        },\n                {\n            r = \"{20912, 562}\";\n            s = 0;\n        },\n                {\n            r = \"{21775, 504}\";\n            s = 0;\n        },\n                {\n            r = \"{22637, 817}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 23455}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 5952}}";
-			sepNavSelRange = "{5336, 0}";
-			sepNavVisRange = "{4143, 1695}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{3567, 221}\";\n            s = 0;\n        },\n                {\n            r = \"{4092, 180}\";\n            s = 0;\n        },\n                {\n            r = \"{4540, 280}\";\n            s = 0;\n        },\n                {\n            r = \"{5092, 662}\";\n            s = 0;\n        },\n                {\n            r = \"{7251, 4348}\";\n            s = 0;\n        },\n                {\n            r = \"{11882, 1886}\";\n            s = 0;\n        },\n                {\n            r = \"{14155, 583}\";\n            s = 0;\n        },\n                {\n            r = \"{15038, 728}\";\n            s = 0;\n        },\n                {\n            r = \"{16061, 177}\";\n            s = 0;\n        },\n                {\n            r = \"{16537, 842}\";\n            s = 0;\n        },\n                {\n            r = \"{17669, 550}\";\n            s = 0;\n        },\n                {\n            r = \"{18535, 728}\";\n            s = 0;\n        },\n                {\n            r = \"{19573, 678}\";\n            s = 0;\n        },\n                {\n            r = \"{20547, 251}\";\n            s = 0;\n        },\n                {\n            r = \"{21091, 562}\";\n            s = 0;\n        },\n                {\n            r = \"{21954, 571}\";\n            s = 0;\n        },\n                {\n            r = \"{22816, 817}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 23634}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 3312}}";
+			sepNavSelRange = "{5632, 0}";
+			sepNavVisRange = "{4854, 1692}";
 		};
 	};
 	158C85A916A5C19C00E07CFF /* ProcessLigand.py */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1994, 1098}\";\n            s = 0;\n        },\n                {\n            r = \"{3124, 339}\";\n            s = 0;\n        },\n                {\n            r = \"{3585, 2793}\";\n            s = 0;\n        },\n                {\n            r = \"{6503, 118}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 6626}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 1312}}";
-			sepNavSelRange = "{2152, 0}";
-			sepNavVisRange = "{1079, 1039}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1262, 720}\";\n            s = 0;\n        },\n                {\n            r = \"{2002, 1098}\";\n            s = 0;\n        },\n                {\n            r = \"{3136, 339}\";\n            s = 0;\n        },\n                {\n            r = \"{3601, 2793}\";\n            s = 0;\n        },\n                {\n            r = \"{6519, 118}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 6642}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 960}}";
+			sepNavSelRange = "{1326, 0}";
+			sepNavVisRange = "{771, 678}";
 		};
 	};
 	158C85AA16A5C19C00E07CFF /* RunFlexAID.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 607}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 582}}";
 			sepNavSelRange = "{451, 120}";
 			sepNavVisRange = "{0, 587}";
 		};
 	};
 	158C85AB16A5C19C00E07CFF /* Simulate.py */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1308, 263}\";\n            s = 0;\n        },\n                {\n            r = \"{2134, 56}\";\n            s = 0;\n        },\n                {\n            r = \"{12307, 232}\";\n            s = 0;\n        },\n                {\n            r = \"{12801, 203}\";\n            s = 0;\n        },\n                {\n            r = \"{13267, 82}\";\n            s = 0;\n        },\n                {\n            r = \"{13644, 91}\";\n            s = 0;\n        },\n                {\n            r = \"{14008, 86}\";\n            s = 0;\n        },\n                {\n            r = \"{14361, 85}\";\n            s = 0;\n        },\n                {\n            r = \"{14710, 86}\";\n            s = 0;\n        },\n                {\n            r = \"{15063, 89}\";\n            s = 0;\n        },\n                {\n            r = \"{15435, 96}\";\n            s = 0;\n        },\n                {\n            r = \"{16310, 81}\";\n            s = 0;\n        },\n                {\n            r = \"{16777, 319}\";\n            s = 0;\n        },\n                {\n            r = \"{18025, 317}\";\n            s = 0;\n        },\n                {\n            r = \"{21495, 680}\";\n            s = 0;\n        },\n                {\n            r = \"{22443, 48}\";\n            s = 0;\n        },\n                {\n            r = \"{22769, 642}\";\n            s = 0;\n        },\n                {\n            r = \"{23743, 43}\";\n            s = 0;\n        },\n                {\n            r = \"{24119, 971}\";\n            s = 0;\n        },\n                {\n            r = \"{25770, 652}\";\n            s = 0;\n        },\n                {\n            r = \"{26599, 682}\";\n            s = 0;\n        },\n                {\n            r = \"{27599, 935}\";\n            s = 0;\n        },\n                {\n            r = \"{28827, 331}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 29159}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 7920}}";
-			sepNavSelRange = "{15825, 0}";
-			sepNavVisRange = "{14954, 2078}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1322, 263}\";\n            s = 0;\n        },\n                {\n            r = \"{1611, 252}\";\n            s = 0;\n        },\n                {\n            r = \"{2148, 56}\";\n            s = 0;\n        },\n                {\n            r = \"{2519, 6184}\";\n            s = 0;\n        },\n                {\n            r = \"{8997, 3050}\";\n            s = 0;\n        },\n                {\n            r = \"{12321, 232}\";\n            s = 0;\n        },\n                {\n            r = \"{12815, 203}\";\n            s = 0;\n        },\n                {\n            r = \"{13281, 82}\";\n            s = 0;\n        },\n                {\n            r = \"{13658, 91}\";\n            s = 0;\n        },\n                {\n            r = \"{14022, 86}\";\n            s = 0;\n        },\n                {\n            r = \"{14375, 85}\";\n            s = 0;\n        },\n                {\n            r = \"{14724, 86}\";\n            s = 0;\n        },\n                {\n            r = \"{15077, 89}\";\n            s = 0;\n        },\n                {\n            r = \"{15449, 96}\";\n            s = 0;\n        },\n                {\n            r = \"{15828, 231}\";\n            s = 0;\n        },\n                {\n            r = \"{16324, 81}\";\n            s = 0;\n        },\n                {\n            r = \"{16791, 319}\";\n            s = 0;\n        },\n                {\n            r = \"{17439, 196}\";\n            s = 0;\n        },\n                {\n            r = \"{17953, 565}\";\n            s = 0;\n        },\n                {\n            r = \"{18814, 204}\";\n            s = 0;\n        },\n                {\n            r = \"{19313, 1158}\";\n            s = 0;\n        },\n                {\n            r = \"{20735, 673}\";\n            s = 0;\n        },\n                {\n            r = \"{21665, 680}\";\n            s = 0;\n        },\n                {\n            r = \"{22613, 48}\";\n            s = 0;\n        },\n                {\n            r = \"{22939, 642}\";\n            s = 0;\n        },\n                {\n            r = \"{23913, 43}\";\n            s = 0;\n        },\n                {\n            r = \"{24289, 971}\";\n            s = 0;\n        },\n                {\n            r = \"{25940, 652}\";\n            s = 0;\n        },\n                {\n            r = \"{26769, 682}\";\n            s = 0;\n        },\n                {\n            r = \"{29255, 331}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 29587}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 4496}}";
+			sepNavSelRange = "{10958, 0}";
+			sepNavVisRange = "{1027, 1380}";
 		};
 	};
 	158C85AC16A5C19C00E07CFF /* Simulation.py */ = {
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{16061, 1737}\";\n            s = 0;\n        },\n                {\n            r = \"{17951, 699}\";\n            s = 0;\n        },\n                {\n            r = \"{18905, 390}\";\n            s = 0;\n        },\n                {\n            r = \"{19457, 630}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 20089}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 7488}}";
-			sepNavSelRange = "{4286, 0}";
-			sepNavVisRange = "{3313, 1704}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 7744}}";
+			sepNavSelRange = "{5514, 0}";
+			sepNavVisRange = "{4779, 1134}";
 			sepNavWindowFrame = "{{15, 99}, {1056, 774}}";
 		};
 	};
@@ -1199,9 +2035,9 @@
 	158C85AE16A5C19C00E07CFF /* UpdateScreen.py */ = {
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{2150, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{3293, 298}\";\n            s = 0;\n        },\n                {\n            r = \"{9388, 2792}\";\n            s = 0;\n        },\n                {\n            r = \"{12588, 1531}\";\n            s = 0;\n        },\n                {\n            r = \"{14547, 3274}\";\n            s = 0;\n        },\n                {\n            r = \"{18190, 241}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 18870}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 4416}}";
-			sepNavSelRange = "{4089, 0}";
-			sepNavVisRange = "{3712, 1361}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 4240}}";
+			sepNavSelRange = "{5236, 0}";
+			sepNavVisRange = "{4642, 1542}";
 		};
 	};
 	158C85C616A5C19C00E07CFF /* General_cmd.py */ = {
@@ -1349,9 +2185,9 @@
 	};
 	15BDD04116B98BD0000F45F7 /* Result.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 2400}}";
-			sepNavSelRange = "{4417, 0}";
-			sepNavVisRange = "{3462, 1306}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 2576}}";
+			sepNavSelRange = "{4616, 17}";
+			sepNavVisRange = "{3548, 1220}";
 		};
 	};
 	15F62C5816C6F9A8001CF626 /* MultiList.py */ = {

@@ -21,6 +21,7 @@ from Tkinter import *
 
 import os
 import re
+import shutil
 import glob
 import Queue
 
@@ -385,8 +386,6 @@ class Simulate(Tabs.Tab):
         for Result in self.Vars.ResultsContainer.Results:
             
             self.dictSimData[Result.ResultID] = [ Result.CF, 'N/A', Result.RMSD ]
-            print Result.ResultID
-            print self.dictSimData[Result.ResultID]
             
     ''' ==================================================================================
     FUNCTION update_DataList: Update the displayed Data List informations.
@@ -397,9 +396,13 @@ class Simulate(Tabs.Tab):
         
         i = 0
         for key in sorted(self.dictSimData.keys()):
-            self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], self.dictSimData[key][2] ],
-                            [ self.ColorList[i], None, None, None, None ] )
-            i += 1
+            if key == 'REF':
+                self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], '0.000' ],
+                                [ self.top.Color_White, None, None, None, None ] )
+            else:
+                self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], self.dictSimData[key][2] ],
+                                [ self.ColorList[i], None, None, None, None ] )
+                i += 1
         
     ''' =============================================================================== 
     FUNCTION Reset_Buttons(self): resets button states back to defaults
@@ -447,7 +450,7 @@ class Simulate(Tabs.Tab):
             self.Btn_Abort.config(state='normal')
 
             self.RunStatus()
-          
+    
     ''' =============================================================================== 
     FUNCTION Btn_AbortSim: Abort the simulation 
     ===============================================================================  '''    
@@ -661,14 +664,22 @@ class Simulate(Tabs.Tab):
             if self.Results:
                 self.Load_Results()
                 
-                self.ColorList = Color.GetHeatColorList(self.Manage.NUMBER_RESULTS, True)
-                self.PymolColorList = Color.GetHeatColorList(self.Manage.NUMBER_RESULTS, False)
+                NRes = self.Manage.NUMBER_RESULTS
+                #if self.top.Config2.UseReference.get():
+                #    NRes = NRes + 1
+                
+                self.ColorList = Color.GetHeatColorList(NRes, True)
+                self.PymolColorList = Color.GetHeatColorList(NRes, False)
+                
                 self.Init_Table()
                 
                 self.update_DataResults()
                 self.Show_Results()
                 self.update_DataList()
-
+            
+            else:
+                shutil.rmtree(self.Manage.FlexAIDRunSimulationProject_Dir, True)
+            
             self.Reset_Buttons()
 
     ''' ==================================================================================

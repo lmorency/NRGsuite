@@ -106,7 +106,7 @@ class constraint(Wizard):
             self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1)
             self.Quit_Wizard()
             return
-
+        
         # remove any possible selection before selecting atoms
         cmd.deselect()
               
@@ -540,9 +540,11 @@ class constraint(Wizard):
         
         try:
             cmd.set("auto_zoom", 0)
-                        
+            
+            Active = self.ActiveCons.get()
+            
             cmd.pseudoatom(self.MiddleDisplay,
-                           pos=self.dictConstraints[self.ActiveCons.get()][6],
+                           pos=self.dictConstraints[Active][6],
                            vdw=self.MiddleRadius,
                            state=self.State)
             cmd.refresh()
@@ -550,7 +552,7 @@ class constraint(Wizard):
             cmd.hide('nonbonded', self.MiddleDisplay)
             cmd.refresh()
             
-            dist = '%.2f' % self.dictConstraints[self.ActiveCons.get()][5]
+            dist = '%.2f' % self.dictConstraints[Active][5]
             cmd.label(self.MiddleDisplay, str(dist))
             cmd.refresh()
             

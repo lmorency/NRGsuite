@@ -57,7 +57,7 @@ class ProcLig:
         self.Gen3D = Gen3D
         
         self.FlexAIDWRKInstall_Dir = os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK')
-
+        
         #Init the INP file path
         self.SimLigInpPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.inp')
         self.SimLigICPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.ic')
@@ -97,7 +97,7 @@ class ProcLig:
 
         self.top.ProcessLigand(False, 0, '', 0, False, False, 0)
         self.FlexAID.ProcessRunning = False
-
+    
     def Copy_LigandFile(self):
         
         try:
@@ -110,7 +110,7 @@ class ProcLig:
         self.SimLigPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, os.path.split(self.LigandPath)[1])
 
         return 0
-
+    
     '''
     @summary: process: Processes the ligand (generates input files for FlexAID)
     '''  

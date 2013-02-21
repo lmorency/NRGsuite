@@ -172,7 +172,13 @@ class Manage:
                 
                 if self.Config2.UseReference.get():
                     self.top.Vars.ResultsContainer.Results.append(Res)
-                    continue                
+                    
+                continue                
+
+            m = re.search("RESULT_par.res$", file)
+            if m:
+                self.top.Vars.ResultsContainer.ResultParams = file
+                continue
     
     ''' ==================================================================================
     @summary: Create_CONFIG: Creation of the CONFIG.inp
