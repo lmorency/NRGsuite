@@ -129,7 +129,7 @@ class Parse(threading.Thread):
         self.BindingSiteDisplay = self.FlexAID.Config1.BindingSiteDisplay
                 
         self.FlexStatus = self.FlexAID.Config2.FlexStatus.get()
-        self.dictFlexBonds = self.FlexAID.Config2.Vars.dictFlexBonds
+        self.dictFlexBonds = self.FlexAID.IOFile.Vars.dictFlexBonds
         self.RngOpt = self.FlexAID.Config1.RngOpt.get()
         self.NbTotalGen = int(self.FlexAID.GAParam.NbGen.get())
         self.DefaultDisplay = self.top.SimDefDisplay.get()
@@ -404,19 +404,22 @@ class Parse(threading.Thread):
             if self.Error:
                 break
         
+        # Put back the auto_zoom to on
+        cmd.set("auto_zoom", -1)
+
         if self.FlexAID.ProcessError or self.Error:
             self.queue.put(lambda: self.top.ErrorStatus(self.ErrorMsg))
         else:
             self.queue.put(lambda: self.top.SuccessStatus())
+    
+            if self.top.Results:
+                cmd.disable("TOP_*__")
+                cmd.refresh()
+                cmd.enable("RESULT_*")
+                cmd.refresh()
+                
+            cmd.frame(1)
         
-        # Put back the auto_zoom to on
-        cmd.set("auto_zoom", -1)
-        cmd.disable("TOP_*__")
-        cmd.refresh()
-        cmd.enable("RESULT_*")
-        cmd.refresh()
-        cmd.frame(1)
-
         self.top.ProcessParsing = False
 
         print("FlexAID parsing thread has ended.")

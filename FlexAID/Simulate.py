@@ -63,8 +63,6 @@ class Simulate(Tabs.Tab):
         self.SimCartoonDisplay = self.Vars.SimCartoonDisplay
 
     def Init_Vars(self):
-
-        self.Manage = ManageFiles.Manage(self)
         
         self.ProcessParsing = False
 
@@ -193,6 +191,8 @@ class Simulate(Tabs.Tab):
     ===============================================================================  '''     
     def Btn_StartSim(self):
 
+        self.Manage = ManageFiles.Manage(self)
+        
         if not self.Manage.Clean():
             self.DisplayMessage('   Fatal error: Could not clean files before the simulation',1)
             self.DisplayMessage('   Please contact the developers of the NRGsuite',1)
@@ -346,7 +346,11 @@ class Simulate(Tabs.Tab):
     def SuccessStatus(self):
 
         self.lblSimStatus.config(fg='chartreuse')
-        self.SimStatus.set('Simulation ended successfully.')
+        
+        if self.Results:
+            self.SimStatus.set('Simulation ended successfully.')
+        else:
+            self.SimStatus.set('Simulation aborted successfully.')
 
     ''' =============================================================================== 
     FUNCTION ErrorStatus: An error occured.
@@ -651,15 +655,17 @@ class Simulate(Tabs.Tab):
             self.top.root.after(self.top.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
             
         else:
-            self.Load_Results()
-            
-            self.ColorList = Color.GetHeatColorList(self.Manage.NUMBER_RESULTS, True)
-            self.PymolColorList = Color.GetHeatColorList(self.Manage.NUMBER_RESULTS, False)
-            self.Init_Table()
-            
-            self.update_DataResults()
-            self.Show_Results()
-            self.update_DataList()
+            # Results were generated.
+            if self.Results:
+                self.Load_Results()
+                
+                self.ColorList = Color.GetHeatColorList(self.Manage.NUMBER_RESULTS, True)
+                self.PymolColorList = Color.GetHeatColorList(self.Manage.NUMBER_RESULTS, False)
+                self.Init_Table()
+                
+                self.update_DataResults()
+                self.Show_Results()
+                self.update_DataList()
 
             self.Reset_Buttons()
 

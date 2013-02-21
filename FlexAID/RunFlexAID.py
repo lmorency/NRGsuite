@@ -10,12 +10,11 @@ sys.path.append('/Users/francisgaudreault/Development/NRGsuite/NRGsuite')
 
 Project_Dir = '/Users/francisgaudreault/Documents/NRGsuite/Default'
 Install_Dir = '/usr/local/NRGsuite'
-AlreadyRunning_Dir = '/Users/francisgaudreault/Documents/NRGsuite'
+NRGsuite_Dir = '/Users/francisgaudreault/Documents/NRGsuite'
 
 root = Tk()
 
 import FlexAID
 
-FlexAID = FlexAID.displayFlexAID(root, None, Project_Dir, Install_Dir, AlreadyRunning_Dir, 'MAC', 0,
-                                 'FlexAID', '.frun', 700, 600)
+FlexAID = FlexAID.displayFlexAID(root, None, -1, Project_Dir, Install_Dir, NRGsuite_Dir, 'MAC', 0, 'FlexAID', 700, 600)
 root.mainloop()

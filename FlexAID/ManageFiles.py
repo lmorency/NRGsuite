@@ -219,7 +219,7 @@ class Manage:
             config_file.write('RMSDST ' + self.IOFile.ReferencePath.get() + '\n')
         
         # Ligand flexibility
-        order = sorted(self.Config2.Vars.dictFlexBonds.keys())
+        order = sorted(self.IOFile.Vars.dictFlexBonds.keys())
         self.Add_FlexBonds(config_file,order)
 
         if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
@@ -379,16 +379,16 @@ class Manage:
             strk = str(k)
 
             # If bond is flexible
-            if self.Config2.Vars.dictFlexBonds[k][0]:
+            if self.IOFile.Vars.dictFlexBonds[k][0]:
                 FilePtr.write('OPTIMZ ' + str(self.IOFile.ResSeq.get()) + ' - ' + strk + '\n')
                             
                 # If the bond is forced
-                if self.Config2.Vars.dictFlexBonds[k][1]:
+                if self.IOFile.Vars.dictFlexBonds[k][1]:
 
                     ForcedLines += 'FLEDIH' + strk.rjust(3, ' ') + ' '
-                    n = self.Config2.Vars.dictFlexBonds[k][2]            
+                    n = self.IOFile.Vars.dictFlexBonds[k][2]            
                     for i in range(0, n):
-                        ForcedLines += str(self.Config2.Vars.dictFlexBonds[k][i+3]).rjust(5, ' ')
+                        ForcedLines += str(self.IOFile.Vars.dictFlexBonds[k][i+3]).rjust(5, ' ')
                     ForcedLines += '\n'                
         
         self.Add_Forced(ForcedLines)
@@ -430,7 +430,7 @@ class Manage:
             for line in lines:
                 if line.startswith('HETTYP'):
                     index = line[6:11].strip()
-                    newline = line[:11] + self.Config2.Vars.dictAtomTypes[index][1].rjust(2, ' ') +  line[13:]
+                    newline = line[:11] + self.IOFile.Vars.dictAtomTypes[index][1].rjust(2, ' ') +  line[13:]
                     inpFile.write(newline)
                 else:
                     inpFile.write(line)

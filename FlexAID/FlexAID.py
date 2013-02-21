@@ -283,6 +283,8 @@ class displayFlexAID(Base.Base):
                 
                 self.DisplayMessage("  The session '" + os.path.split(LoadFile)[1] + "' was loaded successfully.", 2)
 
+                self.SaveSessionFile = ''
+
             except:
                 self.DisplayMessage("  ERROR: Could not properly load the session", 2)
                 self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
@@ -350,7 +352,6 @@ class displayFlexAID(Base.Base):
                 self.DisplayMessage("  ERROR: Could not properly save the session:", 2)
                 self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
 
-        
     ''' ==================================================================================
     FUNCTION Btn_Save_Session: Saves the current session
     ==================================================================================  '''        

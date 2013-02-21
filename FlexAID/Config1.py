@@ -358,7 +358,7 @@ class Config1(Tabs.Tab):
     def defOptCleft_Toggle(self,*args):
 
         self.Highlight_SelectedCleft(self.defOptCleft.get())
-
+    
     ''' ==================================================================================
     FUNCTION RngOpt_Toggle: Changes the optimization range
     =================================================================================  '''    
@@ -830,7 +830,7 @@ class Config1(Tabs.Tab):
 
         exc = [ self.BindingSiteDisplay, self.SphereDisplay ]
         General_cmd.Refresh_DDL(self.OptMenuSphere,self.defOptSphere,exc,self.CenterSphere)
-
+    
     ''' ==================================================================================
     FUNCTION Get_BindingSitePath: Retrieves the default path of the bindingsite
     ==================================================================================  '''        
@@ -840,7 +840,7 @@ class Config1(Tabs.Tab):
         BindingSitePath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,TARGETNAME)
         
         return BindingSitePath
-
+    
     ''' ==================================================================================
     FUNCTION Get_BindingSitePath: Retrieves the default path of clefts
     ==================================================================================  '''        
@@ -850,7 +850,7 @@ class Config1(Tabs.Tab):
         CleftPath = os.path.join(self.top.CleftProject_Dir,TARGETNAME)
         
         return CleftPath
-
+    
     ''' ==================================================================================
     FUNCTION Btn_Import_Clefts: Asks for user to load clefts
     ==================================================================================  '''        
@@ -882,7 +882,7 @@ class Config1(Tabs.Tab):
                 
             self.Display_BindingSite()
             self.Update_Clefts_DDL()
-
+    
     ''' ==================================================================================
     FUNCTION Display_BindingSite: Displays the binding-site of the target
     ================================================================================== '''        

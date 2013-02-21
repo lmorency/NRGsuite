@@ -35,13 +35,16 @@ from pymol import util
 import pymol
 import General
 import General_cmd
+import Geometry
 
 class constraint(Wizard):
 
     CYLINDER_WIDTH = 0.06
     
-    DefaultConsDist = '1.5'
+    DefaultConsDist = '2.5'
     LigDisplay = 'CONSTRAINT_LIGAND__'
+    MiddleDisplay = 'DISTANCE_OBJECT__'
+    MiddleRadius = 0.05
     
     CONSTRAINT = 'CONS_'
     ACTIVE = 'ACTIVE_CONS__'
@@ -58,7 +61,7 @@ class constraint(Wizard):
 
         self.RefLigand = self.FlexAID.IOFile.ReferencePath.get()
 
-        self.Active = self.top.ActiveCons
+        self.ActiveCons = self.top.ActiveCons
         self.dictConstraints = self.top.Vars.dictConstraints
         
         self.pick_count = 0
@@ -157,6 +160,9 @@ class constraint(Wizard):
             cmd.delete(self.LigDisplay)
             cmd.refresh()
 
+            cmd.delete(self.MiddleDisplay)
+            cmd.refresh()
+
             cmd.deselect()
             cmd.unpick()
             
@@ -187,7 +193,7 @@ class constraint(Wizard):
     def btn_Clear(self):
 
         self.dictConstraints.clear()
-        self.Active.set('')
+        self.ActiveCons.set('')
         
     #=======================================================================
     ''' Resets to pick the first atom '''
@@ -252,7 +258,7 @@ class constraint(Wizard):
             
         else:
             self.atom2 = self.get_Atom(name)
-
+            
             if len(self.atom2) > 0:
                 if self.AnalyzeConstraint(self.atom1,self.atom2):
                     self.ErrorStatus = [ "An unexpected error occured. Try again." ]
@@ -332,17 +338,29 @@ class constraint(Wizard):
                         self.ErrorStatus = [ "The selected constraint already exists. Try again." ]
 
                     else:
+                    
+                        pointA = [ atom1[5], atom1[6], atom1[7] ]
+                        pointB = [ atom2[5], atom2[6], atom2[7] ]
+                        
+                        dist = Geometry.distance(pointA, pointB)
+                        if dist > self.top.MAX_DIST_CONSTRAINT:
+                            dist = self.DefaultConsDist
+                        
+                        middle = Geometry.middle(pointA, pointB)
+                        
                         # Create new entry in dictionary
                         distobj = self.get_ConstraintID()
                         
                         self.dictConstraints[distobj] = [   leftkey, rightkey,
                                                             key,                                 # constraint name
-                                                            [ atom1[5], atom1[6], atom1[7] ],    # coordinates of atom 1
-                                                            [ atom2[5], atom2[6], atom2[7] ],    # coordinates of atom 2
-                                                            self.DefaultConsDist ]               # value of slider
-                                        
-                        if not self.Active.get():
-                            self.Active.set(distobj)
+                                                            pointA,                              # coordinates of atom 1
+                                                            pointB,                              # coordinates of atom 2
+                                                            dist,                                # value of slider
+                                                            middle                               # pseudoatom location
+                                                        ]
+                                                        
+                        if not self.ActiveCons.get():
+                            self.ActiveCons.set(distobj)
                         else:
                             self.refresh_display()
 
@@ -374,7 +392,7 @@ class constraint(Wizard):
             cmd.set("auto_zoom", 0)
             
             for key in self.dictConstraints.keys():
-                if key == self.Active.get():
+                if key == self.ActiveCons.get():
                     
                     cons = self.dictConstraints[key]
                     
@@ -386,8 +404,10 @@ class constraint(Wizard):
                                        1.000, 1.000, 1.000,
                                        1.000, 1.000, 1.000 ])
 
-                    cmd.load_cgo(Highlight, self.ACTIVE)
+                    cmd.load_cgo(Highlight, self.ACTIVE, state=self.State)
                     cmd.refresh()
+                    
+                    self.refresh_distance()
                     
                     break            
     
@@ -430,13 +450,13 @@ class constraint(Wizard):
             if not First:
                 First = key
             
-            if key == self.Active.get():
+            if key == self.ActiveCons.get():
                 Next = True
             
         if not Active:
             Active = First
 
-        self.Active.set(Active)
+        self.ActiveCons.set(Active)
     
     #=======================================================================
     ''' Move up to the previous active constraint '''
@@ -456,13 +476,13 @@ class constraint(Wizard):
             if not First:
                 First = key
             
-            if key == self.Active.get():
+            if key == self.ActiveCons.get():
                 Next = True
             
         if not Active:
             Active = First
             
-        self.Active.set(Active)
+        self.ActiveCons.set(Active)
     
 
     #=======================================================================
@@ -470,8 +490,8 @@ class constraint(Wizard):
     #=======================================================================
     def delete(self):
 
-        if self.Active.get():
-            del self.dictConstraints[self.Active.get()]
+        if self.ActiveCons.get():
+            del self.dictConstraints[self.ActiveCons.get()]
             self.Next_Active()
 
     #=======================================================================
@@ -502,6 +522,35 @@ class constraint(Wizard):
             self.ErrorCode = 1
         
         return self.ErrorCode
+        
+    #=======================================================================
+        ''' refreshes the distance label of the distance object '''
+    #=======================================================================
+    def refresh_distance(self):
+
+        try:
+            cmd.delete(self.MiddleDisplay)
+            cmd.refresh()
+        except:
+            pass
+        
+        try:
+            cmd.set("auto_zoom", 0)
+                        
+            cmd.pseudoatom(self.MiddleDisplay,
+                           pos=self.dictConstraints[self.ActiveCons.get()][6],
+                           vdw=self.MiddleRadius,
+                           state=self.State)
+            cmd.refresh()
+            
+            dist = '%.2f' % self.dictConstraints[self.ActiveCons.get()][5]
+            cmd.label(self.MiddleDisplay, str(dist))
+            cmd.refresh()
+            
+        except:
+            pass
+        
+        cmd.set("auto_zoom", self.auto_zoom)
         
     #=======================================================================
     ''' Shows the constraint using the distance object '''

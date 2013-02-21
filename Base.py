@@ -71,7 +71,8 @@ class Base:
         self.top = top
         
         self.menuindex = menuindex
-        self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='disabled')
+        if self.menuindex != -1:
+            self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='disabled')
 
         #self.root.geometry()   # Interface DIMENSIONS
         #self.root.maxsize(WINDOWWIDTH,WINDOWHEIGHT)
@@ -280,7 +281,8 @@ class Base:
         self.root.destroy()
         self.root = None
         
-        self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='normal')
+        if self.menuindex != -1:
+            self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='normal')
                 
         print('  Closed ' + self.Name)
 

@@ -43,14 +43,10 @@ class Config2Vars(Vars.Vars):
     UseReference = IntVar()
     ConsDist = DoubleVar() 
     ActiveCons = StringVar()
-    Anchor = IntVar()
     
     def __init__(self):
     
         self.dictConstraints = dict()
-        self.dictAtomTypes = dict()
-        self.dictFlexBonds = dict()
-        self.dictNeighbours = dict()
     
 class Config2(Tabs.Tab):
     
@@ -68,13 +64,10 @@ class Config2(Tabs.Tab):
         self.IntTranslation = self.Vars.IntTranslation
         self.IntRotation = self.Vars.IntRotation
         self.ActiveCons = self.Vars.ActiveCons
-        self.Anchor = self.Vars.Anchor
-
+        
     def Init_Vars(self):
         
-        self.Vars.dictConstraints.clear()
-        self.ActiveCons.set('')
-        
+        self.ActiveCons.set('')        
         self.UseReference.set(0)
         self.ConsDist.set(0.25)
         self.IntTranslation.set(1)
@@ -82,8 +75,11 @@ class Config2(Tabs.Tab):
         self.SATStatus.set('')
         self.ConsStatus.set('No constraint(s) set')
         self.FlexStatus.set('No flexible bond(s) set')
-        self.Anchor.set(-1)
 
+        self.Vars.dictConstraints.clear()
+        self.ResetFlexBonds()
+        self.ResetAtomTypes()
+    
     def Trace(self):
     
         try:
@@ -116,6 +112,21 @@ class Config2(Tabs.Tab):
         cmd.set_wizard(self.top.ActiveWizard)
         self.top.ActiveWizard.Start()
             
+    ''' ==================================================================================
+    FUNCTION ResetAtomTypes: Resets the atom types of the ligand to defaults
+    =================================================================================  '''    
+    def ResetAtomTypes(self):
+    
+        return
+
+    ''' ==================================================================================
+    FUNCTION ResetFlexBonds: Resets the selected flexible bonds of the ligand
+    =================================================================================  '''    
+    def ResetFlexBonds(self):
+    
+        for index in self.top.IOFile.Vars.dictFlexBonds.keys():
+            self.top.IOFile.Vars.dictFlexBonds[index][0] = 0
+
     ''' ==================================================================================
     FUNCTION FlexBondsRunning: Disables/enables controls related to Flexible lig. wizard
     =================================================================================  '''    
@@ -351,6 +362,8 @@ class Config2(Tabs.Tab):
         if self.top.WizardRunning():
             
             self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
+            
+            self.top.ActiveWizard.refresh_distance()
 
     ''' ==================================================================================
     FUNCTION Load_Message: Display the message based on the menu selected

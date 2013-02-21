@@ -31,11 +31,19 @@
 
 import math
     
-
+'''******************************************************************************
+  SUBROUTINE middle: Calculates the center of geometry between 2 points
+******************************************************************************'''
+def middle(pointA, pointB):
+  
+    return [ ( pointA[0] + pointB[0] ) / 2.0 ,
+             ( pointA[1] + pointB[1] ) / 2.0 ,
+             ( pointA[2] + pointB[2] ) / 2.0 
+           ]
+    
 '''******************************************************************************
   SUBROUTINE distance: Calculates the cartesian distance between two point in 
                        3 dimensions.
-             INPUT: pointA (array[3] of float), pointB (array[3] of float)
 ******************************************************************************'''
 def distance(pointA, pointB):
   
@@ -51,7 +59,6 @@ def distance(pointA, pointB):
 '''******************************************************************************
   SUBROUTINE distance: Calculates the cartesian squared distance between two point in 
                        3 dimensions.
-             INPUT: pointA (array[3] of float), pointB (array[3] of float)
 ******************************************************************************'''
 def sqrdistance(pointA, pointB):
   

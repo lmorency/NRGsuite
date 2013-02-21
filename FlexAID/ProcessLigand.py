@@ -43,7 +43,7 @@ from subprocess import Popen, PIPE
 class ProcLig:
 
 
-    def __init__(self, top, StartAtomIndex, AtomTypes, AnchorAtom, ConvertOnly, Gen3D):
+    def __init__(self, top, StartAtomIndex, AtomTypes, AnchorAtom, ConvertOnly, ProcessOnly, Gen3D):
         
         self.top = top
         self.FlexAID = self.top.top
@@ -54,6 +54,7 @@ class ProcLig:
         self.AnchorAtom = AnchorAtom
 
         self.ConvertOnly = ConvertOnly
+        self.ProcessOnly = ProcessOnly
         self.Gen3D = Gen3D
         
         self.FlexAIDWRKInstall_Dir = os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK')
@@ -96,7 +97,7 @@ class ProcLig:
 
             self.FlexAID.DisplayMessage("  ERROR: The ligand could not be copied", 1)
 
-        self.top.ProcessLigand(False, 0, '', 0, False, 0)
+        self.top.ProcessLigand(False, 0, '', 0, False, False, 0)
         self.FlexAID.ProcessRunning = False
 
 
@@ -127,10 +128,13 @@ class ProcLig:
         
         if self.Gen3D:
             commandline += ' --gen3D'
-        
+
         if self.ConvertOnly:
             commandline += ' -c'
         else:
+            if self.ProcessOnly:
+                commandline += ' -p'
+            
             commandline += ' --atom_index ' + str(self.StartAtomIndex)
             commandline += ' -ref'
             
