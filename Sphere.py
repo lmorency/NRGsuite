@@ -157,7 +157,7 @@ class Sphere(Wizard):
             self.App.DisplayMessage("  ERROR: Could not resize the Sphere", 1)
             self.App.DisplayMessage("         The wizard will abort prematurely", 1)
             self.Quit_Wizard()
-                    
+    
     def get_prompt(self):
         
         return self.Prompt

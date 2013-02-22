@@ -24,7 +24,7 @@ class SphereObj:
     def Set_Radius(self, val):
         
         self.Radius = val
-
+    
     ''' ==================================================================================
     FUNCTION Set_MaxRadius: Sets the maximum radius of the sphere
     =================================================================================  '''    

@@ -34,7 +34,7 @@ import General
 
 class Smiles:
     
-    def __init__(self, top, SmilesString):
+    def __init__(self, top, SmilesString, SmilesName):
     
         self.top = top
         
@@ -43,7 +43,7 @@ class Smiles:
         self.inputWindow.protocol('WM_DELETE_WINDOW', self.Quit)
         
         WINDOWWIDTH = 400
-        WINDOWHEIGHT = 90
+        WINDOWHEIGHT = 130
 
         self.inputWindow.maxsize(WINDOWWIDTH,WINDOWHEIGHT)
         self.inputWindow.minsize(WINDOWWIDTH,WINDOWHEIGHT)
@@ -51,6 +51,7 @@ class Smiles:
         General.CenterWindow(self.inputWindow,WINDOWWIDTH,WINDOWHEIGHT)
 
         self.SmilesString = SmilesString
+        self.SmilesName = SmilesName
         
         self.Frame()
     
@@ -58,7 +59,11 @@ class Smiles:
     
         Label(self.inputWindow, text='Input your SMILES string:', font=self.top.font_Title).pack(side=TOP, pady=5, anchor=W, padx=10)
         Entry(self.inputWindow, font=self.top.font_Text, textvariable=self.SmilesString, width=100).pack(side=TOP, fill=X, padx=10)
-        Button(self.inputWindow, font=self.top.font_Text, text='Quit', command=self.Quit).pack(side=RIGHT, padx=10)
+
+        Label(self.inputWindow, text='Name the object:', font=self.top.font_Text).pack(side=TOP, pady=5, anchor=W, padx=10)
+        Entry(self.inputWindow, font=self.top.font_Text, textvariable=self.SmilesName, width=30).pack(side=TOP, padx=10, anchor=W)
+
+        Button(self.inputWindow, font=self.top.font_Text, text='Cancel', command=self.Quit).pack(side=RIGHT, padx=10)
         Button(self.inputWindow, font=self.top.font_Text, text='Enter', command=self.Enter).pack(side=RIGHT)
         
     def Quit(self):
@@ -67,7 +72,11 @@ class Smiles:
         self.top.SmilesRunning(False, False)
         
     def Enter(self):
-        
+
+        if General.validate_String(self.SmilesName.get(), '', False, False, True):
+            self.top.DisplayMessage("  ERROR: Could not process the smiles string because you entered an invalid name.", 2)
+            return
+            
         #Test : CCC[C@@H](O)CC\C=C\C=C\C#CC#C\C=C\CO
         self.inputWindow.destroy()
         self.top.SmilesRunning(False, True)

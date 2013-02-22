@@ -551,7 +551,7 @@ class Config1(Tabs.Tab):
                 SaveFile = os.path.normpath(SaveFile)
 
                 if General.validate_String(SaveFile, '.nrgtf', True, True, False):
-                    self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
+                    self.DisplayMessage("  ERROR: Could not save the file because you entered an ` name.", 2)
                     return
 
                 try:

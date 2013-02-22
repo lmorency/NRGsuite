@@ -413,7 +413,7 @@ class Simulate(Tabs.Tab):
         self.Btn_PauseResume.config(state='disabled')
         self.Btn_Stop.config(state='disabled')
         self.Btn_Abort.config(state='disabled')
-        
+    
     ''' =============================================================================== 
     FUNCTION Btn_PauseResumeSim: Pauses/Resumes the simulation   
     ===============================================================================  '''        
@@ -513,37 +513,37 @@ class Simulate(Tabs.Tab):
         
         i = 0
         
-        for Result in self.Vars.ResultsContainer.Results:
+        for key in sorted(self.dictSimData.keys()):
             
-            try:
-                ResultName = 'RESULT_' + str(Result.ResultID) + '__'
+            Result = self.Vars.ResultsContainer.Get_ResultID(key)
+            if Result is not None:
+                try:
+                    ResultName = 'RESULT_' + str(Result.ResultID) + '__'
+                    
+                    cmd.load(Result.ResultFile, ResultName, state=1)
+                    cmd.refresh()
+                    
+                    cmd.color(self.PymolColorList[i], ResultName)
+                    cmd.refresh()
+                    
+                except:
+                    continue
                 
-                cmd.load(Result.ResultFile, ResultName, state=1)
-                cmd.refresh()
-                
-                cmd.color(self.PymolColorList[i], ResultName)
-                cmd.refresh()
-                
-            except:
-                continue
-            
-            i += 1
-            
-            #for opt in Result.Optimizable:
+                i += 1
         
         self.Refresh_LigDisplay()
         self.Refresh_CartoonDisplay()
-        
+    
     ''' ==================================================================================
     FUNCTION Click_RadioSIM: Change the way the ligand is displayed during a Simulation
-    ==================================================================================  '''               
+    ==================================================================================  '''
     def Click_RadioSIM(self, *args):
         
         self.Refresh_LigDisplay()
     
     ''' ==================================================================================
     FUNCTION Refresh_LigDisplay: Refreshes the visual appearance of the ligand in TOP_* objects
-    ==================================================================================  '''               
+    ==================================================================================  '''
     def Refresh_LigDisplay(self):
     
         if self.SimDefDisplay.get() == 'spheres':
@@ -589,7 +589,7 @@ class Simulate(Tabs.Tab):
         
     ''' ==================================================================================
     FUNCTION Refresh_CartoonDisplay: Refreshes the visual appearance of the protein
-    ==================================================================================  '''               
+    ==================================================================================  '''
     def Refresh_CartoonDisplay(self):
 
         # Display the Cartoon

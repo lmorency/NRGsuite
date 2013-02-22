@@ -151,10 +151,19 @@ class ResultsContainer:
 
         # Result PDB files
         self.Results = list()
-
+        
         # File containing the parameters allowing to continue the simulation
         self.ResultParams = ''
         
         # If these results were generated from other results this will be set
         self.ParentResult = None
+        
+        
+    def Get_ResultID(self, ResID):
+    
+        for Result in self.Results:
+            if Result.ResultID == ResID:
+                return Result
+                
+        return None
         

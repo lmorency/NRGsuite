@@ -27,6 +27,7 @@ import shutil
 import Vars
 import Tabs
 import tkFileDialog
+import tkMessageBox
 import General
 import Smiles
 import Constants
@@ -57,6 +58,7 @@ class IOFileVars(Vars.Vars):
     LigandName = StringVar()
     AtomTypes = StringVar()
     SmilesString = StringVar()
+    SmilesName = StringVar()
     Gen3D = IntVar()
     Anchor = IntVar()
     
@@ -69,7 +71,8 @@ class IOFileVars(Vars.Vars):
     
 class IOFile(Tabs.Tab):
     
-    SupportedFormats = [ ('PDB File','*.pdb'),
+    SupportedFormats = [ ('All supported formats', ('*.pdb','*.mol','*.mol2','*.sdf','*.smi')),
+                         ('PDB File','*.pdb'),
                          ('MOL File','*.mol'),
                          ('MOL2 File','*.mol2'),
                          ('SDF File','*.sdf'),
@@ -93,6 +96,7 @@ class IOFile(Tabs.Tab):
         self.LigandName = self.Vars.LigandName
         self.AtomTypes = self.Vars.AtomTypes
         self.SmilesString = self.Vars.SmilesString
+        self.SmilesName = self.Vars.SmilesName
         self.Gen3D = self.Vars.Gen3D
         self.Anchor = self.Vars.Anchor
 
@@ -104,6 +108,7 @@ class IOFile(Tabs.Tab):
         self.LigandPath.set('')
         self.LigandName.set('')
         self.SmilesString.set('')
+        self.SmilesName.set('')
         self.Gen3D.set(0)
 
         self.ReferencePath.set('')
@@ -117,6 +122,7 @@ class IOFile(Tabs.Tab):
         #self.Vars.LigandPathMD5 = ''
     
         # flags
+        self.LigandChanged = False
         self.ProcessOnly = False
         self.fProcessLigand = False
         self.fStoreInfo = False
@@ -129,6 +135,8 @@ class IOFile(Tabs.Tab):
 
         self.Btn_DisplayLigand_Clicked()
         self.Btn_DisplayProtein_Clicked()
+
+        self.LigandChanged = False
 
     ''' ==================================================================================
     FUNCTION Before_Kill_Frame: Actions related before killing the frame
@@ -201,16 +209,16 @@ class IOFile(Tabs.Tab):
     ''' ==================================================================================
     FUNCTION Convert_Smiles: Write the Smiles to a .smi file
     ================================================================================== '''    
-    def Write_Smiles(self):
+    def Write_Smiles(self, Filebase):
         
-        LigandPath = os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIG.smi')
+        LigandPath = os.path.join(self.top.FlexAIDSimulationProject_Dir, Filebase + '.smi')
         
         try:
             handle = open(LigandPath, 'w')
             handle.write(self.SmilesString.get() + '\n')
             handle.close()
         except IOError:
-            self.DisplayMessage("  ERROR: Could not write Smiles string a file.", 2)
+            self.DisplayMessage("  ERROR: Could not write Smiles string to a file.", 2)
             return 1
             
         self.LigandPath.set(LigandPath)
@@ -231,25 +239,34 @@ class IOFile(Tabs.Tab):
             self.Enable_Frame()
 
             if Convert and self.SmilesString.get():
-                if not self.Write_Smiles() and not self.Convert_Smiles() and \
-                   not self.Move_TempLigand():
+            
+                Filebase = self.SmilesLigand
+                if self.SmilesName.get():
+                    Filebase = self.SmilesName.get()
+
+                if not self.Write_Smiles(Filebase) and not self.Convert_Smiles() and \
+                   not self.Move_TempLigand(Filebase):
                    
-                    LigandFile = os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIG.mol2')
+                    LigandFile = os.path.join(self.top.FlexAIDSimulationProject_Dir, Filebase + '.mol2')
                     
                     try:
-                        cmd.delete(self.SmilesLigand)
+                        cmd.delete(Filebase)
                         cmd.refresh()
                     except:
                         pass
                     
                     self.LigandPath.set(LigandFile)
                     
-                    if not self.Load_ProcConvLigand(LigandFile, self.SmilesLigand, True) and \
-                       not self.Validate_ObjectSelection(self.SmilesLigand, 'Ligand', 1):
+                    if not self.Load_ProcConvLigand(LigandFile, Filebase, True) and \
+                       not self.Validate_ObjectSelection(Filebase, 'Ligand', 1):
                            
-                        self.LigandName.set(self.SmilesLigand)
+                        self.LigandName.set(Filebase)
+                        
+                        self.ForceSaveObject(LigandFile, Filebase, 'Ligand')
+
                         self.fProcessLigand = False
                         self.ProcessOnly = True
+                                                
                     else:
                         self.LigandPath.set('')
                         self.LigandName.set('')
@@ -318,7 +335,7 @@ class IOFile(Tabs.Tab):
             self.LigandNameTrace = self.LigandName.trace('w',self.Ligand_Toggle)
         except:
             pass
-
+        
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     ==================================================================================  '''  
@@ -339,31 +356,6 @@ class IOFile(Tabs.Tab):
         self.fIOFile = Frame(self.top.fMiddle)
 
         #==================================================================================
-        #                              PDB Options
-        #==================================================================================
-        fPDB_options = Frame(self.fIOFile)#, border=1, relief=SUNKEN)
-        #fPDB_options.pack(fill=X, side=TOP, padx=5, pady=5)
-
-        fPDB_optionsLine1 = Frame(fPDB_options)#, border=1, relief=SUNKEN)
-        fPDB_optionsLine1.pack(side=TOP, fill=X)
-        fPDB_optionsLine2 = Frame(fPDB_options)#, border=1, relief=SUNKEN)
-        fPDB_optionsLine2.pack(side=TOP, fill=X)
-
-        # Header Get PDB
-        Label(fPDB_optionsLine1, text='Retrieve a molecule', font=self.font_Title).pack(side=LEFT)
-        
-        # Get a PDB File from a file on your harddrive
-        Button(fPDB_optionsLine2, text='Open file', command=self.Btn_OpenPDB_Clicked, font=self.font_Text).pack(side=LEFT, padx=5)
-        
-        # Download a PDB File from the internet
-        Button(fPDB_optionsLine2, text='Download', command=self.Btn_DownloadPDB_Clicked, font=self.font_Text, width=10).pack(side=RIGHT, padx=5)
-        entFetchPDB = Entry(fPDB_optionsLine2, textvariable=self.FetchPDB, width=10, background='white', font=self.font_Text, justify=CENTER)#,
-        #                    validate="key", validatecommand=lambda v=self.FetchPDB: len(v.get()) < 5)
-        #entFetchPDB.pack(side=RIGHT)
-        Label(fPDB_optionsLine2, text='Enter the PDB code:', font=self.font_Text, justify=CENTER).pack(side=RIGHT, padx=5)
-        
-
-        #==================================================================================
         #                                 Object/selections
         #==================================================================================
         fPDB_options2 = Frame(self.fIOFile)#, border=1, relief=SUNKEN)
@@ -379,7 +371,7 @@ class IOFile(Tabs.Tab):
         # Header Select
         Label(fPDB_options2Line1, text='Select an object or selection', font=self.font_Title).pack(side=LEFT)
 
-        # List of selections
+        # List of selectionsSave
         Label(fPDB_options2Line2, text='PyMOL objects/selections:', width=25, justify=RIGHT, font=self.font_Text).pack(side=LEFT, anchor=E)
 
         optionTuple = ('',)
@@ -397,9 +389,12 @@ class IOFile(Tabs.Tab):
         #Label(fPDB_options2Line2, text='Set as...', justify=RIGHT, font=self.font_Text).pack(side=RIGHT, anchor=E)
 
         # List of selections
-        Button(fPDB_options2Line2, text='Save as target', command=self.Btn_SaveProt_Clicked, font=self.font_Text).pack(side=LEFT, padx=10)
+        Button(fPDB_options2Line2, text='Save as target', command=lambda objtype='Target': self.Btn_SaveObject_Clicked(objtype), 
+                                                          font=self.font_Text).pack(side=LEFT, padx=10)
         
-        Button(fPDB_options2Line2, text='Save as ligand', command=self.Btn_SaveLigand_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDB_options2Line2, text='Save as ligand', command=lambda objtype='Ligand': self.Btn_SaveObject_Clicked(objtype),
+                                                          font=self.font_Text).pack(side=LEFT)
+        
         Button(fPDB_options2Line2, text='Extract as ligand', command=self.Btn_ExtractLigand_Clicked, font=self.font_Text).pack(side=LEFT)
 
         #Label(fPDB_options2Line2, text='Save as...', justify=RIGHT, font=self.font_Text).pack(side=RIGHT, anchor=E)
@@ -422,11 +417,13 @@ class IOFile(Tabs.Tab):
 
         fPDBproteinLine2 = Frame(fPDBprotein)
         fPDBproteinLine2.pack(side=TOP, fill=X, padx=3, pady=3)
-
+        
         # First line
         Label(fPDBproteinLine1, width=20, text='THE TARGET', font=self.font_Title).pack(side=LEFT)
-        Button(fPDBproteinLine1, text='Load', command=self.Btn_LoadProt_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDBproteinLine1, text='Zoom', command=self.Btn_DisplayProtein_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDBproteinLine1, text='Load', command=lambda objtype='Target': self.Btn_LoadObject_Clicked(objtype), 
+                                              font=self.font_Text).pack(side=LEFT)
+        Button(fPDBproteinLine1, text='Display', command=lambda objtype='Target': self.Btn_DisplayObject_Clicked(objtype),
+                                                 font=self.font_Text).pack(side=LEFT)
         Button(fPDBproteinLine1, text='Reset', command=self.Btn_ResetProt_Clicked, font=self.font_Text).pack(side=LEFT)
 
         # Second line
@@ -453,8 +450,10 @@ class IOFile(Tabs.Tab):
 
         # First line
         Label(fPDBligandLine1, width=20, text='THE LIGAND', font=self.font_Title).pack(side=LEFT)
-        Button(fPDBligandLine1, text='Load', command=self.Btn_LoadLigand_Clicked, font=self.font_Text).pack(side=LEFT)
-        Button(fPDBligandLine1, text='Zoom', command=self.Btn_DisplayLigand_Clicked,font=self.font_Text).pack(side=LEFT)
+        Button(fPDBligandLine1, text='Load', command=lambda objtype='Ligand': self.Btn_LoadObject_Clicked(objtype), 
+                                             font=self.font_Text).pack(side=LEFT)
+        Button(fPDBligandLine1, text='Display', command=lambda objtype='Ligand': self.Btn_DisplayObject_Clicked(objtype),
+                                                font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Reset', command=self.Btn_ResetLigand_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Input', command=self.Btn_Input_Clicked, font=self.font_Text).pack(side=LEFT)
         Button(fPDBligandLine1, text='Anchor', command=self.Btn_Anchor_Clicked, font=self.font_Text).pack(side=LEFT)
@@ -529,8 +528,24 @@ class IOFile(Tabs.Tab):
         
             self.SmilesRunning(True, False)
             
-            self.top.ChildWindow = Smiles.Smiles(self, self.SmilesString)
+            self.top.ChildWindow = Smiles.Smiles(self, self.SmilesString, self.SmilesName)
         
+    ''' ==================================================================================
+    FUNCTION Set_Object_Variables: Sets class level variables
+    ==================================================================================  '''    
+    def Set_Object_Variables(self, objtype):
+
+        if objtype == 'Ligand':
+            self.savepath = self.top.FlexAIDLigandProject_Dir
+
+            self.VarPath = self.LigandPath
+            self.VarName = self.LigandName
+        elif objtype == 'Target':
+            self.savepath = self.top.TargetProject_Dir        
+
+            self.VarPath = self.ProtPath
+            self.VarName = self.ProtName
+
     ''' ==================================================================================
     FUNCTION Validate_ObjectSelection: Validates whether the obj exists on the current state
                                        and has at least N atoms
@@ -556,92 +571,140 @@ class IOFile(Tabs.Tab):
         return 0
         
     ''' ==================================================================================
-    FUNCTION Btn_Save : Save Ligand and Protein objects, object is reloaded automatically
+    FUNCTION ForceSaveObject: Forces saving of the object in the corresponding folder
     ==================================================================================  '''    
-    def Btn_SaveLigand_Clicked(self):
-        
-        if not self.PyMOL:
-            return
-
-        state = cmd.get_state()
-
-        # Get the Drop Down List Selection Name
-        ddlSelection = self.defaultOption.get()
-
-        if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, 'Ligand', state):
-            return
-        
-        LigandPath = tkFileDialog.asksaveasfilename(initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', 
-                                                    initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')],
-                                                    defaultextension='.pdb')
-        
-        if len(LigandPath) > 0:
-
-            if General.validate_String(LigandPath, '.pdb', True, False, True):
-                self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
-                return
-            
-            try:
-                cmd.save(LigandPath, ddlSelection, state, 'pdb') # Save the Selection
-                LigandName = os.path.basename(os.path.splitext(LigandPath)[0])
-
-                cmd.load(LigandPath, LigandName, state=1)
-                cmd.refresh()
-            except:
-                self.DisplayMessage("  ERROR: An error occured while saving the ligand object.", 1)
-                return
-                
-            self.LigandPath.set(os.path.normpath(LigandPath))
-            self.LigandName.set(LigandName)
-            
-            self.DisplayMessage('  Successfully saved and loaded the ligand:  ' + self.LigandName.get() + "'", 0)
+    def ForceSaveObject(self, file, objname, objtype):
     
-    def Btn_SaveProt_Clicked(self):
+        basepath, filename = os.path.split(file)
+        filebasename, fileextname = os.path.splitext(filename)
         
-        if not self.PyMOL:
-            return
+        self.Set_Object_Variables(objtype)
         
-        state = cmd.get_state()
+        if self.savepath != basepath:
+        
+            newfile = os.path.join(self.savepath,filebasename + '.pdb')
+            print newfile
+            if os.path.isfile(newfile):
+                answer = tkMessageBox.askquestion("Question", 
+                                                  message=  "An object with that name already exists in your '" + \
+                                                            objtype + "' folder. Would you like to overwrite it?",
+                                                  icon='warning')
+                if str(answer) == 'no':
+                    return -1
+                
+            try:
+                cmd.save(newfile, objname, state=1)
+            except:
+                self.DisplayMessage("  ERROR: The file could not be saved in your '" + objtype + "' folder.", 2)
+                return 1
+                        
+        return 0
+
+    ''' ==================================================================================
+    FUNCTION ValidateSaveProject: Validates if a file was saved in the right folder
+    ==================================================================================  '''    
+    def ValidateSaveProject(self, file, objtype):
+    
+        basepath, filename = os.path.split(file)
+        
+        self.Set_Object_Variables(objtype)
+        
+        if basepath != self.savepath:
+            return 1
+        
+        return 0
+
+    ''' ==================================================================================
+    FUNCTION Btn_SaveObjectClicked: Save Ligand and Protein objects
+                                    Object is reloaded when renamed
+    ==================================================================================  '''    
+    def Btn_SaveObject_Clicked(self, objtype):
 
         # Get the Drop Down List Selection Name
         ddlSelection = self.defaultOption.get()
 
-        if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, 'Target', state):
-            return
-                    
-        ProtPath = tkFileDialog.asksaveasfilename(initialdir=self.top.TargetProject_Dir, title='Save the PDB File', 
-                                                  initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')],
-                                                  defaultextension='.pdb')
+        state = cmd.get_state()
+
+        self.Set_Object_Variables(objtype)
         
-        if len(ProtPath) > 0:
-            
-            print ProtPath
-            
-            if General.validate_String(ProtPath, '.pdb', True, False, True):
+        if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, objtype, state):
+            return
+        
+        Path = tkFileDialog.asksaveasfilename(initialdir=self.savepath, title='Save the PDB File',
+                                              initialfile=ddlSelection, defaultextension='.pdb')
+        
+        if len(Path) > 0:
+
+            if General.validate_String(Path, '.pdb', True, False, True):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
+                return
+
+            if self.ValidateSaveProject(Path, objtype):
+                self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
                 return
             
             try:
-                cmd.save(ProtPath, ddlSelection, state, 'pdb') # Save the Selection
-                ProtName = os.path.basename(os.path.splitext(ProtPath)[0])
-                
-                cmd.load(ProtPath, ProtName, state=1)
+                cmd.save(Path, ddlSelection, state)
+                Name = os.path.basename(os.path.splitext(Path)[0])
+
+                cmd.load(Path, Name, state=1)
                 cmd.refresh()
-                
             except:
-                self.DisplayMessage("  ERROR: An error occured while extracting the ligand object.", 1)
+                self.DisplayMessage("  ERROR: An error occured while saving the object.", 1)
                 return
                 
-            self.ProtPath.set(os.path.normpath(ProtPath))
-            self.ProtName.set(ProtName)
+            self.VarPath.set(os.path.normpath(Path))
+            self.VarName.set(Name)
             
-            self.DisplayMessage('  Successfully saved and loaded the target: ' + self.ProtName.get(), 0)                                    
+            self.DisplayMessage('  Successfully saved and loaded the object:  ' + self.VarName.get() + "'", 0)
+        
+    ''' ==================================================================================
+    FUNCTIONS Load Ligand and Protein and display the filename in the textbox
+    ================================================================================== '''        
+    def Btn_LoadObject_Clicked(self, objtype):
+        
+        self.Set_Object_Variables(objtype)
+
+        Path = tkFileDialog.askopenfilename(filetypes=self.SupportedFormats,
+                                            initialdir=self.savepath, title='Select a file to Load')
+
+        if len(Path) > 0:
+        
+            Path = os.path.normpath(Path)
+
+            if General.validate_String(Path, '', True, False, True):
+                self.DisplayMessage("  ERROR: Could not load the file because it has an invalid name.", 2)
+                return
+
+            if Path == self.VarPath.get():
+                self.DisplayMessage("  Loading skipped. File is the same as the one already loaded.", 2)
+                return
+            
+            try:
+                Name = os.path.basename(os.path.splitext(Path)[0])
+
+                cmd.load(Path, Name, state=1)
+                cmd.refresh()
                 
+                if self.Validate_ObjectSelection(Name, objtype, 1):
+                    return
+                    
+            except:
+                self.DisplayMessage("  ERROR: An error occured while loading the file.", 1)
+                return
+            
+            self.VarPath.set(Path)
+            self.VarName.set(Name)
+            
+            self.ForceSaveObject(Path,Name,objtype)
+            
+            self.DisplayMessage("  Successfully loaded the object: '" + self.VarName.get() + "'", 0)
+    
+    ''' ==================================================================================
+    FUNCTIONS Btn_ExtractLigand_Clicked: Extracts the selection out of the current object
+    ================================================================================== '''        
     def Btn_ExtractLigand_Clicked(self):
-        
-        if not self.PyMOL:
-            return
-        
+                
         state = cmd.get_state()
 
         # Get the Drop Down List Selection Name
@@ -651,8 +714,7 @@ class IOFile(Tabs.Tab):
             return
         
         LigandPath = tkFileDialog.asksaveasfilename(initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', 
-                                                    initialfile=ddlSelection, filetypes=[('PDB File','*.pdb')],
-                                                    defaultextension='.pdb')
+                                                    initialfile=ddlSelection, defaultextension='.pdb')
         
         if len(LigandPath) > 0:
             
@@ -660,8 +722,12 @@ class IOFile(Tabs.Tab):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                 return
 
+            if self.ValidateSaveProject(LigandPath, 'Ligand'):
+                self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
+                return
+
             try:
-                cmd.save(LigandPath, ddlSelection, state, 'pdb')                 # Save the Selection
+                cmd.save(LigandPath, ddlSelection, state)                 # Save the Selection
                 LigandName = os.path.basename(os.path.splitext(LigandPath)[0])
 
                 cmd.extract(self.ExtractObject, ddlSelection)
@@ -676,43 +742,6 @@ class IOFile(Tabs.Tab):
             
             self.DisplayMessage('  Successfully extracted the ligand:  ' + self.LigandName.get() + "'", 0)
     
-    ''' ==================================================================================
-    FUNCTIONS Load Ligand and Protein and display the filename in the textbox
-    ================================================================================== '''        
-    def Btn_LoadLigand_Clicked(self):        
-        
-        LigandPath = tkFileDialog.askopenfilename(  filetypes=self.SupportedFormats,
-                                                    initialdir=self.top.FlexAIDLigandProject_Dir, title='Select a Ligand File to Load')
-
-        if len(LigandPath) > 0:
-            LigandPath = os.path.normpath(LigandPath)
-
-            if General.validate_String(LigandPath, '', True, False, True):
-                self.DisplayMessage("  ERROR: Could not load the file because it has an invalid name.", 2)
-                return
-
-            if LigandPath == self.LigandPath.get():
-                return
-            
-            try:
-
-                Name = os.path.basename(os.path.splitext(LigandPath)[0])
-
-                if self.PyMOL:
-                    cmd.load(LigandPath, Name, state=1)
-                    cmd.refresh()
-                    
-                    if self.Validate_ObjectSelection(Name, 'Ligand', 1):
-                        return
-                    
-            except:
-                self.DisplayMessage("  ERROR for file '" + LigandPath + "': Could not load the ligand file", 1)
-                return
-            
-            self.LigandPath.set(LigandPath)
-            self.LigandName.set(Name)
-            
-            self.DisplayMessage("  Successfully loaded the ligand: '" + self.LigandName.get() + "'", 0)
 
     def Load_ProcConvLigand(self, LigandFile, ObjectName, Zoom):
         
@@ -738,74 +767,6 @@ class IOFile(Tabs.Tab):
         
         return Error
 
-    def Btn_LoadProt_Clicked(self):
-        
-        ProtPath = tkFileDialog.askopenfilename(filetypes=self.SupportedFormats, 
-                                                initialdir=self.top.TargetProject_Dir, title='Select a Target File to Load')
-        
-        if len(ProtPath) > 0:
-            ProtPath = os.path.normpath(ProtPath)
-
-            if General.validate_String(ProtPath, '', True, False, True):
-                self.DisplayMessage("  ERROR: Could not load the file because it has an invalid name.", 2)
-                return
-
-            if ProtPath == self.ProtPath.get():
-                return
-            
-            try:
-                Name = os.path.basename(os.path.splitext(ProtPath)[0])
-                if self.PyMOL:
-                    cmd.load(ProtPath, Name, state=1)
-                    cmd.refresh()
-
-                    if self.Validate_ObjectSelection(Name, 'Target', 1):
-                        return
-                
-            except:
-                self.DisplayMessage("  ERROR for object '" + ProtPath + "': Could not load the target file", 1)
-                return
-            
-            self.ProtPath.set(ProtPath)
-            self.ProtName.set(Name)
-            
-            self.DisplayMessage("  Successfully loaded the target: '" + self.ProtName.get() + "'", 0)
-
-    ''' ==================================================================================
-    FUNCTION openPDB: Import PDB file
-    ================================================================================== '''
-    def Btn_OpenPDB_Clicked(self):
-        
-        FilePath = tkFileDialog.askopenfilename(filetypes=[('PDB File','*.pdb')],
-                                                initialdir=self.top.Project_Dir, 
-                                                title='Select a PDB File to Import')
-        
-        if len(FilePath) > 0:
-
-            FilePath = os.path.normpath(FilePath)
-            
-            if self.PyMOL:
-                cmd.load(FilePath, state=1)
-                cmd.refresh()
-
-    ''' ==================================================================================
-    FUNCTION Btn_DownloadPDB_Clicked: Download a PDB from the internet and display the
-                                      result in Pymol 
-    ==================================================================================  '''    
-    def Btn_DownloadPDB_Clicked(self):       
-
-        PdbCode = self.FetchPDB.get()
-        
-        try:            
-            if self.PyMOL:
-                cmd.fetch(PdbCode, async=0)
-                cmd.refresh()
-
-        except:
-            self.DisplayMessage('You entered an invalid pdb code.', 1)
-            
-        self.FetchPDB.set('')        
-
     ''' ==================================================================================
     FUNCTION Btn_RefreshOptMenu_Clicked: Refresh the selections list in the application
                                          with the selections in Pymol 
@@ -820,9 +781,9 @@ class IOFile(Tabs.Tab):
     ''' ==================================================================================
     FUNCTIONS Move_TempLigand(self):
     ================================================================================== '''        
-    def Move_TempLigand(self):
+    def Move_TempLigand(self, Filebase):
 
-        LigandFile = os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIG.mol2')
+        LigandFile = os.path.join(self.top.FlexAIDSimulationProject_Dir, Filebase + '.mol2')
         TempLigandFile = LigandFile + '.tmp'
         
         try:
@@ -838,39 +799,21 @@ class IOFile(Tabs.Tab):
     ''' ==================================================================================
     FUNCTIONS Display Ligand and Protein in pymol
     ================================================================================== '''        
-    def Btn_DisplayLigand_Clicked(self):
-        
-        if not self.PyMOL:
-            return
+    def Btn_DisplayObject_Clicked(self, objtype):
 
-        if self.LigandName.get() != '':
+        self.Set_Object_Variables(objtype)
 
-            if not General_cmd.object_Exists(self.LigandName.get()):
-                cmd.load(self.LigandPath.get(), state=1)                      # Load the pdb file in Pymol                     
-                cmd.refresh()
-            else:
-                cmd.center(self.LigandName.get())
-                cmd.refresh()
-                
-                cmd.zoom(self.LigandName.get())    
-                cmd.refresh()
-    
-    def Btn_DisplayProtein_Clicked(self):
-        
-        if not self.PyMOL:
-            return
-
-        if self.ProtName.get() != '':
-
-            if not General_cmd.object_Exists(self.ProtName.get()):
-                cmd.load(self.ProtPath.get(), state=1)                        # Load the pdb file in Pymol                     
-                cmd.refresh()
-            else:
-                cmd.center(self.ProtName.get())
-                cmd.refresh()
-
-                cmd.zoom(self.ProtName.get())        
-                cmd.refresh()
+        if self.VarName.get() != '':
+            try:
+                if not General_cmd.object_Exists(self.VarName.get()):
+                    cmd.load(self.VarPath.get(), state=1)
+                    cmd.refresh()
+                else:                    
+                    cmd.zoom(self.VarName.get())    
+                    cmd.refresh()
+            except:
+                self.DisplayMessage("  ERROR: An error occured while displaying the object.", 1)
+                return
     
     #=======================================================================
     ''' Store inp file information (flexible bonds, atom types)  '''
@@ -916,13 +859,14 @@ class IOFile(Tabs.Tab):
         except:
             self.DisplayMessage('  ERROR: Could not retrieve ligand input file', 1)
             return 1
-
+        
         #if not self.Check_LigandPathMD5(inpFilePath):
-        self.store_Neighbours(inpInfo)
-        self.store_AtomTypes(inpInfo)
-        self.store_FlexBonds(flexInfo)
+        if not self.LigandChanged:
+            self.store_Neighbours(inpInfo)
+            self.store_AtomTypes(inpInfo)
+            self.store_FlexBonds(flexInfo)
 
-        #self.Vars.LigandPathMD5 = self._LigandPathMD5
+            #self.Vars.LigandPathMD5 = self._LigandPathMD5
 
         return 0
 
