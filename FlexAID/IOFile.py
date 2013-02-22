@@ -540,6 +540,7 @@ class IOFile(Tabs.Tab):
 
             self.VarPath = self.LigandPath
             self.VarName = self.LigandName
+            
         elif objtype == 'Target':
             self.savepath = self.top.TargetProject_Dir        
 
@@ -583,7 +584,7 @@ class IOFile(Tabs.Tab):
         if self.savepath != basepath:
         
             newfile = os.path.join(self.savepath,filebasename + '.pdb')
-            print newfile
+
             if os.path.isfile(newfile):
                 answer = tkMessageBox.askquestion("Question", 
                                                   message=  "An object with that name already exists in your '" + \
@@ -597,7 +598,9 @@ class IOFile(Tabs.Tab):
             except:
                 self.DisplayMessage("  ERROR: The file could not be saved in your '" + objtype + "' folder.", 2)
                 return 1
-                        
+            
+            self.VarPath.set(newfile)
+            
         return 0
 
     ''' ==================================================================================
