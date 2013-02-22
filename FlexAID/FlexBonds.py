@@ -184,7 +184,8 @@ class flexbond(Wizard):
 
             cmd.alter(self.LigDisplay,'vdw=0.25')
             cmd.rebuild(self.LigDisplay)
-        
+            cmd.refresh()
+
             util.cbag(self.LigDisplay)
             cmd.refresh()
 

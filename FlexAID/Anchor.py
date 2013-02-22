@@ -155,6 +155,7 @@ class anchor(Wizard):
 
             cmd.alter(self.LigDisplay,'vdw=0.25')
             cmd.rebuild(self.LigDisplay)
+            cmd.refresh()
 
             util.cbag(self.LigDisplay)
             cmd.refresh()
@@ -166,6 +167,7 @@ class anchor(Wizard):
 
                 cmd.alter(AtomSel ,'vdw=0.30')
                 cmd.rebuild(AtomSel)
+                cmd.refresh()
                         
         except:
             self.ErrorCode = 1

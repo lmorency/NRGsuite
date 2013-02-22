@@ -924,13 +924,12 @@ class Config1(Tabs.Tab):
                 cmd.hide('everything', self.BindingSiteDisplay)
                 cmd.refresh()
 
-                #cmd.show('surface', self.BindingSiteDisplay)
                 cmd.show('mesh', self.BindingSiteDisplay)
                 cmd.refresh()
 
-                cmd.alter(self.BindingSiteDisplay,'vdw=2.0')
+                cmd.alter(self.BindingSiteDisplay,'vdw=2.00')
+                cmd.rebuild(self.BindingSiteDisplay)
                 cmd.refresh()
-                #cmd.set('transparency', 0.7, self.BindingSiteDisplay)
 
             cmd.color('purpleblue', self.BindingSiteDisplay)
             cmd.refresh()

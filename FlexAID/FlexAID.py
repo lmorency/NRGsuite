@@ -417,7 +417,7 @@ class displayFlexAID(Base.Base):
         for Btn in self.listBtnTabs:
             Btn.config(state='disabled',bg=self.Color_Grey)
 
-        self.Btn_IOFiles.config(state='normal')
+        self.Btn_IOFiles.config(state='normal',bg=self.Color_Blue)
 
     ''' ==================================================================================
     FUNCTION Go_Step2: Enables/Disables buttons for step 2
@@ -427,6 +427,8 @@ class displayFlexAID(Base.Base):
         #print "Setting Tab buttons to Step 2"        
         for Btn in self.listBtnTabs:
             Btn.config(state='normal',bg=self.Color_White)
+
+        self.Btn_IOFiles.config(bg=self.Color_Blue)
         
     ''' ==================================================================================
     FUNCTION Reset_Step2: Reset ALL the parameters

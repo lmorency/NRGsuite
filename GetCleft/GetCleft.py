@@ -246,8 +246,7 @@ class displayGetCleft(Base.Base):
         for Btn in self.listBtnTabs:
             Btn.config(state='disabled', bg=self.Color_Grey)
 
-        self.Btn_Config.config(state='normal')
-        self.Btn_Config.config(bg=self.Color_Blue)
+        self.Btn_Config.config(state='normal',bg=self.Color_Blue)
 
     ''' ==================================================================================
     FUNCTION Go_Step2: Enables/Disables buttons for step 2

@@ -24,7 +24,7 @@ import Geometry
 import Constants
 
 
-class UpdateScreen():
+class UpdateScreen:
 
     def __init__(self, top, ID, colNo, Line, State, TOP, Translation, Rotation):
         #threading.Thread.__init__(self)
@@ -125,20 +125,23 @@ class UpdateScreen():
             self.dictSimData[self.TOP+1] = []
 
             #Get index position of energy column
-            self.colNo = self.Line.rfind("value=")
+            self.colNo = self.Line.rfind("value=") + 6
+            to = self.Line.rfind("fitnes=")
             
             if self.colNo != -1:
                 #Update the energy of the dictionary
-                self.dictSimData[self.TOP+1].append(self.Line[self.colNo+6:self.colNo+15].strip())     # Energy
+                self.dictSimData[self.TOP+1].append(self.Line[self.colNo:to].strip())     # Energy
             else:
                 self.dictSimData[self.TOP+1].append('N/A')
 
 
-            #Get index position of fitnes column
-            self.colNo = self.Line.rfind("fitnes=")
+            #Get index position of the fitness column
+            self.colNo = to + 7
+            to = self.Line.rfind("\n")
+            
             if self.colNo != -1:
                 #Update the fitnes of the dictionary
-                self.dictSimData[self.TOP+1].append(self.Line[self.colNo+7:self.colNo+16].strip())    # Fitness
+                self.dictSimData[self.TOP+1].append(self.Line[self.colNo:to].strip())    # Fitness
             else:
                 self.dictSimData[self.TOP+1].append('N/A')
 
