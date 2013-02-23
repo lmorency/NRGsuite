@@ -20,10 +20,10 @@
 from subprocess import Popen, PIPE
 from datetime import datetime
 
-import shutil
 import os
-import glob
 import re
+import glob
+import shutil
 import Result
 
 if __debug__:
@@ -63,6 +63,8 @@ class Manage:
         self.FlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,self.Protein + '-' + self.Ligand,self.Now)
         self.INPFlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.inp')
         self.ICFlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.ic')
+        
+        self.BINDINGSITE = os.path.join(self.FlexAIDRunSimulationProject_Dir,'binding_site.pdb')
         
         self.PAUSE = os.path.join(self.FlexAIDRunSimulationProject_Dir,'.pause')
         self.STOP = os.path.join(self.FlexAIDRunSimulationProject_Dir,'.stop')
@@ -210,8 +212,10 @@ class Manage:
 
         elif rngOpt == 'LOCCLF':
             self.Config1.Generate_CleftBindingSite()
+            self.Copy_BindingSite()
+            
             line = 'RNGOPT LOCCLF '
-            line += self.Config1.CleftTmpPath + '\n'
+            line += self.BINDINGSITE + '\n'
             config_file.write(line)
 
         if self.Config1.Vars.TargetFlex.Count_SideChain() > 0:
@@ -283,6 +287,18 @@ class Manage:
 
         config_file.close()
         
+    ''' ==================================================================================
+    @summary: Copy_BindingSite: Copies from the temp folder to results folder
+    ================================================================================== '''
+    def Copy_BindingSite(self):
+        
+        try:
+            shutil.copy(self.Config1.CleftTmpPath, self.BINDINGSITE)
+        except:
+            return False
+
+        return True
+
     ''' ==================================================================================
     @summary: Create_ga_inp: Creation of the ga_inp.dat file  
     ================================================================================== '''

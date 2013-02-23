@@ -114,6 +114,8 @@ class Base:
         
         self.After_Init()
 
+        self.Clean()
+        
         return
         
     ''' ==================================================================================
@@ -127,6 +129,13 @@ class Base:
     FUNCTION After_Init: Generates actions after initializing variables
     ==================================================================================  '''  
     def After_Init(self):
+
+        return    
+
+    ''' ==================================================================================
+    FUNCTION Clean: Cleans the temporary folders of the application
+    ==================================================================================  '''  
+    def Clean(self):
 
         return    
 

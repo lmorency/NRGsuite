@@ -227,7 +227,7 @@ class IOFile(Tabs.Tab):
 
                 if not self.Write_Smiles(Filebase) and not self.Convert_Smiles() and \
                    not self.Move_TempLigand(Filebase):
-                   
+                    
                     LigandFile = os.path.join(self.top.FlexAIDSimulationProject_Dir, Filebase + '.mol2')
                     
                     try:
@@ -243,6 +243,9 @@ class IOFile(Tabs.Tab):
                            
                         self.LigandName.set(Filebase)
                         
+                        print "FORCE SAVE!"
+                        print "LigandFile", LigandFile
+                        print "Filebase", Filebase
                         self.ForceSaveObject(LigandFile, Filebase, 'Ligand')
 
                         self.ProcessOnly = True
@@ -271,9 +274,6 @@ class IOFile(Tabs.Tab):
         self.ValidateLigProt()
     
     def Ligand_Toggle(self, *args):
-                
-        # Clean constraints, reset flex bonds and atom types (no effect)
-        self.top.Config2.Vars.dictConstraints.clear()
         
         self.ValidateLigProt()
 
@@ -297,6 +297,8 @@ class IOFile(Tabs.Tab):
         self.Vars.dictAtomTypes.clear()
         self.Vars.dictFlexBonds.clear()
         self.Vars.dictNeighbours.clear()
+        
+        self.top.Config2.Init_Vars()
         
         self.ProcessOnly = False
         self.Processed = False

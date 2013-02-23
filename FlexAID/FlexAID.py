@@ -29,7 +29,8 @@
 
 from Tkinter import *
 
-import os, sys
+import os
+import sys
 import pickle
 import tkFileDialog
 
@@ -81,6 +82,16 @@ class displayFlexAID(Base.Base):
 
         return
 
+    def Clean(self):
+    
+        files = os.listdir(self.FlexAIDSimulationProject_Dir)
+
+        for file in files:
+            try:
+                os.remove(os.path.join(self.FlexAIDSimulationProject_Dir,file))
+            except OSError:
+                pass
+    
     def Set_Folders(self):
 
         self.FlexAIDInstall_Dir = os.path.join(self.Install_Dir,'FlexAID')

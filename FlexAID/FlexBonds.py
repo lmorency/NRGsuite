@@ -390,7 +390,7 @@ class flexbond(Wizard):
     #=======================================================================
     def show_AtomsNumber(self):
         
-        cmd.label(self.LigDisplay, "\"%d\" % ID")        
+        cmd.label(self.LigDisplay, "\"%d\" % ID")
         cmd.refresh()
      
     #=======================================================================   
