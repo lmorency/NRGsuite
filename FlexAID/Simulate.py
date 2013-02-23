@@ -579,7 +579,7 @@ class Simulate(Tabs.Tab):
                 
             except:
                 pass
-
+    
     ''' ==================================================================================
     FUNCTION Check_CartoonSIM: Change the protein display adding or removing the cartoon
     ==================================================================================  '''

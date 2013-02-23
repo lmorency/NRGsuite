@@ -200,7 +200,7 @@ class anchor(Wizard):
             [ 2, 'Clear anchor atom','cmd.get_wizard().clear()'],
             [ 2, 'Reset anchor atom','cmd.get_wizard().reset()'],                  
             [ 2, 'Show atom names','cmd.get_wizard().show_AtomsName()'],
-            [ 2, 'Show atom IDs','cmd.get_wizard().show_AtomsNumber()'],
+            #[ 2, 'Show atom IDs','cmd.get_wizard().show_AtomsNumber()'],
             [ 2, 'Hide labels','cmd.get_wizard().hide_Labels()'],
             [ 2, 'Done','cmd.get_wizard().btn_Done()'],                  
             ]

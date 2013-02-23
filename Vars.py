@@ -45,6 +45,7 @@ class Vars:
     # Then Vars because they are bound to controls
     def __setstate__(self, dict_data):
 
+        #print dict_data
         Vars.dict_vars.clear()
 
         for k in dict_data.keys():

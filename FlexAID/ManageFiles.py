@@ -508,8 +508,8 @@ class Manage:
             # Creation of a dictionary containing the 3 neighbours of each atom
             for line in inpLines:
                 if line.startswith('HETTYP'):
-                    noLine = int(line[7:11])
-                    self.RecAtom[noLine] = [int(line[22:26]), int(line[27:31]), int(line[32:36])]
+                    noLine = int(line[6:11])
+                    self.RecAtom[noLine] = [int(line[21:26]), int(line[26:31]), int(line[31:36])]
         except:
             return 1
                 
@@ -530,7 +530,7 @@ class Manage:
             # Creation of a dictionary containing the 3 neighbors of each atoms
             for line in icLines:
                 if line[0:6] != 'REFPCG':
-                    noLine = int(line[1:5])
+                    noLine = int(line[0:5])
                     self.DisAngDih[noLine] = [float(line[7:15]), float(line[16:24]), float(line[25:33])]
         except:
             return 1
@@ -555,10 +555,10 @@ class Manage:
         # Creation of a dictionary containing the 3 neighbors of each atoms
         for line in inpLines:
             if line.startswith('HETTYP'):
-                noAtom = int(line[7:11])
-                if int(line[32:36]) == 0:
-                    if int(line[27:31]) == 0:
-                        if int(line[22:26]) == 0:
+                noAtom = int(line[6:11])
+                if int(line[31:36]) == 0:
+                    if int(line[26:31]) == 0:
+                        if int(line[21:26]) == 0:
                             NoAtom3 = noAtom
                         else:
                             NoAtom2 = noAtom

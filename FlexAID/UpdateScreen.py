@@ -43,7 +43,7 @@ class UpdateScreen:
 
         # Starting index of line
         self.colNo = colNo
-
+        
         # input line to parse
         self.Line = Line
 
@@ -230,7 +230,7 @@ class UpdateScreen:
                 type = pdbLine[0:6].strip()
                 if type == 'HETATM' or type == 'ATOM':
 
-                    NoAtom = int(pdbLine[7:11])
+                    NoAtom = int(pdbLine[6:11])
                     #print NoAtom
                     
                     atomX = float(self.dictCoord[NoAtom][0])
@@ -260,7 +260,7 @@ class UpdateScreen:
        UpdateLigandFlexibility: Updates the dihedral angles of the ligand
     ========================================================================='''
     def UpdateLigandFlexibility(self):
-
+        
         # Flexible bond(s) selected?
         try:
             if self.top.FlexStatus != '':

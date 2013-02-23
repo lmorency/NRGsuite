@@ -93,7 +93,6 @@ class Config3(Tabs.Tab):
 
         try:
             self.IncludeHETTrace = self.IncludeHET.trace('w',self.IncludeHET_Toggle)
-            self.top.IOFile.AtomTypesTrace = self.top.IOFile.AtomTypes.trace('w',self.AtomTypes_Toggle)
             self.SolventTypeTrace = self.SolventType.trace('w',self.SolventType_Toggle)
             self.DEETrace = self.UseDEE.trace('w',self.DEE_Toggle)
 
@@ -131,7 +130,6 @@ class Config3(Tabs.Tab):
 
         try:
             self.IncludeHET.trace_vdelete('w',self.IncludeHETTrace)
-            self.top.IOFile.AtomTypes.trace_vdelete('w',self.top.IOFile.AtomTypesTrace)
             self.SolventType.trace_vdelete('w',self.SolventTypeTrace)
             self.UseDEE.trace_vdelete('w',self.DEETrace)
             self.Permeability.trace_vdelete('w',self.PermeabilityTrace)
@@ -152,24 +150,6 @@ class Config3(Tabs.Tab):
             self.chkHOH.config(state='normal')
         else:
             self.chkHOH.config(state='disabled')
-
-    ''' ==================================================================================
-    FUNCTION AtomTypes_Toggle: Toggle the controls related to Atom Types
-    =================================================================================  '''    
-    def AtomTypes_Toggle(self, *args):
-        
-        if self.top.IOFile.AtomTypes.get() != 'Gaudreault':
-            self.optSolventType.config(state='normal')
-            self.SolventType.set('< No type >')
-        else:
-            self.optSolventType.config(state='disabled')
-            self.SolventType.set('< Type-based >')
-
-        # Need for processing the ligand again if atom typing is changed
-        self.top.IOFile.fProcessLigand = False
-
-        # Reset atom type definition
-        self.top.Config2.SATStatus.set('')
 
     ''' ==================================================================================
     FUNCTION SolventType_Toggle: Toggle the controls related to Solvent Types

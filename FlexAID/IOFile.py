@@ -21,7 +21,6 @@ from Tkinter import *
 
 import math
 import os
-#import hashlib
 import shutil
 
 import Vars
@@ -71,6 +70,9 @@ class IOFileVars(Vars.Vars):
     
 class IOFile(Tabs.Tab):
     
+    ATOM_INDEX = 90000
+    RESIDUE_NUMBER = 9999
+    
     SupportedFormats = [ ('All supported formats', ('*.pdb','*.mol','*.mol2','*.sdf','*.smi')),
                          ('PDB File','*.pdb'),
                          ('MOL File','*.mol'),
@@ -97,6 +99,7 @@ class IOFile(Tabs.Tab):
         self.AtomTypes = self.Vars.AtomTypes
         self.SmilesString = self.Vars.SmilesString
         self.SmilesName = self.Vars.SmilesName
+
         self.Gen3D = self.Vars.Gen3D
         self.Anchor = self.Vars.Anchor
 
@@ -109,7 +112,6 @@ class IOFile(Tabs.Tab):
         self.LigandName.set('')
         self.SmilesString.set('')
         self.SmilesName.set('')
-        self.Gen3D.set(0)
 
         self.ReferencePath.set('')
         self.defaultOption.set('')
@@ -117,66 +119,45 @@ class IOFile(Tabs.Tab):
         self.AtomTypes.set('Sybyl')
         
         self.ResSeq.set(0)
+        self.Gen3D.set(0)
         self.Anchor.set(-1)
         
-        #self.Vars.LigandPathMD5 = ''
-    
         # flags
-        self.LigandChanged = False
         self.ProcessOnly = False
-        self.fProcessLigand = False
-        self.fStoreInfo = False
-        self.fLoadProcessed = False
+        self.Processed = False
 
     ''' ==================================================================================
     FUNCTION Load_Session: Actions related to when a new session is loaded
     =================================================================================  '''    
     def Load_Session(self):
 
-        self.Btn_DisplayLigand_Clicked()
-        self.Btn_DisplayProtein_Clicked()
-
-        self.LigandChanged = False
-
+        self.Btn_DisplayObject_Clicked('Ligand')
+        self.Btn_DisplayObject_Clicked('Target')
+                
     ''' ==================================================================================
     FUNCTION Before_Kill_Frame: Actions related before killing the frame
     =================================================================================  '''    
     def Before_Kill_Frame(self):
-        
-        self.top.ProcessError = False
-        
+               
         # Process ligand
-        if not self.fProcessLigand:
+        if not self.Processed:
+            self.top.ProcessError = False
             
-            AtomIndex = General.store_Residues(self.top.Config1.listResidues, self.ProtPath.get(), 0)
-            if AtomIndex == -1:
-                return False
-
-            self.ProcessLigand( True, AtomIndex + 1, self.AtomTypes.get(), self.Anchor.get(),
-                                False, self.ProcessOnly, self.Gen3D.get())
-
+            self.ProcessLigand( True, self.ATOM_INDEX, self.AtomTypes.get(), self.Anchor.get(),
+                                False, self.ProcessOnly, self.Gen3D.get() )
             if self.top.ProcessError:
                 return False
             else:
-                self.fProcessLigand = True
-                self.ResSeq.set(9999)
-                
-            self.fStoreInfo = False
-            self.fLoadProcessed = False
+                self.Processed = True
+                self.ResSeq.set(self.RESIDUE_NUMBER)
 
         # Store content of ligand input files
-        if not self.fStoreInfo:
-            if self.store_InpFile():
-                return False
-            else:
-                self.fStoreInfo = True
-
-        # Loads the PDB of the processed ligand
-        if not self.fLoadProcessed:
+        if self.store_InpFile():
+            return False
+        else:
+            print self.ReferencePath.get()
             if self.Load_ProcConvLigand(self.ReferencePath.get(), self.ReferenceLigand, False):
                 return False
-            else:
-                self.fLoadProcessed = True
 
         return True
     
@@ -203,7 +184,7 @@ class IOFile(Tabs.Tab):
         
         if self.top.ProcessError:
             return 1
-            
+        
         return 0
 
     ''' ==================================================================================
@@ -264,8 +245,8 @@ class IOFile(Tabs.Tab):
                         
                         self.ForceSaveObject(LigandFile, Filebase, 'Ligand')
 
-                        self.fProcessLigand = False
                         self.ProcessOnly = True
+                        self.Processed = False
                                                 
                     else:
                         self.LigandPath.set('')
@@ -290,21 +271,10 @@ class IOFile(Tabs.Tab):
         self.ValidateLigProt()
     
     def Ligand_Toggle(self, *args):
-        
-        self.Anchor.set(-1)
-
-        self.Vars.dictAtomTypes.clear()
-        self.Vars.dictFlexBonds.clear()
-        self.Vars.dictNeighbours.clear()
-        
+                
         # Clean constraints, reset flex bonds and atom types (no effect)
-        self.top.Config2.Init_Vars()
+        self.top.Config2.Vars.dictConstraints.clear()
         
-        self.ProcessOnly = False
-        self.fProcessLigand = False
-        self.fStoreInfo = False
-        self.fLoadProcessed = False
-
         self.ValidateLigProt()
 
     ''' ==================================================================================
@@ -318,13 +288,27 @@ class IOFile(Tabs.Tab):
             self.top.Go_Step1()
         
     ''' ==================================================================================
+    FUNCTION Reset_Ligand: Rests all parameters variables to processing of the ligand
+    ================================================================================== '''    
+    def Reset_Ligand(self):
+        
+        self.Anchor.set(-1)
+
+        self.Vars.dictAtomTypes.clear()
+        self.Vars.dictFlexBonds.clear()
+        self.Vars.dictNeighbours.clear()
+        
+        self.ProcessOnly = False
+        self.Processed = False
+
+    ''' ==================================================================================
     FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
     def After_Show(self):
                 
         #Show the list of selection/objects in case the user already worked in PyMOL
         self.Btn_RefreshOptMenu_Clicked()
-        
+    
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
     ==================================================================================  '''  
@@ -333,9 +317,10 @@ class IOFile(Tabs.Tab):
         try:
             self.ProtNameTrace = self.ProtName.trace('w',self.Protein_Toggle)
             self.LigandNameTrace = self.LigandName.trace('w',self.Ligand_Toggle)
+            self.AtomTypesTrace = self.AtomTypes.trace('w',self.AtomTypes_Toggle)            
         except:
             pass
-        
+    
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     ==================================================================================  '''  
@@ -344,9 +329,28 @@ class IOFile(Tabs.Tab):
         try:
             self.ProtName.trace_vdelete('w',self.ProtNameTrace)
             self.LigandName.trace_vdelete('w',self.LigandNameTrace)
+            self.AtomTypes.trace_vdelete('w',self.AtomTypesTrace)
         except:
             pass
-            
+    
+    ''' ==================================================================================
+    FUNCTION AtomTypes_Toggle: Toggle the controls related to Atom Types
+    =================================================================================  '''    
+    def AtomTypes_Toggle(self, *args):
+        
+        if self.AtomTypes.get() != 'Gaudreault':
+            self.top.Config3.optSolventType.config(state='normal')
+            self.top.Config3.SolventType.set('< No type >')
+        else:
+            self.top.Config3.optSolventType.config(state='disabled')
+            self.top.Config3.SolventType.set('< Type-based >')
+
+        # Reset atom type definition
+        self.Vars.dictAtomTypes.clear()
+
+        # Need for processing the ligand again if atom typing is changed
+        self.Processed = False
+
     ''' ==================================================================================
     FUNCTION Frame: Generate the Input / Output Files frame in the the middle 
                     frame section    
@@ -655,9 +659,12 @@ class IOFile(Tabs.Tab):
             except:
                 self.DisplayMessage("  ERROR: An error occured while saving the object.", 1)
                 return
-                
+            
             self.VarPath.set(os.path.normpath(Path))
             self.VarName.set(Name)
+            
+            if objtype == 'Ligand':
+                self.Reset_Ligand()
             
             self.DisplayMessage('  Successfully saved and loaded the object:  ' + self.VarName.get() + "'", 0)
         
@@ -700,6 +707,9 @@ class IOFile(Tabs.Tab):
             self.VarName.set(Name)
             
             self.ForceSaveObject(Path,Name,objtype)
+
+            if objtype == 'Ligand':
+                self.Reset_Ligand()
             
             self.DisplayMessage("  Successfully loaded the object: '" + self.VarName.get() + "'", 0)
     
@@ -742,6 +752,8 @@ class IOFile(Tabs.Tab):
             
             self.LigandPath.set(os.path.normpath(LigandPath))
             self.LigandName.set(LigandName)
+
+            self.Reset_Ligand()
             
             self.DisplayMessage('  Successfully extracted the ligand:  ' + self.LigandName.get() + "'", 0)
     
@@ -831,46 +843,46 @@ class IOFile(Tabs.Tab):
         #Read the inp file and get the flexible bonds
         try:
             file = open(inpFilePath, 'r')
-            inpFile = file.readlines()
+            inpLines = file.readlines()
             file.close()
 
-            nbLines = len(inpFile)      
-            for line in range(0, nbLines):
+            for Line in inpLines:
 
                 #HETTYP  902 1  N1  m   909  910  903    0
-                if inpFile[line].startswith('HETTYP'):
+                if Line.startswith('HETTYP'):
                     
-                    ATOM = inpFile[line][7:11].strip()
+                    ATOM = Line[6:11].strip()
 
                     list = []
-                    list.append(inpFile[line][11:13].strip()) # Type
-                    list.append(inpFile[line][22:26].strip()) # Neighbour 1
-                    list.append(inpFile[line][27:31].strip()) #           2
-                    list.append(inpFile[line][32:36].strip()) #           3
+                    list.append(Line[11:13].strip()) # Type
+                    list.append(Line[21:26].strip()) # Neighbour 1
+                    list.append(Line[26:31].strip()) #           2
+                    list.append(Line[31:36].strip()) #           3
                     inpInfo[ATOM] = list
 
                 #FLEDIH  4   916  917   
-                elif inpFile[line].startswith('FLEDIH'):
+                elif Line.startswith('FLEDIH'):
 
-                    INDEX = inpFile[line][7:9].strip()
+                    INDEX = Line[7:9].strip()
 
                     list = []
-                    for i in range(0,len(inpFile[line][10:])/5):
-                        list.append(inpFile[line][(10+i*5):(10+5+i*5)].strip())
+                    for i in range(0,len(Line[10:])/5):
+                        list.append(Line[(10+i*5):(10+5+i*5)].strip())
                     flexInfo[INDEX] = list
                 
         except:
             self.DisplayMessage('  ERROR: Could not retrieve ligand input file', 1)
             return 1
         
-        #if not self.Check_LigandPathMD5(inpFilePath):
-        if not self.LigandChanged:
+        if not len(self.Vars.dictNeighbours): 
             self.store_Neighbours(inpInfo)
+            
+        if not len(self.Vars.dictAtomTypes):
             self.store_AtomTypes(inpInfo)
+        
+        if not len(self.Vars.dictFlexBonds):
             self.store_FlexBonds(flexInfo)
-
-            #self.Vars.LigandPathMD5 = self._LigandPathMD5
-
+        
         return 0
 
     #=======================================================================
@@ -937,10 +949,16 @@ class IOFile(Tabs.Tab):
             self.Disable_Frame()
         else:
             self.Enable_Frame()
-
+            
             if self.Anchor.get() != self.top.WizardResult:
-                self.fProcessLigand = False
-
+                self.Processed = False
+                
+                self.Vars.dictAtomTypes.clear()
+                self.Vars.dictNeighbours.clear()
+                self.Vars.dictFlexBonds.clear()
+            
+                self.top.Config2.Init_Vars()
+            
             self.Anchor.set(self.top.WizardResult)
 
     # Welcome menu message

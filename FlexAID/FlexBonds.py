@@ -379,7 +379,7 @@ class flexbond(Wizard):
          [ 2, 'Select all flexible bonds','cmd.get_wizard().btn_SelectAllBonds()'],
          [ 2, 'Clear flexible bonds','cmd.get_wizard().reset()'],         
          [ 2, 'Show atom names','cmd.get_wizard().show_AtomsName()'],
-         [ 2, 'Show atom IDs','cmd.get_wizard().show_AtomsNumber()'],
+         #[ 2, 'Show atom IDs','cmd.get_wizard().show_AtomsNumber()'],
          [ 2, 'Hide labels','cmd.get_wizard().hide_Labels()'],
          #[ 2, self.panelForceBond,'cmd.get_wizard().btn_Force()'],        
          [ 2, 'Done','cmd.get_wizard().btn_Done()'],         
