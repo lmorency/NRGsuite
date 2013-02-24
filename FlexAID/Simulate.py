@@ -21,9 +21,11 @@ from Tkinter import *
 
 import os
 import re
+import pickle
 import shutil
 import glob
 import Queue
+import tkFileDialog
 
 import MultiList
 import General
@@ -43,13 +45,14 @@ if __debug__:
 
 class SimulateVars(Vars.Vars):
     
+    ResultsName = StringVar()
     SimDefDisplay = StringVar()
     SimCartoonDisplay = IntVar()
 
     def __init__(self):
         
         self.ResultsContainer = Result.ResultsContainer()
-    
+
 
 class Simulate(Tabs.Tab):
     
@@ -60,13 +63,15 @@ class Simulate(Tabs.Tab):
         self.dictSimData = dict()
 
         # vars class objects
+        self.ResultsName = self.Vars.ResultsName
         self.SimDefDisplay = self.Vars.SimDefDisplay
         self.SimCartoonDisplay = self.Vars.SimCartoonDisplay
 
+        self.Manage = ManageFiles.Manage(self)
+    
     def Init_Vars(self):
         
-        self.ProcessParsing = False
-
+        self.ResultsName.set('')
         self.ProgBarText.set('... / ...')
         self.SimDefDisplay.set('sticks')
         self.SimCartoonDisplay.set(0)
@@ -76,6 +81,10 @@ class Simulate(Tabs.Tab):
 
         self.dictSimData = {}
         
+        self.Vars.ResultsContainer.Clear()
+        
+        self.ProcessParsing = False
+        
     ''' ==================================================================================
     FUNCTION After_Show: Actions related after showing the frame
     ==================================================================================  '''  
@@ -84,6 +93,10 @@ class Simulate(Tabs.Tab):
         self.IdleStatus()
         self.Reset_Buttons()
     
+        self.ConfigMD5 = self.Manage.Hash_CONFIG()
+        
+        self.ResultsName_Toggle()
+        
     ''' =============================================================================== 
     FUNCTION Frame: Generate the CSimulation frame in the the middle frame 
                     section.
@@ -96,10 +109,33 @@ class Simulate(Tabs.Tab):
         '''                         --- SIMULATION TABLE ---                            '''
         #==================================================================================
         
-        fTable = Frame(self.fSimulate, height=200, pady=5, padx=5)
+        self.fRes = Frame(self.fSimulate, relief=RAISED, border=1)
+        self.fRes.pack(fill=BOTH, side=BOTTOM, padx=5, pady=10)
+
+        Label(self.fRes, text='Simulation results', font=self.top.font_Title_H).pack(side=TOP, fill=X, pady=3)
+
+        fConfRes = Frame(self.fRes)
+        fConfRes.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
+
+        Label(fConfRes, text='Pre-generated results:', width=30, font=self.top.font_Text).pack(side=LEFT)
+        Button(fConfRes, text='Load', command=self.Btn_Load_Results_Clicked, font=self.top.font_Text).pack(side=LEFT)
+        Button(fConfRes, text='Save', command=self.Btn_Save_Results_Clicked, font=self.top.font_Text).pack(side=LEFT)
+        Entry(fConfRes, textvariable=self.ResultsName, font=self.top.font_Text, state='disabled', disabledbackground=self.top.Color_White,
+                        disabledforeground=self.top.Color_Black, justify=CENTER).pack(side=LEFT, fill=X, expand=True)
+
+        fNaviRes = Frame(self.fRes)
+        fNaviRes.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
+
+        Label(fNaviRes, text='Results navigation', width=30, font=self.top.font_Text).pack(side=LEFT)
+        Button(fNaviRes, text='Show parent', font=self.top.font_Text).pack(side=LEFT)
+        Button(fNaviRes, text='Show next child', font=self.top.font_Text).pack(side=LEFT)
+        Button(fNaviRes, text='Show previous child', font=self.top.font_Text).pack(side=LEFT)
+
+
+        fTable = Frame(self.fSimulate, height=150, pady=5, padx=5)
         fTable.pack(side=BOTTOM, fill=BOTH, expand=True)
         fTable.pack_propagate(0)
-        
+
         self.Table = MultiList.Table(fTable, 5,
                                    [ 'Color', 'TOP', 'CF', 'Fitness', 'RMSD' ],
                                    [ 65, 65, 167, 167, 167 ],
@@ -109,6 +145,11 @@ class Simulate(Tabs.Tab):
                                    self.top.Color_Blue)
         self.Table.Draw()
         
+
+        #==================================================================================
+        '''                         --- LEFT AND RIGHT ---                              '''
+        #==================================================================================       
+
         fSimulate_Left = Frame(self.fSimulate)
         fSimulate_Left.pack(side=LEFT, fill=X, expand=True)
         
@@ -129,6 +170,9 @@ class Simulate(Tabs.Tab):
         Label(fSim_PlayerLine1, text='Simulation controls', font=self.top.font_Title).pack(side=LEFT, anchor=W)        
         self.Btn_Start = Button(fSim_PlayerLine2, text='Start', command=self.Btn_StartSim, font=self.top.font_Text, state='normal')
         self.Btn_Start.pack(side=LEFT)
+        self.Btn_Continue = Button(fSim_PlayerLine2, text='Continue', command=lambda bContinue=True: self.Btn_StartSim(bContinue),
+                                   font=self.top.font_Text, state='disabled')
+        self.Btn_Continue.pack(side=LEFT)
         self.Btn_PauseResume = Button(fSim_PlayerLine2, text='Pause', command=self.Btn_PauseResumeSim, font=self.top.font_Text, state='disabled')
         self.Btn_PauseResume.pack(side=LEFT)
         self.Btn_Stop = Button(fSim_PlayerLine2, text='Stop', command=self.Btn_StopSim, font=self.top.font_Text, state='disabled')
@@ -188,40 +232,44 @@ class Simulate(Tabs.Tab):
         return self.fSimulate
     
     ''' =============================================================================== 
+    FUNCTION Btn_ContinueSim: Continue a simulation from an existing one
+    ===============================================================================  '''     
+    def Btn_ContinueSim(self):
+
+        return
+
+    ''' =============================================================================== 
     FUNCTION Btn_StartSim: Start the simulation (If requirements are meet...)
     ===============================================================================  '''     
-    def Btn_StartSim(self):
+    def Btn_StartSim(self, bContinue=False):
+        
+        self.Manage.Reference_Folders()
 
-        self.Manage = ManageFiles.Manage(self)
-        
         if not self.Manage.Clean():
-            self.DisplayMessage('   Fatal error: Could not clean files before the simulation',1)
-            self.DisplayMessage('   Please contact the developers of the NRGsuite',1)
+            self.DisplayMessage('  ERROR: Could not clean files before the simulation', 1)
             return
-        
+                
         if not self.Manage.Create_Folders():
-            self.DisplayMessage('   Fatal error: Could not create RESULT folder',1)
-            self.DisplayMessage('   Please contact the developers of the NRGsuite',1)
+            self.DisplayMessage('  ERROR: Could not create complex folder', 1)
             return
 
         if not self.Manage.Move_Files():
-            self.DisplayMessage('   Fatal error: Could not move input files to RESULT folder',1)
-            self.DisplayMessage('   Please contact the developers of the NRGsuite',1)
+            self.DisplayMessage('  ERROR: Could not move input files to RESULT folder', 1)
             return
 
         if not self.Manage.Executable_Exists():
-            self.DisplayMessage('   Fatal error: Could not find FlexAID executable',1)
-            self.DisplayMessage('   Please contact the developers of the NRGsuite',1)
+            self.DisplayMessage('  ERROR: Could not find FlexAID executable', 1)
             return
 
-                
-        self.DisplayMessage('   Will create input files...', 2)
-        self.DisplayMessage('   CONFIG.inp file...', 2)
-        self.Manage.Create_CONFIG()
-        self.DisplayMessage('   ga_inp.dat file...', 2)
-        self.Manage.Create_ga_inp()
+        self.DisplayMessage('   Creating input files...', 2)
         
-        self.DisplayMessage('   Savinga and modifying input files...', 2)
+        self.DisplayMessage('   CONFIG.inp...', 2)
+        self.Manage.Create_CONFIG()
+        
+        self.DisplayMessage('   ga_inp.dat...', 2)
+        self.Manage.Create_ga_inp(bContinue)
+        
+        self.DisplayMessage('   Saving and modifying input files...', 2)
         #self.Manage.Modify_Input()
         self.Manage.CreateTempPDB()
         self.Manage.Get_CoordRef()
@@ -229,18 +277,21 @@ class Simulate(Tabs.Tab):
         self.Manage.Get_DisAngDih()
         self.Manage.Get_RecAtom()
 
-        self.DisplayMessage('   RESULT file(s) will be saved in: ', 0)
+        #self.DisplayMessage('   RESULT file(s) will be saved in: ', 0)
         self.DisplayMessage(self.Manage.FlexAIDRunSimulationProject_Dir, 0)
 
         # Start the simulation
-        self.Btn_Start.config(state='disabled') 
+        self.Btn_Start.config(state='disabled')
+        self.Btn_Continue.config(state='disabled')
         self.Btn_PauseResume.config(state='normal')
         self.Btn_Stop.config(state='normal')
         self.Btn_Abort.config(state='normal')
 
         self.ColorList = Color.GetHeatColorList(int(self.top.GAParam.NbTopChrom.get()), True)
         self.PymolColorList = Color.GetHeatColorList(int(self.top.GAParam.NbTopChrom.get()), False)
+
         self.Init_Table()
+        self.dictSimData.clear()
         
         # START FLEXAID AS THREAD
         commandline =   '"%s" "%s" "%s" "%s"' % (   self.top.FlexAIDExecutable,
@@ -250,10 +301,19 @@ class Simulate(Tabs.Tab):
         
         self.Results = True
         
+        if bContinue:
+            ParentResultsContainer = self.Vars.ResultsContainer
+        
+        self.Vars.ResultsContainer = Result.ResultsContainer()
+        self.Vars.ResultsContainer.ConfigMD5 = self.ConfigMD5
+        
+        if bContinue:
+            self.Vars.ResultsContainer.ParentResult = ParentResultsContainer
+        
         # START SIMULATION
         self.DisplayMessage('  Starting executable thread.', 2)
         self.Start = Simulation.Start(self, commandline)
-
+        
         # Stacking up tasks related to updating Tkinter
         self.queue = Queue.Queue()
         
@@ -269,6 +329,7 @@ class Simulate(Tabs.Tab):
     def Trace(self):
 
         try:
+            self.ResultsNameTrace = self.ResultsName.trace('w',self.ResultsName_Toggle)
             self.SimDefDisplayTrace = self.SimDefDisplay.trace('w',self.Click_RadioSIM)
             self.SimCartoonDisplayTrace = self.SimCartoonDisplay.trace('w',Check_CartoonSIM)
         except:
@@ -280,6 +341,7 @@ class Simulate(Tabs.Tab):
     def Del_Trace(self):
 
         try:
+            self.ResultsName.trace_vdelete('w',self.ResultsNameTrace)
             self.SimDefDisplay.trace_vdelete('w',self.SimDefDisplayTrace)
             self.SimCartoonDisplay.trace_vdelete('w',self.SimCartoonDisplayTrace)
         except:
@@ -352,7 +414,7 @@ class Simulate(Tabs.Tab):
             self.SimStatus.set('Simulation ended successfully.')
         else:
             self.SimStatus.set('Simulation aborted successfully.')
-
+    
     ''' =============================================================================== 
     FUNCTION ErrorStatus: An error occured.
     ===============================================================================  '''     
@@ -360,14 +422,12 @@ class Simulate(Tabs.Tab):
 
         self.lblSimStatus.config(fg='red')
         self.SimStatus.set(ErrorMsg)
-
+    
     ''' ==================================================================================
     FUNCTION Init_Table: Initialisation the dictionary that contain the energy 
                                                  and fitness for each solution.
     ==================================================================================  '''                
     def Init_Table(self):
-        
-        self.dictSimData.clear()
                 
         # Empty table list
         self.Table.Clear()
@@ -375,18 +435,24 @@ class Simulate(Tabs.Tab):
         for key in range(1, len(self.ColorList) + 1):
             self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ], 
                             [ self.ColorList[key-1], None, None, None, None ] )
-        
+    
     ''' ==================================================================================
     FUNCTION update_DataResults: Updates the dictionary with the values of the results
     ==================================================================================  '''                
     def update_DataResults(self):
-
+        
+        NRes = 0
         self.dictSimData.clear()
         
         for Result in self.Vars.ResultsContainer.Results:
             
             self.dictSimData[Result.ResultID] = [ Result.CF, 'N/A', Result.RMSD ]
             
+            if Result.ResultID != 'REF':
+                NRes = NRes + 1
+            
+        return NRes
+    
     ''' ==================================================================================
     FUNCTION update_DataList: Update the displayed Data List informations.
     ==================================================================================  '''                
@@ -403,13 +469,14 @@ class Simulate(Tabs.Tab):
                 self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], self.dictSimData[key][2] ],
                                 [ self.ColorList[i], None, None, None, None ] )
                 i += 1
-        
+    
     ''' =============================================================================== 
     FUNCTION Reset_Buttons(self): resets button states back to defaults
     ===============================================================================  '''        
     def Reset_Buttons(self):
         
         self.Btn_Start.config(state='normal')
+        self.Btn_Continue.config(state='disabled')
         self.Btn_PauseResume.config(state='disabled')
         self.Btn_Stop.config(state='disabled')
         self.Btn_Abort.config(state='disabled')
@@ -474,7 +541,7 @@ class Simulate(Tabs.Tab):
             self.AbortStatus()
             self.Parse.ParseFile = self.Manage.LOGFILE
             self.Results = False
-
+    
     ''' =============================================================================== 
     FUNCTION Btn_StopSim: Stop the simulation 
     ===============================================================================  '''    
@@ -496,8 +563,8 @@ class Simulate(Tabs.Tab):
             self.Btn_Abort.config(state='disabled')
 
             self.StopStatus()
-            self.Parse.ParseFile = self.Parse.LOGFILE
-            self.Parse.ParseFile = self.Parse.LOGFILE
+            
+            self.Parse.ParseFile = self.Manage.LOGFILE
     
     ''' ==================================================================================
     FUNCTION: Loads all result files
@@ -614,7 +681,7 @@ class Simulate(Tabs.Tab):
                 cmd.refresh()
             except:
                 pass                
-
+    
     '''
     @summary: SUBROUTINE progressBarHandler: Update the progression bar in the interface                  
     '''
@@ -642,7 +709,7 @@ class Simulate(Tabs.Tab):
             pass
 
         return
-
+    
     ''' ==================================================================================
     FUNCTION Update_Tkinter: update the tkinter interface (tasks queued from the worker)
     ==================================================================================  '''               
@@ -668,19 +735,118 @@ class Simulate(Tabs.Tab):
                 #if self.top.Config2.UseReference.get():
                 #    NRes = NRes + 1
                 
-                self.ColorList = Color.GetHeatColorList(NRes, True)
-                self.PymolColorList = Color.GetHeatColorList(NRes, False)
-                
-                self.Init_Table()
-                
-                self.update_DataResults()
-                self.Show_Results()
-                self.update_DataList()
-            
+                self.Process_ResultsContainer()
             else:
+                self.Vars.ResultsContainer = None
                 shutil.rmtree(self.Manage.FlexAIDRunSimulationProject_Dir, True)
             
             self.Reset_Buttons()
+    
+    ''' ==================================================================================
+    FUNCTION Process_ResultsContainer: updates the data and show the results
+    ==================================================================================  '''
+    def Process_ResultsContainer(self):
+        
+        NRes = self.update_DataResults()
+        self.ColorList = Color.GetHeatColorList(NRes, True)
+        self.PymolColorList = Color.GetHeatColorList(NRes, False)
+        
+        self.Show_Results()
+        self.update_DataList()
+
+    ''' ==================================================================================
+    FUNCTION Btn_Load_Results_Clicked: Loads a previously saved results
+    ==================================================================================  '''        
+    def Btn_Load_Results_Clicked(self):
+
+        if self.top.ValidateProcessRunning() or self.top.ValidateWizardRunning() or \
+            self.top.ValidateWindowRunning():
+            return
+
+        Results_Dir = os.path.join(self.top.FlexAIDResultsProject_Dir, self.top.IOFile.Complex.get().upper())
+        if not os.path.isdir(Results_Dir):
+            Results_Dir = self.top.FlexAIDResultsProject_Dir
+
+        
+        LoadFile = tkFileDialog.askopenfilename(initialdir=Results_Dir,
+                                                filetypes=[('NRG FlexAID Results','*.nrgfr')],
+                                                title='Load a Results file')
+
+        if len(LoadFile) > 0:
+                                
+            LoadFile = os.path.normpath(LoadFile)
+            
+            try:
+                in_ = open(LoadFile, 'r')
+                TmpResultsContainer = pickle.load(in_)
+                in_.close()
+                
+                if TmpResultsContainer is not None and len(TmpResultsContainer.Results):
+                
+                    self.Vars.ResultsContainer = TmpResultsContainer
+                    self.Process_ResultsContainer()
+                    
+                    self.ResultsName.set(os.path.basename(os.path.splitext(LoadFile)[0]))
+                else:
+                    self.DisplayMessage("  ERROR: The Results file is empty or has unknown format.", 2)
+
+                self.DisplayMessage("  Successfully loaded the Results file '" + os.path.basename(os.path.splitext(LoadFile)[0]) + "'", 2)
+                
+            except:
+                self.DisplayMessage("  ERROR: Could not read the Results file.", 2)
+    
+    ''' ==================================================================================
+    FUNCTION Btn_Save_Results_Clicked: Saves the current results
+    ==================================================================================  '''        
+    def Btn_Save_Results_Clicked(self):
+
+        if self.top.ValidateProcessRunning() or self.top.ValidateWizardRunning() or \
+           self.top.ValidateWindowRunning():
+            return
+        
+        if self.Vars.ResultsContainer is None or not len(self.Vars.ResultsContainer.Results):
+            self.DisplayMessage("  No result file(s) to save.", 2)
+            return
+        
+        Results_Dir = os.path.join(self.top.FlexAIDResultsProject_Dir, self.top.IOFile.Complex.get().upper())
+        if not os.path.isdir(Results_Dir):
+            os.makedirs(Results_Dir)
+        
+        SaveFile = tkFileDialog.asksaveasfilename(initialdir=Results_Dir,
+                                  title='Save the Results file', initialfile='default_results',
+                                  defaultextension='.nrgfr')
+        
+        if len(SaveFile) > 0:
+
+            if General.validate_String(SaveFile, '.nrgfr', True, True, False):
+                self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
+                return
+
+            if self.top.ValidateSaveProject(SaveFile, 'Results'):
+                self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
+                return
+    
+            try:
+                out = open(SaveFile, 'w')
+                pickle.dump(self.Vars.ResultsContainer, out)
+                out.close()
+
+                self.ResultsName.set(os.path.basename(os.path.splitext(SaveFile)[0]))
+
+                self.DisplayMessage("  Successfully saved '" + SaveFile + "'", 2)
+            except:
+                self.DisplayMessage("  ERROR: Could not save Results file.", 2)
+            
+    ''' ==================================================================================
+    FUNCTION ResultsName_Toggle: Toggles the continue button
+    ==================================================================================  '''        
+    def ResultsName_Toggle(self, *args):
+
+        self.Btn_Continue.config(state='disabled')
+        
+        if self.ResultsName.get():
+            if self.ConfigMD5 == self.Vars.ResultsContainer.ConfigMD5:
+                self.Btn_Continue.config(state='normal')
 
     ''' ==================================================================================
     FUNCTION Load_Message: Display the message based on the menu selected

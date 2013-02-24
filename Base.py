@@ -224,8 +224,11 @@ class Base:
     ==================================================================================  '''    
     def DisplayMessage(self, msg, priority):
         
+        # Prepend text at end of control text
+        self.TextMessage.mark_set(INSERT, END)
+
         self.TextMessage.config(state='normal')
- 
+         
         #self.TextMessage.config(font='red')
         self.TextMessage.insert(INSERT, '\n' + msg)
 

@@ -24,7 +24,10 @@ import os
 import re
 import glob
 import shutil
+import hashlib
+
 import Result
+import General
 
 if __debug__:
     import Constraint
@@ -55,12 +58,26 @@ class Manage:
 
         self.Protein = self.IOFile.ProtName.get()
         self.Ligand = self.IOFile.LigandName.get()
+        self.COMPLEX = self.IOFile.Complex.get().upper()
         
+        self.TmpFile = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'file.tmp')
+
         self.RefFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG_ref.pdb')
         self.INPFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.inp')
         self.ICFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.ic')
 
-        self.FlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,self.Protein + '-' + self.Ligand,self.Now)
+        self.VarAtoms = list()
+        self.listTmpPDB = list()
+        self.RecAtom = dict()
+        self.DisAngDih = dict()
+        self.dictCoordRef = dict()
+        
+    ''' ==============================================================================
+    @summary: Reference_Folders: Create folder references with the now timestamp
+    ============================================================================== '''          
+    def Reference_Folders(self):
+
+        self.FlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,self.COMPLEX,self.Now)
         self.INPFlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.inp')
         self.ICFlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.ic')
         
@@ -75,12 +92,6 @@ class Manage:
         self.CONFIG = os.path.join(self.FlexAIDRunSimulationProject_Dir,'CONFIG.inp')
         self.ga_inp = os.path.join(self.FlexAIDRunSimulationProject_Dir,'ga_inp.dat')
 
-        self.VarAtoms = list()
-        self.listTmpPDB = list()
-        self.RecAtom = dict()
-        self.DisAngDih = dict()
-        self.dictCoordRef = dict()
-        
     ''' ==============================================================================
     @summary: Create_Folders: Creation AND/OR copy of the required files  
     ============================================================================== '''          
@@ -157,7 +168,7 @@ class Manage:
     ============================================================================== '''          
     def Load_ResultFiles(self):
         
-        pattern = os.path.join(self.FlexAIDRunSimulationProject_Dir,'RESULT_*.pdb')
+        pattern = os.path.join(self.FlexAIDRunSimulationProject_Dir,'RESULT_*')
         for file in glob.glob(pattern):
             
             m = re.search("RESULT_(\d+)\.pdb$", file)
@@ -177,16 +188,100 @@ class Manage:
                     
                 continue                
 
-            m = re.search("RESULT_par.res$", file)
+            m = re.search("RESULT_par\.res$", file)
             if m:
                 self.top.Vars.ResultsContainer.ResultParams = file
                 continue
     
     ''' ==================================================================================
+    @summary: Hash_CONFIG: Hashes the contents of the CONFIG recursively
+    ================================================================================== '''
+    def Hash_CONFIG(self):
+
+        hasher = hashlib.md5()
+        
+        hasher = General.hashfile_update(self.IOFile.ProtPath.get(), hasher)
+        hasher = General.hashfile_update(self.INPFlexAIDSimulationProject_Dir, hasher)
+
+        #hasher.update('SPACER 0.375\n')
+        
+        rngOpt = self.Config1.RngOpt.get()
+        
+        if rngOpt == 'LOCCEN':
+            line = 'RNGOPT LOCCEN'
+            line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[0]
+            line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[1]
+            line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[2]
+            line += ' %.3f\n' % self.Config1.Vars.BindingSite.Sphere.Radius
+            
+            hasher.update(line)
+
+        elif rngOpt == 'LOCCLF':
+            self.Config1.Generate_CleftBindingSite()
+            
+            hasher = General.hashfile_update(self.Config1.CleftTmpPath, hasher)
+        
+        if self.Config1.Vars.TargetFlex.Count_SideChain() > 0:
+            self.Create_FlexFile(self.TmpFile)
+
+            hasher = General.hashfile_update(self.TmpFile, hasher)
+                        
+        if len(self.Config2.Vars.dictConstraints):
+            self.Create_ConsFile(self.TmpFile)
+
+            hasher = General.hashfile_update(self.TmpFile, hasher)
+
+        if self.Config2.IntTranslation.get():
+            hasher.update('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - -1\n')
+            
+        if self.Config2.IntRotation.get():
+            hasher.update('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n')
+        
+        if self.Config2.UseReference.get():
+            hasher.update('RMSDST ' + self.IOFile.ReferencePath.get() + '\n')
+        
+        # Ligand flexibility
+        order = sorted(self.IOFile.Vars.dictFlexBonds.keys())
+        hasher.update(self.Add_FlexBonds(order))
+
+        if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
+            hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','scr_bin.dat') + '\n')
+
+        elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
+            hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n')
+
+        elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
+            hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','SYBYL_emat.dat') + '\n')
+
+        # permeability of atoms
+        Permea = 1.00 - float(self.Config3.Permeability.get())
+        hasher.update('PERMEA ' + str(Permea) + '\n')
+        
+        # heterogroups consideration
+        if self.Config3.IncludeHET.get():
+            hasher.update('INCHET' + '\n')
+            
+            if self.Config3.ExcludeHOH.get():
+                hasher.update('RMVHOH' + '\n')
+    
+        #config_file.write('VARDIS ' + self.Config3.DeltaDistance.get() + '\n')
+        hasher.update('VARANG ' + self.Config3.DeltaAngle.get() + '\n')
+        hasher.update('VARDIH ' + self.Config3.DeltaDihedral.get() + '\n')
+        hasher.update('VARFLX ' + self.Config3.DeltaDihedralFlex.get() + '\n')
+
+        hasher.update('SLVTYP ' + str(self.Config3.SolventTypeIndex.get()) + '\n')
+        if self.Config3.SolventTypeIndex.get() == 0:
+            hasher.update('SLVPEN ' + self.Config3.SolventTerm.get() + '\n')
+        
+        hasher.update('MAXRES ' + str(self.NUMBER_RESULTS) + '\n')
+                
+        return hasher.digest()
+
+    ''' ==================================================================================
     @summary: Create_CONFIG: Creation of the CONFIG.inp
     ================================================================================== '''
     def Create_CONFIG(self):
-        
+
         # Save the data to the configuration file
         config_file = open(self.CONFIG, 'w')
 
@@ -239,7 +334,7 @@ class Manage:
         
         # Ligand flexibility
         order = sorted(self.IOFile.Vars.dictFlexBonds.keys())
-        self.Add_FlexBonds(config_file,order)
+        config_file.write(self.Add_FlexBonds(order))
 
         if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
             config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','scr_bin.dat') + '\n')
@@ -253,7 +348,7 @@ class Manage:
         # permeability of atoms
         Permea = 1.00 - float(self.Config3.Permeability.get())
         config_file.write('PERMEA ' + str(Permea) + '\n')
-
+        
         # heterogroups consideration
         if self.Config3.IncludeHET.get():
             config_file.write('INCHET' + '\n')
@@ -287,6 +382,8 @@ class Manage:
 
         config_file.close()
         
+        return
+        
     ''' ==================================================================================
     @summary: Copy_BindingSite: Copies from the temp folder to results folder
     ================================================================================== '''
@@ -302,7 +399,7 @@ class Manage:
     ''' ==================================================================================
     @summary: Create_ga_inp: Creation of the ga_inp.dat file  
     ================================================================================== '''
-    def Create_ga_inp(self):
+    def Create_ga_inp(self, bContinue=False):
         
         # Save the data to the configuration file
         gaInp_file = open(self.ga_inp, 'w')
@@ -321,7 +418,10 @@ class Manage:
         gaInp_file.write('CROSRATE %.3f\n' % float(self.GAParam.CrossRate.get()))
         gaInp_file.write('MUTARATE %.3f\n' % float(self.GAParam.MutaRate.get()))
 
-        gaInp_file.write('POPINIMT RANDOM\n')
+        if bContinue:
+            gaInp_file.write('POPINIMT IPFILE ' + self.top.Vars.ResultsContainer.ResultParams + '\n')
+        else:
+            gaInp_file.write('POPINIMT RANDOM\n')
 
         gaInp_file.write('FITMODEL ' + self.GAParam.FitModel.get() + '\n')
         if self.GAParam.FitModel.get() == 'PSHARE':
@@ -349,7 +449,7 @@ class Manage:
                               for the Flexible Side Chain.
     ==================================================================================  '''          
     def Create_FlexFile(self,outfile):
-                    
+        
         FlexFile = open(outfile, 'w')
                   
         for item in self.Config1.Vars.TargetFlex.listSideChain:
@@ -360,12 +460,12 @@ class Manage:
 
             Line = 'RESIDU ' + str(ResSeq).rjust(4) + ' ' + ChainID + ' ' + ResName + '\n'
             FlexFile.write(Line)
-                
+            
         if os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','rotobs.lst')):
             FlexFile.write('ROTOBS\n')
 
         FlexFile.close()
-        
+
     ''' ==================================================================================
     FUNCTION Create_ConsFile: Creates the constraints file
     ==================================================================================  '''          
@@ -401,8 +501,9 @@ class Manage:
     ''' ==================================================================================
     FUNCTION Add_FlexBonds: Adds optimization lines in CONFIG
     ==================================================================================  '''          
-    def Add_FlexBonds(self, FilePtr,list):
-                    
+    def Add_FlexBonds(self, list):
+        
+        Content = ''
         ForcedLines = ''
 
         # Append extra OPTIMZ lines in CONFIG file
@@ -411,40 +512,10 @@ class Manage:
 
             # If bond is flexible
             if self.IOFile.Vars.dictFlexBonds[k][0]:
-                FilePtr.write('OPTIMZ ' + str(self.IOFile.ResSeq.get()) + ' - ' + strk + '\n')
-                            
-                # If the bond is forced
-                if self.IOFile.Vars.dictFlexBonds[k][1]:
-
-                    ForcedLines += 'FLEDIH' + strk.rjust(3, ' ') + ' '
-                    n = self.IOFile.Vars.dictFlexBonds[k][2]            
-                    for i in range(0, n):
-                        ForcedLines += str(self.IOFile.Vars.dictFlexBonds[k][i+3]).rjust(5, ' ')
-                    ForcedLines += '\n'                
+                Content += 'OPTIMZ ' + str(self.IOFile.ResSeq.get()) + ' - ' + strk + '\n'
         
-        self.Add_Forced(ForcedLines)
-
-    ''' ==================================================================================
-    FUNCTION Add_Forced: Adds FLEDIH lines in ligand inp
-    ==================================================================================  '''          
-    def Add_Forced(self, ForcedLines):
-
-        # Append extra FLEDIH lines (Forced flexible bonds)
-        if ForcedLines != '':
-
-            # Store file content
-            inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'r')
-            lines = inpFile.readlines()
-            inpFile.close()
-
-            # Re-write file
-            inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'w')
-            for line in lines:
-                if line.startswith('GPATOM'):
-                    inpFile.write(ForcedLines)
-                inpFile.write(line)
-            inpFile.close()
-
+        return Content
+        
     ''' ==================================================================================
     FUNCTION Modify_Input: Changes the ICDATA line for the new path and changes the new types
     ==================================================================================  '''          

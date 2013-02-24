@@ -510,7 +510,7 @@ class Config1(Tabs.Tab):
         if len(LoadPath) > 0:
 
             LoadPath = os.path.normpath(LoadPath)
-
+                
             try:
                 in_ = open(LoadPath, 'r')
                 TargetFlex = pickle.load(in_)
@@ -544,7 +544,7 @@ class Config1(Tabs.Tab):
 
             SaveFile = tkFileDialog.asksaveasfilename(initialdir=TargetFlexPath,
                                                       title='Save the TargetFlex file', initialfile='default_targetflex',
-                                                      filetypes=[('NRG TargetFlex','*.nrgtf')], defaultextension='.nrgtf')
+                                                      defaultextension='.nrgtf')
             
             if len(SaveFile) > 0:
 
@@ -552,6 +552,10 @@ class Config1(Tabs.Tab):
 
                 if General.validate_String(SaveFile, '.nrgtf', True, True, False):
                     self.DisplayMessage("  ERROR: Could not save the file because you entered an ` name.", 2)
+                    return
+
+                if self.top.ValidateSaveProject(Path, 'TargetFlex'):
+                    self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
                     return
 
                 try:
@@ -563,7 +567,7 @@ class Config1(Tabs.Tab):
 
                     self.DisplayMessage("  Successfully saved '" + SaveFile + "'", 0)
                 except:
-                    self.DisplayMessage("  Could not save target flexibility configuration", 0)
+                    self.DisplayMessage("  ERROR: Could not save target flexibility configuration", 0)
 
     ''' ==================================================================================
     FUNCTION Btn_LoadConfBS_Clicked: Asks for user to load binding-site
@@ -630,8 +634,8 @@ class Config1(Tabs.Tab):
                 os.makedirs(BindingSitePath)
 
             SaveFile = tkFileDialog.asksaveasfilename(initialdir=BindingSitePath,
-                                                      title='Save the BindingSite file', initialfile='my_default_bindingsite',
-                                                      filetypes=[('NRG BindingSite','*.nrgbs')], defaultextension='.nrgbs')
+                                                      title='Save the BindingSite file', initialfile='default_bindingsite',
+                                                      defaultextension='.nrgbs')
             
             if len(SaveFile) > 0:
 
@@ -641,6 +645,10 @@ class Config1(Tabs.Tab):
                     self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                     return
                     
+                if self.top.ValidateSaveProject(Path, 'BindingSite'):
+                    self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
+                    return
+
                 try:
                     out = open(SaveFile, 'w')
                     pickle.dump(self.Vars.BindingSite, out)

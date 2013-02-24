@@ -157,7 +157,13 @@ class ResultsContainer:
         
         # If these results were generated from other results this will be set
         self.ParentResult = None
-    
+
+        # A parent can have multiple child results
+        self.ChildResults = list()
+        
+        # Checksum of CONFIG.inp file (used for continu-ing simulation)
+        self.ConfigMD5 = ''
+        
     def Get_ResultID(self, ResID):
     
         for Result in self.Results:
@@ -165,4 +171,15 @@ class ResultsContainer:
                 return Result
                 
         return None
+        
+    def Clear(self):
+    
+        del self.Results[:]
+        
+        del self.ChildResults[:]
+    
+        self.ResultParams = ''
+        self.ConfigMD5 = ''
+        
+        self.ParentResult = None
         

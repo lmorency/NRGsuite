@@ -131,15 +131,11 @@ class displayFlexAID(Base.Base):
         
         loadmenu = Menu(self.menubar, tearoff=0)
         loadmenu.add_command(label="Load session", command=self.Btn_Load_Session)
-        loadmenu.add_separator()
-        loadmenu.add_command(label="Load results", command=self.Btn_Load_Results)
         self.menubar.add_cascade(label="Load", menu=loadmenu)
 
         savemenu = Menu(self.menubar, tearoff=0)        
         savemenu.add_command(label="Save session", command=self.Btn_Save_Session)
         savemenu.add_command(label="Save session as...", command=self.Btn_SaveAs_Session)
-        savemenu.add_separator()
-        savemenu.add_command(label="Save results", command=self.Btn_Save_Results)
         self.menubar.add_cascade(label="Save", menu=savemenu)
 
         viewmenu = Menu(self.menubar, tearoff=0)
@@ -307,41 +303,29 @@ class displayFlexAID(Base.Base):
             except:
                 self.DisplayMessage("  ERROR: Could not properly load the session", 2)
                 self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
-
-    ''' ==================================================================================
-    FUNCTION Btn_Load_Results: Loads a previously saved results
-    ==================================================================================  '''        
-    def Btn_Load_Results(self):
-
-        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
-            self.ValidateWindowRunning():
-            return
-
-        LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDResultsProject_Dir,
-                                                filetypes=[('NRG FlexAID Results','*.nrgfr')],
-                                                title='Select the Results to load')
-
-        if len(LoadFile) > 0:
-                                
-            LoadFile = os.path.normpath(LoadFile)
-                    
-    ''' ==================================================================================
-    FUNCTION Btn_Save_Results: Saves the current results
-    ==================================================================================  '''        
-    def Btn_Save_Results(self):
-
-        if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
-            self.ValidateWindowRunning():
-            return
-                
-        SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDResultsProject_Dir,
-                                  title='Save the Results file', initialfile='default_results',
-                                  filetypes=[('NRG FlexAID Results','*.nrgfr')], defaultextension='.nrgfr')
-        
-        if len(SaveFile) > 0:
-
-            SaveFile = os.path.normpath(SaveFile)
     
+    ''' ==================================================================================
+    FUNCTION ValidateSaveProject: Validates if a file was saved in the right folder
+    ==================================================================================  '''    
+    def ValidateSaveProject(self, file, objtype):
+    
+        basepath, filename = os.path.split(file)
+        
+        if objtype == 'Ligand' and not self.FlexAIDLigandProject_Dir in basepath:
+            return 1
+        elif objtype == 'Target' and not self.TargetProject_Dir in basepath:
+            return 1
+        elif objtype == 'Session' and not self.FlexAIDSessionProject_Dir in basepath:
+            return 1
+        elif objtype == 'Results' and not self.FlexAIDResultsProject_Dir in basepath:
+            return 1
+        elif objtype == 'TargetFlex' and not self.FlexAIDTargetFlexProject_Dir in basepath:
+            return 1
+        elif objtype == 'BindingSite' and not self.FlexAIDBindingSiteProject_Dir in basepath:
+            return 1
+        
+        return 0
+
     ''' ==================================================================================
     FUNCTION Save_Session: Saves the current session
     ==================================================================================  '''        
@@ -353,6 +337,10 @@ class displayFlexAID(Base.Base):
             
             if General.validate_String(SaveFile, '.nrgfs', True, True, False):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
+                return
+
+            if self.ValidateSaveProject(SaveFile, 'Session'):
+                self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
                 return
 
             try:

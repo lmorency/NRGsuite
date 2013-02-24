@@ -24,6 +24,8 @@ import time
 import os
 import hashlib
 
+BLOCKSIZE = 65536
+
 ''' ==================================================================================
 FUNCTION Get_Date: Return the actual date (mm/dd/yyyy - hh:mm:ss).
 ==================================================================================  '''    
@@ -268,19 +270,36 @@ def store_Residues(listResidues, PDBFile, HETATM):
 #=======================================================================
 ''' Returns the Signature of a file contents '''
 #=======================================================================   
-def hashfile(file, blocksize=65536):
-
+def hashfile(file):
+    
     hasher = hashlib.md5()
+    
     afile = open(file, 'r')
     
-    buf = afile.read(blocksize)
+    buf = afile.read(BLOCKSIZE)
     while len(buf) > 0:
         hasher.update(buf)
-        buf = afile.read(blocksize)
+        buf = afile.read(BLOCKSIZE)
     
     afile.close()
     
     return hasher.digest()
+
+#=======================================================================
+''' Returns an updated md5 hashlib '''
+#=======================================================================   
+def hashfile_update(file, hasher):
+    
+    afile = open(file, 'r')
+    
+    buf = afile.read(BLOCKSIZE)
+    while len(buf) > 0:
+        hasher.update(buf)
+        buf = afile.read(BLOCKSIZE)
+    
+    afile.close()
+    
+    return hasher
 
 ''' ==================================================================================
 FUNCTION repeat: repeats a character N number of times

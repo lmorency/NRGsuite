@@ -92,6 +92,7 @@ class IOFile(Tabs.Tab):
         self.FetchPDB = StringVar()
         self.ReferencePath = StringVar()
         self.ResSeq = IntVar()
+        self.Complex = StringVar()
         
         # vars class objects
         self.ProtMD5 = self.Vars.ProtMD5
@@ -123,6 +124,7 @@ class IOFile(Tabs.Tab):
         self.defaultOption.set('')
         self.FetchPDB.set('')
         self.AtomTypes.set('Sybyl')
+        self.Complex.set('')
         
         self.ResSeq.set(0)
         self.Gen3D.set(0)
@@ -291,6 +293,8 @@ class IOFile(Tabs.Tab):
         # Clear constraint because there might be ligand-target constraints
         self.top.Config2.Vars.dictConstraints.clear()
 
+        self.top.Simulate.Init_Vars()
+
         self.ValidateLigProt()
     
     def Ligand_Toggle(self, *args):
@@ -301,12 +305,14 @@ class IOFile(Tabs.Tab):
                          ENABLE / DISABLE - Buttons
     ================================================================================== '''             
     def ValidateLigProt(self):
-                
+        
         if self.ProtName.get() and self.LigandName.get():
             self.top.Go_Step2()
         else:
             self.top.Go_Step1()
         
+        self.Complex.set(self.ProtName.get() + '-' + self.LigandName.get())
+    
     ''' ==================================================================================
     FUNCTION Reset_Ligand: Rests all parameters variables to processing of the ligand
     ================================================================================== '''    
@@ -319,7 +325,9 @@ class IOFile(Tabs.Tab):
         self.Vars.dictNeighbours.clear()
         
         self.top.Config2.Init_Vars()
-        
+
+        self.top.Simulate.Init_Vars()
+
         self.ProcessOnly = False
         self.Processed = False
 
@@ -630,21 +638,7 @@ class IOFile(Tabs.Tab):
             self.VarPath.set(newfile)
             
         return 0
-
-    ''' ==================================================================================
-    FUNCTION ValidateSaveProject: Validates if a file was saved in the right folder
-    ==================================================================================  '''    
-    def ValidateSaveProject(self, file, objtype):
     
-        basepath, filename = os.path.split(file)
-        
-        self.Set_Object_Variables(objtype)
-        
-        if basepath != self.savepath:
-            return 1
-        
-        return 0
-
     ''' ==================================================================================
     FUNCTION Btn_SaveObjectClicked: Save Ligand and Protein objects
                                     Object is reloaded when renamed
@@ -670,7 +664,7 @@ class IOFile(Tabs.Tab):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                 return
 
-            if self.ValidateSaveProject(Path, objtype):
+            if self.top.ValidateSaveProject(Path, objtype):
                 self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
                 return
             
@@ -764,7 +758,7 @@ class IOFile(Tabs.Tab):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                 return
 
-            if self.ValidateSaveProject(LigandPath, 'Ligand'):
+            if self.top.ValidateSaveProject(LigandPath, 'Ligand'):
                 self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
                 return
 
