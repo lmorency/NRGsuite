@@ -157,8 +157,7 @@ class ResultsContainer:
         
         # If these results were generated from other results this will be set
         self.ParentResult = None
-        
-        
+    
     def Get_ResultID(self, ResID):
     
         for Result in self.Results:

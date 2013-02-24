@@ -145,6 +145,7 @@ class IOFile(Tabs.Tab):
             
             self.ProcessLigand( True, self.ATOM_INDEX, self.AtomTypes.get(), self.Anchor.get(),
                                 False, self.ProcessOnly, self.Gen3D.get() )
+            
             if self.top.ProcessError:
                 return False
             else:
@@ -155,7 +156,6 @@ class IOFile(Tabs.Tab):
         if self.store_InpFile():
             return False
         else:
-            print self.ReferencePath.get()
             if self.Load_ProcConvLigand(self.ReferencePath.get(), self.ReferenceLigand, False):
                 return False
 
@@ -242,13 +242,12 @@ class IOFile(Tabs.Tab):
                        not self.Validate_ObjectSelection(Filebase, 'Ligand', 1):
                            
                         self.LigandName.set(Filebase)
-                        
-                        print "FORCE SAVE!"
-                        print "LigandFile", LigandFile
-                        print "Filebase", Filebase
-                        self.ForceSaveObject(LigandFile, Filebase, 'Ligand')
 
-                        self.ProcessOnly = True
+                        if self.ForceSaveObject(LigandFile, Filebase, 'Ligand'):
+                            self.LigandPath.set('')
+                            self.LigandName.set('')
+                        
+                        #self.ProcessOnly = True
                         self.Processed = False
                                                 
                     else:
@@ -581,7 +580,7 @@ class IOFile(Tabs.Tab):
     FUNCTION ForceSaveObject: Forces saving of the object in the corresponding folder
     ==================================================================================  '''    
     def ForceSaveObject(self, file, objname, objtype):
-    
+        
         basepath, filename = os.path.split(file)
         filebasename, fileextname = os.path.splitext(filename)
         
@@ -590,15 +589,15 @@ class IOFile(Tabs.Tab):
         if self.savepath != basepath:
         
             newfile = os.path.join(self.savepath,filebasename + '.pdb')
-
+            
             if os.path.isfile(newfile):
                 answer = tkMessageBox.askquestion("Question", 
                                                   message=  "An object with that name already exists in your '" + \
                                                             objtype + "' folder. Would you like to overwrite it?",
                                                   icon='warning')
                 if str(answer) == 'no':
-                    return -1
-                
+                    return 2
+            
             try:
                 cmd.save(newfile, objname, state=1)
             except:
@@ -708,10 +707,12 @@ class IOFile(Tabs.Tab):
             self.VarPath.set(Path)
             self.VarName.set(Name)
             
-            self.ForceSaveObject(Path,Name,objtype)
-
             if objtype == 'Ligand':
                 self.Reset_Ligand()
+
+            if self.ForceSaveObject(Path,Name,objtype):
+                self.VarPath.set('')
+                self.VarName.set('')
             
             self.DisplayMessage("  Successfully loaded the object: '" + self.VarName.get() + "'", 0)
     
@@ -759,7 +760,6 @@ class IOFile(Tabs.Tab):
             
             self.DisplayMessage('  Successfully extracted the ligand:  ' + self.LigandName.get() + "'", 0)
     
-
     def Load_ProcConvLigand(self, LigandFile, ObjectName, Zoom):
         
         Error = 0

@@ -58,10 +58,6 @@ class ProcLig:
         
         self.FlexAIDWRKInstall_Dir = os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK')
         
-        #Init the INP file path
-        self.SimLigInpPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.inp')
-        self.SimLigICPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.ic')
-        
         self.StartAtomIndex = StartAtomIndex
         
         self.run()
@@ -70,47 +66,26 @@ class ProcLig:
         
         self.FlexAID.ProcessRunning = True
         
-        if not self.Copy_LigandFile():
-
-            self.FlexAID.DisplayMessage("  Executing Process Ligand...", 0)
-            
-            if not self.process():
-            
-                if self.ConvertOnly:
-                    self.FlexAID.DisplayMessage("  The ligand was converted successfully", 0)
-                else:
-                    self.FlexAID.DisplayMessage("  The ligand was processed successfully", 0)
-
+        self.FlexAID.DisplayMessage("  Executing Process Ligand...", 0)
+        
+        if not self.process():
+        
+            if self.ConvertOnly:
+                self.FlexAID.DisplayMessage("  The ligand was converted successfully", 0)
             else:
-                self.FlexAID.ProcessError = True
-
-                if self.ConvertOnly:
-                    self.FlexAID.DisplayMessage("  ERROR: The ligand could not be converted", 1)
-                else:
-                    self.FlexAID.DisplayMessage("  ERROR: The ligand could not be processed", 1)
+                self.FlexAID.DisplayMessage("  The ligand was processed successfully", 0)
 
         else:
-            # could not copy file
             self.FlexAID.ProcessError = True
 
-            self.FlexAID.DisplayMessage("  ERROR: The ligand could not be copied", 1)
+            if self.ConvertOnly:
+                self.FlexAID.DisplayMessage("  ERROR: The ligand could not be converted", 1)
+            else:
+                self.FlexAID.DisplayMessage("  ERROR: The ligand could not be processed", 1)
 
         self.top.ProcessLigand(False, 0, '', 0, False, False, 0)
         self.FlexAID.ProcessRunning = False
-    
-    def Copy_LigandFile(self):
         
-        try:
-            copy(self.LigandPath, self.FlexAID.FlexAIDSimulationProject_Dir)            
-        except IOError:
-            return 1
-        except Error:
-            pass
-        
-        self.SimLigPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, os.path.split(self.LigandPath)[1])
-
-        return 0
-    
     '''
     @summary: process: Processes the ligand (generates input files for FlexAID)
     '''  
@@ -119,7 +94,7 @@ class ProcLig:
         # Set the command-line arguments to process ligand
         commandline = '"' + self.FlexAID.Process_LigandExecutable + '"'
 
-        commandline += ' -f ' + '"' + self.SimLigPath + '"'
+        commandline += ' -f ' + '"' + self.LigandPath + '"'
         commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG') + '"'
         
         if self.Gen3D:

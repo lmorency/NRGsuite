@@ -82,6 +82,9 @@ def angle(pointA, pointB, pointC):
         cosa += (pointA[i]-pointB[i])*(pointC[i]-pointB[i])
         absu += (pointA[i]-pointB[i])*(pointA[i]-pointB[i])
         absv += (pointC[i]-pointB[i])*(pointC[i]-pointB[i])
+
+    absv += 1e-10;
+    absu += 1e-10;
     
     cosa = cosa / math.sqrt(absu*absv)
     cosa = math.acos(cosa)*(180.0/math.pi)
@@ -138,6 +141,9 @@ def dihedralAngle(pointA, pointB, pointC, pointD):
     absv = math.sqrt((v[0]*v[0])+(v[1]*v[1])+(v[2]*v[2]))
     absu = math.sqrt((u[0]*u[0])+(u[1]*u[1])+(u[2]*u[2]))
     
+    absv += 1e-10;
+    absu += 1e-10;
+
     q = ((v[0]*u[0]) + (v[1]*u[1]) + (v[2]*u[2]))/(absv*absu)
     
     theta = q*theta*(180.0/math.pi)

@@ -97,7 +97,7 @@ class Manage:
     ''' ==============================================================================
     @summary: Executable_Exists: Check if FlexAID is present
     ============================================================================== '''          
-    def Executable_Exists(self):                        
+    def Executable_Exists(self):
         
         try:
             if not os.path.isfile(self.FlexAID.FlexAIDExecutable):
@@ -185,7 +185,7 @@ class Manage:
     ''' ==================================================================================
     @summary: Create_CONFIG: Creation of the CONFIG.inp
     ================================================================================== '''
-    def Create_CONFIG(self):        
+    def Create_CONFIG(self):
         
         # Save the data to the configuration file
         config_file = open(self.CONFIG, 'w')

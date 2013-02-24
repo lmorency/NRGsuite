@@ -181,7 +181,7 @@ class Parse(threading.Thread):
         self.top.ProcessParsing = True
 
         self.start()
-        
+    
     '''
     @summary: SUBROUTINE run: Start the simulation
     '''    
@@ -245,24 +245,8 @@ class Parse(threading.Thread):
 
                 m = re.match("(\s*(\d+) \()", Line)
                 if m:
-                    #print Line
+                    print Line
                     
-                    '''
-                    Generation:   0
-                    best by energy
-                        0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
-                        1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
-                        2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
-                        3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
-                        4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
-                    best by fitnes
-                        0 (   16.819   128.976    15.591   154.488   171.496  -137.480 )  value= -406.907 fitnes=  100.000
-                        1 (   17.286   -58.110   -43.937  -148.819   -26.929   -83.622 )  value= -494.421 fitnes=   99.000
-                        2 (   19.386    -1.417    63.780   120.472   -15.591    29.764 )  value= -498.632 fitnes=   98.000
-                        3 (   22.186   -38.268    72.283  -106.299   157.323    52.441 )  value= -515.372 fitnes=   97.000
-                        4 (   22.653    -1.417    38.268  -109.134    89.291  -126.142 )  value= -533.335 fitnes=   96.000
-                    '''
-
                     self.TOP = int(m.group(2))
 
                     # Find starting index where to parse column values
@@ -361,7 +345,7 @@ class Parse(threading.Thread):
                         self.OrderFledih()
                 
                     continue
-
+                
                 m = re.match("the protein center of coordinates is:\s+(\S+)\s+(\S+)\s+(\S+)\s+", Line)
                 if m:
                     self.Ori[0] = float(m.group(1))
@@ -495,8 +479,6 @@ class Parse(threading.Thread):
                 self.dictSideChainRotamers[words[2]].append(float(words[i].strip()))
         
         self.dictSideChainNRot[words[2]] += 1
-        
-        #print "%s now has %d rotamer(s)" % (words[2], self.dictSideChainNRot[words[2]])
     
     '''
     @summary: SUBROUTINE: Remove_UPDATE: Tries to remove the .update to be able to generate another one

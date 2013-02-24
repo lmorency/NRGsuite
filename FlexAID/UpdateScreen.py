@@ -351,7 +351,6 @@ class UpdateScreen:
                 self.colNo += 11
             
             if self.Rotation:
-                            
                 self.top.DisAngDih[self.top.VarAtoms[1]][1] = float(self.Line[self.colNo:self.colNo+10])
                 self.top.DisAngDih[self.top.VarAtoms[1]][2] = float(self.Line[self.colNo+11:self.colNo+21])
                 self.top.DisAngDih[self.top.VarAtoms[2]][2] = float(self.Line[self.colNo+22:self.colNo+32])

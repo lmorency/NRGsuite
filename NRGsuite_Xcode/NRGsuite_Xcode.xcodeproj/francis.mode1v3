@@ -273,13 +273,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>15</integer>
-									<integer>1</integer>
+									<integer>44</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 29}, {186, 755}}</string>
+							<string>{{0, 227}, {186, 755}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -316,7 +315,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ManageFiles.py</string>
+								<string>Geometry.py</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -324,32 +323,26 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ManageFiles.py</string>
+										<string>Geometry.py</string>
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>1565EA5216D9860C0025A72D</string>
+										<string>1565EAA416D993820025A72D</string>
 										<key>history</key>
 										<array>
 											<string>1565E80716D6C5DA0025A72D</string>
 											<string>1565E82216D6C8710025A72D</string>
 											<string>1565E85C16D6D2790025A72D</string>
-											<string>1565E8C716D6F6410025A72D</string>
 											<string>1565E8C816D6F6410025A72D</string>
 											<string>1565E8D516D6F9A50025A72D</string>
 											<string>1565E8D716D6F9A50025A72D</string>
 											<string>1565E92516D7F2570025A72D</string>
-											<string>1565E92616D7F2570025A72D</string>
 											<string>1565E92716D7F2570025A72D</string>
 											<string>1565E92A16D7F2570025A72D</string>
 											<string>1565E93516D806D70025A72D</string>
-											<string>1565E93816D806D70025A72D</string>
-											<string>1565E95316D8106F0025A72D</string>
 											<string>1565E95816D813EC0025A72D</string>
 											<string>1565E97216D81D470025A72D</string>
-											<string>1565E9A116D941A00025A72D</string>
 											<string>1565E9AA16D944CE0025A72D</string>
-											<string>1565E9B316D947300025A72D</string>
 											<string>1565E9B816D948AA0025A72D</string>
 											<string>1565E9B916D948AA0025A72D</string>
 											<string>1565E9BA16D948AA0025A72D</string>
@@ -358,19 +351,25 @@
 											<string>1565E9BF16D9490E0025A72D</string>
 											<string>1565E9D116D9586F0025A72D</string>
 											<string>1565E9E016D95F560025A72D</string>
-											<string>1565E9E216D95F560025A72D</string>
-											<string>1565E9EB16D960440025A72D</string>
 											<string>1565E9EC16D960440025A72D</string>
-											<string>1565EA1F16D96DDF0025A72D</string>
 											<string>1565EA2016D96DDF0025A72D</string>
-											<string>1565EA2116D96DDF0025A72D</string>
 											<string>1565EA2216D96DDF0025A72D</string>
-											<string>1565EA2C16D97DAF0025A72D</string>
-											<string>1565EA3816D982240025A72D</string>
 											<string>1565EA3916D982240025A72D</string>
-											<string>1565EA4516D984CC0025A72D</string>
-											<string>1565EA4616D984CC0025A72D</string>
-											<string>1565EA1916D9686D0025A72D</string>
+											<string>1565EA6F16D98C7D0025A72D</string>
+											<string>1565EA7016D98C7D0025A72D</string>
+											<string>1565EA7116D98C7D0025A72D</string>
+											<string>1565EA7216D98C7D0025A72D</string>
+											<string>1565EA7316D98C7D0025A72D</string>
+											<string>1565EA7416D98C7D0025A72D</string>
+											<string>1565EA7516D98C7D0025A72D</string>
+											<string>1565EA7616D98C7D0025A72D</string>
+											<string>1565EA7716D98C7D0025A72D</string>
+											<string>1565EA8816D990FD0025A72D</string>
+											<string>1565EA8916D990FD0025A72D</string>
+											<string>1565EA8A16D990FD0025A72D</string>
+											<string>1565EA8B16D990FD0025A72D</string>
+											<string>1565EA9B16D9921F0025A72D</string>
+											<string>1565EA9E16D992C70025A72D</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
