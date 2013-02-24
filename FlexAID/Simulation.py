@@ -245,7 +245,7 @@ class Parse(threading.Thread):
 
                 m = re.match("(\s*(\d+) \()", Line)
                 if m:
-                    print Line
+                    #print Line
                     
                     self.TOP = int(m.group(2))
 

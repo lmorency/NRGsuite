@@ -287,13 +287,21 @@ class displayFlexAID(Base.Base):
                     try:
                         Tab.Vars = pickle.load(in_)
                         Tab.Vars.refresh()
+                        
+                        if Tab.Check_Integrity():
+                            self.Reset_All()
+                            self.DisplayMessage("  ERROR: The loading of the session failed the integrity check.", 2)
+                            return
+                            
                         Tab.Load_Session()
+                        
                     except:
                         pass
+                        
                 in_.close()
                 
                 self.DisplayMessage("  The session '" + os.path.split(LoadFile)[1] + "' was loaded successfully.", 2)
-
+                
                 self.SaveSessionFile = ''
 
             except:
@@ -429,7 +437,7 @@ class displayFlexAID(Base.Base):
             Btn.config(state='disabled',bg=self.Color_Grey)
 
         self.Btn_IOFiles.config(state='normal',bg=self.Color_Blue)
-
+    
     ''' ==================================================================================
     FUNCTION Go_Step2: Enables/Disables buttons for step 2
     ================================================================================== '''    
@@ -442,13 +450,21 @@ class displayFlexAID(Base.Base):
         self.Btn_IOFiles.config(bg=self.Color_Blue)
         
     ''' ==================================================================================
-    FUNCTION Reset_Step2: Reset ALL the parameters
+    FUNCTION Reset_Step2: Reset all except IOFiles
     ==================================================================================  '''    
     def Reset_Step2(self):
         
         for Tab in self.listTabs:
             if Tab != self.IOFile:
                 Tab.Init_Vars()
+    
+    ''' ==================================================================================
+    FUNCTION Reset_All: Reset ALL the parameters
+    ==================================================================================  '''    
+    def Reset_All(self):
+        
+        for Tab in self.listTabs:
+            Tab.Init_Vars()
     
     ''' ==================================================================================
     FUNCTION ValidateResiduValue: Validate the residue entered 

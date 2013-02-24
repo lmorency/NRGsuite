@@ -131,7 +131,7 @@ class Base:
     def After_Init(self):
 
         return    
-
+    
     ''' ==================================================================================
     FUNCTION Clean: Cleans the temporary folders of the application
     ==================================================================================  '''  

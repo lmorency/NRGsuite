@@ -22,6 +22,7 @@ from Tkinter import *
 import re
 import time
 import os
+import hashlib
 
 ''' ==================================================================================
 FUNCTION Get_Date: Return the actual date (mm/dd/yyyy - hh:mm:ss).
@@ -263,6 +264,23 @@ def store_Residues(listResidues, PDBFile, HETATM):
 
 
     return max
+
+#=======================================================================
+''' Returns the Signature of a file contents '''
+#=======================================================================   
+def hashfile(file, blocksize=65536):
+
+    hasher = hashlib.md5()
+    afile = open(file, 'r')
+    
+    buf = afile.read(blocksize)
+    while len(buf) > 0:
+        hasher.update(buf)
+        buf = afile.read(blocksize)
+    
+    afile.close()
+    
+    return hasher.digest()
 
 ''' ==================================================================================
 FUNCTION repeat: repeats a character N number of times

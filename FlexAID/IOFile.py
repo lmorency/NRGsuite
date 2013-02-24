@@ -51,8 +51,10 @@ if __debug__:
 
 class IOFileVars(Vars.Vars):
     
+    ProtMD5 = StringVar()
     ProtPath = StringVar()
     ProtName = StringVar()
+    LigandMD5 = StringVar()
     LigandPath = StringVar()
     LigandName = StringVar()
     AtomTypes = StringVar()
@@ -92,8 +94,10 @@ class IOFile(Tabs.Tab):
         self.ResSeq = IntVar()
         
         # vars class objects
+        self.ProtMD5 = self.Vars.ProtMD5
         self.ProtPath = self.Vars.ProtPath
         self.ProtName = self.Vars.ProtName
+        self.LigandMD5 = self.Vars.LigandMD5
         self.LigandPath = self.Vars.LigandPath
         self.LigandName = self.Vars.LigandName
         self.AtomTypes = self.Vars.AtomTypes
@@ -106,8 +110,10 @@ class IOFile(Tabs.Tab):
     def Init_Vars(self):
 
         #print("Init Vars for IOFile")
+        self.ProtMD5.set('')
         self.ProtPath.set('')
         self.ProtName.set('')
+        self.LigandMD5.set('')
         self.LigandPath.set('')
         self.LigandName.set('')
         self.SmilesString.set('')
@@ -125,15 +131,30 @@ class IOFile(Tabs.Tab):
         # flags
         self.ProcessOnly = False
         self.Processed = False
-
+        
+        self.Vars.dictAtomTypes.clear()
+        self.Vars.dictNeighbours.clear()
+        self.Vars.dictFlexBonds.clear()
+    
+    ''' ==================================================================================
+    FUNCTION Check_Integrity: Checks if the referenced files are the same upon loading
+    =================================================================================  '''    
+    def Check_Integrity(self):
+        
+        if (self.ProtName.get() != '' and General.hashfile(self.ProtPath.get()) != self.ProtMD5.get()) or \
+           (self.LigandName.get() != '' and General.hashfile(self.LigandPath.get()) != self.LigandMD5.get()):
+            return 1
+            
+        return 0
+    
     ''' ==================================================================================
     FUNCTION Load_Session: Actions related to when a new session is loaded
     =================================================================================  '''    
     def Load_Session(self):
-
+        
         self.Btn_DisplayObject_Clicked('Ligand')
         self.Btn_DisplayObject_Clicked('Target')
-                
+    
     ''' ==================================================================================
     FUNCTION Before_Kill_Frame: Actions related before killing the frame
     =================================================================================  '''    
@@ -174,7 +195,7 @@ class IOFile(Tabs.Tab):
 
         else:
             self.Enable_Frame()
-
+    
     ''' ==================================================================================
     FUNCTION Convert_Smiles: Converts the smiles string to a viewable molecule format
     ================================================================================== '''
@@ -186,7 +207,7 @@ class IOFile(Tabs.Tab):
             return 1
         
         return 0
-
+    
     ''' ==================================================================================
     FUNCTION Convert_Smiles: Write the Smiles to a .smi file
     ================================================================================== '''    
@@ -205,7 +226,7 @@ class IOFile(Tabs.Tab):
         self.LigandPath.set(LigandPath)
         
         return 0
-        
+    
     ''' ==================================================================================
     FUNCTION SmilesRunning: Disables all controls when smiles windows is opened
     ================================================================================== '''    
@@ -545,12 +566,14 @@ class IOFile(Tabs.Tab):
 
             self.VarPath = self.LigandPath
             self.VarName = self.LigandName
+            self.VarMD5 = self.LigandMD5
             
         elif objtype == 'Target':
             self.savepath = self.top.TargetProject_Dir        
 
             self.VarPath = self.ProtPath
             self.VarName = self.ProtName
+            self.VarMD5 = self.ProtMD5
 
     ''' ==================================================================================
     FUNCTION Validate_ObjectSelection: Validates whether the obj exists on the current state
@@ -663,6 +686,7 @@ class IOFile(Tabs.Tab):
             
             self.VarPath.set(os.path.normpath(Path))
             self.VarName.set(Name)
+            self.VarMD5.set(General.hashfile(self.VarPath.get()))
             
             if objtype == 'Ligand':
                 self.Reset_Ligand()
@@ -714,6 +738,8 @@ class IOFile(Tabs.Tab):
                 self.VarPath.set('')
                 self.VarName.set('')
             
+            self.VarMD5.set(General.hashfile(self.VarPath.get()))
+
             self.DisplayMessage("  Successfully loaded the object: '" + self.VarName.get() + "'", 0)
     
     ''' ==================================================================================
@@ -755,6 +781,7 @@ class IOFile(Tabs.Tab):
             
             self.LigandPath.set(os.path.normpath(LigandPath))
             self.LigandName.set(LigandName)
+            self.LigandMD5.set(General.hashfile(self.LigandPath.get()))
 
             self.Reset_Ligand()
             
@@ -920,28 +947,7 @@ class IOFile(Tabs.Tab):
         
         for atom in inpInfo.keys():
             self.Vars.dictAtomTypes[atom] = [inpInfo[atom][0], inpInfo[atom][0]]
-        
-    #=======================================================================
-    ''' Compares the file content of the ligand when the session was saved '''
-    #=======================================================================   
-    def Check_LigandPathMD5(self, fname):
-        
-        self._LigandPathMD5 = self.hashfile(open(fname, 'r'), hashlib.md5())
-        
-        return self.Vars.LigandPathMD5 == self._LigandPathMD5
-
-    #=======================================================================
-    ''' Returns the Signature of a file contents '''
-    #=======================================================================   
-    def hashfile(self, afile, hasher, blocksize=65536):
     
-        buf = afile.read(blocksize)
-        while len(buf) > 0:
-            hasher.update(buf)
-            buf = afile.read(blocksize)
-        
-        return hasher.digest()
-
     #=======================================================================
     ''' Enables/disables controls related to AnchorWizard  '''
     #=======================================================================   

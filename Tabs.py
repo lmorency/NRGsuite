@@ -126,6 +126,13 @@ class Tab:
         return
     
     ''' ==================================================================================
+    FUNCTION Check_Integrity: Compares the checksum of the physical files in the session
+    =================================================================================  '''    
+    def Check_Integrity(self):
+
+        return
+
+    ''' ==================================================================================
     FUNCTION Load_Message: Welcome message (frame-specific)
     =================================================================================  '''    
     def Load_Message(self):
