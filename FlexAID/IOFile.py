@@ -660,6 +660,8 @@ class IOFile(Tabs.Tab):
         
         if len(Path) > 0:
 
+            Path = os.path.normpath(Path)
+
             if General.validate_String(Path, '.pdb', True, False, True):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                 return
@@ -754,6 +756,8 @@ class IOFile(Tabs.Tab):
         
         if len(LigandPath) > 0:
             
+            LigandPath = os.path.normpath(LigandPath)
+
             if General.validate_String(LigandPath, '.pdb', True, False, True):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                 return

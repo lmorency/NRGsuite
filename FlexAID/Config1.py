@@ -289,7 +289,7 @@ class Config1(Tabs.Tab):
         fFlexSCLine3 = Frame(self.fFlexSC)
         fFlexSCLine3.pack(fill=X, side=TOP)
 
-        Label(fFlexSCLine1, text='Flexible Side-Chains', font=self.top.font_Title).pack(side=LEFT)
+        Label(fFlexSCLine1, text='Flexible Side-Chains', font=self.top.font_Title).pack(side=TOP,fill=X)
         Label(fFlexSCLine2, text='Enter residue name (e.g. ALA21A):', width=30, font=self.top.font_Text, justify=LEFT).pack(side=LEFT, anchor=W)
         self.EntryResidu = Entry(fFlexSCLine2, textvariable=self.ResiduValue, background='white', width=10, justify=CENTER, font=self.top.font_Text)
         self.EntryResidu.pack(side=LEFT, anchor=E)

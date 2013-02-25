@@ -829,6 +829,8 @@ class Simulate(Tabs.Tab):
         
         if len(SaveFile) > 0:
 
+            SaveFile = os.path.normpath(SaveFile)
+            
             if General.validate_String(SaveFile, '.nrgfr', True, True, False):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                 return
