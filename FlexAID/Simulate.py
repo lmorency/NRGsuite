@@ -482,6 +482,16 @@ class Simulate(Tabs.Tab):
         self.Btn_Abort.config(state='disabled')
     
     ''' =============================================================================== 
+    FUNCTION Clean_Update: Remove the .update file is present
+    ===============================================================================  '''        
+    def Clean_Update(self):
+    
+        if os.path.isfile(self.Manage.UPDATE):
+            if self.Parse.Remove_UPDATE():
+                self.Parse.Error = True
+                self.Parse.ErrorMsg = '*NRGsuite ERROR: Could not successfully remove .update file'
+
+    ''' =============================================================================== 
     FUNCTION Btn_PauseResumeSim: Pauses/Resumes the simulation   
     ===============================================================================  '''        
     def Btn_PauseResumeSim(self):
@@ -538,6 +548,7 @@ class Simulate(Tabs.Tab):
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')
 
+            self.Clean_Update()
             self.AbortStatus()
             self.Parse.ParseFile = self.Manage.LOGFILE
             self.Results = False
@@ -562,8 +573,8 @@ class Simulate(Tabs.Tab):
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')
 
+            self.Clean_Update()
             self.StopStatus()
-            
             self.Parse.ParseFile = self.Manage.LOGFILE
     
     ''' ==================================================================================

@@ -5,7 +5,7 @@
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1100, 553}\";\n            s = 0;\n        },\n                {\n            r = \"{1679, 755}\";\n            s = 0;\n        },\n                {\n            r = \"{2463, 89}\";\n            s = 0;\n        },\n                {\n            r = \"{2582, 372}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 2959}\";\n    s = 0;\n}";
 			sepNavIntBoundsRect = "{{0, 0}, {1168, 704}}";
 			sepNavSelRange = "{625, 0}";
-			sepNavVisRange = "{0, 1102}";
+			sepNavVisRange = "{0, 1046}";
 		};
 	};
 	1565EB0716DA889A0025A72D /* PBXTextBookmark */ = {
@@ -37,16 +37,6 @@
 		rType = 0;
 		vrLen = 13713;
 		vrLoc = 5201;
-	};
-	1565EB0F16DA889A0025A72D /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 158C85CB16A5C19C00E07CFF /* CropCleft.py */;
-		name = "CropCleft.py: 38";
-		rLen = 0;
-		rLoc = 1123;
-		rType = 0;
-		vrLen = 930;
-		vrLoc = 780;
 	};
 	1565EB1016DA889A0025A72D /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -178,16 +168,6 @@
 		vrLen = 2238;
 		vrLoc = 0;
 	};
-	1565EB1F16DA889A0025A72D /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 158C85EC16A5C19C00E07CFF /* Sphere.py */;
-		name = "Sphere.py: 110";
-		rLen = 0;
-		rLoc = 3457;
-		rType = 0;
-		vrLen = 5325;
-		vrLoc = 883;
-	};
 	1565EB2016DA889A0025A72D /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 158C85E816A5C19C00E07CFF /* Prefs.py */;
@@ -218,16 +198,6 @@
 		vrLen = 1482;
 		vrLoc = 117;
 	};
-	1565EB2916DA889A0025A72D /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 158C85A316A5C19C00E07CFF /* FlexBonds.py */;
-		name = "FlexBonds.py: 530";
-		rLen = 0;
-		rLoc = 19153;
-		rType = 0;
-		vrLen = 7221;
-		vrLoc = 18435;
-	};
 	1565EB4116DA92520025A72D /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 158C85A616A5C19C00E07CFF /* GAParam.py */;
@@ -248,16 +218,6 @@
 		vrLen = 2284;
 		vrLoc = 8344;
 	};
-	1565EB9216DAB17C0025A72D /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 158C85A216A5C19C00E07CFF /* FlexAID.py */;
-		name = "FlexAID.py: 314";
-		rLen = 0;
-		rLoc = 14633;
-		rType = 0;
-		vrLen = 814;
-		vrLoc = 770;
-	};
 	1565EBC916DAC7DF0025A72D /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 158C85AA16A5C19C00E07CFF /* RunFlexAID.py */;
@@ -276,16 +236,6 @@
 		rLoc = 927;
 		rType = 0;
 		vrLen = 1560;
-		vrLoc = 0;
-	};
-	1565EBCB16DAC7DF0025A72D /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 1555D4F616C70CEF00F30037 /* Smiles.py */;
-		name = "Smiles.py: 14";
-		rLen = 0;
-		rLoc = 625;
-		rType = 0;
-		vrLen = 1654;
 		vrLoc = 0;
 	};
 	1565EBF016DACE570025A72D /* PBXTextBookmark */ = {
@@ -358,16 +308,6 @@
 		vrLen = 2157;
 		vrLoc = 5612;
 	};
-	1565EC2716DADAFB0025A72D /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
-		name = "Simulation.py: 245";
-		rLen = 0;
-		rLoc = 7970;
-		rType = 0;
-		vrLen = 1519;
-		vrLoc = 7402;
-	};
 	1565EC2816DADAFB0025A72D /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 158C859E16A5C19C00E07CFF /* Config1.py */;
@@ -397,26 +337,6 @@
 		rType = 0;
 		vrLen = 5559;
 		vrLoc = 5858;
-	};
-	1565EC3D16DADD9E0025A72D /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
-		name = "Simulate.py: 50";
-		rLen = 0;
-		rLoc = 1233;
-		rType = 0;
-		vrLen = 790;
-		vrLoc = 983;
-	};
-	1565EC4216DADED60025A72D /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
-		name = "Simulate.py: 473";
-		rLen = 0;
-		rLoc = 21507;
-		rType = 0;
-		vrLen = 5140;
-		vrLoc = 19263;
 	};
 	156DDD1016BCA5CF00E42516 /* Base.py */ = {
 		uiCtxt = {
@@ -456,51 +376,72 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 383413650;
-			PBXWorkspaceStateSaveDate = 383413650;
+			PBXPerProjectTemplateStateSaveDate = 383508315;
+			PBXWorkspaceStateSaveDate = 383508315;
 		};
 		perUserProjectItems = {
-			1565EB0716DA889A0025A72D /* PBXTextBookmark */ = 1565EB0716DA889A0025A72D /* PBXTextBookmark */;
-			1565EB0916DA889A0025A72D /* PBXTextBookmark */ = 1565EB0916DA889A0025A72D /* PBXTextBookmark */;
-			1565EB0E16DA889A0025A72D /* PBXTextBookmark */ = 1565EB0E16DA889A0025A72D /* PBXTextBookmark */;
-			1565EB0F16DA889A0025A72D /* PBXTextBookmark */ = 1565EB0F16DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1016DA889A0025A72D /* PBXTextBookmark */ = 1565EB1016DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1116DA889A0025A72D /* PBXTextBookmark */ = 1565EB1116DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1216DA889A0025A72D /* PBXTextBookmark */ = 1565EB1216DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1316DA889A0025A72D /* PBXTextBookmark */ = 1565EB1316DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1416DA889A0025A72D /* PBXTextBookmark */ = 1565EB1416DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1516DA889A0025A72D /* PBXTextBookmark */ = 1565EB1516DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1616DA889A0025A72D /* PBXTextBookmark */ = 1565EB1616DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1716DA889A0025A72D /* PBXTextBookmark */ = 1565EB1716DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1816DA889A0025A72D /* PBXTextBookmark */ = 1565EB1816DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1916DA889A0025A72D /* PBXTextBookmark */ = 1565EB1916DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1C16DA889A0025A72D /* PBXTextBookmark */ = 1565EB1C16DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1D16DA889A0025A72D /* PBXTextBookmark */ = 1565EB1D16DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1E16DA889A0025A72D /* PBXTextBookmark */ = 1565EB1E16DA889A0025A72D /* PBXTextBookmark */;
-			1565EB1F16DA889A0025A72D /* PBXTextBookmark */ = 1565EB1F16DA889A0025A72D /* PBXTextBookmark */;
-			1565EB2016DA889A0025A72D /* PBXTextBookmark */ = 1565EB2016DA889A0025A72D /* PBXTextBookmark */;
-			1565EB2116DA889A0025A72D /* PBXTextBookmark */ = 1565EB2116DA889A0025A72D /* PBXTextBookmark */;
-			1565EB2216DA889A0025A72D /* PBXTextBookmark */ = 1565EB2216DA889A0025A72D /* PBXTextBookmark */;
-			1565EB2916DA889A0025A72D /* PBXTextBookmark */ = 1565EB2916DA889A0025A72D /* PBXTextBookmark */;
-			1565EB4116DA92520025A72D /* PBXTextBookmark */ = 1565EB4116DA92520025A72D /* PBXTextBookmark */;
-			1565EB8216DAAD8C0025A72D /* PBXTextBookmark */ = 1565EB8216DAAD8C0025A72D /* PBXTextBookmark */;
-			1565EB9216DAB17C0025A72D /* PBXTextBookmark */ = 1565EB9216DAB17C0025A72D /* PBXTextBookmark */;
-			1565EBC916DAC7DF0025A72D /* PBXTextBookmark */ = 1565EBC916DAC7DF0025A72D /* PBXTextBookmark */;
-			1565EBCA16DAC7DF0025A72D /* PBXTextBookmark */ = 1565EBCA16DAC7DF0025A72D /* PBXTextBookmark */;
-			1565EBCB16DAC7DF0025A72D /* PBXTextBookmark */ = 1565EBCB16DAC7DF0025A72D /* PBXTextBookmark */;
-			1565EBF016DACE570025A72D /* PBXTextBookmark */ = 1565EBF016DACE570025A72D /* PBXTextBookmark */;
-			1565EBF116DACE570025A72D /* PBXTextBookmark */ = 1565EBF116DACE570025A72D /* PBXTextBookmark */;
-			1565EBF216DACE570025A72D /* PBXTextBookmark */ = 1565EBF216DACE570025A72D /* PBXTextBookmark */;
-			1565EBF316DACE570025A72D /* PBXTextBookmark */ = 1565EBF316DACE570025A72D /* PBXTextBookmark */;
-			1565EBF416DACE570025A72D /* PBXTextBookmark */ = 1565EBF416DACE570025A72D /* PBXTextBookmark */;
-			1565EBF716DACE570025A72D /* PBXTextBookmark */ = 1565EBF716DACE570025A72D /* PBXTextBookmark */;
-			1565EC2216DAD9AC0025A72D /* PBXTextBookmark */ = 1565EC2216DAD9AC0025A72D /* PBXTextBookmark */;
-			1565EC2716DADAFB0025A72D /* PBXTextBookmark */ = 1565EC2716DADAFB0025A72D /* PBXTextBookmark */;
-			1565EC2816DADAFB0025A72D /* PBXTextBookmark */ = 1565EC2816DADAFB0025A72D /* PBXTextBookmark */;
-			1565EC3116DADB6A0025A72D /* PBXTextBookmark */ = 1565EC3116DADB6A0025A72D /* PBXTextBookmark */;
-			1565EC3C16DADD9E0025A72D /* PBXTextBookmark */ = 1565EC3C16DADD9E0025A72D /* PBXTextBookmark */;
-			1565EC3D16DADD9E0025A72D /* PBXTextBookmark */ = 1565EC3D16DADD9E0025A72D /* PBXTextBookmark */;
-			1565EC4216DADED60025A72D /* PBXTextBookmark */ = 1565EC4216DADED60025A72D /* PBXTextBookmark */;
+			1565EB0716DA889A0025A72D = 1565EB0716DA889A0025A72D /* PBXTextBookmark */;
+			1565EB0916DA889A0025A72D = 1565EB0916DA889A0025A72D /* PBXTextBookmark */;
+			1565EB0E16DA889A0025A72D = 1565EB0E16DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1016DA889A0025A72D = 1565EB1016DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1116DA889A0025A72D = 1565EB1116DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1216DA889A0025A72D = 1565EB1216DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1316DA889A0025A72D = 1565EB1316DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1416DA889A0025A72D = 1565EB1416DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1516DA889A0025A72D = 1565EB1516DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1616DA889A0025A72D = 1565EB1616DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1716DA889A0025A72D = 1565EB1716DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1816DA889A0025A72D = 1565EB1816DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1916DA889A0025A72D = 1565EB1916DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1C16DA889A0025A72D = 1565EB1C16DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1D16DA889A0025A72D = 1565EB1D16DA889A0025A72D /* PBXTextBookmark */;
+			1565EB1E16DA889A0025A72D = 1565EB1E16DA889A0025A72D /* PBXTextBookmark */;
+			1565EB2016DA889A0025A72D = 1565EB2016DA889A0025A72D /* PBXTextBookmark */;
+			1565EB2116DA889A0025A72D = 1565EB2116DA889A0025A72D /* PBXTextBookmark */;
+			1565EB2216DA889A0025A72D = 1565EB2216DA889A0025A72D /* PBXTextBookmark */;
+			1565EB4116DA92520025A72D = 1565EB4116DA92520025A72D /* PBXTextBookmark */;
+			1565EB8216DAAD8C0025A72D = 1565EB8216DAAD8C0025A72D /* PBXTextBookmark */;
+			1565EBC916DAC7DF0025A72D = 1565EBC916DAC7DF0025A72D /* PBXTextBookmark */;
+			1565EBCA16DAC7DF0025A72D = 1565EBCA16DAC7DF0025A72D /* PBXTextBookmark */;
+			1565EBF016DACE570025A72D = 1565EBF016DACE570025A72D /* PBXTextBookmark */;
+			1565EBF116DACE570025A72D = 1565EBF116DACE570025A72D /* PBXTextBookmark */;
+			1565EBF216DACE570025A72D = 1565EBF216DACE570025A72D /* PBXTextBookmark */;
+			1565EBF316DACE570025A72D = 1565EBF316DACE570025A72D /* PBXTextBookmark */;
+			1565EBF416DACE570025A72D = 1565EBF416DACE570025A72D /* PBXTextBookmark */;
+			1565EBF716DACE570025A72D = 1565EBF716DACE570025A72D /* PBXTextBookmark */;
+			1565EC2216DAD9AC0025A72D = 1565EC2216DAD9AC0025A72D /* PBXTextBookmark */;
+			1565EC2816DADAFB0025A72D = 1565EC2816DADAFB0025A72D /* PBXTextBookmark */;
+			1565EC3116DADB6A0025A72D = 1565EC3116DADB6A0025A72D /* PBXTextBookmark */;
+			1565EC3C16DADD9E0025A72D = 1565EC3C16DADD9E0025A72D /* PBXTextBookmark */;
+			15BD1C3516DBCA030010C774 = 15BD1C3516DBCA030010C774 /* PBXTextBookmark */;
+			15BD1C4316DBCEF20010C774 = 15BD1C4316DBCEF20010C774 /* PBXTextBookmark */;
+			15BD1C5116DBDE590010C774 = 15BD1C5116DBDE590010C774 /* PBXTextBookmark */;
+			15BD1C5216DBDE590010C774 = 15BD1C5216DBDE590010C774 /* PBXTextBookmark */;
+			15BD1C5316DBDE590010C774 = 15BD1C5316DBDE590010C774 /* PBXTextBookmark */;
+			15BD1C5416DBDE590010C774 = 15BD1C5416DBDE590010C774 /* PBXTextBookmark */;
+			15BD1C5516DBDE590010C774 = 15BD1C5516DBDE590010C774 /* PBXTextBookmark */;
+			15BD1C5616DBDE590010C774 = 15BD1C5616DBDE590010C774 /* PBXTextBookmark */;
+			15BD1C6316DBE1070010C774 /* PBXTextBookmark */ = 15BD1C6316DBE1070010C774 /* PBXTextBookmark */;
+			15BD1C6416DBE1070010C774 /* PBXTextBookmark */ = 15BD1C6416DBE1070010C774 /* PBXTextBookmark */;
+			15BD1C6516DBE1070010C774 /* PBXTextBookmark */ = 15BD1C6516DBE1070010C774 /* PBXTextBookmark */;
+			15BD1C6616DBE1070010C774 /* PBXTextBookmark */ = 15BD1C6616DBE1070010C774 /* PBXTextBookmark */;
+			15BD1C6716DBE1070010C774 /* PBXTextBookmark */ = 15BD1C6716DBE1070010C774 /* PBXTextBookmark */;
+			15BD1C6816DBE1070010C774 /* PBXTextBookmark */ = 15BD1C6816DBE1070010C774 /* PBXTextBookmark */;
+			15BD1C6916DBE1070010C774 /* PBXTextBookmark */ = 15BD1C6916DBE1070010C774 /* PBXTextBookmark */;
+			15BD1C6A16DBE1070010C774 /* PBXTextBookmark */ = 15BD1C6A16DBE1070010C774 /* PBXTextBookmark */;
+			15BD1C6B16DBE1070010C774 /* PBXTextBookmark */ = 15BD1C6B16DBE1070010C774 /* PBXTextBookmark */;
+			15BD1C6C16DBE1070010C774 /* PBXTextBookmark */ = 15BD1C6C16DBE1070010C774 /* PBXTextBookmark */;
+			15BD1C6F16DBE1080010C774 /* PBXTextBookmark */ = 15BD1C6F16DBE1080010C774 /* PBXTextBookmark */;
+			15BD1C7016DBE11D0010C774 /* PBXTextBookmark */ = 15BD1C7016DBE11D0010C774 /* PBXTextBookmark */;
+			15BD1C7116DBE17C0010C774 /* PBXTextBookmark */ = 15BD1C7116DBE17C0010C774 /* PBXTextBookmark */;
+			15BD1C7216DBE1880010C774 /* PBXTextBookmark */ = 15BD1C7216DBE1880010C774 /* PBXTextBookmark */;
+			15BD1C7316DBE1BA0010C774 /* PBXTextBookmark */ = 15BD1C7316DBE1BA0010C774 /* PBXTextBookmark */;
+			15BD1C7416DBE1BA0010C774 /* PBXTextBookmark */ = 15BD1C7416DBE1BA0010C774 /* PBXTextBookmark */;
+			15BD1C7516DBE1BA0010C774 /* PBXTextBookmark */ = 15BD1C7516DBE1BA0010C774 /* PBXTextBookmark */;
+			15BD1C7616DBE22B0010C774 /* PBXTextBookmark */ = 15BD1C7616DBE22B0010C774 /* PBXTextBookmark */;
+			15BD1C7716DBE2640010C774 /* PBXTextBookmark */ = 15BD1C7716DBE2640010C774 /* PBXTextBookmark */;
+			15BD1C7816DBE2690010C774 /* PBXTextBookmark */ = 15BD1C7816DBE2690010C774 /* PBXTextBookmark */;
+			15BD1C7916DBE2900010C774 /* PBXTextBookmark */ = 15BD1C7916DBE2900010C774 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 158C859016A5C17300E07CFF /* Source Control */;
 		userBuildSettings = {
@@ -598,16 +539,16 @@
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1609, 51}\";\n            s = 0;\n        },\n                {\n            r = \"{1691, 193}\";\n            s = 0;\n        },\n                {\n            r = \"{1911, 1003}\";\n            s = 0;\n        },\n                {\n            r = \"{2936, 241}\";\n            s = 0;\n        },\n                {\n            r = \"{3209, 1928}\";\n            s = 0;\n        },\n                {\n            r = \"{5431, 792}\";\n            s = 0;\n        },\n                {\n            r = \"{6499, 67}\";\n            s = 0;\n        },\n                {\n            r = \"{6868, 743}\";\n            s = 0;\n        },\n                {\n            r = \"{7918, 4331}\";\n            s = 0;\n        },\n                {\n            r = \"{12541, 1666}\";\n            s = 0;\n        },\n                {\n            r = \"{15548, 1152}\";\n            s = 0;\n        },\n                {\n            r = \"{16981, 284}\";\n            s = 0;\n        },\n                {\n            r = \"{17548, 483}\";\n            s = 0;\n        },\n                {\n            r = \"{18318, 54}\";\n            s = 0;\n        },\n                {\n            r = \"{18408, 51}\";\n            s = 0;\n        },\n                {\n            r = \"{18495, 51}\";\n            s = 0;\n        },\n                {\n            r = \"{18582, 51}\";\n            s = 0;\n        },\n                {\n            r = \"{18669, 51}\";\n            s = 0;\n        },\n                {\n            r = \"{18757, 52}\";\n            s = 0;\n        },\n                {\n            r = \"{19079, 221}\";\n            s = 0;\n        },\n                {\n            r = \"{19574, 213}\";\n            s = 0;\n        },\n                {\n            r = \"{20061, 110}\";\n            s = 0;\n        },\n                {\n            r = \"{20437, 71}\";\n            s = 0;\n        },\n                {\n            r = \"{20801, 1369}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 22184}\";\n    s = 0;\n}";
 			sepNavIntBoundsRect = "{{0, 0}, {1168, 2720}}";
 			sepNavSelRange = "{3628, 0}";
-			sepNavVisRange = "{770, 814}";
+			sepNavVisRange = "{771, 813}";
 			sepNavWindowFrame = "{{15, 99}, {1056, 774}}";
 		};
 	};
 	158C85A316A5C19C00E07CFF /* FlexBonds.py */ = {
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1595, 940}\";\n            s = 0;\n        },\n                {\n            r = \"{2785, 1749}\";\n            s = 0;\n        },\n                {\n            r = \"{4757, 779}\";\n            s = 0;\n        },\n                {\n            r = \"{5771, 778}\";\n            s = 0;\n        },\n                {\n            r = \"{6768, 551}\";\n            s = 0;\n        },\n                {\n            r = \"{7531, 526}\";\n            s = 0;\n        },\n                {\n            r = \"{8323, 331}\";\n            s = 0;\n        },\n                {\n            c =             (\n                                {\n                    r = \"{9097, 1145}\";\n                    s = 0;\n                }\n            );\n            r = \"{8901, 1658}\";\n            s = 0;\n        },\n                {\n            r = \"{10802, 1392}\";\n            s = 0;\n        },\n                {\n            r = \"{12452, 499}\";\n            s = 0;\n        },\n                {\n            r = \"{13208, 577}\";\n            s = 0;\n        },\n                {\n            r = \"{14056, 81}\";\n            s = 0;\n        },\n                {\n            r = \"{14409, 89}\";\n            s = 0;\n        },\n                {\n            r = \"{14725, 81}\";\n            s = 0;\n        },\n                {\n            r = \"{15053, 261}\";\n            s = 0;\n        },\n                {\n            r = \"{15561, 255}\";\n            s = 0;\n        },\n                {\n            r = \"{16055, 443}\";\n            s = 0;\n        },\n                {\n            r = \"{16763, 526}\";\n            s = 0;\n        },\n                {\n            r = \"{17538, 784}\";\n            s = 0;\n        },\n                {\n            r = \"{18543, 110}\";\n            s = 0;\n        },\n                {\n            r = \"{18910, 214}\";\n            s = 0;\n        },\n                {\n            r = \"{19382, 677}\";\n            s = 0;\n        },\n                {\n            r = \"{20343, 374}\";\n            s = 0;\n        },\n                {\n            r = \"{20980, 703}\";\n            s = 0;\n        },\n                {\n            r = \"{21934, 639}\";\n            s = 0;\n        },\n                {\n            r = \"{22827, 2298}\";\n            s = 0;\n        },\n                {\n            r = \"{25369, 286}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 25656}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 3056}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 3088}}";
 			sepNavSelRange = "{6550, 0}";
-			sepNavVisRange = "{6154, 1928}";
+			sepNavVisRange = "{6154, 1901}";
 			sepNavWindowFrame = "{{15, 99}, {1056, 774}}";
 		};
 	};
@@ -639,25 +580,25 @@
 	158C85A716A5C19C00E07CFF /* IOFile.py */ = {
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1606, 118}\";\n            s = 0;\n        },\n                {\n            r = \"{2306, 717}\";\n            s = 0;\n        },\n                {\n            r = \"{3049, 765}\";\n            s = 0;\n        },\n                {\n            r = \"{4123, 278}\";\n            s = 0;\n        },\n                {\n            r = \"{4695, 107}\";\n            s = 0;\n        },\n                {\n            r = \"{5099, 753}\";\n            s = 0;\n        },\n                {\n            r = \"{6223, 269}\";\n            s = 0;\n        },\n                {\n            r = \"{6795, 159}\";\n            s = 0;\n        },\n                {\n            r = \"{7244, 462}\";\n            s = 0;\n        },\n                {\n            r = \"{8024, 1864}\";\n            s = 0;\n        },\n                {\n            r = \"{10204, 308}\";\n            s = 0;\n        },\n                {\n            r = \"{10553, 40}\";\n            s = 0;\n        },\n                {\n            c =             (\n                                {\n                    r = \"{10872, 145}\";\n                    s = 0;\n                }\n            );\n            r = \"{10872, 230}\";\n            s = 0;\n        },\n                {\n            r = \"{11993, 144}\";\n            s = 0;\n        },\n                {\n            r = \"{12407, 300}\";\n            s = 0;\n        },\n                {\n            r = \"{12973, 245}\";\n            s = 0;\n        },\n                {\n            r = \"{13521, 514}\";\n            s = 0;\n        },\n                {\n            r = \"{14359, 8307}\";\n            s = 0;\n        },\n                {\n            r = \"{22944, 65}\";\n            s = 0;\n        },\n                {\n            r = \"{23049, 65}\";\n            s = 0;\n        },\n                {\n            r = \"{23407, 314}\";\n            s = 0;\n        },\n                {\n            r = \"{24016, 181}\";\n            s = 0;\n        },\n                {\n            r = \"{24500, 455}\";\n            s = 0;\n        },\n                {\n            r = \"{25362, 782}\";\n            s = 0;\n        },\n                {\n            r = \"{26481, 1104}\";\n            s = 0;\n        },\n                {\n            c =             (\n                                {\n                    r = \"{27960, 1545}\";\n                    s = 0;\n                }\n            );\n            r = \"{27960, 1669}\";\n            s = 0;\n        },\n                {\n            r = \"{29953, 1603}\";\n            s = 0;\n        },\n                {\n            r = \"{31882, 1792}\";\n            s = 0;\n        },\n                {\n            r = \"{33744, 604}\";\n            s = 0;\n        },\n                {\n            r = \"{34750, 153}\";\n            s = 0;\n        },\n                {\n            r = \"{35175, 419}\";\n            s = 0;\n        },\n                {\n            r = \"{35885, 530}\";\n            s = 0;\n        },\n                {\n            r = \"{36675, 1667}\";\n            s = 0;\n        },\n                {\n            r = \"{38580, 108}\";\n            s = 0;\n        },\n                {\n            r = \"{38950, 478}\";\n            s = 0;\n        },\n                {\n            r = \"{39665, 126}\";\n            s = 0;\n        },\n                {\n            r = \"{40054, 503}\";\n            s = 0;\n        },\n                {\n            r = \"{40613, 398}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 41012}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 4384}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 4976}}";
 			sepNavSelRange = "{5050, 0}";
-			sepNavVisRange = "{3126, 2234}";
+			sepNavVisRange = "{3217, 2143}";
 		};
 	};
 	158C85A816A5C19C00E07CFF /* ManageFiles.py */ = {
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1039, 1436}\";\n            s = 0;\n        },\n                {\n            r = \"{2782, 1059}\";\n            s = 0;\n        },\n                {\n            r = \"{4131, 221}\";\n            s = 0;\n        },\n                {\n            r = \"{4632, 180}\";\n            s = 0;\n        },\n                {\n            r = \"{5080, 280}\";\n            s = 0;\n        },\n                {\n            r = \"{5632, 662}\";\n            s = 0;\n        },\n                {\n            r = \"{7795, 906}\";\n            s = 0;\n        },\n                {\n            r = \"{11492, 3825}\";\n            s = 0;\n        },\n                {\n            r = \"{16212, 153}\";\n            s = 0;\n        },\n                {\n            r = \"{19072, 567}\";\n            s = 0;\n        },\n                {\n            r = \"{19931, 728}\";\n            s = 0;\n        },\n                {\n            r = \"{20954, 177}\";\n            s = 0;\n        },\n                {\n            r = \"{21422, 367}\";\n            s = 0;\n        },\n                {\n            r = \"{22113, 728}\";\n            s = 0;\n        },\n                {\n            r = \"{23151, 678}\";\n            s = 0;\n        },\n                {\n            r = \"{24125, 251}\";\n            s = 0;\n        },\n                {\n            r = \"{24669, 562}\";\n            s = 0;\n        },\n                {\n            r = \"{25532, 571}\";\n            s = 0;\n        },\n                {\n            r = \"{26394, 817}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 27212}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 5184}}";
-			sepNavSelRange = "{3192, 0}";
-			sepNavVisRange = "{2441, 1496}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 5168}}";
+			sepNavSelRange = "{3087, 0}";
+			sepNavVisRange = "{918, 1546}";
 		};
 	};
 	158C85A916A5C19C00E07CFF /* ProcessLigand.py */ = {
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1262, 491}\";\n            s = 0;\n        },\n                {\n            r = \"{1773, 821}\";\n            s = 0;\n        },\n                {\n            r = \"{2724, 2793}\";\n            s = 0;\n        },\n                {\n            r = \"{5642, 118}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 5765}\";\n    s = 0;\n}";
 			sepNavIntBoundsRect = "{{0, 0}, {1168, 928}}";
-			sepNavSelRange = "{1263, 0}";
-			sepNavVisRange = "{781, 765}";
+			sepNavSelRange = "{1107, 0}";
+			sepNavVisRange = "{816, 730}";
 		};
 	};
 	158C85AA16A5C19C00E07CFF /* RunFlexAID.py */ = {
@@ -669,25 +610,25 @@
 	};
 	158C85AB16A5C19C00E07CFF /* Simulate.py */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1258, 67}\";\n            s = 0;\n        },\n                {\n            r = \"{1382, 360}\";\n            s = 0;\n        },\n                {\n            r = \"{1772, 345}\";\n            s = 0;\n        },\n                {\n            r = \"{11304, 16}\";\n            s = 0;\n        },\n                {\n            r = \"{15011, 320}\";\n            s = 0;\n        },\n                {\n            r = \"{15593, 273}\";\n            s = 0;\n        },\n                {\n            r = \"{16129, 82}\";\n            s = 0;\n        },\n                {\n            r = \"{16506, 91}\";\n            s = 0;\n        },\n                {\n            r = \"{16870, 86}\";\n            s = 0;\n        },\n                {\n            r = \"{17223, 85}\";\n            s = 0;\n        },\n                {\n            r = \"{17572, 86}\";\n            s = 0;\n        },\n                {\n            r = \"{17925, 89}\";\n            s = 0;\n        },\n                {\n            r = \"{18297, 96}\";\n            s = 0;\n        },\n                {\n            r = \"{18676, 231}\";\n            s = 0;\n        },\n                {\n            r = \"{19176, 81}\";\n            s = 0;\n        },\n                {\n            r = \"{19647, 277}\";\n            s = 0;\n        },\n                {\n            r = \"{20249, 340}\";\n            s = 0;\n        },\n                {\n            r = \"{20899, 565}\";\n            s = 0;\n        },\n                {\n            r = \"{22302, 1158}\";\n            s = 0;\n        },\n                {\n            r = \"{23724, 673}\";\n            s = 0;\n        },\n                {\n            r = \"{24658, 640}\";\n            s = 0;\n        },\n                {\n            r = \"{25566, 48}\";\n            s = 0;\n        },\n                {\n            r = \"{25892, 732}\";\n            s = 0;\n        },\n                {\n            r = \"{26937, 43}\";\n            s = 0;\n        },\n                {\n            r = \"{27298, 971}\";\n            s = 0;\n        },\n                {\n            r = \"{28585, 39}\";\n            s = 0;\n        },\n                {\n            r = \"{28938, 652}\";\n            s = 0;\n        },\n                {\n            r = \"{29771, 682}\";\n            s = 0;\n        },\n                {\n            r = \"{30775, 951}\";\n            s = 0;\n        },\n                {\n            r = \"{32031, 244}\";\n            s = 0;\n        },\n                {\n            r = \"{32579, 1632}\";\n            s = 0;\n        },\n                {\n            r = \"{34512, 1648}\";\n            s = 0;\n        },\n                {\n            r = \"{36466, 224}\";\n            s = 0;\n        },\n                {\n            r = \"{36983, 331}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 37315}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 8208}}";
-			sepNavSelRange = "{18035, 0}";
-			sepNavVisRange = "{16970, 2132}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1258, 67}\";\n            s = 0;\n        },\n                {\n            r = \"{1382, 360}\";\n            s = 0;\n        },\n                {\n            r = \"{1772, 345}\";\n            s = 0;\n        },\n                {\n            r = \"{2402, 155}\";\n            s = 0;\n        },\n                {\n            r = \"{2876, 8136}\";\n            s = 0;\n        },\n                {\n            r = \"{11304, 16}\";\n            s = 0;\n        },\n                {\n            r = \"{11627, 3110}\";\n            s = 0;\n        },\n                {\n            r = \"{15011, 320}\";\n            s = 0;\n        },\n                {\n            r = \"{15593, 273}\";\n            s = 0;\n        },\n                {\n            r = \"{16129, 82}\";\n            s = 0;\n        },\n                {\n            r = \"{16506, 91}\";\n            s = 0;\n        },\n                {\n            r = \"{16870, 86}\";\n            s = 0;\n        },\n                {\n            r = \"{17223, 85}\";\n            s = 0;\n        },\n                {\n            r = \"{17572, 86}\";\n            s = 0;\n        },\n                {\n            r = \"{17925, 89}\";\n            s = 0;\n        },\n                {\n            r = \"{18297, 96}\";\n            s = 0;\n        },\n                {\n            r = \"{18676, 231}\";\n            s = 0;\n        },\n                {\n            r = \"{19176, 81}\";\n            s = 0;\n        },\n                {\n            r = \"{19647, 277}\";\n            s = 0;\n        },\n                {\n            r = \"{20249, 340}\";\n            s = 0;\n        },\n                {\n            r = \"{20899, 565}\";\n            s = 0;\n        },\n                {\n            r = \"{21756, 255}\";\n            s = 0;\n        },\n                {\n            r = \"{22292, 235}\";\n            s = 0;\n        },\n                {\n            r = \"{22814, 1158}\";\n            s = 0;\n        },\n                {\n            r = \"{24236, 705}\";\n            s = 0;\n        },\n                {\n            r = \"{25202, 659}\";\n            s = 0;\n        },\n                {\n            r = \"{26129, 48}\";\n            s = 0;\n        },\n                {\n            r = \"{26455, 732}\";\n            s = 0;\n        },\n                {\n            r = \"{27500, 43}\";\n            s = 0;\n        },\n                {\n            r = \"{27861, 971}\";\n            s = 0;\n        },\n                {\n            r = \"{29148, 39}\";\n            s = 0;\n        },\n                {\n            r = \"{29501, 652}\";\n            s = 0;\n        },\n                {\n            r = \"{30334, 682}\";\n            s = 0;\n        },\n                {\n            r = \"{31338, 951}\";\n            s = 0;\n        },\n                {\n            r = \"{32594, 244}\";\n            s = 0;\n        },\n                {\n            r = \"{33142, 1632}\";\n            s = 0;\n        },\n                {\n            r = \"{35075, 1648}\";\n            s = 0;\n        },\n                {\n            r = \"{37029, 224}\";\n            s = 0;\n        },\n                {\n            r = \"{37546, 331}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 37878}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 3968}}";
+			sepNavSelRange = "{7169, 0}";
+			sepNavVisRange = "{6289, 2057}";
 		};
 	};
 	158C85AC16A5C19C00E07CFF /* Simulation.py */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1780, 1152}\";\n            s = 0;\n        },\n                {\n            r = \"{14688, 1737}\";\n            s = 0;\n        },\n                {\n            r = \"{16578, 699}\";\n            s = 0;\n        },\n                {\n            r = \"{17434, 390}\";\n            s = 0;\n        },\n                {\n            r = \"{17986, 630}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 18618}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 6304}}";
-			sepNavSelRange = "{6819, 0}";
-			sepNavVisRange = "{6251, 1519}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1780, 1152}\";\n            s = 0;\n        },\n                {\n            r = \"{14680, 1737}\";\n            s = 0;\n        },\n                {\n            r = \"{16570, 699}\";\n            s = 0;\n        },\n                {\n            r = \"{17978, 630}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 18610}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 6672}}";
+			sepNavSelRange = "{5663, 0}";
+			sepNavVisRange = "{5021, 1387}";
 			sepNavWindowFrame = "{{15, 99}, {1056, 774}}";
 		};
 	};
 	158C85AD16A5C19C00E07CFF /* TargetFlex.py */ = {
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{42, 37}\";\n            s = 0;\n        },\n                {\n            r = \"{381, 99}\";\n            s = 0;\n        },\n                {\n            r = \"{791, 99}\";\n            s = 0;\n        },\n                {\n            r = \"{1186, 35}\";\n            s = 0;\n        },\n                {\n            r = \"{1519, 40}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 1560}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 579}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 561}}";
 			sepNavSelRange = "{695, 0}";
 			sepNavVisRange = "{0, 1255}";
 			sepNavWindowFrame = "{{61, 57}, {1056, 774}}";
@@ -698,7 +639,7 @@
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{953, 1181}\";\n            s = 0;\n        },\n                {\n            r = \"{2156, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{2240, 790}\";\n            s = 0;\n        },\n                {\n            r = \"{3299, 298}\";\n            s = 0;\n        },\n                {\n            r = \"{3864, 1336}\";\n            s = 0;\n        },\n                {\n            r = \"{5451, 1833}\";\n            s = 0;\n        },\n                {\n            r = \"{7544, 1633}\";\n            s = 0;\n        },\n                {\n            r = \"{9453, 2925}\";\n            s = 0;\n        },\n                {\n            c =             (\n                                {\n                    r = \"{12661, 1502}\";\n                    s = 0;\n                }\n            );\n            r = \"{12661, 1630}\";\n            s = 0;\n        },\n                {\n            r = \"{14591, 3368}\";\n            s = 0;\n        },\n                {\n            r = \"{18234, 241}\";\n            s = 0;\n        },\n                {\n            r = \"{18738, 166}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 18914}\";\n    s = 0;\n}";
 			sepNavIntBoundsRect = "{{0, 0}, {1168, 1296}}";
 			sepNavSelRange = "{2647, 0}";
-			sepNavVisRange = "{1574, 1924}";
+			sepNavVisRange = "{1575, 1923}";
 		};
 	};
 	158C85C616A5C19C00E07CFF /* General_cmd.py */ = {
@@ -727,10 +668,10 @@
 	};
 	158C85CB16A5C19C00E07CFF /* CropCleft.py */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1734, 285}\";\n            s = 0;\n        },\n                {\n            r = \"{2045, 762}\";\n            s = 0;\n        },\n                {\n            r = \"{3077, 225}\";\n            s = 0;\n        },\n                {\n            r = \"{3572, 199}\";\n            s = 0;\n        },\n                {\n            r = \"{4027, 248}\";\n            s = 0;\n        },\n                {\n            r = \"{4545, 6635}\";\n            s = 0;\n        },\n                {\n            r = \"{11502, 727}\";\n            s = 0;\n        },\n                {\n            r = \"{12466, 664}\";\n            s = 0;\n        },\n                {\n            r = \"{13372, 593}\";\n            s = 0;\n        },\n                {\n            r = \"{14192, 390}\";\n            s = 0;\n        },\n                {\n            r = \"{14812, 77}\";\n            s = 0;\n        },\n                {\n            r = \"{15126, 1005}\";\n            s = 0;\n        },\n                {\n            r = \"{16365, 238}\";\n            s = 0;\n        },\n                {\n            r = \"{16829, 580}\";\n            s = 0;\n        },\n                {\n            r = \"{17646, 387}\";\n            s = 0;\n        },\n                {\n            r = \"{18279, 3103}\";\n            s = 0;\n        },\n                {\n            r = \"{21603, 319}\";\n            s = 0;\n        },\n                {\n            r = \"{22167, 230}\";\n            s = 0;\n        },\n                {\n            r = \"{22647, 445}\";\n            s = 0;\n        },\n                {\n            r = \"{23372, 369}\";\n            s = 0;\n        },\n                {\n            r = \"{23980, 137}\";\n            s = 0;\n        },\n                {\n            r = \"{24347, 726}\";\n            s = 0;\n        },\n                {\n            r = \"{25300, 472}\";\n            s = 0;\n        },\n                {\n            r = \"{25993, 548}\";\n            s = 0;\n        },\n                {\n            r = \"{26773, 462}\";\n            s = 0;\n        },\n                {\n            r = \"{27312, 652}\";\n            s = 0;\n        },\n                {\n            r = \"{28036, 829}\";\n            s = 0;\n        },\n                {\n            r = \"{28988, 96}\";\n            s = 0;\n        },\n                {\n            r = \"{29374, 1927}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 31306}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 3424}}";
-			sepNavSelRange = "{1123, 0}";
-			sepNavVisRange = "{780, 930}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1734, 285}\";\n            s = 0;\n        },\n                {\n            r = \"{2045, 762}\";\n            s = 0;\n        },\n                {\n            r = \"{3077, 225}\";\n            s = 0;\n        },\n                {\n            r = \"{3572, 199}\";\n            s = 0;\n        },\n                {\n            r = \"{4027, 248}\";\n            s = 0;\n        },\n                {\n            r = \"{4545, 6635}\";\n            s = 0;\n        },\n                {\n            r = \"{11502, 361}\";\n            s = 0;\n        },\n                {\n            r = \"{12470, 664}\";\n            s = 0;\n        },\n                {\n            r = \"{13376, 593}\";\n            s = 0;\n        },\n                {\n            r = \"{14196, 390}\";\n            s = 0;\n        },\n                {\n            r = \"{14816, 77}\";\n            s = 0;\n        },\n                {\n            r = \"{15130, 1005}\";\n            s = 0;\n        },\n                {\n            r = \"{16369, 238}\";\n            s = 0;\n        },\n                {\n            r = \"{16833, 580}\";\n            s = 0;\n        },\n                {\n            r = \"{17650, 387}\";\n            s = 0;\n        },\n                {\n            r = \"{18283, 3103}\";\n            s = 0;\n        },\n                {\n            r = \"{21607, 319}\";\n            s = 0;\n        },\n                {\n            r = \"{22171, 230}\";\n            s = 0;\n        },\n                {\n            r = \"{22651, 445}\";\n            s = 0;\n        },\n                {\n            r = \"{23376, 369}\";\n            s = 0;\n        },\n                {\n            r = \"{23984, 137}\";\n            s = 0;\n        },\n                {\n            r = \"{24351, 726}\";\n            s = 0;\n        },\n                {\n            r = \"{25304, 472}\";\n            s = 0;\n        },\n                {\n            r = \"{25997, 548}\";\n            s = 0;\n        },\n                {\n            r = \"{26777, 462}\";\n            s = 0;\n        },\n                {\n            r = \"{27316, 652}\";\n            s = 0;\n        },\n                {\n            r = \"{28040, 829}\";\n            s = 0;\n        },\n                {\n            r = \"{28992, 96}\";\n            s = 0;\n        },\n                {\n            r = \"{29378, 1927}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 31310}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 3376}}";
+			sepNavSelRange = "{3160, 0}";
+			sepNavVisRange = "{2662, 1641}";
 		};
 	};
 	158C85CC16A5C19C00E07CFF /* Default.py */ = {
@@ -807,10 +748,10 @@
 	};
 	158C85EC16A5C19C00E07CFF /* Sphere.py */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1002, 675}\";\n            s = 0;\n        },\n                {\n            r = \"{1907, 854}\";\n            s = 0;\n        },\n                {\n            r = \"{2976, 481}\";\n            s = 0;\n        },\n                {\n            r = \"{3685, 714}\";\n            s = 0;\n        },\n                {\n            r = \"{4622, 433}\";\n            s = 0;\n        },\n                {\n            r = \"{5086, 36}\";\n            s = 0;\n        },\n                {\n            r = \"{5144, 347}\";\n            s = 0;\n        },\n                {\n            r = \"{5514, 62}\";\n            s = 0;\n        },\n                {\n            r = \"{5613, 328}\";\n            s = 0;\n        },\n                {\n            r = \"{5967, 230}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 6208}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1168, 992}}";
-			sepNavSelRange = "{1450, 0}";
-			sepNavVisRange = "{883, 1175}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1002, 675}\";\n            s = 0;\n        },\n                {\n            r = \"{1907, 854}\";\n            s = 0;\n        },\n                {\n            r = \"{3685, 714}\";\n            s = 0;\n        },\n                {\n            r = \"{4622, 433}\";\n            s = 0;\n        },\n                {\n            r = \"{5086, 36}\";\n            s = 0;\n        },\n                {\n            r = \"{5144, 347}\";\n            s = 0;\n        },\n                {\n            r = \"{5514, 62}\";\n            s = 0;\n        },\n                {\n            r = \"{5967, 230}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 6208}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1168, 1424}}";
+			sepNavSelRange = "{1867, 0}";
+			sepNavVisRange = "{1236, 1180}";
 		};
 	};
 	158C85ED16A5C19C00E07CFF /* SphereObj.py */ = {
@@ -820,6 +761,296 @@
 			sepNavSelRange = "{1420, 0}";
 			sepNavVisRange = "{0, 1916}";
 		};
+	};
+	15BD1C3516DBCA030010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 473";
+		rLen = 0;
+		rLoc = 21507;
+		rType = 0;
+		vrLen = 5049;
+		vrLoc = 19354;
+	};
+	15BD1C4316DBCEF20010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85EC16A5C19C00E07CFF /* Sphere.py */;
+		name = "Sphere.py: 107";
+		rLen = 0;
+		rLoc = 3394;
+		rType = 0;
+		vrLen = 2360;
+		vrLoc = 2763;
+	};
+	15BD1C5116DBDE590010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85CB16A5C19C00E07CFF /* CropCleft.py */;
+		name = "CropCleft.py: 252";
+		rLen = 0;
+		rLoc = 11868;
+		rType = 0;
+		vrLen = 10279;
+		vrLoc = 4376;
+	};
+	15BD1C5216DBDE590010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1555D4F616C70CEF00F30037 /* Smiles.py */;
+		name = "Smiles.py: 14";
+		rLen = 0;
+		rLoc = 625;
+		rType = 0;
+		vrLen = 1046;
+		vrLoc = 0;
+	};
+	15BD1C5316DBDE590010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
+		name = "Simulation.py: 230";
+		rLen = 0;
+		rLoc = 7369;
+		rType = 0;
+		vrLen = 1315;
+		vrLoc = 6315;
+	};
+	15BD1C5416DBDE590010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A216A5C19C00E07CFF /* FlexAID.py */;
+		name = "FlexAID.py: 314";
+		rLen = 0;
+		rLoc = 14633;
+		rType = 0;
+		vrLen = 813;
+		vrLoc = 771;
+	};
+	15BD1C5516DBDE590010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A316A5C19C00E07CFF /* FlexBonds.py */;
+		name = "FlexBonds.py: 530";
+		rLen = 0;
+		rLoc = 19153;
+		rType = 0;
+		vrLen = 6909;
+		vrLoc = 18435;
+	};
+	15BD1C5616DBDE590010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 15BDD04116B98BD0000F45F7 /* Result.py */;
+		name = "Result.py: 148";
+		rLen = 0;
+		rLoc = 4433;
+		rType = 0;
+		vrLen = 4800;
+		vrLoc = 576;
+	};
+	15BD1C6316DBE1070010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A716A5C19C00E07CFF /* IOFile.py */;
+		name = "IOFile.py: 315";
+		rLen = 0;
+		rLoc = 11107;
+		rType = 0;
+		vrLen = 5468;
+		vrLoc = 5949;
+	};
+	15BD1C6416DBE1070010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 15BDD04116B98BD0000F45F7 /* Result.py */;
+		name = "Result.py: 64";
+		rLen = 0;
+		rLoc = 1539;
+		rType = 0;
+		vrLen = 4800;
+		vrLoc = 576;
+	};
+	15BD1C6516DBE1070010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1555D4F616C70CEF00F30037 /* Smiles.py */;
+		name = "Smiles.py: 14";
+		rLen = 0;
+		rLoc = 625;
+		rType = 0;
+		vrLen = 1046;
+		vrLoc = 0;
+	};
+	15BD1C6616DBE1070010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AD16A5C19C00E07CFF /* TargetFlex.py */;
+		name = "TargetFlex.py: 23";
+		rLen = 0;
+		rLoc = 927;
+		rType = 0;
+		vrLen = 1560;
+		vrLoc = 0;
+	};
+	15BD1C6716DBE1070010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AE16A5C19C00E07CFF /* UpdateScreen.py */;
+		name = "UpdateScreen.py: 363";
+		rLen = 0;
+		rLoc = 14291;
+		rType = 0;
+		vrLen = 13712;
+		vrLoc = 5202;
+	};
+	15BD1C6816DBE1070010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A816A5C19C00E07CFF /* ManageFiles.py */;
+		name = "ManageFiles.py: 178";
+		rLen = 0;
+		rLoc = 6919;
+		rType = 0;
+		vrLen = 5378;
+		vrLoc = 918;
+	};
+	15BD1C6916DBE1070010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85A916A5C19C00E07CFF /* ProcessLigand.py */;
+		name = "ProcessLigand.py: 38";
+		rLen = 0;
+		rLoc = 1107;
+		rType = 0;
+		vrLen = 4949;
+		vrLoc = 816;
+	};
+	15BD1C6A16DBE1070010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
+		name = "Simulation.py: 214";
+		rLen = 0;
+		rLoc = 6866;
+		rType = 0;
+		vrLen = 1361;
+		vrLoc = 6172;
+	};
+	15BD1C6B16DBE1070010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 492";
+		rLen = 42;
+		rLoc = 22484;
+		rType = 0;
+		vrLen = 4298;
+		vrLoc = 21631;
+	};
+	15BD1C6C16DBE1070010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 578";
+		rLen = 0;
+		rLoc = 25806;
+		rType = 0;
+		vrLen = 3558;
+		vrLoc = 25302;
+	};
+	15BD1C6F16DBE1080010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 578";
+		rLen = 0;
+		rLoc = 25806;
+		rType = 0;
+		vrLen = 3558;
+		vrLoc = 25302;
+	};
+	15BD1C7016DBE11D0010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 493";
+		rLen = 0;
+		rLoc = 22528;
+		rType = 0;
+		vrLen = 5363;
+		vrLoc = 20595;
+	};
+	15BD1C7116DBE17C0010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 492";
+		rLen = 0;
+		rLoc = 22474;
+		rType = 0;
+		vrLen = 5363;
+		vrLoc = 20595;
+	};
+	15BD1C7216DBE1880010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 492";
+		rLen = 0;
+		rLoc = 22465;
+		rType = 0;
+		vrLen = 5363;
+		vrLoc = 20595;
+	};
+	15BD1C7316DBE1BA0010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AB16A5C19C00E07CFF /* Simulate.py */;
+		name = "Simulate.py: 492";
+		rLen = 0;
+		rLoc = 22527;
+		rType = 0;
+		vrLen = 5675;
+		vrLoc = 20595;
+	};
+	15BD1C7416DBE1BA0010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
+		name = "Simulation.py: 214";
+		rLen = 0;
+		rLoc = 6866;
+		rType = 0;
+		vrLen = 1361;
+		vrLoc = 6172;
+	};
+	15BD1C7516DBE1BA0010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
+		name = "Simulation.py: 224";
+		rLen = 0;
+		rLoc = 7183;
+		rType = 0;
+		vrLen = 1387;
+		vrLoc = 6172;
+	};
+	15BD1C7616DBE22B0010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
+		name = "Simulation.py: 214";
+		rLen = 0;
+		rLoc = 6814;
+		rType = 0;
+		vrLen = 1387;
+		vrLoc = 6172;
+	};
+	15BD1C7716DBE2640010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
+		name = "Simulation.py: 214";
+		rLen = 0;
+		rLoc = 6814;
+		rType = 0;
+		vrLen = 1387;
+		vrLoc = 6172;
+	};
+	15BD1C7816DBE2690010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
+		name = "Simulation.py: 214";
+		rLen = 0;
+		rLoc = 6814;
+		rType = 0;
+		vrLen = 1387;
+		vrLoc = 6172;
+	};
+	15BD1C7916DBE2900010C774 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 158C85AC16A5C19C00E07CFF /* Simulation.py */;
+		name = "Simulation.py: 214";
+		rLen = 0;
+		rLoc = 6814;
+		rType = 0;
+		vrLen = 1387;
+		vrLoc = 6172;
 	};
 	15BDCF2D16B8E418000F45F7 /* BindingSite.py */ = {
 		uiCtxt = {
@@ -850,8 +1081,8 @@
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{854, 137}\";\n            s = 0;\n        },\n                {\n            r = \"{1040, 194}\";\n            s = 0;\n        },\n                {\n            r = \"{1285, 245}\";\n            s = 0;\n        },\n                {\n            r = \"{1627, 2769}\";\n            s = 0;\n        },\n                {\n            r = \"{4471, 491}\";\n            s = 0;\n        },\n                {\n            r = \"{5006, 149}\";\n            s = 0;\n        },\n                {\n            r = \"{5185, 181}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 5376}\";\n    s = 0;\n}";
 			sepNavIntBoundsRect = "{{0, 0}, {1168, 768}}";
-			sepNavSelRange = "{1092, 0}";
-			sepNavVisRange = "{625, 592}";
+			sepNavSelRange = "{966, 0}";
+			sepNavVisRange = "{576, 641}";
 		};
 	};
 	15F62C5816C6F9A8001CF626 /* MultiList.py */ = {

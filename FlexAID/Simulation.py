@@ -205,13 +205,13 @@ class Parse(threading.Thread):
             
             # Once copied cannot go change file (safe-protection)
             ParseFile = self.ParseFile 
-            
+                        
             if self.top.SimStatus.get() == 'Paused.':
                 continue
-                
+            
             elif self.CopyRead(ParseFile):
                 self.Error = True
-                self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files.'
+                self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files'
                 break
                 
             if self.nRead.get(ParseFile):
@@ -219,7 +219,6 @@ class Parse(threading.Thread):
                 self.Lines = self.Lines[self.nRead[ParseFile]:]
             else:
                 self.nRead[ParseFile] = 0
-            
             
             for Line in self.Lines:
                 
@@ -284,7 +283,7 @@ class Parse(threading.Thread):
                             else:
                                 if self.Remove_UPDATE():
                                     self.Error = True
-                                    self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temp files.'
+                                    self.ErrorMsg = '*NRGsuite ERROR: Could not successfully remove .update file'
                                     break
                                                                     
                     continue
