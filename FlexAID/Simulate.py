@@ -60,7 +60,6 @@ class Simulate(Tabs.Tab):
         
         self.SimStatus = StringVar()
         self.ProgBarText = StringVar()
-        self.dictSimData = dict()
 
         # vars class objects
         self.ResultsName = self.Vars.ResultsName
@@ -109,7 +108,7 @@ class Simulate(Tabs.Tab):
         '''                         --- SIMULATION TABLE ---                            '''
         #==================================================================================
         
-        self.fRes = Frame(self.fSimulate, relief=RAISED, border=1)
+        self.fRes = Frame(self.fSimulate)#, relief=RAISED, border=1)
         self.fRes.pack(fill=BOTH, side=BOTTOM, padx=5, pady=10)
 
         Label(self.fRes, text='Simulation results', font=self.top.font_Title_H).pack(side=TOP, fill=X, pady=3)
@@ -124,7 +123,7 @@ class Simulate(Tabs.Tab):
                         disabledforeground=self.top.Color_Black, justify=CENTER).pack(side=LEFT, fill=X, expand=True)
 
         fNaviRes = Frame(self.fRes)
-        fNaviRes.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
+        #fNaviRes.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
 
         Label(fNaviRes, text='Results navigation', width=30, font=self.top.font_Text).pack(side=LEFT)
         Button(fNaviRes, text='Show parent', font=self.top.font_Text).pack(side=LEFT)
@@ -137,7 +136,7 @@ class Simulate(Tabs.Tab):
         fTable.pack_propagate(0)
 
         self.Table = MultiList.Table(fTable, 5,
-                                   [ 'Color', 'TOP', 'CF', 'Fitness', 'RMSD' ],
+                                   [ 'Color', 'TOP', 'CF', 'Fitness', 'Last RMSD' ],
                                    [ 65, 65, 167, 167, 167 ],
                                    [ 0, 6, 6, 6, 6 ],
                                    [ False, True, True, True, True ],
@@ -219,7 +218,7 @@ class Simulate(Tabs.Tab):
         fSim_DisplayLine3 = Frame(fSim_Display)
         fSim_DisplayLine3.pack(side=TOP, fill=X)
         
-        Label(fSim_DisplayLine1, text='Display options of TOP solutions', font=self.top.font_Title).pack(side=LEFT)
+        Label(fSim_DisplayLine1, text='Display options of TOP and RESULT objects', font=self.top.font_Title).pack(side=LEFT)
         
         Label(fSim_DisplayLine2, text='Ligand:', font=self.top.font_Text).pack(side=LEFT)
         Radiobutton(fSim_DisplayLine2, text='Sticks', variable=self.SimDefDisplay, value='sticks', command=self.Click_RadioSIM, font=self.top.font_Text).pack(side=RIGHT)
@@ -291,7 +290,6 @@ class Simulate(Tabs.Tab):
         self.PymolColorList = Color.GetHeatColorList(int(self.top.GAParam.NbTopChrom.get()), False)
 
         self.Init_Table()
-        self.dictSimData.clear()
         
         # START FLEXAID AS THREAD
         commandline =   '"%s" "%s" "%s" "%s"' % (   self.top.FlexAIDExecutable,
@@ -435,6 +433,8 @@ class Simulate(Tabs.Tab):
         for key in range(1, len(self.ColorList) + 1):
             self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ], 
                             [ self.ColorList[key-1], None, None, None, None ] )
+                            
+            self.dictSimData[key] = [ 0.0, 0.0, 0.0 ]
     
     ''' ==================================================================================
     FUNCTION update_DataResults: Updates the dictionary with the values of the results

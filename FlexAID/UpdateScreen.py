@@ -50,9 +50,7 @@ class UpdateScreen:
         # State on which updating is happening
         self.State = State
 
-        self.dictSimData = self.top.dictSimData
         self.dictFlexBonds = self.top.dictFlexBonds
-        self.dictCoordRef = self.top.dictCoordRef
 
         self.LigandName = self.top.FlexAID.IOFile.LigandName.get()
         self.ProtName = self.top.FlexAID.IOFile.ProtName.get()
@@ -92,7 +90,8 @@ class UpdateScreen:
         
             self.selSideChains = self.UpdateSideChainConformations()
             
-            if self.WriteOutLigand() or self.EditView() or self.UpdateDataList():
+            if self.WriteOutLigand() or self.EditView() or \
+               self.top.UpdateDataList(self.Line, self.TOP, self.top.Reference, self.dictCoord):
                 self.Delete_Object()
 
         self.Delete_Object()
@@ -114,53 +113,6 @@ class UpdateScreen:
 
         except:
             self.CriticalError("Object " + str(self.ProteinObj) + " no longer exists")
-
-    '''=========================================================================
-       UpdateDataList: Updates the table containing energy/fitness values
-    ========================================================================='''
-    def UpdateDataList(self):
-
-        try: 
-
-            self.dictSimData[self.TOP+1] = []
-
-            #Get index position of energy column
-            self.colNo = self.Line.rfind("value=") + 6
-            to = self.Line.rfind("fitnes=")
-            
-            if self.colNo != -1:
-                #Update the energy of the dictionary
-                self.dictSimData[self.TOP+1].append(self.Line[self.colNo:to].strip())     # Energy
-            else:
-                self.dictSimData[self.TOP+1].append('N/A')
-
-
-            #Get index position of the fitness column
-            self.colNo = to + 7
-            to = self.Line.rfind("\n")
-            
-            if self.colNo != -1:
-                #Update the fitnes of the dictionary
-                self.dictSimData[self.TOP+1].append(self.Line[self.colNo:to].strip())    # Fitness
-            else:
-                self.dictSimData[self.TOP+1].append('N/A')
-
-            # RMSD of ligand
-            if self.top.Reference:
-                RMSD = Geometry.rmsd(self.dictCoord, self.dictCoordRef)
-                
-                if RMSD != 'N/A':
-                    RMSD = '%.3f' % RMSD
-            else:
-                RMSD = 'N/A'
-
-            self.dictSimData[self.TOP+1].append(RMSD)
-
-        except:
-            self.CriticalError("Could not update data list")
-            return 1
-
-        return 0
 
     '''=========================================================================
        EditView: Edit the visual aspects of the PyMOL interface

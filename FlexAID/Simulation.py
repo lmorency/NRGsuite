@@ -167,8 +167,6 @@ class Parse(threading.Thread):
         self.FixedAngle = dict()
         
         # References
-        self.dictSimData = self.top.dictSimData
-
         self.ReferenceLines = self.top.Manage.ReferenceLines
         self.VarAtoms = self.top.Manage.VarAtoms
         self.RecAtom = self.top.Manage.RecAtom
@@ -271,6 +269,13 @@ class Parse(threading.Thread):
 
                                 self.top.Refresh_LigDisplay()
                                 self.top.Refresh_CartoonDisplay()
+                        
+                        else:
+                            self.UpdateDataList(Line, self.TOP, 0, None)
+                            
+                            if (self.TOP+1) == self.NbTopChrom:
+                                self.queue.put(lambda: self.top.update_DataList())
+                        
                         
                         # Ready to read another file
                         if (self.TOP+1) == self.NbTopChrom:
@@ -408,6 +413,56 @@ class Parse(threading.Thread):
 
         print("FlexAID parsing thread has ended.")
 
+    '''=========================================================================
+       UpdateDataList: Updates the table containing energy/fitness values
+    ========================================================================='''
+    def UpdateDataList(self, Line, TOP, Reference, dictCoord):
+        
+        try:
+            PrevRMSD = self.top.dictSimData[TOP+1][2]
+        except:
+            PrevRMSD = 'N/A'
+            
+        try:
+            
+            #Get index position of energy column
+            colNo = Line.rfind("value=") + 6
+            to = Line.rfind("fitnes=")
+            
+            if colNo != -1:
+                #Update the energy of the dictionary
+                self.top.dictSimData[TOP+1][0] = Line[colNo:to].strip()     # Energy
+            else:
+                self.top.dictSimData[TOP+1][0] = 'N/A'
+
+            #Get index position of the fitness column
+            colNo = to + 7
+            to = Line.rfind("\n")
+            
+            if colNo != -1:
+                #Update the fitnes of the dictionary
+                self.top.dictSimData[TOP+1][1] = Line[colNo:to].strip()    # Fitness
+            else:
+                self.top.dictSimData[TOP+1][1] = 'N/A'
+
+            # RMSD of ligand
+            if Reference:
+                RMSD = Geometry.rmsd(dictCoord, self.dictCoordRef)
+                
+                if RMSD != 'N/A':
+                    RMSD = '%.3f' % RMSD
+            else:
+                RMSD = PrevRMSD
+
+            self.top.dictSimData[TOP+1][2] = RMSD
+
+        except:
+            self.top.DisplayMessage("  ERROR: Could not update data list.", 2)
+            return 1
+
+        return 0
+
+
     '''
     @summary: SUBROUTINE OrderFledih: Order the FLEDIH atoms number based on
                                       the ligand construction (lout) if REQUIRED!                
@@ -456,8 +511,7 @@ class Parse(threading.Thread):
 
                     for elem in range(3, elemTot):
                         self.dictFlexBonds[k][elem] = AtListSorted[elem-3]            
-        
-
+    
     '''
     @summary: SUBROUTINE AddRotamerFromLine: Adds a rotamer from the output of FlexAID
     '''

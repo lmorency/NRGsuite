@@ -51,6 +51,7 @@ if __debug__:
 
 class IOFileVars(Vars.Vars):
     
+    Complex = StringVar()
     ProtMD5 = StringVar()
     ProtPath = StringVar()
     ProtName = StringVar()
@@ -92,9 +93,9 @@ class IOFile(Tabs.Tab):
         self.FetchPDB = StringVar()
         self.ReferencePath = StringVar()
         self.ResSeq = IntVar()
-        self.Complex = StringVar()
-        
+                
         # vars class objects
+        self.Complex = self.Vars.Complex
         self.ProtMD5 = self.Vars.ProtMD5
         self.ProtPath = self.Vars.ProtPath
         self.ProtName = self.Vars.ProtName

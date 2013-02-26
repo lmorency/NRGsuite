@@ -82,6 +82,16 @@ class displayGetCleft(Base.Base):
     
         return
     
+    def Clean(self):
+    
+        files = os.listdir(self.GetCleftProject_Dir)
+
+        for file in files:
+            try:
+                os.remove(os.path.join(self.GetCleftProject_Dir,file))
+            except OSError:
+                pass
+    
     def Set_Folders(self):
     
         self.GetCleftInstall_Dir = os.path.join(self.Install_Dir,'GetCleft')
@@ -104,7 +114,7 @@ class displayGetCleft(Base.Base):
                                 self.GetCleftSaveProject_Dir, self.GetCleftTempProject_Dir ] )
 
         return
-
+    
     ''' ==================================================================================
     FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
     ==================================================================================  '''        
@@ -121,7 +131,7 @@ class displayGetCleft(Base.Base):
         menubar.add_cascade(label="Save", menu=savemenu)
         
         self.root.config(menu=menubar)
-        
+    
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
     ==================================================================================  '''        
