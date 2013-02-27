@@ -55,9 +55,13 @@ if OSid == 'WIN':
         Install_Dir = os.path.join(ProgramFiles,'NRGsuite')
     else:
         Install_Dir = os.path.join('C:\\','Program Files','NRGsuite')
+        
+elif OSid == 'MAC':
+    Install_Dir = os.path.join('/Applications','NRGsuite')
+
 else:
     Install_Dir = os.path.join('/usr','local','NRGsuite')
-
+    
 
 if OSid != 'UNKNOWN':
     
