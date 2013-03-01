@@ -427,6 +427,8 @@ class Simulate(Tabs.Tab):
     ==================================================================================  '''                
     def Init_Table(self):
                 
+        self.dictSimData.clear()
+        
         # Empty table list
         self.Table.Clear()
         
@@ -434,7 +436,7 @@ class Simulate(Tabs.Tab):
             self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ], 
                             [ self.ColorList[key-1], None, None, None, None ] )
                             
-            self.dictSimData[key] = [ 0.0, 0.0, 0.0 ]
+            self.dictSimData[key] = [ 0.0, 0.0, 'N/A' ]
     
     ''' ==================================================================================
     FUNCTION update_DataResults: Updates the dictionary with the values of the results
@@ -823,9 +825,10 @@ class Simulate(Tabs.Tab):
         if not os.path.isdir(Results_Dir):
             os.makedirs(Results_Dir)
         
-        SaveFile = tkFileDialog.asksaveasfilename(initialdir=Results_Dir,
-                                  title='Save the Results file', initialfile='default_results',
-                                  defaultextension='.nrgfr')
+        SaveFile = tkFileDialog.asksaveasfilename(filetypes=[('NRG FlexAID Results','*.nrgfr')],
+                                                  initialdir=Results_Dir,
+                                                  title='Save the Results file', initialfile='default_results',
+                                                  defaultextension='.nrgfr')
         
         if len(SaveFile) > 0:
 

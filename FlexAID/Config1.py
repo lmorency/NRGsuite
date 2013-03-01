@@ -417,7 +417,7 @@ class Config1(Tabs.Tab):
                 
         self.Highlight_RngOpt()
         self.top.fMiddle.update_idletasks()
-        
+    
     ''' ==================================================================================
     FUNCTION Create_NewSphere: Creates a new sphere using the target as center of geometry
     ==================================================================================  '''               
@@ -436,7 +436,7 @@ class Config1(Tabs.Tab):
         else:
             self.DisplayMessage("  ERROR: Could not display the default sphere", 1)
             self.RngOpt.set('')
-
+    
     ''' ==================================================================================
     FUNCTION SelectFlexibleSideChains: Starts the flexible side-chain wizard
     ==================================================================================  '''               
@@ -503,10 +503,10 @@ class Config1(Tabs.Tab):
             self.DisplayMessage("  The default TargetFlex folder is used.", 2)
 
             TargetFlexPath = self.top.FlexAIDTargetFlexProject_Dir
-            
+        
         LoadPath = tkFileDialog.askopenfilename(filetypes=[('NRG TargetFlex file','*.nrgtf')],
                                                 initialdir=TargetFlexPath, title='Load a TargetFlex file')
-
+        
         if len(LoadPath) > 0:
 
             LoadPath = os.path.normpath(LoadPath)
@@ -543,6 +543,7 @@ class Config1(Tabs.Tab):
                 os.makedirs(TargetFlexPath)
 
             SaveFile = tkFileDialog.asksaveasfilename(initialdir=TargetFlexPath,
+                                                      filetypes=[('NRG TargetFlex file','*.nrgtf')],
                                                       title='Save the TargetFlex file', initialfile='default_targetflex',
                                                       defaultextension='.nrgtf')
             
@@ -554,10 +555,10 @@ class Config1(Tabs.Tab):
                     self.DisplayMessage("  ERROR: Could not save the file because you entered an ` name.", 2)
                     return
 
-                if self.top.ValidateSaveProject(Path, 'TargetFlex'):
+                if self.top.ValidateSaveProject(SaveFile, 'TargetFlex'):
                     self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
                     return
-
+                
                 try:
                     out = open(SaveFile, 'w')
                     pickle.dump(self.Vars.TargetFlex, out)
@@ -622,10 +623,10 @@ class Config1(Tabs.Tab):
     FUNCTION Btn_SaveConfBS_Clicked: Asks for user to save binding-site
     ==================================================================================  '''        
     def Btn_SaveConfBS_Clicked(self):
-
+                
         if self.top.ValidateWizardRunning():
             return
-
+        
         BindingSitePath = self.Get_BindingSitePath()
 
         if self.Vars.BindingSite.Type == 1 or (self.Vars.BindingSite.Type == 2 and self.Vars.BindingSite.Count_Cleft() > 0):
@@ -634,18 +635,17 @@ class Config1(Tabs.Tab):
                 os.makedirs(BindingSitePath)
 
             SaveFile = tkFileDialog.asksaveasfilename(initialdir=BindingSitePath,
+                                                      filetypes=[('NRG BindingSite','*.nrgbs')],
                                                       title='Save the BindingSite file', initialfile='default_bindingsite',
                                                       defaultextension='.nrgbs')
-            
             if len(SaveFile) > 0:
-
                 SaveFile = os.path.normpath(SaveFile)
-                    
+                
                 if General.validate_String(SaveFile, '.nrgbs', True, True, False):
                     self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                     return
-                    
-                if self.top.ValidateSaveProject(Path, 'BindingSite'):
+                        
+                if self.top.ValidateSaveProject(SaveFile, 'BindingSite'):
                     self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
                     return
 

@@ -656,7 +656,8 @@ class IOFile(Tabs.Tab):
         if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, objtype, state):
             return
         
-        Path = tkFileDialog.asksaveasfilename(initialdir=self.savepath, title='Save the PDB File',
+        Path = tkFileDialog.asksaveasfilename(filetypes=[('PDB File','*.pdb')],
+                                              initialdir=self.savepath, title='Save the PDB File',
                                               initialfile=ddlSelection, defaultextension='.pdb')
         
         if len(Path) > 0:
@@ -752,7 +753,8 @@ class IOFile(Tabs.Tab):
         if ddlSelection == '' or self.Validate_ObjectSelection(ddlSelection, 'Ligand', state):
             return
         
-        LigandPath = tkFileDialog.asksaveasfilename(initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', 
+        LigandPath = tkFileDialog.asksaveasfilename(filetypes=[('PDB File','*.pdb')],
+                                                    initialdir=self.top.FlexAIDLigandProject_Dir, title='Save the PDB File', 
                                                     initialfile=ddlSelection, defaultextension='.pdb')
         
         if len(LigandPath) > 0:

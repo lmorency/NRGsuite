@@ -422,7 +422,9 @@ class Parse(threading.Thread):
             PrevRMSD = self.top.dictSimData[TOP+1][2]
         except:
             PrevRMSD = 'N/A'
-            
+        
+        print "UPDATE DATA LIST!"
+        
         try:
             
             #Get index position of energy column
