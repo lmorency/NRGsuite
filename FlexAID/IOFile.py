@@ -76,12 +76,14 @@ class IOFile(Tabs.Tab):
     ATOM_INDEX = 90000
     RESIDUE_NUMBER = 9999
     
-    SupportedFormats = [ ('All supported formats', ('*.pdb','*.mol','*.mol2','*.sdf','*.smi')),
-                         ('PDB File','*.pdb'),
-                         ('MOL File','*.mol'),
-                         ('MOL2 File','*.mol2'),
-                         ('SDF File','*.sdf'),
-                         ('SMI File','*.smi') ]
+    LigandSupportedFormats = [ ('All supported formats', ('*.pdb','*.mol','*.mol2','*.sdf','*.smi')),
+                               ('PDB File','*.pdb'),
+                               ('MOL File','*.mol'),
+                               ('MOL2 File','*.mol2'),
+                               ('SDF File','*.sdf'),
+                               ('SMI File','*.smi') ]
+
+    TargetSupportedFormats = [ ('PDB File','*.pdb') ]
     
     SmilesLigand = 'SMILES_LIGAND__'
     ReferenceLigand = 'REFERENCE_LIGAND__'
@@ -707,13 +709,25 @@ class IOFile(Tabs.Tab):
             self.DisplayMessage('  Successfully saved and loaded the object:  ' + self.VarName.get() + "'", 0)
         
     ''' ==================================================================================
+    FUNCTIONS Get_SupportedFormats: Returns the supported formats depending on the object type
+    ================================================================================== '''        
+    def Get_SupportedFormats(self, objtype):
+    
+        if objtype == 'Ligand':
+            return self.LigandSupportedFormats
+        else:
+            return self.TargetSupportedFormats
+
+    ''' ==================================================================================
     FUNCTIONS Load Ligand and Protein and display the filename in the textbox
     ================================================================================== '''        
     def Btn_LoadObject_Clicked(self, objtype):
         
         self.Set_Object_Variables(objtype)
-
-        Path = tkFileDialog.askopenfilename(filetypes=self.SupportedFormats,
+        
+        SupportedFormats = self.Get_SupportedFormats(objtype)
+        
+        Path = tkFileDialog.askopenfilename(filetypes=SupportedFormats,
                                             initialdir=self.savepath, title='Select a file to Load')
 
         if len(Path) > 0:
