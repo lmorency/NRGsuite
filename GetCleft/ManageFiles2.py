@@ -60,7 +60,7 @@ class Manage:
             Cleft.CleftFile = CleftFile
             Cleft.CleftName = CleftName
             Cleft.UTarget = Target.upper()
-            #Cleft.Set_CleftMD5()
+            Cleft.Set_CleftMD5()
 
             self.top.Default.TempBindingSite.Add_Cleft(Cleft)
 

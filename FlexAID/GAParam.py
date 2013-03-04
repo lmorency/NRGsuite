@@ -85,7 +85,7 @@ class GAParam(Tabs.Tab):
         self.RepDup.set(0)
         self.RepSS.set('500')
         self.RepB.set('1.0')
-        self.UseAGA.set(0)
+        self.UseAGA.set(1)
         self.AGAk1.set('0.95')
         self.AGAk2.set('0.10')
         self.AGAk3.set('0.95')
@@ -253,12 +253,14 @@ class GAParam(Tabs.Tab):
 
         Label(fOperatorsLine1, text='Genetic operators', font=self.top.font_Title).pack(side=LEFT)
         Label(fOperatorsLine2, text='Crossover rate:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
-        self.inputCR = Entry(fOperatorsLine2, width=5, background='white', justify=CENTER, textvariable=self.CrossRate, font=self.top.font_Text)
+        self.inputCR = Entry(fOperatorsLine2, width=5, background='white', justify=CENTER,
+                             textvariable=self.CrossRate, font=self.top.font_Text, state='disabled')
         self.inputCR.pack(side=RIGHT, anchor=NW)
         self.ValidCrossRate = [1, False, self.inputCR]
         
         Label(fOperatorsLine3, text='Mutation rate:', font=self.top.font_Text).pack(side=LEFT, anchor=W) 
-        self.inputMR = Entry(fOperatorsLine3, width=5, background='white', justify=CENTER, textvariable=self.MutaRate, font=self.top.font_Text)
+        self.inputMR = Entry(fOperatorsLine3, width=5, background='white', justify=CENTER,
+                             textvariable=self.MutaRate, font=self.top.font_Text, state='disabled')
         self.inputMR.pack(side=RIGHT, anchor=W)
         self.ValidMutaRate = [1, False, self.inputMR]
 
@@ -272,7 +274,7 @@ class GAParam(Tabs.Tab):
         fAGALine2.pack(side=TOP, fill=X, padx=5, pady=2)
 
         Label(fAGALine1, text='Adaptive operators:', font=self.top.font_Text).pack(side=LEFT)
-        Checkbutton(fAGALine1, text='Use', variable=self.UseAGA, font=self.top.font_Text).pack(side=RIGHT)
+        Checkbutton(fAGALine1, text=' Use', variable=self.UseAGA, font=self.top.font_Text).pack(side=RIGHT)
 
         self.entAGAk4 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk4, font=self.top.font_Text)
         self.entAGAk4.pack(side=RIGHT, anchor=W)
@@ -373,7 +375,7 @@ class GAParam(Tabs.Tab):
         Label(fRepModelLine3, text='Ratio.:', font=self.top.font_Text).pack(side=RIGHT)
         self.ValidRepB = [1, False, self.entB]
         
-        Checkbutton(fRepModelLine4, text='Allow duplicates', variable=self.RepDup, font=self.top.font_Text).pack(side=LEFT)
+        Checkbutton(fRepModelLine4, text=' Allow duplicates', variable=self.RepDup, font=self.top.font_Text).pack(side=LEFT)
         
         self.Validator = [self.ValidNbGen, self.ValidNbGenFreq, self.ValidNbChrom, self.ValidNbTopChrom,
                           self.ValidCrossRate, self.ValidMutaRate, self.ValidFitAlpha, self.ValidFitPeak,

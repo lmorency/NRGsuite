@@ -319,6 +319,7 @@ class IOFile(Tabs.Tab):
     ================================================================================== '''    
     def Reset_Ligand(self):
         
+        self.Gen3D.set(0)
         self.Anchor.set(-1)
 
         self.Vars.dictAtomTypes.clear()
@@ -348,7 +349,8 @@ class IOFile(Tabs.Tab):
         try:
             self.ProtNameTrace = self.ProtName.trace('w',self.Protein_Toggle)
             self.LigandNameTrace = self.LigandName.trace('w',self.Ligand_Toggle)
-            self.AtomTypesTrace = self.AtomTypes.trace('w',self.AtomTypes_Toggle)            
+            self.AtomTypesTrace = self.AtomTypes.trace('w',self.AtomTypes_Toggle)
+            self.Gen3DTrace = self.Gen3D.trace('w',self.Gen3D_Toggle)
         except:
             pass
     
@@ -361,6 +363,7 @@ class IOFile(Tabs.Tab):
             self.ProtName.trace_vdelete('w',self.ProtNameTrace)
             self.LigandName.trace_vdelete('w',self.LigandNameTrace)
             self.AtomTypes.trace_vdelete('w',self.AtomTypesTrace)
+            self.Gen3D.trace_vdelete('w',self.Gen3DTrace)
         except:
             pass
     
@@ -382,6 +385,13 @@ class IOFile(Tabs.Tab):
         # Need for processing the ligand again if atom typing is changed
         self.Processed = False
 
+    ''' ==================================================================================
+    FUNCTION Gen3D_Toggle: Toggles the generation of a 3D molecule
+    =================================================================================  '''    
+    def Gen3D_Toggle(self, *args):
+        
+        self.Processed = False        
+        
     ''' ==================================================================================
     FUNCTION Frame: Generate the Input / Output Files frame in the the middle 
                     frame section    
@@ -499,7 +509,7 @@ class IOFile(Tabs.Tab):
                             textvariable=self.LigandName, font=self.font_Text, justify=CENTER, width=20)
         EntLigand.pack(side=LEFT, fill=X)
         EntLigand.config(state='disabled')
-        Checkbutton(fPDBligandLine2, variable=self.Gen3D, text='Generate 3D conformation',
+        Checkbutton(fPDBligandLine2, variable=self.Gen3D, text=' Generate 3D conformation',
             font=self.font_Text, justify=RIGHT).pack(side=LEFT)
 
         #==================================================================================
@@ -599,7 +609,7 @@ class IOFile(Tabs.Tab):
             
             elif objtype == 'Ligand' and n > Constants.MAX_LIGAND_ATOMS:
                 self.DisplayMessage("  ERROR for object/selection '" + sele + "': The ligand must have a maximum of (" + 
-                                    Constants.MAX_LIGAND_ATOMS + ') atoms', 1)
+                                    str(Constants.MAX_LIGAND_ATOMS) + ") atoms", 1)
                 return 1
             
         except:
@@ -678,6 +688,11 @@ class IOFile(Tabs.Tab):
 
                 cmd.load(Path, Name, state=1)
                 cmd.refresh()
+                
+                if ddlSelection != Name:
+                    # as if the object was renamed, delete the object
+                    cmd.delete(ddlSelection)
+                
             except:
                 self.DisplayMessage("  ERROR: An error occured while saving the object.", 1)
                 return
@@ -721,7 +736,7 @@ class IOFile(Tabs.Tab):
                 
                 if self.Validate_ObjectSelection(Name, objtype, 1):
                     return
-                    
+                                        
             except:
                 self.DisplayMessage("  ERROR: An error occured while loading the file.", 1)
                 return
@@ -770,11 +785,15 @@ class IOFile(Tabs.Tab):
                 return
 
             try:
-                cmd.save(LigandPath, ddlSelection, state)                 # Save the Selection
+                cmd.save(LigandPath, ddlSelection, state)
                 LigandName = os.path.basename(os.path.splitext(LigandPath)[0])
 
                 cmd.extract(self.ExtractObject, ddlSelection)
                 cmd.set_name(self.ExtractObject, LigandName)
+                
+                if ddlSelection != LigandName:
+                    # as if the object was renamed, delete the object
+                    cmd.delete(ddlSelection)
                 
             except:
                 self.DisplayMessage("  ERROR: An error occured while extracting the ligand object.", 1)
@@ -791,6 +810,12 @@ class IOFile(Tabs.Tab):
     def Load_ProcConvLigand(self, LigandFile, ObjectName, Zoom):
         
         Error = 0
+        
+        try:
+            cmd.delete(ObjectName)
+            cmd.refresh()
+        except:
+            pass
         
         auto_zoom = cmd.get("auto_zoom")
         

@@ -225,7 +225,12 @@ class Config2(Tabs.Tab):
         #*         Ligand Translation/Rotation          *#
         #************************************************#
 
-        self.fTransRot = Frame(fC2Left)
+        fDOF = Frame(fC2Left, border=1, relief=RAISED)
+        fDOF.pack(fill=BOTH, expand=True, padx=5, pady=5)
+
+        Label(fDOF, text='Degrees of freedom', font=self.top.font_Title_H).pack(side=TOP, fill=X, expand=True, pady=2)
+
+        self.fTransRot = Frame(fDOF)
         self.fTransRot.pack(fill=X, side=TOP, padx=5, pady=5)
         fTransRotLine1 = Frame(self.fTransRot)
         fTransRotLine1.pack(side=TOP, fill=X, padx=5, pady=2)
@@ -235,14 +240,14 @@ class Config2(Tabs.Tab):
         fTransRotLine3.pack(side=TOP, fill=X, padx=5, pady=2)
 
         Label(fTransRotLine1, text='Ligand translation and rotation', font=self.top.font_Title).pack(side=TOP, anchor=W)
-        Checkbutton(fTransRotLine2, text='Translational degrees of freedom', variable=self.IntTranslation, font=self.top.font_Text).pack(fill=X, side=LEFT)
-        Checkbutton(fTransRotLine3, text='Rotational degrees of freedom', variable=self.IntRotation, font=self.top.font_Text).pack(fill=X, side=LEFT)        
+        Checkbutton(fTransRotLine2, text=' Include translational', variable=self.IntTranslation, font=self.top.font_Text).pack(fill=X, side=LEFT)
+        Checkbutton(fTransRotLine3, text=' Include rotational', variable=self.IntRotation, font=self.top.font_Text).pack(fill=X, side=LEFT)        
 
         #************************************************#
         #*             Ligand Flexible Bonds            *#
         #************************************************#
 
-        self.fBonds = Frame(fC2Left)
+        self.fBonds = Frame(fDOF)
         self.fBonds.pack(fill=X, side=TOP, padx=5, pady=5)
         fBondsLine1 = Frame(self.fBonds)
         fBondsLine1.pack(side=TOP, fill=X, padx=5, pady=2)
@@ -261,7 +266,7 @@ class Config2(Tabs.Tab):
         #************************************************#
 
         self.fSAT = Frame(fC2Left)
-        self.fSAT.pack(fill=X, side=TOP, padx=5, pady=5)
+        #self.fSAT.pack(fill=X, side=TOP, padx=5, pady=5)
         fSATLine1 = Frame(self.fSAT)
         fSATLine1.pack(side=TOP, fill=X, padx=5, pady=2)
         fSATLine2 = Frame(self.fSAT)
@@ -285,7 +290,7 @@ class Config2(Tabs.Tab):
         fRMSDLine2.pack(side=TOP, fill=X, padx=5, pady=2)
         
         Label(fRMSDLine1, text='RMSD structure', font=self.top.font_Title).pack(side=LEFT,anchor=W)        
-        Checkbutton(fRMSDLine2, text='Ligand pose as reference', variable=self.UseReference, font=self.top.font_Text).pack(side=LEFT)
+        Checkbutton(fRMSDLine2, text=' Ligand pose as reference', variable=self.UseReference, font=self.top.font_Text).pack(side=LEFT)
 
         #************************************************#
         #*               Add Constraints                *#

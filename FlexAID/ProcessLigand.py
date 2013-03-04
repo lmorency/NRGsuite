@@ -68,20 +68,25 @@ class ProcLig:
         
         self.FlexAID.DisplayMessage("  Executing Process Ligand...", 0)
         
-        if not self.process():
-        
-            if self.ConvertOnly:
-                self.FlexAID.DisplayMessage("  The ligand was converted successfully", 0)
+        if not self.Copy_LigandFile():
+            
+            if not self.process():
+            
+                if self.ConvertOnly:
+                    self.FlexAID.DisplayMessage("  The ligand was converted successfully", 0)
+                else:
+                    self.FlexAID.DisplayMessage("  The ligand was processed successfully", 0)
+
             else:
-                self.FlexAID.DisplayMessage("  The ligand was processed successfully", 0)
+                self.FlexAID.ProcessError = True
+
+                if self.ConvertOnly:
+                    self.FlexAID.DisplayMessage("  ERROR: The ligand could not be converted", 1)
+                else:
+                    self.FlexAID.DisplayMessage("  ERROR: The ligand could not be processed", 1)
 
         else:
-            self.FlexAID.ProcessError = True
-
-            if self.ConvertOnly:
-                self.FlexAID.DisplayMessage("  ERROR: The ligand could not be converted", 1)
-            else:
-                self.FlexAID.DisplayMessage("  ERROR: The ligand could not be processed", 1)
+            self.FlexAID.DisplayMessage("  ERROR: The ligand could not be copied to temp folder", 1)
 
         self.top.ProcessLigand(False, 0, '', 0, False, False, 0)
         self.FlexAID.ProcessRunning = False
@@ -94,7 +99,7 @@ class ProcLig:
         # Set the command-line arguments to process ligand
         commandline = '"' + self.FlexAID.Process_LigandExecutable + '"'
 
-        commandline += ' -f ' + '"' + self.LigandPath + '"'
+        commandline += ' -f ' + '"' + self.TmpLigandPath + '"'
         commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG') + '"'
         
         if self.Gen3D:
@@ -155,6 +160,20 @@ class ProcLig:
             return 0
         
         return 1
+
+    def Copy_LigandFile(self):
+
+        try:
+            copy(self.LigandPath, self.FlexAID.FlexAIDSimulationProject_Dir)            
+        except IOError:
+            return 1
+        except Error:
+            pass
+        
+        self.TmpLigandPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, os.path.split(self.LigandPath)[1])
+
+        return 0
+    
 
     '''
     @summary: set_environment sets a environment variable

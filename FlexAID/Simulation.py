@@ -132,7 +132,7 @@ class Parse(threading.Thread):
         self.dictFlexBonds = self.FlexAID.IOFile.Vars.dictFlexBonds
         self.RngOpt = self.FlexAID.Config1.RngOpt.get()
         self.NbTotalGen = int(self.FlexAID.GAParam.NbGen.get())
-        self.DefaultDisplay = self.top.SimDefDisplay.get()
+        self.DefaultDisplay = self.top.SimLigDisplay.get()
 
         self.Translation = self.FlexAID.Config2.IntTranslation.get()
         self.Rotation = self.FlexAID.Config2.IntRotation.get()
@@ -267,15 +267,15 @@ class Parse(threading.Thread):
                                 # Update energy/fitness table
                                 self.queue.put(lambda: self.top.update_DataList())
 
-                                self.top.Refresh_LigDisplay()
-                                self.top.Refresh_CartoonDisplay()
+                                self.top.Modify_LigDisplay()
+                                self.top.Modify_Display(self.top.SimCartoonDisplay, 'cartoon')
+                                self.top.Modify_Display(self.top.SimLinesDisplay, 'lines')
                         
                         else:
                             self.UpdateDataList(Line, self.TOP, 0, None)
                             
                             if (self.TOP+1) == self.NbTopChrom:
                                 self.queue.put(lambda: self.top.update_DataList())
-                        
                         
                         # Ready to read another file
                         if (self.TOP+1) == self.NbTopChrom:
@@ -422,9 +422,7 @@ class Parse(threading.Thread):
             PrevRMSD = self.top.dictSimData[TOP+1][2]
         except:
             PrevRMSD = 'N/A'
-        
-        print "UPDATE DATA LIST!"
-        
+                
         try:
             
             #Get index position of energy column

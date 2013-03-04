@@ -479,7 +479,7 @@ class CropCleft(Tabs.Tab):
                     Cleft.PartitionParent = self.Cleft
                     Cleft.Partition = True
                     Cleft.UTarget = self.Cleft.UTarget
-                    #Cleft.Set_CleftMD5()
+                    Cleft.Set_CleftMD5()
                     Cleft.Color = General.rgb_to_hex(partition_rgb)
                     
                     self.top.Default.TempBindingSite.Add_Cleft(Cleft)

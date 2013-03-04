@@ -66,8 +66,8 @@ class Config3(Tabs.Tab):
         self.UseDEE.set(0)
         self.IncludeHET.set(1)
         self.ExcludeHOH.set(1)
-
-        self.DEE_Clash_Threshold.set('0.50')
+        
+        self.DEE_Clash_Threshold.set('0.25')
         self.Permeability.set('0.1')
         
         if self.top.IOFile.AtomTypes.get() == 'Sobolev':
@@ -204,9 +204,9 @@ class Config3(Tabs.Tab):
         fHETLine3.pack(fill=X, padx=5, pady=2)
 
         Label(fHETLine1, text='HET groups', font=self.top.font_Title).pack(side=LEFT, anchor=W)
-        Checkbutton(fHETLine2, text='Include bound molecules', variable=self.IncludeHET, font=self.top.font_Text).pack(side=LEFT)
+        Checkbutton(fHETLine2, text=' Include bound molecules', variable=self.IncludeHET, font=self.top.font_Text).pack(side=LEFT)
         
-        self.chkHOH = Checkbutton(fHETLine3, text='Exclude water molecules', variable=self.ExcludeHOH, font=self.top.font_Text)
+        self.chkHOH = Checkbutton(fHETLine3, text=' Exclude water molecules', variable=self.ExcludeHOH, font=self.top.font_Text)
         self.chkHOH.pack(side=LEFT)
 
         #==================================================================================
@@ -228,10 +228,10 @@ class Config3(Tabs.Tab):
         #==================================================================================
         # Delta (variations of distances/angles)
         #==================================================================================
-        fSearchSpace = Frame(fC3Right, border=2, relief=RAISED)
+        fSearchSpace = Frame(fC3Right, border=1, relief=RAISED)
         fSearchSpace.pack(fill=BOTH, expand=True, padx=5, pady=5)
 
-        Label(fSearchSpace, text='Search space', font=self.top.font_Title).pack(side=TOP, fill=X, expand=True)
+        Label(fSearchSpace, text='Search space', font=self.top.font_Title_H).pack(side=TOP, fill=X, expand=True, pady=2)
         
         fDelta = Frame(fSearchSpace)#, bd=1, relief=SUNKEN)
         fDelta.pack(fill=X, side=TOP, padx=5, pady=5)
@@ -279,7 +279,7 @@ class Config3(Tabs.Tab):
         fDEELine4.pack(fill=X, side=TOP, padx=5, pady=2)
 
         Label(fDEELine1, text='Side-chain optimization', font=self.top.font_Title).pack(side=TOP, anchor=W)        
-        Checkbutton(fDEELine2, text='Dead-end elimination theorem', variable=self.UseDEE, font=self.top.font_Text).pack(side=LEFT)
+        Checkbutton(fDEELine2, text=' Dead-end elimination theorem', variable=self.UseDEE, font=self.top.font_Text).pack(side=LEFT)
         
         Label(fDEELine3, text='Clashing Threshold:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entDEE = Entry(fDEELine3, width=5, font=self.top.font_Text, textvariable=self.DEE_Clash_Threshold, state='disabled', justify=CENTER)
@@ -326,7 +326,7 @@ class Config3(Tabs.Tab):
     def Load_Message(self):
         
         self.DisplayMessage('', 0)
-        self.DisplayMessage('  FlexAID < Scoring Cfg > Menu.', 2)
+        self.DisplayMessage('  FlexAID < Scoring/Search Cfg > Menu.', 2)
         self.DisplayMessage('  INFO:   Set different options of the scoring function.', 2)
 
 

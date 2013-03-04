@@ -46,8 +46,9 @@ if __debug__:
 class SimulateVars(Vars.Vars):
     
     ResultsName = StringVar()
-    SimDefDisplay = StringVar()
+    SimLigDisplay = StringVar()
     SimCartoonDisplay = IntVar()
+    SimLinesDisplay = IntVar()
 
     def __init__(self):
         
@@ -63,18 +64,21 @@ class Simulate(Tabs.Tab):
 
         # vars class objects
         self.ResultsName = self.Vars.ResultsName
-        self.SimDefDisplay = self.Vars.SimDefDisplay
+        self.SimLigDisplay = self.Vars.SimLigDisplay
         self.SimCartoonDisplay = self.Vars.SimCartoonDisplay
-
+        self.SimLinesDisplay = self.Vars.SimLinesDisplay
+        
         self.Manage = ManageFiles.Manage(self)
     
     def Init_Vars(self):
         
         self.ResultsName.set('')
         self.ProgBarText.set('... / ...')
-        self.SimDefDisplay.set('sticks')
-        self.SimCartoonDisplay.set(0)
-
+        self.SimLigDisplay.set('sticks')
+        
+        self.SimCartoonDisplay.set(1)
+        self.SimLinesDisplay.set(0)
+        
         self.BarWidth = 0
         self.BarHeight = 0
 
@@ -221,13 +225,23 @@ class Simulate(Tabs.Tab):
         Label(fSim_DisplayLine1, text='Display options of TOP and RESULT objects', font=self.top.font_Title).pack(side=LEFT)
         
         Label(fSim_DisplayLine2, text='Ligand:', font=self.top.font_Text).pack(side=LEFT)
-        Radiobutton(fSim_DisplayLine2, text='Sticks', variable=self.SimDefDisplay, value='sticks', command=self.Click_RadioSIM, font=self.top.font_Text).pack(side=RIGHT)
-        Radiobutton(fSim_DisplayLine2, text='Spheres', variable=self.SimDefDisplay, value='spheres', command=self.Click_RadioSIM, font=self.top.font_Text).pack(side=RIGHT)
+        
+        Radiobutton(fSim_DisplayLine2, text='Sticks', variable=self.SimLigDisplay, value='sticks', 
+                    font=self.top.font_Text).pack(side=RIGHT)
+                    
+        Radiobutton(fSim_DisplayLine2, text='Spheres', variable=self.SimLigDisplay, value='spheres',
+                    font=self.top.font_Text).pack(side=RIGHT)
                         
         Label(fSim_DisplayLine3, text='Target:', font=self.top.font_Text).pack(side=LEFT)
-        #Checkbutton(fSim_DisplayLine3, text='Mesh', variable=self.SimMeshDisplay, command=self.Check_MeshSIM,font=self.top.font_Text).pack(side=RIGHT)
-        Checkbutton(fSim_DisplayLine3, text=' Cartoon', variable=self.SimCartoonDisplay, command=self.Check_CartoonSIM, font=self.top.font_Text).pack(side=RIGHT)
-                
+        
+        Checkbutton(fSim_DisplayLine3, text=' Cartoon', variable=self.SimCartoonDisplay, 
+                    command=lambda var=self.SimCartoonDisplay, display='cartoon': self.Modify_Display(var, display),
+                    font=self.top.font_Text).pack(side=RIGHT)
+                    
+        Checkbutton(fSim_DisplayLine3, text=' Lines', variable=self.SimLinesDisplay,
+                    command=lambda var=self.SimLinesDisplay, display='lines': self.Modify_Display(var, display),
+                    font=self.top.font_Text).pack(side=RIGHT)
+        
         return self.fSimulate
     
     ''' =============================================================================== 
@@ -290,7 +304,7 @@ class Simulate(Tabs.Tab):
         self.PymolColorList = Color.GetHeatColorList(int(self.top.GAParam.NbTopChrom.get()), False)
 
         self.Init_Table()
-        
+
         # START FLEXAID AS THREAD
         commandline =   '"%s" "%s" "%s" "%s"' % (   self.top.FlexAIDExecutable,
                                                     self.Manage.CONFIG,
@@ -328,8 +342,7 @@ class Simulate(Tabs.Tab):
 
         try:
             self.ResultsNameTrace = self.ResultsName.trace('w',self.ResultsName_Toggle)
-            self.SimDefDisplayTrace = self.SimDefDisplay.trace('w',self.Click_RadioSIM)
-            self.SimCartoonDisplayTrace = self.SimCartoonDisplay.trace('w',Check_CartoonSIM)
+            self.SimLigDisplayTrace = self.SimLigDisplay.trace('w',self.Modify_LigDisplay)
         except:
             pass    
 
@@ -340,8 +353,7 @@ class Simulate(Tabs.Tab):
 
         try:
             self.ResultsName.trace_vdelete('w',self.ResultsNameTrace)
-            self.SimDefDisplay.trace_vdelete('w',self.SimDefDisplayTrace)
-            self.SimCartoonDisplay.trace_vdelete('w',self.SimCartoonDisplayTrace)
+            self.SimLigDisplay.trace_vdelete('w',self.SimLigDisplayTrace)
         except:
             pass
 
@@ -433,7 +445,7 @@ class Simulate(Tabs.Tab):
         self.Table.Clear()
         
         for key in range(1, len(self.ColorList) + 1):
-            self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ], 
+            self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ],
                             [ self.ColorList[key-1], None, None, None, None ] )
                             
             self.dictSimData[key] = [ 0.0, 0.0, 'N/A' ]
@@ -611,86 +623,56 @@ class Simulate(Tabs.Tab):
                 
                 i += 1
         
-        self.Refresh_LigDisplay()
-        self.Refresh_CartoonDisplay()
+        self.Modify_LigDisplay()
+        self.Modify_Display(self.SimCartoonDisplay, 'cartoon')
+        self.Modify_Display(self.SimLinesDisplay, 'lines')
     
     ''' ==================================================================================
-    FUNCTION Click_RadioSIM: Change the way the ligand is displayed during a Simulation
+    FUNCTION Modify_LigDisplay: Modifies how the ligand is visualized in the TOP*/RESULT* objects
     ==================================================================================  '''
-    def Click_RadioSIM(self, *args):
+    def Modify_LigDisplay(self, *args):
         
-        self.Refresh_LigDisplay()
-    
-    ''' ==================================================================================
-    FUNCTION Refresh_LigDisplay: Refreshes the visual appearance of the ligand in TOP_* objects
-    ==================================================================================  '''
-    def Refresh_LigDisplay(self):
-    
-        if self.SimDefDisplay.get() == 'spheres':
-            try:
-                cmd.show('spheres', 'TOP_*__ & resn LIG')
-                cmd.refresh()
+        display = self.SimLigDisplay.get()
+        
+        try:
+            cmd.hide('everything', 'TOP_*__ & resn LIG')
+            cmd.refresh()
 
-                cmd.hide('sticks', 'TOP_*__ & resn LIG')
-                cmd.refresh()
-
-                cmd.show('spheres', 'RESULT_*__ & resn LIG')
-                cmd.refresh()
-
-                cmd.hide('sticks', 'RESULT_*__ & resn LIG')
-                cmd.refresh()
-
-            except:
-                pass
+            cmd.hide('everything', 'RESULT_*__ & resn LIG')
+            cmd.refresh()
             
-        elif self.SimDefDisplay.get() == 'sticks':
-            try:
-                cmd.hide('spheres', 'TOP_*__ & resn LIG')
-                cmd.refresh()
+            cmd.show(display, 'TOP_*__ & resn LIG')
+            cmd.refresh()
 
-                cmd.show('sticks', 'TOP_*__ & resn LIG')
-                cmd.refresh()
+            cmd.show(display, 'RESULT_*__ & resn LIG')
+            cmd.refresh()
 
-                cmd.hide('spheres', 'RESULT_*__ & resn LIG')
-                cmd.refresh()
-
-                cmd.show('sticks', 'RESULT_*__ & resn LIG')
-                cmd.refresh()
-                
-            except:
-                pass
+        except:
+            pass
+                        
+    ''' ==================================================================================
+    FUNCTION Modify_Display: Modifies how the target is visualized in the TOP*/RESULT* objects
+    ==================================================================================  '''
+    def Modify_Display(self, var, display):
     
-    ''' ==================================================================================
-    FUNCTION Check_CartoonSIM: Change the protein display adding or removing the cartoon
-    ==================================================================================  '''
-    def Check_CartoonSIM(self, *args):
-
-        self.Refresh_CartoonDisplay()
+        if var.get():
         
-    ''' ==================================================================================
-    FUNCTION Refresh_CartoonDisplay: Refreshes the visual appearance of the protein
-    ==================================================================================  '''
-    def Refresh_CartoonDisplay(self):
-
-        # Display the Cartoon
-        if self.SimCartoonDisplay.get():
             try:
-                cmd.show('cartoon', 'TOP_*__ & ! resn LIG')
+                cmd.show(display, 'TOP_*__ & ! resn LIG')
                 cmd.refresh()
 
-                cmd.show('cartoon', 'RESULT_*__ & ! resn LIG')
+                cmd.show(display, 'RESULT_*__ & ! resn LIG')
                 cmd.refresh()
                 
             except:
                 pass
             
         else:   
-            # Remove the Cartoon
             try:
-                cmd.hide('cartoon', 'TOP_*__ & ! resn LIG')
+                cmd.hide(display, 'TOP_*__ & ! resn LIG')
                 cmd.refresh()
 
-                cmd.hide('cartoon', 'RESULT_*__ & ! resn LIG')
+                cmd.hide(display, 'RESULT_*__ & ! resn LIG')
                 cmd.refresh()
             except:
                 pass                

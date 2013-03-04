@@ -65,11 +65,11 @@ class UpdateScreen:
 
         # start thread
         self.start()
-
+    
     def start(self):
     
         self.Update()
-
+    
     # Updates the PyMOL interface
     def Update(self):
         
@@ -157,7 +157,7 @@ class UpdateScreen:
                 cmd.refresh()
 
         except:
-            self.CriticalError("Could not edit view")
+            self.CriticalError("Could not refresh the visual display")
             return 1
 
         return 0
