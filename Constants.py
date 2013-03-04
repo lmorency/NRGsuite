@@ -22,6 +22,14 @@ from collections import defaultdict
 
 MAX_LIGAND_ATOMS = 100
 
+nAtoms = dict(zip(('VAL','LEU','ILE','MET', 
+                   'PHE','ASN','ASP','GLN',  
+                   'GLU','HIS','LYS','ARG', 
+                   'SER','THR','TYR','TRP', 
+                   'CYS'),
+                      (7,8,8,8,11,8,8,9,9,
+                       10,9,11,6,7,12,14,6)))
+
 nFlexBonds = dict(zip(('VAL','LEU','ILE','MET', 
                        'PHE','ASN','ASP','GLN',  
                        'GLU','HIS','LYS','ARG', 
@@ -70,3 +78,4 @@ setDihedrals = ({ 'VAL':['N','CA','CB','CG1'],
                   'TRP':['N','CA','CB','CG',
                          'CA','CB','CG','CD1'],
                   'CYS':['N','CA','CB','SG'] })
+                  

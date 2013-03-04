@@ -102,8 +102,8 @@ class anchor(Wizard):
             cmd.delete(self.LigDisplay)
             cmd.refresh()
 
-            cmd.delete(self.AtomDisplay)
-            cmd.refresh()
+            #cmd.delete(self.AtomDisplay)
+            #cmd.refresh()
             
             cmd.deselect()
             
@@ -114,11 +114,12 @@ class anchor(Wizard):
             self.FlexAID.WizardError = True
         
         self.FlexAID.WizardResult = self.AnchorAtom
-        self.top.AnchorRunning(False)
         self.FlexAID.ActiveWizard = None
 
         cmd.set_wizard()
         cmd.set_view(self.View)
+
+        self.top.AnchorRunning(False)
         
     #=======================================================================
     ''' Displays the ligand to change anchor '''

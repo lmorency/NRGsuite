@@ -768,7 +768,7 @@ class IOFile(Tabs.Tab):
             self.VarMD5.set(General.hashfile(self.VarPath.get()))
 
             self.DisplayMessage("  Successfully loaded the object: '" + self.VarName.get() + "'", 0)
-    
+        
     ''' ==================================================================================
     FUNCTIONS Btn_ExtractLigand_Clicked: Extracts the selection out of the current object
     ================================================================================== '''        

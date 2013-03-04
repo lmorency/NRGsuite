@@ -341,7 +341,9 @@ class UpdateScreen:
                     strSelectSC += "(resn " + Res + " & resi " + Num
                     if Chn != '-':
                         strSelectSC += " & chain " + Chn
-
+                    else:
+                        strSelectSC += " & chain ''"                    
+                    
                     strSelectSC += " & ! name C+O+N " + " & " + self.ProteinObj + " & present) or "
 
                     # Get Integer value from GA.
@@ -398,7 +400,9 @@ class UpdateScreen:
         AtomString  = "resn " + R + " & resi " + N
         if C != '-':
             AtomString += " & chain " + C
-            
+        else:
+            AtomString += " & chain ''"
+        
         AtomString += " & name " + Atom
         AtomString += " & " + self.ProteinObj
 

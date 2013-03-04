@@ -23,6 +23,7 @@ import os
 import tkFileDialog
 import Vars
 import Tabs
+import Constants
 import General
 import SphereObj
 import CleftObj
@@ -42,11 +43,12 @@ if __debug__:
 class Config1Vars(Vars.Vars):
 
     RngOpt = StringVar()
-    ResiduValue = StringVar()
+    ResidueValue = StringVar()
     defOptSphere = StringVar()
     defOptCleft = StringVar()
     defOptResidue = StringVar()
     SphereSize = DoubleVar()
+    FlexSCStatus = StringVar()
     TargetFlexName = StringVar()
     BindingSiteName = StringVar()
 
@@ -72,11 +74,12 @@ class Config1(Tabs.Tab):
 
         # vars class objects
         self.RngOpt = self.Vars.RngOpt
-        self.ResiduValue = self.Vars.ResiduValue
+        self.ResidueValue = self.Vars.ResidueValue
         self.defOptSphere = self.Vars.defOptSphere
         self.defOptCleft = self.Vars.defOptCleft
         self.defOptResidue = self.Vars.defOptResidue
         self.SphereSize = self.Vars.SphereSize
+        self.FlexSCStatus = self.Vars.FlexSCStatus
         self.TargetFlexName = self.Vars.TargetFlexName
         self.BindingSiteName = self.Vars.BindingSiteName
 
@@ -88,11 +91,13 @@ class Config1(Tabs.Tab):
         self.defOptCleft.set('')
         self.defOptResidue.set('')
         self.SphereSize.set(0.5)
-        self.ResiduValue.set('')
+        self.ResidueValue.set('')
         
         self.TargetFlexName.set('')
         self.BindingSiteName.set('')
-
+        
+        self.FlexSCStatus.set('No flexible side-chain(s) set')
+        
         self.Vars.TargetFlex.Clear_SideChain()
         self.Vars.BindingSite.Clear()
         
@@ -135,7 +140,7 @@ class Config1(Tabs.Tab):
     def After_Show(self):
         
         self.Btn_OptSphRefresh_Clicked()
-        self.Update_FlexSideChain_DDL()
+        #self.Update_FlexSideChain_DDL()
         self.Update_Clefts_DDL()
 
     ''' ==================================================================================
@@ -279,32 +284,44 @@ class Config1(Tabs.Tab):
         #==================================================================================
         self.fFlexSC = Frame(fProtFlex)
         self.fFlexSC.pack(side=TOP, fill=X, padx=5, pady=5)
-        
+
         fFlexSCLine1 = Frame(self.fFlexSC)
         fFlexSCLine1.pack(fill=X, side=TOP)
 
-        fFlexSCLine2 = Frame(self.fFlexSC)
-        fFlexSCLine2.pack(fill=X, side=TOP)
+        self.fFlexSCLeft = Frame(self.fFlexSC)
+        self.fFlexSCLeft.pack(side=LEFT, padx=5, expand=True, fill=BOTH)
+        self.fFlexSCRight = Frame(self.fFlexSC)
+        self.fFlexSCRight.pack(side=RIGHT, padx=5, expand=True, fill=BOTH)
 
-        fFlexSCLine3 = Frame(self.fFlexSC)
-        fFlexSCLine3.pack(fill=X, side=TOP)
+        fFlexSCLeftLine1 = Frame(self.fFlexSCLeft)
+        fFlexSCLeftLine1.pack(fill=X, side=TOP)
+        fFlexSCLeftLine2 = Frame(self.fFlexSCLeft)
+        fFlexSCLeftLine2.pack(fill=X, side=TOP)
 
+        fFlexSCRightLine1 = Frame(self.fFlexSCRight)
+        fFlexSCRightLine1.pack(fill=X, side=TOP)
+        fFlexSCRightLine2 = Frame(self.fFlexSCRight)
+        fFlexSCRightLine2.pack(fill=X, side=TOP)
+        
         Label(fFlexSCLine1, text='Side-chain flexibility', font=self.top.font_Title).pack(side=TOP,fill=X)
-        Label(fFlexSCLine2, text='Residue name (e.g. ALA21A):', font=self.top.font_Text, justify=LEFT).pack(side=LEFT, anchor=W)
-        self.EntryResidu = Entry(fFlexSCLine2, textvariable=self.ResiduValue, background='white', width=10, justify=CENTER, font=self.top.font_Text)
-        self.EntryResidu.pack(side=LEFT, anchor=E)
+        
+        Button(fFlexSCLeftLine1, text='Add/Delete flexible side-chains', font=self.top.font_Text,
+               command=self.SelectFlexibleSideChains, width=40).pack(side=TOP, anchor=NW, expand=True, fill=X)
+               
+        Entry(fFlexSCLeftLine2, text='', state='disabled', textvariable=self.FlexSCStatus, font=self.top.font_Text, 
+                disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT,anchor=NW,expand=True, fill=X)
+        
+        #Button(fFlexSCLine3, text='Clear', command=self.Btn_DelAllResidu_Clicked, font=self.top.font_Text).pack(side=RIGHT)
+        #Button(fFlexSCLine3, text='Delete', command=self.Btn_DelResidu_Clicked, font=self.top.font_Text).pack(side=RIGHT)
 
-        Button(fFlexSCLine2, text='Add', command=self.Btn_AddResidu_Clicked, font=self.top.font_Text).pack(side=LEFT)        
-        Button(fFlexSCLine2, text='Add from PyMOL', command=self.SelectFlexibleSideChains, font=self.top.font_Text).pack(side=LEFT)
+        Button(fFlexSCRightLine1, text='Enter', command=self.Btn_EnterResidue_Clicked, font=self.top.font_Text).pack(side=RIGHT)
+        
+        self.EntryResidu = Entry(fFlexSCRightLine1, textvariable=self.ResidueValue, background='white', width=10, justify=CENTER, font=self.top.font_Text)
+        self.EntryResidu.pack(side=RIGHT, anchor=E)
+        
+        Label(fFlexSCRightLine1, text='Residue code (e.g. ALA31A):', font=self.top.font_Text, justify=LEFT).pack(side=RIGHT, anchor=W)
 
-        Label(fFlexSCLine3, text='Flexible side-chains', width=30, font=self.top.font_Text).pack(side=LEFT, anchor=W)                
-        optionTuple = '',
-        self.optMenuWidgetRES = apply(OptionMenu, (fFlexSCLine3, self.defOptResidue) + optionTuple)
-        self.optMenuWidgetRES.config(width=10, bg='white', font=self.top.font_Text)
-        self.optMenuWidgetRES.pack(side=LEFT, anchor=NE, padx=4)
-        Button(fFlexSCLine3, text='Delete', command=self.Btn_DelResidu_Clicked, font=self.top.font_Text).pack(side=LEFT)
-        Button(fFlexSCLine3, text='Clear', command=self.Btn_DelAllResidu_Clicked, font=self.top.font_Text).pack(side=LEFT)
-                    
+        '''
         #==================================================================================
         # Normal-modes
         #==================================================================================
@@ -319,6 +336,7 @@ class Config1(Tabs.Tab):
         
         Label(fNMrow1, text='Normal Modes', font=self.top.font_Title).pack(side=LEFT)
         Label(fNMrow2, text='Upcoming feature...', width=30, font=self.top.font_Text_I).pack(side=LEFT, anchor=W)
+        '''
         
         return self.fConfig
     
@@ -461,8 +479,15 @@ class Config1(Tabs.Tab):
         else:
             self.Enable_Frame()
             
-            self.Update_FlexSideChain_DDL()
-
+            #self.Update_FlexSideChain_DDL()
+            
+            if self.top.WizardResult:
+                Status = '(' + str(self.top.WizardResult) + ') flexible side-chain(s) set'
+            else:
+                Status = 'No flexible side-chain(s) set'
+                
+            self.FlexSCStatus.set(Status)
+            
     ''' ==================================================================================
     FUNCTION Update_FlexSideChain_DDL: Updates the drop-down-list meny of flex sc.
     ==================================================================================  '''           
@@ -476,7 +501,7 @@ class Config1(Tabs.Tab):
             Residue = res
 
         self.defOptResidue.set(Residue)
-
+    
     ''' ==================================================================================
     FUNCTION Update_Clefts_DDL: Updates the drop-down-list of clefts
     ==================================================================================  '''           
@@ -520,7 +545,7 @@ class Config1(Tabs.Tab):
                 
                 if TargetFlex.Count_SideChain() > 0: # or normal modes
                     self.Vars.TargetFlex = TargetFlex
-                    self.Update_FlexSideChain_DDL()
+                    #self.Update_FlexSideChain_DDL()
 
                     self.TargetFlexName.set(os.path.basename(os.path.splitext(LoadPath)[0]))
                 else:
@@ -664,54 +689,68 @@ class Config1(Tabs.Tab):
             self.DisplayMessage("  No clefts or sphere to save as 'binding-site'", 2)
 
     ''' ==================================================================================
-    FUNCTION Btn_AddResidu_Clicked: Add a residue name in the Flexible side chain ddl.
+    FUNCTION Validate_EnterResidue: Validates the residue code
     ==================================================================================  '''           
-    def Btn_AddResidu_Clicked(self):
+    def Validate_EnterResidue(self, residue):
+                
+        res = residue[0:3]
+        num = residue[3:(len(residue)-1)]
+        chn = residue[(len(residue)-1):len(residue)]
+
+        ProtName = self.top.IOFile.ProtName.get()
         
-        res = self.ResiduValue.get()
-        resn = res[0:3]
-
-        # Verify if the residue is in the list of residues and already in the ddl
-        if self.listResidues.count(res) != 0:
-
-            if resn != 'ALA' and resn != 'GLY' and resn != 'PRO':
-
-                self.Vars.TargetFlex.Add_SideChain(res)
-                self.Update_FlexSideChain_DDL()
-                self.ResiduValue.set('')
-                self.EntryResidu.config(bg=self.top.Color_White)
-
-            else:
-                self.DisplayMessage("Invalid residue entered (ALA/GLY/PRO do not have flexible bonds)", 2)
-                self.EntryResidu.config(bg=self.top.Color_Red)                
-
+        selString = ' resn ' + res
+        selString += ' & resi ' + num
+        
+        if chn != '-':
+            selString += ' & chain ' + chn
         else:
-            self.DisplayMessage("Invalid residue entered (you need a '-' chain identifier when no chain is provided)", 2)
-            self.EntryResidu.config(bg=self.top.Color_Red)
+            selString += ' & chain \'\''
+        
+        selString += ' & ! name H*'
+        selString += ' & ! name OXT'
+        
+        selString += ' & ' + ProtName
+        
+        try:
+            n = cmd.count_atoms(selString, state=1)
+        except:
+            return "An unexpected error occured while validating the residue."
+        
+        if res == 'GLY' or res == 'ALA' or res == 'PRO':
+            return "Could not validate the residue: The residue does not have flexible bonds."
+        elif res not in Constants.nAtoms:
+            return "Could not validate the residue: The residue is unknown."
+        elif n == 0:
+            return "Could not validate the residue: No such residue."
+        elif n < Constants.nAtoms[res]:
+            return "Could not validate the residue: The residue is missing atoms."
+        elif n > Constants.nAtoms[res]:
+            return "Could not validate the residue: The residue has too many atoms."
+        
+        return ""
         
     ''' ==================================================================================
-    FUNCTION Btn_DelResidu_Clicked: Delete a residue name in the drop-down-list of flex. sc.
-    ==================================================================================  '''        
-    def Btn_DelResidu_Clicked(self):
+    FUNCTION Btn_EnterResidue_Clicked: Add a residue name in the Flexible side chain ddl.
+    ==================================================================================  '''           
+    def Btn_EnterResidue_Clicked(self):
         
-        OptResidue = self.defOptResidue.get()
-
-        if OptResidue != '':
-
-            Index = self.optMenuWidgetRES["menu"].index(OptResidue)
-            self.optMenuWidgetRES["menu"].delete(Index)
-
-            self.Vars.TargetFlex.Remove_SideChain(OptResidue)
-            self.Update_FlexSideChain_DDL()
-
-    ''' ==================================================================================
-    FUNCTION Btn_DelAllResidu_Clicked: Delete all residues in the DDL
-    ==================================================================================  '''        
-    def Btn_DelAllResidu_Clicked(self):
+        Residue = self.ResidueValue.get()
         
-        self.Vars.TargetFlex.Clear_SideChain()
-        self.Update_FlexSideChain_DDL()
+        Error = self.Validate_EnterResidue(Residue)
         
+        if Error:
+            self.DisplayMessage(Error, 2)
+            self.EntryResidu.config(bg=self.top.Color_Red)                
+        else:
+            self.Vars.TargetFlex.Add_SideChain(Residue)
+
+            self.ResidueValue.set('')
+            self.EntryResidu.config(bg=self.top.Color_White)
+
+            Status = '(' + str(self.Vars.TargetFlex.Count_SideChain()) + ') flexible side-chain(s) set'
+            self.FlexSCStatus.set(Status)
+                        
     ''' ==================================================================================
     FUNCTION Highlight_RngOpt: Highlight with a grey bar the RngOpt selected
     ==================================================================================  '''       

@@ -297,7 +297,9 @@ class constraint(Wizard):
             leftsel = 'resn ' + atom1[1] + ' & resi ' + atom1[2]
             if atom1[3] != '-':
                 leftsel += ' & chain ' + atom1[3]
-                
+            else:
+                leftsel += ' & chain \'\''
+            
             obj = self.Get_Prot_or_Lig(leftsel)
             if not obj:
                 self.ErrorStatus = [ "You can only select atoms from the protein or the constraint ligand objects. Try again." ]
@@ -308,6 +310,8 @@ class constraint(Wizard):
                 rightsel = 'resn ' + atom2[1] + ' & resi ' + atom2[2]
                 if atom2[3] != '-':
                     rightsel += ' & chain ' + atom2[3]
+                else:
+                    rightsel += ' & chain \'\''
                     
                 obj = self.Get_Prot_or_Lig(rightsel)
                 if not obj:

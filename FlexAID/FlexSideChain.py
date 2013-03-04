@@ -35,10 +35,9 @@ import General_cmd
 
 class flexSC(Wizard):
 
-    FlexSCDisplay = 'FLEXIBLE_SIDE_CHAINS__'   
-    ResidueDisplay = 'HIGHLIGHT_RESIDUE__'   
-    BackboneDisplay = 'BACKBONE_ATOMS__'
-
+    FlexSCDisplay = 'FLEXIBLE_SIDE_CHAINS__'
+    ResidueDisplay = 'HIGHLIGHT_RESIDUE__'
+    
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
@@ -112,6 +111,12 @@ class flexSC(Wizard):
         
         selString = ''
 
+        try:
+            cmd.delete(self.FlexSCDisplay)
+            cmd.refresh()
+        except:
+            pass
+        
         for sc in self.TargetFlex.listSideChain:
             
             resn = sc[0:3]
@@ -129,8 +134,8 @@ class flexSC(Wizard):
                 selString += ' & c. ' + str(chain)
 
             selString += ' & ' + self.ProtName
-            
-            
+        
+        
         if selString != '' and self.highlight_FlexibleSC(selString):
             return 1
 
@@ -141,33 +146,48 @@ class flexSC(Wizard):
                                    DDL in FlexAID '''
     #=======================================================================       
     def btn_AddResidue(self):
-        
+
         self.TargetFlex.Add_SideChain(self.ResidueName)
 
-        self.ResidueName = '...'
         self.show_SelectedSC()
-
-        cmd.delete(self.ResidueDisplay)
-        cmd.refresh()
-
-        cmd.refresh_wizard()
-            
+        self.btn_Reset()
+        
     #=======================================================================
     ''' Button Add Residue Clicked: Add the residue in the Flexible Side-Chains
                                    DDL in FlexAID '''
     #=======================================================================       
     def btn_DelResidue(self):
-        
+                
         self.TargetFlex.Remove_SideChain(self.ResidueName)
-
-        self.ResidueName = '...'
+        
         self.show_SelectedSC()
+        self.btn_Reset()
 
-        cmd.delete(self.ResidueDisplay)
-        cmd.refresh()
+    #=======================================================================
+    ''' Button Clear Residues Clicked: Clears the side chains list '''
+    #=======================================================================       
+    def btn_ClearResidue(self):
+                
+        self.TargetFlex.Clear_SideChain()
+        
+        self.show_SelectedSC()
+        self.btn_Reset()
+        
+    #=======================================================================
+    ''' Button Reset Residues Clicked: Resets the highlighted '''
+    #=======================================================================       
+    def btn_Reset(self):
+        
+        self.ResidueName = '...'
+
+        try:
+            cmd.delete(self.ResidueDisplay)
+            cmd.refresh()
+        except:
+            pass
 
         cmd.refresh_wizard()
-     
+        
     #=======================================================================
     ''' Display a message in the interface '''
     #=======================================================================
@@ -192,19 +212,18 @@ class flexSC(Wizard):
             if chain == '':
                 chain = '-'
 
-            if resn != 'VAL' and resn != 'LEU' and resn != 'MET' and resn != 'ILE' and \
-               resn != 'ASN' and resn != 'CYS' and resn != 'SER' and resn != 'THR' and \
-               resn != 'GLN' and resn != 'ASP' and resn != 'GLU' and resn != 'LYS' and \
-               resn != 'ARG' and resn != 'HIS' and resn != 'PHE' and resn != 'TYR' and \
-               resn != 'TRP':
-                
-                self.ErrorStatus = [ "You can only selected side-chains with at least one dihedral angle." ]
+            self.ResidueName = resn + str(resi) + chain
+            
+            Error = self.top.Validate_EnterResidue(self.ResidueName)
+            
+            if Error != '':
+                self.ErrorStatus = [ Error ]
+                self.btn_Reset()
                 
             else:
-
+                self.ErrorStatus = [ ]
                 self.highlight_Residue(name)
-                self.ResidueName = resn + str(resi) + chain
-
+        
         cmd.deselect()
         cmd.refresh_wizard()
 
@@ -214,11 +233,13 @@ class flexSC(Wizard):
     def get_panel(self):
 
         return [
-         [ 1, '* Flexible Side-Chains *',''],
+         [ 1, '* Flexible Side-chains *',''],
          [ 3, self.PanelResidue + self.ResidueName,''],
-         [ 2, 'Add the Residue','cmd.get_wizard().btn_AddResidue()'],
-         [ 2, 'Delete the Residue','cmd.get_wizard().btn_DelResidue()'],       
-         [ 2, 'Done','cmd.get_wizard().btn_Done()'],         
+         [ 2, 'Add the side-chain','cmd.get_wizard().btn_AddResidue()'],
+         [ 2, 'Delete the side-chain','cmd.get_wizard().btn_DelResidue()'],
+         [ 2, 'Clear the side-chains','cmd.get_wizard().btn_ClearResidue()'],
+         [ 2, 'Reset','cmd.get_wizard().btn_Reset()'],
+         [ 2, 'Done','cmd.get_wizard().btn_Done()'],
          ]
 
     #=======================================================================
@@ -227,7 +248,7 @@ class flexSC(Wizard):
     def Quit_Wizard(self):
         
         try:
-
+            
             #Delete the Residue objects
             cmd.delete(self.FlexSCDisplay)
             cmd.refresh()
@@ -235,27 +256,28 @@ class flexSC(Wizard):
             cmd.delete(self.ResidueDisplay)
             cmd.refresh()
 
-            cmd.delete(self.BackboneDisplay)
-            cmd.refresh()
-
-            if self.ErrorCode != 1:
-                General_cmd.unmask_Objects(self.exc)
-                cmd.set('mouse_selection_mode', self.selection_mode)
-                #cmd.config_mouse('three_button_editing', 1)
-
-            if self.ErrorCode > 0:
-                self.FlexAID.WizardError = True
-
-            self.FlexAID.ActiveWizard = None
-
-            cmd.set_wizard()
-            #cmd.set_view(self.View)
+            #cmd.delete(self.BackboneDisplay)
+            #cmd.refresh()
             
         except:
             pass
+            
+        if self.ErrorCode != 1:
+            General_cmd.unmask_Objects(self.exc)
+            cmd.set('mouse_selection_mode', self.selection_mode)
+            #cmd.config_mouse('three_button_editing', 1)
+
+        if self.ErrorCode > 0:
+            self.FlexAID.WizardError = True
+
+        self.FlexAID.WizardResult = self.TargetFlex.Count_SideChain()
 
         self.top.FlexSCRunning(False)
+        self.FlexAID.ActiveWizard = None
 
+        cmd.set_wizard()
+        #cmd.set_view(self.View)
+        
      #=======================================================================   
     ''' gets atom information (coordinates and index)'''
     #=======================================================================    
@@ -352,7 +374,6 @@ class flexSC(Wizard):
             cmd.set("auto_zoom", 0)
 
             # Create new object from selection
-            #cmd.select('TEMP_SELECTION__', selString)
             cmd.create(self.FlexSCDisplay, selString, target_state=self.State)
             cmd.refresh()
 
@@ -367,16 +388,10 @@ class flexSC(Wizard):
             cmd.refresh()
                 
             cmd.mask(self.FlexSCDisplay)
-
-            cmd.disable('TOP_*__')
-            cmd.refresh()
-
-            cmd.enable('TOP_*__')
-            cmd.refresh()
             
         except:
             Error = 1
-
+        
         cmd.set("auto_zoom", self.auto_zoom)
 
         return Error

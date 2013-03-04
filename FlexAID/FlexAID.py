@@ -49,9 +49,6 @@ import Simulate
 
 class displayFlexAID(Base.Base):
     
-    BindingSiteDisplay = 'BINDING_SITE_AREA'
-    SphereDisplay = 'SPHERE_AREA'
-
     def Init_Vars(self):
                 
         self.SaveSessionFile = ''

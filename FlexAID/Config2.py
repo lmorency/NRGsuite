@@ -257,9 +257,9 @@ class Config2(Tabs.Tab):
         fBondsLine3.pack(side=TOP, fill=X, padx=5, pady=2)
         
         Label(fBondsLine1, text='Ligand flexibility', font=self.top.font_Title).pack(side=TOP, anchor=W)
-        Button(fBondsLine2, text='Add/Delete flexible bonds', font=self.top.font_Text,command=self.Btn_AddRemove_FlexBonds, width=40).pack(side=LEFT, anchor=NW,expand=True)
+        Button(fBondsLine2, text='Add/Delete flexible bonds', font=self.top.font_Text,command=self.Btn_AddRemove_FlexBonds, width=40).pack(side=LEFT, anchor=NW,expand=True, fill=X)
         Entry(fBondsLine3, text='', state='disabled', textvariable=self.FlexStatus, font=self.top.font_Text, 
-                disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT,anchor=NW,expand=True)
+                disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT, fill=X, expand=True, anchor=NW)
 
         #************************************************#
         #*             Set atom types                   *#
@@ -311,7 +311,7 @@ class Config2(Tabs.Tab):
 
         self.btnAddConstraint = Button(fConstraintLine2, text = 'Add/Edit/Delete constraints',font=self.top.font_Text,command=self.AddEditDel_Constraint)
         self.btnAddConstraint.pack(side=LEFT, fill=X, expand=True, anchor=NE)
-
+        
         Entry(fConstraintLine3, text='', state='disabled', textvariable=self.ConsStatus, font=self.top.font_Text, 
                 disabledforeground=self.top.Color_Black, width=40, disabledbackground=self.top.Color_White,justify=CENTER).pack(side=LEFT, fill=X, expand=True, anchor=NE)
 
@@ -343,7 +343,7 @@ class Config2(Tabs.Tab):
         l.append(rnc[len(rnc)-1:len(rnc)])
 
         return l
-
+    
     ''' ==================================================================================
     FUNCTION ActiveCons_Toggle: The active constraint is changed
     ================================================================================== '''        
