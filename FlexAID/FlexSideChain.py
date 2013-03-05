@@ -334,7 +334,7 @@ class flexSC(Wizard):
             cmd.show('sticks', self.ResidueDisplay)
             cmd.refresh()
 
-            cmd.color('orange', self.ResidueDisplay)
+            cmd.color('white', self.ResidueDisplay)
             cmd.refresh()
 
             cmd.mask(self.ResidueDisplay)
@@ -344,12 +344,6 @@ class flexSC(Wizard):
             cmd.refresh()
 
             cmd.enable(self.FlexSCDisplay)
-            cmd.refresh()
-
-            cmd.disable('TOP_*__')
-            cmd.refresh()
-
-            cmd.enable('TOP_*__')
             cmd.refresh()
             
         except:
@@ -376,7 +370,7 @@ class flexSC(Wizard):
             # Create new object from selection
             cmd.create(self.FlexSCDisplay, selString, target_state=self.State)
             cmd.refresh()
-
+            
             # Visual appearance
             cmd.hide('lines', self.FlexSCDisplay)
             cmd.refresh()
@@ -384,9 +378,11 @@ class flexSC(Wizard):
             cmd.show('sticks', self.FlexSCDisplay)
             cmd.refresh()
 
-            cmd.color('white', self.FlexSCDisplay)
+            cmd.color('orange', self.FlexSCDisplay)
             cmd.refresh()
-                
+
+            cmd.label(self.FlexSCDisplay + " & name CA", "resn+resi")
+
             cmd.mask(self.FlexSCDisplay)
             
         except:

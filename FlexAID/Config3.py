@@ -219,8 +219,8 @@ class Config3(Tabs.Tab):
         fPermeaLine2 = Frame(fPermea)
         fPermeaLine2.pack(fill=X, padx=5, pady=2)
 
-        Label(fPermeaLine1, text='Permeability', font=self.top.font_Title).pack(side=LEFT, anchor=W)
-        Label(fPermeaLine2, text='Van der Waals ratio: ', font=self.top.font_Text).pack(side=LEFT)
+        Label(fPermeaLine1, text='Soft-docking', font=self.top.font_Title).pack(side=LEFT, anchor=W)
+        Label(fPermeaLine2, text='Van der Waals permeability: ', font=self.top.font_Text).pack(side=LEFT)
         self.entPermea = Entry(fPermeaLine2, textvariable=self.Permeability, font=self.top.font_Text, justify=CENTER, width=4)
         self.entPermea.pack(side=RIGHT)
         self.ValidPermeability = [1, False, self.entPermea]

@@ -101,9 +101,6 @@ class anchor(Wizard):
 
             cmd.delete(self.LigDisplay)
             cmd.refresh()
-
-            #cmd.delete(self.AtomDisplay)
-            #cmd.refresh()
             
             cmd.deselect()
             
