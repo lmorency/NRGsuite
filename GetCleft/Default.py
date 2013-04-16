@@ -558,13 +558,16 @@ class Default(Tabs.Tab):
         for i in range(0, nClefts):
             
             if i == (nClefts-1):
-                RightCoord = self.ChartBar.cget('width')
+                RightCoord = int(self.ChartBar.cget('width'))
             else:    
                 RightCoord = LeftCoord + CellWidth
-                
-            self.ChartBar.create_rectangle(LeftCoord, 0,
-                                           RightCoord, self.ChartBar.cget('height'),
+            
+            self.ChartBar.create_rectangle(LeftCoord, 0, RightCoord, self.ChartBar.cget('height'),
                                            fill=self.ColorHex[i])
+            
+            self.ChartBar.create_text((LeftCoord + RightCoord)/2, int(self.ChartBar.cget('height'))/2,
+                                      text=str(i+1), font=self.top.font_Title_H)
+            
             LeftCoord = RightCoord
 
     ''' ==================================================================================
