@@ -1,0 +1,13 @@
+#!/bin/sh
+
+chmod a+x /Applications/NRGsuite/FlexAID/WRK/FlexAID
+chmod a+x /Applications/NRGsuite/FlexAID/WRK/Process_Ligand
+chmod a+x /Applications/NRGsuite/GetCleft/WRK/GetCleft
+chmod a+x /Applications/NRGsuite/GetCleft/WRK/volume_calc
+
+cd /Applications/NRGsuite/FlexAID/WRK/libs
+
+ln -s libinchi.0.4.1.dylib libinchi.0.dylib
+ln -s libinchi.0.dylib libinchi.dylib
+ln -s libopenbabel.4.0.2.dylib libopenbabel.4.dylib
+ln -s libopenbabel.4.dylib libopenbabel.dylib
