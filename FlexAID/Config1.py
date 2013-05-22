@@ -262,15 +262,15 @@ class Config1(Tabs.Tab):
         '''                        ---  FRAME - BOTTOM SIDE  ---                        '''
         #==================================================================================      
 
-        fProtFlex = Frame(self.fConfig, border=1, relief=RAISED)
-        fProtFlex.pack(fill=BOTH, side=TOP, padx=5, pady=10)
+        fTargetFlex = Frame(self.fConfig, border=1, relief=RAISED)
+        fTargetFlex.pack(fill=BOTH, side=TOP, padx=5, pady=10)
 
-        Label(fProtFlex, text='Target flexibility', font=self.top.font_Title_H).pack(side=TOP, fill=X, pady=3)
+        Label(fTargetFlex, text='Target flexibility', font=self.top.font_Title_H).pack(side=TOP, fill=X, pady=3)
 
         #==================================================================================
         # Pre-configured protein flexibility
         #==================================================================================
-        fConfFlex = Frame(fProtFlex)
+        fConfFlex = Frame(fTargetFlex)
         fConfFlex.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
 
         Label(fConfFlex, text='Pre-configured target flexibility:', width=30, font=self.top.font_Text).pack(side=LEFT)
@@ -282,7 +282,7 @@ class Config1(Tabs.Tab):
         #==================================================================================
         # Flexible Side-Chains
         #==================================================================================
-        self.fFlexSC = Frame(fProtFlex)
+        self.fFlexSC = Frame(fTargetFlex)
         self.fFlexSC.pack(side=TOP, fill=X, padx=5, pady=5)
 
         fFlexSCLine1 = Frame(self.fFlexSC)
@@ -325,7 +325,7 @@ class Config1(Tabs.Tab):
         #==================================================================================
         # Normal-modes
         #==================================================================================
-        fNormalModes = Frame(fProtFlex)
+        fNormalModes = Frame(fTargetFlex)
         #fNormalModes.pack(fill=X, side=TOP, padx=5, pady=5)
 
         fNMrow1 = Frame(fNormalModes)
@@ -345,8 +345,8 @@ class Config1(Tabs.Tab):
     =================================================================================  '''    
     def Get_TargetFlexPath(self):
 
-        PROTNAME = self.top.IOFile.ProtName.get().upper()
-        TargetFlexPath = os.path.join(self.top.FlexAIDTargetFlexProject_Dir,PROTNAME)
+        TARGETNAME = self.top.IOFile.TargetName.get().upper()
+        TargetFlexPath = os.path.join(self.top.FlexAIDTargetFlexProject_Dir,TARGETNAME)
         
         return TargetFlexPath
 
@@ -444,8 +444,8 @@ class Config1(Tabs.Tab):
         if not self.PyMOL:
             return
                 
-        Center = General_cmd.Get_CenterOfMass2(self.top.IOFile.ProtName.get(), cmd.get_state())
-        Width = General_cmd.Get_MaxWidth(self.top.IOFile.ProtName.get(), cmd.get_state())
+        Center = General_cmd.Get_CenterOfMass2(self.top.IOFile.TargetName.get(), cmd.get_state())
+        Width = General_cmd.Get_MaxWidth(self.top.IOFile.TargetName.get(), cmd.get_state())
 
         if len(Center) > 0 and Width != -1:
             self.Vars.BindingSite.Sphere = SphereObj.SphereObj(Width/4.0,Width/2.0,Center)
@@ -697,7 +697,7 @@ class Config1(Tabs.Tab):
         num = residue[3:(len(residue)-1)]
         chn = residue[(len(residue)-1):len(residue)]
 
-        ProtName = self.top.IOFile.ProtName.get()
+        TargetName = self.top.IOFile.TargetName.get()
         
         selString = ' resn ' + res
         selString += ' & resi ' + num
@@ -710,7 +710,7 @@ class Config1(Tabs.Tab):
         selString += ' & ! name H*'
         selString += ' & ! name OXT'
         
-        selString += ' & ' + ProtName
+        selString += ' & ' + TargetName
         
         try:
             n = cmd.count_atoms(selString, state=1)
@@ -883,7 +883,7 @@ class Config1(Tabs.Tab):
     ==================================================================================  '''        
     def Get_BindingSitePath(self):
 
-        TARGETNAME = self.top.IOFile.ProtName.get().upper()
+        TARGETNAME = self.top.IOFile.TargetName.get().upper()
         BindingSitePath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,TARGETNAME)
         
         return BindingSitePath
@@ -893,7 +893,7 @@ class Config1(Tabs.Tab):
     ==================================================================================  '''        
     def Get_CleftPath(self):
 
-        TARGETNAME = self.top.IOFile.ProtName.get().upper()
+        TARGETNAME = self.top.IOFile.TargetName.get().upper()
         CleftPath = os.path.join(self.top.CleftProject_Dir,TARGETNAME)
         
         return CleftPath

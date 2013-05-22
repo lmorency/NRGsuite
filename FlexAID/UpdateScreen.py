@@ -53,13 +53,13 @@ class UpdateScreen:
         self.dictFlexBonds = self.top.dictFlexBonds
 
         self.LigandName = self.top.FlexAID.IOFile.LigandName.get()
-        self.ProtName = self.top.FlexAID.IOFile.ProtName.get()
+        self.TargetName = self.top.FlexAID.IOFile.TargetName.get()
 
         self.LigandObj = self.LigandName + '_' + str(self.TOP+1)
-        self.ProteinObj = self.ProtName + '_' + str(self.TOP+1)
+        self.TargetObj = self.TargetName + '_' + str(self.TOP+1)
         
         # Selections of molecules (ligand/side-chain/protein)
-        self.selProtein = '(' + self.ProteinObj + ' & present)'
+        self.selTarget = '(' + self.TargetObj + ' & present)'
         self.selLigand = '(' + self.LigandObj + ' & present)'
         self.selSideChains = ''
 
@@ -75,7 +75,7 @@ class UpdateScreen:
         
         try:
             # Copy the initial protein (Frame 1) into the working state
-            cmd.create(self.ProteinObj, self.ProtName, 1, self.State)
+            cmd.create(self.TargetObj, self.TargetName, 1, self.State)
             cmd.refresh()
 
             # Display the last frame
@@ -83,7 +83,7 @@ class UpdateScreen:
             #print "Switched to frame " + str(self.State)
 
         except:
-            self.CriticalError("Object " + str(self.ProtName) + " no longer exists")
+            self.CriticalError("Object " + str(self.TargetName) + " no longer exists")
         
         
         if not self.UpdateLigandAnchorPoint() and not self.UpdateLigandFlexibility():
@@ -105,14 +105,14 @@ class UpdateScreen:
 
         try:
             # delete temporary protein PDB file
-            cmd.delete(self.ProteinObj)
+            cmd.delete(self.TargetObj)
             cmd.refresh()
 
             cmd.delete(self.LigandObj)
             cmd.refresh()
 
         except:
-            self.CriticalError("Object " + str(self.ProteinObj) + " no longer exists")
+            self.CriticalError("Object " + str(self.TargetObj) + " no longer exists")
 
     '''=========================================================================
        EditView: Edit the visual aspects of the PyMOL interface
@@ -127,9 +127,9 @@ class UpdateScreen:
 
             # No flexible side-chain(s)
             if self.selSideChains == '':
-                selString = self.selLigand + " or " + self.selProtein
+                selString = self.selLigand + " or " + self.selTarget
             else:
-                selString = self.selSideChains + " or " + self.selLigand + " or " + self.selProtein                         
+                selString = self.selSideChains + " or " + self.selLigand + " or " + self.selTarget                         
             #print selString
 
             # Create solution object
@@ -144,7 +144,7 @@ class UpdateScreen:
            
             # Color side-chains of solution TOP
             if self.selSideChains != '':
-                cmd.color(self.top.top.PymolColorList[self.TOP], self.selSideChains.replace(self.ProteinObj,SolutionObj))
+                cmd.color(self.top.top.PymolColorList[self.TOP], self.selSideChains.replace(self.TargetObj,SolutionObj))
                 cmd.refresh()
 
             #cmd.show(self.DefaultDisplay, "(resn LIG & sol_*__ & present)")
@@ -152,8 +152,8 @@ class UpdateScreen:
             cmd.refresh()
 
             if self.selSideChains != '':
-                #cmd.show("sticks", self.selSideChains.replace(self.protName__,"sol_*__"))
-                cmd.show("sticks", self.selSideChains.replace(self.ProteinObj,SolutionObj))
+                #cmd.show("sticks", self.selSideChains.replace(self.TargetName__,"sol_*__"))
+                cmd.show("sticks", self.selSideChains.replace(self.TargetObj,SolutionObj))
                 cmd.refresh()
 
         except:
@@ -344,7 +344,7 @@ class UpdateScreen:
                     else:
                         strSelectSC += " & chain ''"                    
                     
-                    strSelectSC += " & ! name C+O+N " + " & " + self.ProteinObj + " & present) or "
+                    strSelectSC += " & ! name C+O+N " + " & " + self.TargetObj + " & present) or "
 
                     # Get Integer value from GA.
                     IntVal = int(float(self.Line[self.colNo:(self.colNo+10)].strip()) + 0.5)
@@ -404,7 +404,7 @@ class UpdateScreen:
             AtomString += " & chain ''"
         
         AtomString += " & name " + Atom
-        AtomString += " & " + self.ProteinObj
+        AtomString += " & " + self.TargetObj
 
         return AtomString
 

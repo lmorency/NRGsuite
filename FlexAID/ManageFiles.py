@@ -56,7 +56,7 @@ class Manage:
         self.Now = self.Now.replace(':','-')
         self.Now = self.Now.replace(' ','-')
 
-        self.Protein = self.IOFile.ProtName.get()
+        self.Target = self.IOFile.TargetName.get()
         self.Ligand = self.IOFile.LigandName.get()
         self.COMPLEX = self.IOFile.Complex.get().upper()
         
@@ -200,7 +200,7 @@ class Manage:
 
         hasher = hashlib.md5()
         
-        hasher = General.hashfile_update(self.IOFile.ProtPath.get(), hasher)
+        hasher = General.hashfile_update(self.IOFile.TargetPath.get(), hasher)
         hasher = General.hashfile_update(self.INPFlexAIDSimulationProject_Dir, hasher)
 
         #hasher.update('SPACER 0.375\n')
@@ -285,7 +285,7 @@ class Manage:
         # Save the data to the configuration file
         config_file = open(self.CONFIG, 'w')
 
-        config_file.write('PDBNAM ' + self.IOFile.ProtPath.get() + '\n')
+        config_file.write('PDBNAM ' + self.IOFile.TargetPath.get() + '\n')
         
         config_file.write('INPLIG ' + os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.inp') + '\n')
         config_file.write('METOPT GA\n')

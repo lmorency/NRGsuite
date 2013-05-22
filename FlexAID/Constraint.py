@@ -84,7 +84,7 @@ class constraint(Wizard):
             cmd.set("mouse_selection_mode", 0) # set selection mode to atomic
 
             # Mask objects
-            self.exc = [ self.FlexAID.IOFile.ProtName.get() ]
+            self.exc = [ self.FlexAID.IOFile.TargetName.get() ]
             General_cmd.mask_Objects(self.exc)
 
             self.ErrorCode = 0
@@ -300,9 +300,9 @@ class constraint(Wizard):
             else:
                 leftsel += ' & chain \'\''
             
-            obj = self.Get_Prot_or_Lig(leftsel)
+            obj = self.Get_Target_or_Lig(leftsel)
             if not obj:
-                self.ErrorStatus = [ "You can only select atoms from the protein or the constraint ligand objects. Try again." ]
+                self.ErrorStatus = [ "You can only select atoms from the target or the constraint ligand objects. Try again." ]
                 
             else:
                 leftsel += obj
@@ -313,9 +313,9 @@ class constraint(Wizard):
                 else:
                     rightsel += ' & chain \'\''
                     
-                obj = self.Get_Prot_or_Lig(rightsel)
+                obj = self.Get_Target_or_Lig(rightsel)
                 if not obj:
-                    self.ErrorStatus = [ "You can only select atoms from the protein or the constraint ligand objects. Try again." ]
+                    self.ErrorStatus = [ "You can only select atoms from the target or the constraint ligand objects. Try again." ]
                     
                 else:
                     rightsel += obj
@@ -377,10 +377,10 @@ class constraint(Wizard):
     #=======================================================================
     ''' Gets the right object '''
     #=======================================================================
-    def Get_Prot_or_Lig(self, sele):
+    def Get_Target_or_Lig(self, sele):
 
-        if cmd.count_atoms(sele + ' & ' + self.FlexAID.IOFile.ProtName.get()):
-            return ' & ' + self.FlexAID.IOFile.ProtName.get()
+        if cmd.count_atoms(sele + ' & ' + self.FlexAID.IOFile.TargetName.get()):
+            return ' & ' + self.FlexAID.IOFile.TargetName.get()
         elif cmd.count_atoms(sele + ' & ' + self.LigDisplay):
             return ' & ' + self.LigDisplay
         else:

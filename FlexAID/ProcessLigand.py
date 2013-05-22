@@ -42,54 +42,63 @@ from subprocess import Popen, PIPE
 
 class ProcLig:
 
-    def __init__(self, top, StartAtomIndex, AtomTypes, AnchorAtom, ConvertOnly, ProcessOnly, Gen3D):
+    def __init__(self, top, MoleculeFile, StartAtomIndex, AtomTypes, AnchorAtom, 
+                 ConvertOnly, ProcessOnly, Gen3D, Target, Callback):
         
         self.top = top
         self.FlexAID = self.top.top
-
-        self.LigandPath = self.FlexAID.IOFile.LigandPath.get()
-
+        
+        self.MoleculeFile = MoleculeFile
+        
         self.AtomTypes = AtomTypes
         self.AnchorAtom = AnchorAtom
 
         self.ConvertOnly = ConvertOnly
         self.ProcessOnly = ProcessOnly
         self.Gen3D = Gen3D
+        self.Target = Target
+        
+        self.Callback = Callback
         
         self.FlexAIDWRKInstall_Dir = os.path.join(self.FlexAID.FlexAIDInstall_Dir,'WRK')
         
         self.StartAtomIndex = StartAtomIndex
         
         self.run()
-
+        
     def run(self):
         
         self.FlexAID.ProcessRunning = True
-        
-        self.FlexAID.DisplayMessage("  Executing Process Ligand...", 0)
-        
-        if not self.Copy_LigandFile():
-            
-            if not self.process():
-            
-                if self.ConvertOnly:
-                    self.FlexAID.DisplayMessage("  The ligand was converted successfully", 0)
-                else:
-                    self.FlexAID.DisplayMessage("  The ligand was processed successfully", 0)
-
-            else:
-                self.FlexAID.ProcessError = True
-
-                if self.ConvertOnly:
-                    self.FlexAID.DisplayMessage("  ERROR: The ligand could not be converted", 1)
-                else:
-                    self.FlexAID.DisplayMessage("  ERROR: The ligand could not be processed", 1)
-
+                
+        if self.Target:
+            molecule = 'target'
         else:
-            self.FlexAID.DisplayMessage("  ERROR: The ligand could not be copied to temp folder", 1)
+            molecule = 'ligand'
 
-        self.top.ProcessLigand(False, 0, '', 0, False, False, 0)
+        if not self.Copy_MoleculeFile():
+            self.FlexAID.DisplayMessage("  Processing molecule...", 0)
+            rv = self.process()
+        else:
+            self.FlexAID.DisplayMessage("  ERROR: The %s could not be copied to temp folder" % molecule, 1)
+        
+        if not rv:
+            if self.ConvertOnly:
+                self.FlexAID.DisplayMessage("  The %s was converted successfully" % molecule, 0)
+            else:
+                self.FlexAID.DisplayMessage("  The %s was processed successfully" % molecule, 0)
+        else:
+            if self.ConvertOnly:
+                self.FlexAID.DisplayMessage("  ERROR: The %s could not be converted" % molecule, 1)
+            else:
+                self.FlexAID.DisplayMessage("  ERROR: The %s could not be processed" % molecule, 1)
+        
+        print self.Callback
+        return rv
+        
+        self.Callback(False, '', 0, '', 0, False, False, 0, False)
         self.FlexAID.ProcessRunning = False
+        
+        return rv
         
     '''
     @summary: process: Processes the ligand (generates input files for FlexAID)
@@ -99,8 +108,13 @@ class ProcLig:
         # Set the command-line arguments to process ligand
         commandline = '"' + self.FlexAID.Process_LigandExecutable + '"'
 
-        commandline += ' -f ' + '"' + self.TmpLigandPath + '"'
-        commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG') + '"'
+        commandline += ' -f ' + '"' + self.TmpMoleculeFile + '"'
+        
+        if self.Target:
+            # use default outputting for the target
+            commandline += ' -target'
+        else:
+            commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG') + '"'
         
         if self.Gen3D:
             commandline += ' --gen3D'
@@ -149,32 +163,29 @@ class ProcLig:
 
             if self.FlexAID.Run.returncode != 0:
                 self.FlexAID.ProcessError = True
+                return 1
             
         except:
+            self.FlexAID.ProcessError = True
             return 1
-
+        
         self.FlexAID.Run = None
         
-        if out.find('Done.') != -1:
-            self.top.ReferencePath.set(os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG_ref.pdb'))
-            return 0
-        
-        return 1
+        return 0
 
-    def Copy_LigandFile(self):
+    def Copy_MoleculeFile(self):
 
         try:
-            copy(self.LigandPath, self.FlexAID.FlexAIDSimulationProject_Dir)            
+            copy(self.MoleculeFile, self.FlexAID.FlexAIDSimulationProject_Dir)            
         except IOError:
             return 1
         except Error:
             pass
         
-        self.TmpLigandPath = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, os.path.split(self.LigandPath)[1])
+        self.TmpMoleculeFile = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, os.path.split(self.MoleculeFile)[1])
 
         return 0
     
-
     '''
     @summary: set_environment sets a environment variable
     '''  

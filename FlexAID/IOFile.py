@@ -52,9 +52,9 @@ if __debug__:
 class IOFileVars(Vars.Vars):
     
     Complex = StringVar()
-    ProtMD5 = StringVar()
-    ProtPath = StringVar()
-    ProtName = StringVar()
+    TargetMD5 = StringVar()
+    TargetPath = StringVar()
+    TargetName = StringVar()
     LigandMD5 = StringVar()
     LigandPath = StringVar()
     LigandName = StringVar()
@@ -98,9 +98,9 @@ class IOFile(Tabs.Tab):
                 
         # vars class objects
         self.Complex = self.Vars.Complex
-        self.ProtMD5 = self.Vars.ProtMD5
-        self.ProtPath = self.Vars.ProtPath
-        self.ProtName = self.Vars.ProtName
+        self.TargetMD5 = self.Vars.TargetMD5
+        self.TargetPath = self.Vars.TargetPath
+        self.TargetName = self.Vars.TargetName
         self.LigandMD5 = self.Vars.LigandMD5
         self.LigandPath = self.Vars.LigandPath
         self.LigandName = self.Vars.LigandName
@@ -114,9 +114,9 @@ class IOFile(Tabs.Tab):
     def Init_Vars(self):
 
         #print("Init Vars for IOFile")
-        self.ProtMD5.set('')
-        self.ProtPath.set('')
-        self.ProtName.set('')
+        self.TargetMD5.set('')
+        self.TargetPath.set('')
+        self.TargetName.set('')
         self.LigandMD5.set('')
         self.LigandPath.set('')
         self.LigandName.set('')
@@ -135,7 +135,8 @@ class IOFile(Tabs.Tab):
         
         # flags
         self.ProcessOnly = False
-        self.Processed = False
+        self.ProcessedLigand = False
+        self.ProcessedTarget = False
         
         self.Vars.dictAtomTypes.clear()
         self.Vars.dictNeighbours.clear()
@@ -146,7 +147,7 @@ class IOFile(Tabs.Tab):
     =================================================================================  '''    
     def Check_Integrity(self):
         
-        if (self.ProtName.get() != '' and General.hashfile(self.ProtPath.get()) != self.ProtMD5.get()) or \
+        if (self.TargetName.get() != '' and General.hashfile(self.TargetPath.get()) != self.TargetMD5.get()) or \
            (self.LigandName.get() != '' and General.hashfile(self.LigandPath.get()) != self.LigandMD5.get()):
             return 1
             
@@ -166,18 +167,29 @@ class IOFile(Tabs.Tab):
     def Before_Kill_Frame(self):
                
         # Process ligand
-        if not self.Processed:
+        if not self.ProcessedLigand:
             self.top.ProcessError = False
             
-            self.ProcessLigand( True, self.ATOM_INDEX, self.AtomTypes.get(), self.Anchor.get(),
-                                False, self.ProcessOnly, self.Gen3D.get() )
+            self.ProcessLigand( True, self.LigandPath.get(), self.ATOM_INDEX, self.AtomTypes.get(), 
+                                self.Anchor.get(), False, self.ProcessOnly, self.Gen3D.get(), False )
             
             if self.top.ProcessError:
                 return False
             else:
-                self.Processed = True
+                self.ProcessedLigand = True
                 self.ResSeq.set(self.RESIDUE_NUMBER)
-
+        
+        if not self.ProcessedTarget:
+            self.top.ProcessError = False
+            
+            self.ProcessTarget( True, self.TargetPath.get(), self.ATOM_INDEX, self.AtomTypes.get(),
+                                self.Anchor.get(), False, False, False, True )
+            
+            if self.top.ProcessError:
+                return False
+            else:
+                self.ProcessedTarget = True
+        
         # Store content of ligand input files
         if self.store_InpFile():
             return False
@@ -188,16 +200,34 @@ class IOFile(Tabs.Tab):
         return True
     
     ''' ==================================================================================
-    FUNCTION ProcessLigand: Processes ligand PDB file using lig_extractor
+    FUNCTION ProcessLigand: Processes ligand PDB file using Process_Ligand
     ================================================================================== '''    
-    def ProcessLigand(self, boolRun, StartAtomIndex, AtomTypes, Anchor, ConvertOnly, ProcessOnly, Gen3D):
-
+    def ProcessLigand(self, boolRun, MoleculeFile, StartAtomIndex, AtomTypes,
+                      Anchor, ConvertOnly, ProcessOnly, Gen3D, Target):
+        
         if boolRun:
             self.Disable_Frame()
             
             self.top.ProcessRunning = True
-            p = ProcessLigand.ProcLig(self, StartAtomIndex, AtomTypes, Anchor, ConvertOnly, ProcessOnly, Gen3D)
+            p = ProcessLigand.ProcLig(self, MoleculeFile, StartAtomIndex, AtomTypes, Anchor, 
+                                      ConvertOnly, ProcessOnly, Gen3D, Target, self.ProcessLigand)
+            
+        else:
+            self.Enable_Frame()
 
+    ''' ==================================================================================
+    FUNCTION ProcessTarget: Processes target PDB file
+    ================================================================================== '''    
+    def ProcessTarget(self, boolRun, MoleculeFile, StartAtomIndex, AtomTypes, 
+                      Anchor, ConvertOnly, ProcessOnly, Gen3D, Target):
+        
+        if boolRun:
+            self.Disable_Frame()
+            
+            self.top.ProcessRunning = True
+            p = ProcessLigand.ProcLig(self, MoleculeFile, StartAtomIndex, AtomTypes, Anchor, 
+                                      ConvertOnly, ProcessOnly, Gen3D, Target, self.ProcessTarget)
+                    
         else:
             self.Enable_Frame()
     
@@ -274,7 +304,7 @@ class IOFile(Tabs.Tab):
                             self.LigandName.set('')
                         
                         #self.ProcessOnly = True
-                        self.Processed = False
+                        self.ProcessedLigand = False
                                                 
                     else:
                         self.LigandPath.set('')
@@ -288,7 +318,7 @@ class IOFile(Tabs.Tab):
     ''' ==================================================================================
                          Reset tabs when the target/ligand is modified
     ================================================================================== '''             
-    def Protein_Toggle(self, *args):
+    def Target_Toggle(self, *args):
         
         # Reset binding-site and target flexibility
         self.top.Config1.Init_Vars()
@@ -298,23 +328,23 @@ class IOFile(Tabs.Tab):
 
         self.top.Simulate.Init_Vars()
 
-        self.ValidateLigProt()
+        self.ValidateLigTarget()
     
     def Ligand_Toggle(self, *args):
         
-        self.ValidateLigProt()
+        self.ValidateLigTarget()
 
     ''' ==================================================================================
                          ENABLE / DISABLE - Buttons
     ================================================================================== '''             
-    def ValidateLigProt(self):
+    def ValidateLigTarget(self):
         
-        if self.ProtName.get() and self.LigandName.get():
+        if self.TargetName.get() and self.LigandName.get():
             self.top.Go_Step2()
         else:
             self.top.Go_Step1()
         
-        self.Complex.set(self.ProtName.get() + '-' + self.LigandName.get())
+        self.Complex.set(self.TargetName.get() + '-' + self.LigandName.get())
     
     ''' ==================================================================================
     FUNCTION Reset_Ligand: Rests all parameters variables to processing of the ligand
@@ -333,7 +363,7 @@ class IOFile(Tabs.Tab):
         self.top.Simulate.Init_Vars()
 
         self.ProcessOnly = False
-        self.Processed = False
+        self.ProcessedLigand = False
 
     ''' ==================================================================================
     FUNCTION After_Show: Actions related after showing the frame
@@ -349,7 +379,7 @@ class IOFile(Tabs.Tab):
     def Trace(self):
 
         try:
-            self.ProtNameTrace = self.ProtName.trace('w',self.Protein_Toggle)
+            self.TargetNameTrace = self.TargetName.trace('w',self.Target_Toggle)
             self.LigandNameTrace = self.LigandName.trace('w',self.Ligand_Toggle)
             self.AtomTypesTrace = self.AtomTypes.trace('w',self.AtomTypes_Toggle)
             self.Gen3DTrace = self.Gen3D.trace('w',self.Gen3D_Toggle)
@@ -362,7 +392,7 @@ class IOFile(Tabs.Tab):
     def Del_Trace(self):
 
         try:
-            self.ProtName.trace_vdelete('w',self.ProtNameTrace)
+            self.TargetName.trace_vdelete('w',self.TargetNameTrace)
             self.LigandName.trace_vdelete('w',self.LigandNameTrace)
             self.AtomTypes.trace_vdelete('w',self.AtomTypesTrace)
             self.Gen3D.trace_vdelete('w',self.Gen3DTrace)
@@ -385,14 +415,15 @@ class IOFile(Tabs.Tab):
         self.Vars.dictAtomTypes.clear()
 
         # Need for processing the ligand again if atom typing is changed
-        self.Processed = False
+        self.ProcessedLigand = False
+        self.ProcessedTarget = False
 
     ''' ==================================================================================
     FUNCTION Gen3D_Toggle: Toggles the generation of a 3D molecule
     =================================================================================  '''    
     def Gen3D_Toggle(self, *args):
         
-        self.Processed = False        
+        self.ProcessedLigand = False
         
     ''' ==================================================================================
     FUNCTION Frame: Generate the Input / Output Files frame in the the middle 
@@ -431,7 +462,7 @@ class IOFile(Tabs.Tab):
 
         # List of selections
         #Button(fPDB_options2Line2, text='LIGAND', font=self.font_Text, relief=RIDGE, command=self.Btn_SetLigand_Clicked).pack(side=RIGHT)
-        #Button(fPDB_options2Line2, text='TARGET', font=self.font_Text, relief=RIDGE, command=self.Btn_SetProt_Clicked).pack(side=RIGHT)
+        #Button(fPDB_options2Line2, text='TARGET', font=self.font_Text, relief=RIDGE, command=self.Btn_SetTarget_Clicked).pack(side=RIGHT)
 
         #Label(fPDB_options2Line2, text='Set as...', justify=RIGHT, font=self.font_Text).pack(side=RIGHT, anchor=E)
 
@@ -451,35 +482,32 @@ class IOFile(Tabs.Tab):
         #==================================================================================
         #                                SET TARGET
         #==================================================================================                
-
-        #fPDBprotlig = Frame(self.fIOFile)
-        #fPDBprotlig.pack(fill=X, expand=True)
         
-        fPDBprotein = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=70)
-        fPDBprotein.pack(side=TOP, pady=10, padx=10)#, fill=X, expand=True)
-        fPDBprotein.pack_propagate(0)
+        fPDBTarget = Frame(self.fIOFile, border=1, relief=RAISED, width=500, height=70)
+        fPDBTarget.pack(side=TOP, pady=10, padx=10)#, fill=X, expand=True)
+        fPDBTarget.pack_propagate(0)
 
-        fPDBproteinLine1 = Frame(fPDBprotein)
-        fPDBproteinLine1.pack(side=TOP, fill=X, padx=3, pady=3)
+        fPDBTargetLine1 = Frame(fPDBTarget)
+        fPDBTargetLine1.pack(side=TOP, fill=X, padx=3, pady=3)
 
-        fPDBproteinLine2 = Frame(fPDBprotein)
-        fPDBproteinLine2.pack(side=TOP, fill=X, padx=3, pady=3)
+        fPDBTargetLine2 = Frame(fPDBTarget)
+        fPDBTargetLine2.pack(side=TOP, fill=X, padx=3, pady=3)
         
         # First line
-        Label(fPDBproteinLine1, width=20, text='THE TARGET', font=self.font_Title).pack(side=LEFT)
-        Button(fPDBproteinLine1, text='Load', command=lambda objtype='Target': self.Btn_LoadObject_Clicked(objtype), 
+        Label(fPDBTargetLine1, width=20, text='THE TARGET', font=self.font_Title).pack(side=LEFT)
+        Button(fPDBTargetLine1, text='Load', command=lambda objtype='Target': self.Btn_LoadObject_Clicked(objtype), 
                                               font=self.font_Text).pack(side=LEFT)
-        Button(fPDBproteinLine1, text='Display', command=lambda objtype='Target': self.Btn_DisplayObject_Clicked(objtype),
+        Button(fPDBTargetLine1, text='Display', command=lambda objtype='Target': self.Btn_DisplayObject_Clicked(objtype),
                                                  font=self.font_Text).pack(side=LEFT)
-        Button(fPDBproteinLine1, text='Reset', command=self.Btn_ResetProt_Clicked, font=self.font_Text).pack(side=LEFT)
+        Button(fPDBTargetLine1, text='Reset', command=self.Btn_ResetTarget_Clicked, font=self.font_Text).pack(side=LEFT)
 
         # Second line
-        Label(fPDBproteinLine2, width=20, text='', font=self.font_Title).pack(side=LEFT)
-        EntProtein = Entry(fPDBproteinLine2, textvariable=self.ProtName, disabledbackground=self.Color_White, 
+        Label(fPDBTargetLine2, width=20, text='', font=self.font_Title).pack(side=LEFT)
+        EntTarget = Entry(fPDBTargetLine2, textvariable=self.TargetName, disabledbackground=self.Color_White, 
                             disabledforeground=self.Color_Black, font=self.font_Text, justify=CENTER, width=20)
-        EntProtein.pack(side=LEFT, fill=X)
-        EntProtein.config(state='disabled')
-        #Checkbutton(fPDBproteinLine2, variable=self.TargetRNA, width=10, text='RNA', font=self.font_Text, justify=LEFT).pack(side=LEFT)
+        EntTarget.pack(side=LEFT, fill=X)
+        EntTarget.config(state='disabled')
+        #Checkbutton(fPDBTargetLine2, variable=self.TargetRNA, width=10, text='RNA', font=self.font_Text, justify=LEFT).pack(side=LEFT)
         
         #==================================================================================
         #                               SET LIGAND
@@ -539,12 +567,12 @@ class IOFile(Tabs.Tab):
         return self.fIOFile
     
     ''' ==================================================================================
-    FUNCTIONS Reset Ligand and Protein textbox fields
+    FUNCTIONS Reset Ligand and Target textbox fields
     ================================================================================== '''
-    def Btn_ResetProt_Clicked(self):
+    def Btn_ResetTarget_Clicked(self):
     
-        self.ProtPath.set('')
-        self.ProtName.set('')
+        self.TargetPath.set('')
+        self.TargetName.set('')
 
     def Btn_ResetLigand_Clicked(self):
 
@@ -592,9 +620,9 @@ class IOFile(Tabs.Tab):
         elif objtype == 'Target':
             self.savepath = self.top.TargetProject_Dir        
 
-            self.VarPath = self.ProtPath
-            self.VarName = self.ProtName
-            self.VarMD5 = self.ProtMD5
+            self.VarPath = self.TargetPath
+            self.VarName = self.TargetName
+            self.VarMD5 = self.TargetMD5
 
     ''' ==================================================================================
     FUNCTION Validate_ObjectSelection: Validates whether the obj exists on the current state
@@ -653,7 +681,7 @@ class IOFile(Tabs.Tab):
         return 0
     
     ''' ==================================================================================
-    FUNCTION Btn_SaveObjectClicked: Save Ligand and Protein objects
+    FUNCTION Btn_SaveObjectClicked: Save Ligand and Target objects
                                     Object is reloaded when renamed
     ==================================================================================  '''    
     def Btn_SaveObject_Clicked(self, objtype):
@@ -719,7 +747,7 @@ class IOFile(Tabs.Tab):
             return self.TargetSupportedFormats
 
     ''' ==================================================================================
-    FUNCTIONS Load Ligand and Protein and display the filename in the textbox
+    FUNCTIONS Load Ligand and Target and display the filename in the textbox
     ================================================================================== '''        
     def Btn_LoadObject_Clicked(self, objtype):
         
@@ -881,7 +909,7 @@ class IOFile(Tabs.Tab):
         return 0
 
     ''' ==================================================================================
-    FUNCTIONS Display Ligand and Protein in pymol
+    FUNCTIONS Display Ligand and Target in pymol
     ================================================================================== '''        
     def Btn_DisplayObject_Clicked(self, objtype):
 
@@ -999,7 +1027,7 @@ class IOFile(Tabs.Tab):
             self.Enable_Frame()
             
             if self.Anchor.get() != self.top.WizardResult:
-                self.Processed = False
+                self.ProcessedLigand = False
                 
                 self.Vars.dictAtomTypes.clear()
                 self.Vars.dictNeighbours.clear()

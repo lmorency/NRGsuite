@@ -52,7 +52,7 @@ class flexSC(Wizard):
 
         self.FlexAID.WizardError = False
 
-        self.ProtName = self.FlexAID.IOFile.ProtName.get()
+        self.TargetName = self.FlexAID.IOFile.TargetName.get()
         self.TargetFlex = self.top.Vars.TargetFlex
 
         self.ResidueName = '...'
@@ -95,7 +95,7 @@ class flexSC(Wizard):
         cmd.set("mouse_selection_mode", 1) # set selection mode to residue
 
         # Mask objects
-        self.exc = [ self.ProtName ]
+        self.exc = [ self.TargetName ]
         General_cmd.mask_Objects(self.exc)
 
         # remove any possible selection before selecting atoms
@@ -133,7 +133,7 @@ class flexSC(Wizard):
             if chain != '-':
                 selString += ' & c. ' + str(chain)
 
-            selString += ' & ' + self.ProtName
+            selString += ' & ' + self.TargetName
         
         
         if selString != '' and self.highlight_FlexibleSC(selString):
@@ -287,7 +287,7 @@ class flexSC(Wizard):
 
         try:
             # test if the click is on the protein
-            list = cmd.index(name + " & " + self.ProtName)
+            list = cmd.index(name + " & " + self.TargetName)
 
             if len(list) > 0:
                 atoms = cmd.get_model(name, state=1)
@@ -298,7 +298,7 @@ class flexSC(Wizard):
                     break
 
             else:
-                self.ErrorStatus = [ "You can only select side-chains from the object " + self.ProtName + ". Try again." ]
+                self.ErrorStatus = [ "You can only select side-chains from the object " + self.TargetName + ". Try again." ]
                 return info
 
             cmd.deselect()
