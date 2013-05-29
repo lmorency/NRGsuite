@@ -86,7 +86,8 @@ class IOFile(Tabs.Tab):
     TargetSupportedFormats = [ ('PDB File','*.pdb') ]
     
     SmilesLigand = 'SMILES_LIGAND__'
-    ReferenceLigand = 'REFERENCE_LIGAND__'
+    #ReferenceLigand = 'REFERENCE_LIGAND__'
+    ReferenceLigand = 'LIGAND__'
     ExtractObject = 'EXTRACTED_OBJECT__'
     
     def Def_Vars(self):
@@ -178,6 +179,9 @@ class IOFile(Tabs.Tab):
             else:
                 self.ProcessedLigand = True
                 self.ResSeq.set(self.RESIDUE_NUMBER)
+                
+                ReferencePath = os.path.join(self.top.FlexAIDSimulationProject_Dir, 'LIGAND_ref.pdb')
+                self.ReferencePath.set(ReferencePath)
         
         if not self.ProcessedTarget:
             self.top.ProcessError = False
@@ -211,6 +215,7 @@ class IOFile(Tabs.Tab):
             self.top.ProcessRunning = True
             p = ProcessLigand.ProcLig(self, MoleculeFile, StartAtomIndex, AtomTypes, Anchor, 
                                       ConvertOnly, ProcessOnly, Gen3D, Target, self.ProcessLigand)
+            p.join()
             
         else:
             self.Enable_Frame()
@@ -227,7 +232,8 @@ class IOFile(Tabs.Tab):
             self.top.ProcessRunning = True
             p = ProcessLigand.ProcLig(self, MoleculeFile, StartAtomIndex, AtomTypes, Anchor, 
                                       ConvertOnly, ProcessOnly, Gen3D, Target, self.ProcessTarget)
-                    
+            p.join()
+            
         else:
             self.Enable_Frame()
     
@@ -931,8 +937,8 @@ class IOFile(Tabs.Tab):
     ''' Store inp file information (flexible bonds, atom types)  '''
     #=======================================================================   
     def store_InpFile(self):
-                
-        inpFilePath = os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIG.inp')
+            
+        inpFilePath = os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIGAND.inp')
 
         inpInfo = dict()
         flexInfo = dict()

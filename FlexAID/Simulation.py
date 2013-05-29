@@ -97,7 +97,7 @@ class Start(threading.Thread):
         self.FlexAID.ProcessRunning = False
 
         print("FlexAID starting thread has ended.")
-        
+    
 
 class Parse(threading.Thread):
 #class Parse:

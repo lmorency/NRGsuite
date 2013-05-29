@@ -62,9 +62,10 @@ class Manage:
         
         self.TmpFile = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'file.tmp')
 
-        self.RefFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG_ref.pdb')
-        self.INPFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.inp')
-        self.ICFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG.ic')
+        self.TargetFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'TARGET.inp.pdb')
+        self.RefFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIGAND_ref.pdb')
+        self.INPFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIGAND.inp')
+        self.ICFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIGAND.ic')
 
         self.VarAtoms = list()
         self.listTmpPDB = list()
@@ -124,8 +125,10 @@ class Manage:
     def Move_Files(self):
 
         try:
-            shutil.copy(self.INPFlexAIDSimulationProject_Dir, self.INPFlexAIDRunSimulationProject_Dir)
-            shutil.copy(self.ICFlexAIDSimulationProject_Dir, self.ICFlexAIDRunSimulationProject_Dir)
+            shutil.copy(self.INPFlexAIDSimulationProject_Dir, self.FlexAIDRunSimulationProject_Dir)
+            shutil.copy(self.ICFlexAIDSimulationProject_Dir, self.FlexAIDRunSimulationProject_Dir)
+            shutil.copy(self.RefFlexAIDSimulationProject_Dir, self.FlexAIDRunSimulationProject_Dir)
+            shutil.copy(self.TargetFlexAIDSimulationProject_Dir, self.FlexAIDRunSimulationProject_Dir)
         except:
             return False
 
@@ -287,7 +290,7 @@ class Manage:
 
         config_file.write('PDBNAM ' + self.IOFile.TargetPath.get() + '\n')
         
-        config_file.write('INPLIG ' + os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.inp') + '\n')
+        config_file.write('INPLIG ' + self.INPFlexAIDSimulationProject_Dir + '\n')
         config_file.write('METOPT GA\n')
 
         #config_file.write('BPKENM ' + self.Config1.BPE.get() + '\n')
@@ -578,7 +581,7 @@ class Manage:
         
         # Create the custom path for the temporary pdb files
         for i in range (int(self.GAParam.NbTopChrom.get()) + 1):
-            self.listTmpPDB.append(os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG' + str(i) + '.pdb'))
+            self.listTmpPDB.append(os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIGAND' + str(i) + '.pdb'))
     
     ''' ==================================================================================
     FUNCTION Get_RecAtom: Create a dictionary containing the atoms neighbours

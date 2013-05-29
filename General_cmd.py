@@ -29,7 +29,8 @@ RESERVED_NAMES =    'TOP_\d+__|' + \
                     'RESULT_\d+__|' + \
                     '.*_sph_.*|' + \
                     'BINDINGSITE_AREA__|' + \
-                    'REFERENCE_LIGAND__'
+                    'REFERENCE_LIGAND__|' + \
+		    'LIGAND__'
 
 
 ''' ==========================================================

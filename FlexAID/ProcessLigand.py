@@ -35,16 +35,19 @@ from shutil import copy, Error
 import os
 import time
 import shutil
+import threading
 import General
 
 from subprocess import Popen, PIPE
 
 
-class ProcLig:
+class ProcLig(threading.Thread):
 
     def __init__(self, top, MoleculeFile, StartAtomIndex, AtomTypes, AnchorAtom, 
                  ConvertOnly, ProcessOnly, Gen3D, Target, Callback):
         
+        threading.Thread.__init__(self)
+
         self.top = top
         self.FlexAID = self.top.top
         
@@ -64,7 +67,7 @@ class ProcLig:
         
         self.StartAtomIndex = StartAtomIndex
         
-        self.run()
+        self.start()
         
     def run(self):
         
@@ -76,7 +79,7 @@ class ProcLig:
             molecule = 'ligand'
 
         if not self.Copy_MoleculeFile():
-            self.FlexAID.DisplayMessage("  Processing molecule...", 0)
+            self.FlexAID.DisplayMessage("  Processing %s molecule..." % molecule, 0)
             rv = self.process()
         else:
             self.FlexAID.DisplayMessage("  ERROR: The %s could not be copied to temp folder" % molecule, 1)
@@ -91,9 +94,6 @@ class ProcLig:
                 self.FlexAID.DisplayMessage("  ERROR: The %s could not be converted" % molecule, 1)
             else:
                 self.FlexAID.DisplayMessage("  ERROR: The %s could not be processed" % molecule, 1)
-        
-        print self.Callback
-        return rv
         
         self.Callback(False, '', 0, '', 0, False, False, 0, False)
         self.FlexAID.ProcessRunning = False
@@ -114,29 +114,29 @@ class ProcLig:
             # use default outputting for the target
             commandline += ' -target'
         else:
-            commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIG') + '"'
+            #commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIGAND') + '"'
         
-        if self.Gen3D:
-            commandline += ' --gen3D'
+            if self.Gen3D:
+                commandline += ' --gen3D'
 
-        if self.ConvertOnly:
-            commandline += ' -c'
-        else:
-            if self.ProcessOnly:
-                commandline += ' -p'
-            
-            commandline += ' --atom_index ' + str(self.StartAtomIndex)
-            commandline += ' -ref'
-            
-            if self.AtomTypes == 'Sobolev':
-                commandline += ' --old_types'
-            elif self.AtomTypes == 'Gaudreault':
-                commandline += ' --new_types'
-            elif self.AtomTypes == 'Sybyl':
-                commandline += ' --babel_types'
-            
-            if self.AnchorAtom != -1:
-                commandline += ' --force_gpa ' + str(self.AnchorAtom)
+            if self.ConvertOnly:
+                commandline += ' -c'
+            else:
+                if self.ProcessOnly:
+                    commandline += ' -p'
+                
+                commandline += ' --atom_index ' + str(self.StartAtomIndex)
+                commandline += ' -ref'
+                
+                #if self.AtomTypes == 'Sobolev':
+                #    commandline += ' --old_types'
+                #elif self.AtomTypes == 'Gaudreault':
+                #    commandline += ' --new_types'
+                #elif self.AtomTypes == 'Sybyl':
+                #    commandline += ' --babel_types'
+                
+                if self.AnchorAtom != -1:
+                    commandline += ' --force_gpa ' + str(self.AnchorAtom)
         
         print(commandline)
         
@@ -160,7 +160,7 @@ class ProcLig:
                 self.FlexAID.Run = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
 
             (out,err) = self.FlexAID.Run.communicate()
-
+            
             if self.FlexAID.Run.returncode != 0:
                 self.FlexAID.ProcessError = True
                 return 1
@@ -176,14 +176,19 @@ class ProcLig:
     def Copy_MoleculeFile(self):
 
         try:
-            copy(self.MoleculeFile, self.FlexAID.FlexAIDSimulationProject_Dir)            
+            if self.Target:
+                self.TmpMoleculeFile = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, 'TARGET.pdb')
+            else:
+                self.TmpMoleculeFile = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, 'LIGAND.pdb')
+            
+            copy(self.MoleculeFile, self.TmpMoleculeFile)
+            
         except IOError:
             return 1
         except Error:
             pass
         
-        self.TmpMoleculeFile = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, os.path.split(self.MoleculeFile)[1])
-
+        
         return 0
     
     '''

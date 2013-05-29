@@ -80,7 +80,7 @@ class Config3(Tabs.Tab):
             self.SolventType.set('< No type >')
             self.SolventTypeIndex.set(0)
 
-        self.SolventTerm.set('-5.0')
+        self.SolventTerm.set('5.0')
 
         self.DeltaAngle.set('2.5')
         self.DeltaDihedral.set('2.5')
