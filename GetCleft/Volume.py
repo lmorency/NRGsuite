@@ -54,7 +54,7 @@ class RunVolume(threading.Thread):
         print("volume_calc starting thread has begun.")
 
         for Cleft in self.Clefts:
-        
+            
             cmdline  = '"' + self.GetCleft.VolumeExecutable + '"'
             cmdline += ' -i "' + Cleft.CleftFile + '"'
             cmdline += ' -t ' + self.Iterations

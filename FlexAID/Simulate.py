@@ -281,6 +281,9 @@ class Simulate(Tabs.Tab):
         
         self.DisplayMessage('   ga_inp.dat...', 2)
         self.Manage.Create_ga_inp(bContinue)
+
+        self.DisplayMessage('   Writing report...', 2)
+        self.Manage.Write_Report()
         
         self.DisplayMessage('   Saving and modifying input files...', 2)
         #self.Manage.Modify_Input()

@@ -658,101 +658,119 @@ class Manage:
     ================================================================================== '''
     def Write_Report(self):
         
-        return
-        """
         # Save the data to the configuration file
         report_file = open(self.Report, 'w')
         
-        report_file.write('%-25s%s\n' % ('Target name', self.IOFile.TargetName.get()))
-        report_file.write('%-25s%s\n' % ('Target file', self.IOFile.TargetPath.get()))
+        report_file.write('%-35s%s\n' % ('Target name', self.IOFile.TargetName.get()))
+        report_file.write('%-35s%s\n' % ('Target file', self.IOFile.TargetPath.get()))
 
-        report_file.write('%-25s%s\n' % ('Ligand name', self.IOFile.LigandName.get()))
-        report_file.write('%-25s%s\n' % ('Ligand file', self.IOFile.LigandPath.get()))
+        report_file.write('%-35s%s\n' % ('Ligand name', self.IOFile.LigandName.get()))
+        report_file.write('%-35s%s\n' % ('Ligand file', self.IOFile.LigandPath.get()))
 
-        report_file.write('%-25s%s\n' % ('Method optimization', 'Genetic algorithms'))
-        report_file.write('%-25s%s\n' % ('Scoring function', 'Complementarity function'))
+        report_file.write('%-35s%s\n' % ('Method optimization', 'Genetic algorithms'))
+        report_file.write('%-35s%s\n' % ('Scoring function', 'Complementarity function'))
         
         rngOpt = self.Config1.RngOpt.get()
         if rngOpt == 'LOCCEN':
-            report_file.write('%-25s%s\n' % ('Binding-site definition', 'Sphere'))
-            report_file.write('%-25s%s\n' % ('Sphere center (x,y,z)', 
+            report_file.write('%-35s%s\n' % ('Binding-site definition', 'Sphere'))
+            report_file.write('%-35s%s\n' % ('Sphere center (x,y,z)', 
                                            str(self.Config1.Vars.BindingSite.Sphere.Center[0]) + ',' + \
                                            str(self.Config1.Vars.BindingSite.Sphere.Center[1]) + ',' + \
                                            str(self.Config1.Vars.BindingSite.Sphere.Center[2])))
-            report_file.write('%-25s%s\n' % ('Sphere radius', str(self.Config1.Vars.BindingSite.Sphere.Radius)))
-
-        elif rngOpt == 'LOCCLF':
-            report_file.write('%-25s%s\n' % ('Binding-site definition', 'Cleft'))
+            report_file.write('%-35s%s\n' % ('Sphere radius', str(self.Config1.Vars.BindingSite.Sphere.Radius) + 'A'))
+            report_file.write('%-35s%s\n' % ('Binding-site volume', 
+                                             str(4*3.1416*self.Config1.Vars.BindingSite.Sphere.Radius**3/3) + 'A^3'))
             
-        report_file.write('%-25s%s\n' % ('Binding-site resolution', '0.375A'))
-            self.Config1.Generate_CleftBindingSite()
-            self.Copy_BindingSite()
+        elif rngOpt == 'LOCCLF':
+            report_file.write('%-35s%s\n' % ('Binding-site definition', 'Cleft'))
+            report_file.write('%-35s%s\n' % ('List of clefts', ','.join(self.Config1.Vars.BindingSite.Get_SortedCleftNames())))
+            
+            volume = 0.0
+            for Cleft in self.Config1.Vars.BindingSite.listClefts:
+                if Cleft.Volume:
+                    volume += Cleft.Volume
+                else:
+                    volume = 'undetermined'
+            
+            if type(volume) == float:
+                volume = str(volume) + 'A^3'
+
+            report_file.write('%-35s%s\n' % ('Binding-site volume', volume))
+        
+        report_file.write('%-35s%s\n' % ('Binding-site resolution', '0.375A'))
+        #self.Config1.Generate_CleftBindingSite()
+        #self.Copy_BindingSite()
            
         nflexsc = self.Config1.Vars.TargetFlex.Count_SideChain()
         if nflexsc > 0:
-            report_file.write('%-25s%s\n' % ('Target flexibility', 'Yes'))
-            report_file.write('%-25s%s\n' % ('Number of flexible side-chains', str(nflexsc)))
-            report_file.write('%-25s%s\n' % ('Flexible side-chains', self.Config1.Vars.TargetFlex.Output_List()))
+            report_file.write('%-35s%s\n' % ('Target flexibility', 'Yes'))
+            report_file.write('%-35s%s\n' % ('Number of flexible side-chains', str(nflexsc)))
+            report_file.write('%-35s%s\n' % ('Flexible side-chains', self.Config1.Vars.TargetFlex.Output_List()))
         else:
-            report_file.write('%-25s%s\n' % ('Target flexibility', 'No'))
+            report_file.write('%-35s%s\n' % ('Target flexibility', 'No'))
         
         nflexbonds = len(self.IOFile.Vars.dictFlexBonds.keys())
         if nflexbonds > 0:
-            report_file.write('%-25s%s\n' % ('Ligand flexibility', 'Yes'))
-            report_file.write('%-25s%s\n' % ('Number flexible bonds', str(nflexbonds)))            
+            report_file.write('%-35s%s\n' % ('Ligand flexibility', 'Yes'))
+            report_file.write('%-35s%s\n' % ('Number flexible bonds', str(nflexbonds)))            
         else:
-            report_file.write('%-25s%s\n' % ('Ligand flexibility', 'No'))
+            report_file.write('%-35s%s\n' % ('Ligand flexibility', 'No'))
         
-        report_file.write('%-25s%s\n' % ('Translational degree of freedom', str(nflexbonds)))            
-        
-        if len(self.Config2.Vars.dictConstraints):
-            ConsFile = os.path.join(self.FlexAIDRunSimulationProject_Dir,'cons.lst')
-            self.Create_ConsFile(ConsFile)
-            config_file.write('CONSTR ' + ConsFile + '\n')
-        
+        ncons = len(self.Config2.Vars.dictConstraints)
+        if ncons:
+            report_file.write('%-35s%s\n' % ('Interaction constraints', 'Yes'))
+            report_file.write('%-35s%s\n' % ('Number of constraints', str(ncons)))
+        else:
+            report_file.write('%-35s%s\n' % ('Interaction constraints', 'No'))
+
         if self.Config2.IntTranslation.get():
-            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - -1\n')
-            
+            report_file.write('%-35s%s\n' % ('Translational degree of freedom', 'Yes'))
+        else:
+            report_file.write('%-35s%s\n' % ('Translational degree of freedom', 'No'))
+
         if self.Config2.IntRotation.get():
-            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n')
+            report_file.write('%-35s%s\n' % ('Rotational degree of freedom', 'Yes'))
+        else:
+            report_file.write('%-35s%s\n' % ('Rotational degree of freedom', 'No'))
         
         if self.Config2.UseReference.get():
-            config_file.write('RMSDST ' + self.IOFile.ProcessedLigandPath.get() + '\n')
-                
-        report_file.write('%-25s%s\n' % ('Atom types definition', self.IOFile.AtomTypes.get()))
+            report_file.write('%-35s%s\n' % ('Pose as reference', 'Yes'))
+        else:
+            report_file.write('%-35s%s\n' % ('Pose as reference', 'No'))
+
+        report_file.write('%-35s%s\n' % ('Atom types definition', self.IOFile.AtomTypes.get()))
         
         if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
-            report_file.write('%-25s%s\n' % ('Pairwise energy matrix', 'scr_bin.dat'))
+            report_file.write('%-35s%s\n' % ('Pairwise energy matrix', 'scr_bin.dat'))
             
         elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
-            report_file.write('%-25s%s\n' % ('Pairwise energy matrix', 'M6_cons_3.dat'))
+            report_file.write('%-35s%s\n' % ('Pairwise energy matrix', 'M6_cons_3.dat'))
             
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
-            report_file.write('%-25s%s\n' % ('Pairwise energy matrix', 'MC_10p_3.dat'))
+            report_file.write('%-35s%s\n' % ('Pairwise energy matrix', 'MC_10p_3.dat'))
         
         # permeability of atoms
-        report_file.write('%-25s%s\n' % ('Van der Waals permeability',
-                                         float(self.Config3.Permeability.get()) * 100.0 + '%'))
+        report_file.write('%-35s%s\n' % ('Van der Waals permeability', 
+                                         str(float(self.Config3.Permeability.get()) * 100.0) + '%'))
         
         # heterogroups consideration
         if self.Config3.ExcludeHET.get():
-            report_file.write('%-25s%s\n' % ('Heteogroups excluded', 'Yes'))
+            report_file.write('%-35s%s\n' % ('Heteogroups excluded', 'Yes'))
         elif self.Config3.IncludeHOH.get():
-            report_file.write('%-25s%s\n' % ('Heteogroups excluded', 'No'))
-            report_file.write('%-25s%s\n' % ('Water molecules included', 'Yes'))
+            report_file.write('%-35s%s\n' % ('Heteogroups excluded', 'No'))
+            report_file.write('%-35s%s\n' % ('Water molecules included', 'Yes'))
         
-        report_file.write('%-25s%s\n' % ('Delta angle', self.Config3.DeltaAngle.get() + ' degrees'))
-        report_file.write('%-25s%s\n' % ('Delta dihedrals', self.Config3.DeltaDihedral.get() + ' degrees'))
-        report_file.write('%-25s%s\n' % ('Delta flexible dihedrals', self.Config3.DeltaDihedralFlex.get() + ' degrees'))
+        report_file.write('%-35s%s\n' % ('Delta angle', self.Config3.DeltaAngle.get() + ' degrees'))
+        report_file.write('%-35s%s\n' % ('Delta dihedrals', self.Config3.DeltaDihedral.get() + ' degrees'))
+        report_file.write('%-35s%s\n' % ('Delta flexible dihedrals', self.Config3.DeltaDihedralFlex.get() + ' degrees'))
 
         if self.Config3.SolventTypeIndex.get() == 0:        
-            report_file.write('%-25s%s\n' % ('Solvent type', 'No-type'))
-            report_file.write('%-25s%s\n' % ('Solvent term', str(self.Config3.SolventTerm.get())))
+            report_file.write('%-35s%s\n' % ('Solvent type', 'No-type'))
+            report_file.write('%-35s%s\n' % ('Solvent term', str(self.Config3.SolventTerm.get())))
         else:
-            report_file.write('%-25s%s\n' % ('Solvent type', 'Type-based'))
+            report_file.write('%-35s%s\n' % ('Solvent type', 'Type-based'))
         
-        report_file.write('%-25s%s\n' % ('Maximum docking results', '10'))
+        report_file.write('%-35s%s\n' % ('Maximum docking results', '10'))
         
         return
-        """
-    
+        
