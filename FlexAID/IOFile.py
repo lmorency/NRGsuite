@@ -243,16 +243,18 @@ class IOFile(Tabs.Tab):
             self.Disable_Frame()
             
             self.top.ProcessRunning = True
-            p = ProcessLigand.ProcLig(self, MoleculeFile, StartAtomIndex, AtomTypes, Anchor, 
+            self.DisplayMessage("  Processing the ligand...", 1)
+            
+            p = ProcessLigand.ProcLig(self, MoleculeFile, StartAtomIndex, AtomTypes, Anchor,
                                       ConvertOnly, ProcessOnly, Gen3D, Target, self.ProcessLigand)
             p.join()
             
         else:
             self.Enable_Frame()
-
+        
     ''' ==================================================================================
     FUNCTION ProcessTarget: Processes target PDB file
-    ================================================================================== '''    
+    ================================================================================== '''
     def ProcessTarget(self, boolRun, MoleculeFile, StartAtomIndex, AtomTypes, 
                       Anchor, ConvertOnly, ProcessOnly, Gen3D, Target):
         
@@ -260,7 +262,9 @@ class IOFile(Tabs.Tab):
             self.Disable_Frame()
             
             self.top.ProcessRunning = True
-            p = ProcessLigand.ProcLig(self, MoleculeFile, StartAtomIndex, AtomTypes, Anchor, 
+            self.DisplayMessage("  Processing the target...", 1)
+            
+            p = ProcessLigand.ProcLig(self, MoleculeFile, StartAtomIndex, AtomTypes, Anchor,
                                       ConvertOnly, ProcessOnly, Gen3D, Target, self.ProcessTarget)
             p.join()
             
@@ -674,7 +678,7 @@ class IOFile(Tabs.Tab):
 
             self.VarPath = self.TargetPath
             self.VarName = self.TargetName
-            self.VarProc = self.ProcessedLigandPath
+            self.VarProc = self.ProcessedTargetPath
             #self.VarMD5 = self.TargetMD5
 
     ''' ==================================================================================

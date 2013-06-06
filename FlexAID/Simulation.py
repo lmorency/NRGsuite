@@ -117,7 +117,7 @@ class Parse(threading.Thread):
         self.top = top
         self.FlexAID = self.top.top
         self.queue = queue
-
+        
         self.READ = self.top.Manage.READ
         self.UPDATE = self.top.Manage.UPDATE
         self.LOGFILE = self.top.Manage.LOGFILE
@@ -266,7 +266,7 @@ class Parse(threading.Thread):
 
                                 # Update energy/fitness table
                                 self.queue.put(lambda: self.top.update_DataList())
-
+                                
                                 self.top.Modify_LigDisplay()
                                 self.top.Modify_Display(self.top.SimCartoonDisplay, 'cartoon')
                                 self.top.Modify_Display(self.top.SimLinesDisplay, 'lines')

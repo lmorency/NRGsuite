@@ -25,7 +25,7 @@ import time
 import re
 
 # Regular expression patterns
-RESERVED_NAMES =    '*__|' + \
+RESERVED_NAMES =    '.*__|' + \
                     '.*_sph_.*'
 
 ''' ==========================================================
