@@ -448,7 +448,6 @@ class CropCleft(Tabs.Tab):
                     return
                 
             try:
-                
                 cmd.set("auto_zoom", 0)
                 
                 DestFile = os.path.join(self.top.GetCleftTempProject_Dir, Output + '.pdb')
@@ -491,7 +490,7 @@ class CropCleft(Tabs.Tab):
                     self.Reset_Step1()
                     
                 else:
-                    self.top.DisplayMessage("  ERROR: Cleft '" + self.Cleft.CleftName + "' could not be found to set partition color", 1)                
+                    self.top.DisplayMessage("  ERROR: Cleft '" + self.Cleft.CleftName + "' could not be found to set partition color", 1)
 
             except:
                 self.top.DisplayMessage("  ERROR: Could not create partition object: File not found.", 1)

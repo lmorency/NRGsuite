@@ -212,6 +212,13 @@ class IOFile(Tabs.Tab):
                 #ReferencePath = os.path.join(self.top.FlexAIDTempProject_Dir, 'LIGAND_ref.pdb')
                 #self.ReferencePath.set(ReferencePath)
         
+                # Store content of ligand input files
+                if self.store_InpFile():
+                    return False
+                else:
+                    if self.Load_ProcConvLigand(self.ProcessedLigandPath.get(), self.Ligand, False):
+                        return False
+                        
         if not self.ProcessedTargetPath.get():
             self.top.ProcessError = False
             
@@ -224,13 +231,6 @@ class IOFile(Tabs.Tab):
                 self.ProcessedTargetPath.set(os.path.join(self.top.FlexAIDTempProject_Dir,
                                                           os.path.split(os.path.splitext(self.TargetPath.get())[0])[1]) + '.inp.pdb')
                 
-        # Store content of ligand input files
-        if self.store_InpFile():
-            return False
-        else:
-            if self.Load_ProcConvLigand(self.ProcessedLigandPath.get(), self.Ligand, False):
-                return False
-
         return True
     
     ''' ==================================================================================
@@ -786,6 +786,8 @@ class IOFile(Tabs.Tab):
             
             self.VarPath.set(os.path.normpath(Path))
             self.VarName.set(Name)
+            self.VarProc.set('')
+            self.top.SaveSessionFile = ''
             #self.VarMD5.set(General.hashfile(self.VarPath.get()))
             
             if objtype == 'Ligand':
@@ -842,7 +844,9 @@ class IOFile(Tabs.Tab):
             
             self.VarPath.set(Path)
             self.VarName.set(Name)
-            
+            self.VarProc.set('')
+            self.top.SaveSessionFile = ''
+
             if objtype == 'Ligand':
                 self.Reset_Ligand()
 
@@ -983,6 +987,7 @@ class IOFile(Tabs.Tab):
                 self.VarName.set('')
                 self.VarPath.set('')
                 self.VarProc.set('')
+                self.top.SaveSessionFile = ''
                 
                 self.DisplayMessage("  ERROR: An error occured while displaying the object.", 1)
     
