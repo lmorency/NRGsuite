@@ -31,11 +31,11 @@ if __debug__:
     import General_cmd
 
 class RunVolume(threading.Thread):
-
+    
     def __init__(self, top, queue, Clefts, Iterations):
         
         threading.Thread.__init__(self)
-
+        
         self.top = top
         self.GetCleft = self.top.top
         

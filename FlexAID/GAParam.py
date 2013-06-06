@@ -36,8 +36,8 @@ class GAParamVars(Vars.Vars):
     FitPeak = StringVar()
     FitScale = StringVar()
     RepModel = StringVar()
-    RepSS = StringVar()
-    RepB = StringVar()
+    #RepSS = StringVar()
+    #RepB = StringVar()
     RepDup = IntVar()
     UseAGA = IntVar()
     AGAk1 = StringVar()
@@ -60,8 +60,8 @@ class GAParam(Tabs.Tab):
         self.FitPeak = self.Vars.FitPeak
         self.FitScale = self.Vars.FitScale
         self.RepModel = self.Vars.RepModel
-        self.RepSS = self.Vars.RepSS
-        self.RepB = self.Vars.RepB
+        #self.RepSS = self.Vars.RepSS
+        #self.RepB = self.Vars.RepB
         self.RepDup = self.Vars.RepDup
         self.UseAGA = self.Vars.UseAGA
         self.AGAk1 = self.Vars.AGAk1
@@ -83,8 +83,8 @@ class GAParam(Tabs.Tab):
         self.FitScale.set('10.0')
         self.RepModel.set('BOOM')
         self.RepDup.set(0)
-        self.RepSS.set('500')
-        self.RepB.set('1.0')
+        #self.RepSS.set('500')
+        #self.RepB.set('500')
         self.UseAGA.set(1)
         self.AGAk1.set('0.95')
         self.AGAk2.set('0.10')
@@ -102,6 +102,10 @@ class GAParam(Tabs.Tab):
         if int(self.NbGenFreq.get()) > int(self.NbGen.get()):
             self.NbGenFreq.set(self.NbGen.get())
 
+        # Set k3 = k1 and k4 = k2 because now using max cr (k1) and max mr (k2)
+        self.AGAk3.set(self.AGAk1.get())
+        self.AGAk4.set(self.AGAk2.get())
+        
         return True
 
     ''' ==================================================================================
@@ -133,7 +137,7 @@ class GAParam(Tabs.Tab):
             self.AGAk1Trace = self.AGAk1.trace('w', lambda *args, **kwargs:
                                                     self.Validate_Field(input=self.entAGAk1, var=self.AGAk1, min=0.000,
                                                     max=1.000, ndec=3, tag='Adaptive constant k1', _type=float))
-
+            
             self.AGAk2Trace = self.AGAk2.trace('w', lambda *args, **kwargs:
                                                     self.Validate_Field(input=self.entAGAk2, var=self.AGAk2, min=0.000,
                                                     max=1.000, ndec=3, tag='Adaptive constant k2', _type=float))
@@ -166,13 +170,13 @@ class GAParam(Tabs.Tab):
                                                           self.Validate_Field(input=self.entAlpha, var=self.FitAlpha, min=0.00,
                                                           max=100.00, ndec=2, tag='Fitness alpha', _type=float))
 
-            self.RepSSTrace = self.RepSS.trace('w', lambda *args, **kwargs:
-                                                    self.Validate_Field(input=self.entSS, var=self.RepSS, min=1,
-                                                    max=1000, ndec=-1, tag='Reproduction steady-state', _type=int))
+            #self.RepSSTrace = self.RepSS.trace('w', lambda *args, **kwargs:
+            #                                        self.Validate_Field(input=self.entSS, var=self.RepSS, min=1,
+            #                                        max=1000, ndec=-1, tag='Reproduction steady-state', _type=int))
 
-            self.RepBTrace = self.RepB.trace('w', lambda *args, **kwargs:
-                                                  self.Validate_Field(input=self.entB, var=self.RepB, min=0.10,
-                                                  max=5.00, ndec=2, tag='Reproduction population boom', _type=float))
+            #self.RepBTrace = self.RepB.trace('w', lambda *args, **kwargs:
+            #                                      self.Validate_Field(input=self.entB, var=self.RepB, min=0.10,
+            #                                      max=5.00, ndec=2, tag='Reproduction population boom', _type=float))
 
 
         except:
@@ -200,8 +204,8 @@ class GAParam(Tabs.Tab):
             self.FitScale.trace_vdelete('w',self.FitScaleTrace)
             self.FitPeak.trace_vdelete('w',self.FitPeakTrace)
             self.FitAlpha.trace_vdelete('w',self.FitAlphaTrace)
-            self.RepSS.trace_vdelete('w',self.RepSSTrace)
-            self.RepB.trace_vdelete('w',self.RepBTrace)
+            #self.RepSS.trace_vdelete('w',self.RepSSTrace)
+            #self.RepB.trace_vdelete('w',self.RepBTrace)
         except:
             pass
 
@@ -276,25 +280,39 @@ class GAParam(Tabs.Tab):
         Label(fAGALine1, text='Adaptive operators:', font=self.top.font_Text).pack(side=LEFT)
         Checkbutton(fAGALine1, text=' Use', variable=self.UseAGA, font=self.top.font_Text).pack(side=RIGHT)
 
-        self.entAGAk4 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk4, font=self.top.font_Text)
-        self.entAGAk4.pack(side=RIGHT, anchor=W)
-        Label(fAGALine2, text='k4:',font=self.top.font_Text).pack(side=RIGHT)
-        self.ValidAGAk4 = [1, False, self.entAGAk4]
-
-        self.entAGAk3 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk3, font=self.top.font_Text)
-        self.entAGAk3.pack(side=RIGHT, anchor=W)
-        Label(fAGALine2, text='k3:',font=self.top.font_Text).pack(side=RIGHT)
-        self.ValidAGAk3 = [1, False, self.entAGAk3]
-        
-        self.entAGAk2 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk2, font=self.top.font_Text)
+        self.entAGAk2 = Entry(fAGALine2, width=5, background='white', justify=CENTER, 
+                              textvariable=self.AGAk2, font=self.top.font_Text)
         self.entAGAk2.pack(side=RIGHT, anchor=W)
-        Label(fAGALine2, text='k2:',font=self.top.font_Text).pack(side=RIGHT)
+        Label(fAGALine2, text='Max M.R.:',font=self.top.font_Text).pack(side=RIGHT)
         self.ValidAGAk2 = [1, False, self.entAGAk2]
 
-        self.entAGAk1 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk1, font=self.top.font_Text)
+        self.entAGAk1 = Entry(fAGALine2, width=5, background='white', justify=CENTER,
+                              textvariable=self.AGAk1, font=self.top.font_Text)
         self.entAGAk1.pack(side=RIGHT, anchor=W)
-        Label(fAGALine2, text='k1:',font=self.top.font_Text).pack(side=RIGHT)
+        Label(fAGALine2, text='Max C.R.:',font=self.top.font_Text).pack(side=RIGHT)
         self.ValidAGAk1 = [1, False, self.entAGAk1]
+        
+        self.entAGAk4 = Entry(fAGALine2, width=5, background='white', justify=CENTER,
+                              textvariable=self.AGAk4, font=self.top.font_Text)
+        #self.entAGAk4.pack(side=RIGHT, anchor=W)
+        #Label(fAGALine2, text='k4:',font=self.top.font_Text).pack(side=RIGHT)
+        self.ValidAGAk4 = [1, False, self.entAGAk4]
+
+        self.entAGAk3 = Entry(fAGALine2, width=5, background='white', justify=CENTER,
+                              textvariable=self.AGAk3, font=self.top.font_Text)
+        #self.entAGAk3.pack(side=RIGHT, anchor=W)
+        #Label(fAGALine2, text='k3:',font=self.top.font_Text).pack(side=RIGHT)
+        self.ValidAGAk3 = [1, False, self.entAGAk3]
+        
+        #self.entAGAk2 = Entry(fAGALine2, width=5, background='white', justify=CENTER,textvariable=self.AGAk2, font=self.top.font_Text)
+        #self.entAGAk2.pack(side=RIGHT, anchor=W)
+        #Label(fAGALine2, text='k2:',font=self.top.font_Text).pack(side=RIGHT)
+        #self.ValidAGAk2 = [1, False, self.entAGAk2]
+
+        #self.entAGAk1 = Entry(fAGALine2, width=5, background='white', justify=CENTER, textvariable=self.AGAk1, font=self.top.font_Text)
+        #self.entAGAk1.pack(side=RIGHT, anchor=W)
+        #Label(fAGALine2, text='k1:',font=self.top.font_Text).pack(side=RIGHT)
+        #self.ValidAGAk1 = [1, False, self.entAGAk1]
 
         ''' ========================================================================== '''
 
@@ -332,20 +350,20 @@ class GAParam(Tabs.Tab):
         Label(fFitnessLine1, text='Fitness model', font=self.top.font_Title).pack(side=LEFT)
         Radiobutton(fFitnessLine2, text='Linear', value='LINEAR', variable=self.FitModel, font=self.top.font_Text).pack(side=LEFT)
         Radiobutton(fFitnessLine3, text='Share', value='PSHARE', variable=self.FitModel, font=self.top.font_Text).pack(side=LEFT)
-
+        
         self.entScale = Entry(fFitnessLine3, width=4, background='white', justify=CENTER, textvariable=self.FitScale, font=self.top.font_Text)
-        self.entScale.pack(side=RIGHT)
-        Label(fFitnessLine3, text='Scale:', font=self.top.font_Text).pack(side=RIGHT)
+        #self.entScale.pack(side=RIGHT)
+        #Label(fFitnessLine3, text='Scale:', font=self.top.font_Text).pack(side=RIGHT)
         self.ValidFitScale = [1, False, self.entScale]
-
+        
         self.entPeak = Entry(fFitnessLine3, width=4, background='white', justify=CENTER, textvariable=self.FitPeak, font=self.top.font_Text)
-        self.entPeak.pack(side=RIGHT)
-        Label(fFitnessLine3, text='Peak:', font=self.top.font_Text).pack(side=RIGHT)
+        #self.entPeak.pack(side=RIGHT)
+        #Label(fFitnessLine3, text='Peak:', font=self.top.font_Text).pack(side=RIGHT)
         self.ValidFitPeak = [1, False, self.entPeak]
 
         self.entAlpha = Entry(fFitnessLine3, width=4, background='white', justify=CENTER, textvariable=self.FitAlpha, font=self.top.font_Text)
-        self.entAlpha.pack(side=RIGHT)
-        Label(fFitnessLine3, text='alpha:', font=self.top.font_Text).pack(side=RIGHT)
+        #self.entAlpha.pack(side=RIGHT)
+        #Label(fFitnessLine3, text='alpha:', font=self.top.font_Text).pack(side=RIGHT)
         self.ValidFitAlpha = [1, False, self.entAlpha]
 
         
@@ -363,25 +381,25 @@ class GAParam(Tabs.Tab):
         fRepModelLine4.pack(side=TOP, fill=X, padx=5, pady=2)
         
         Label(fRepModelLine1, text='Reproduction model', font=self.top.font_Title).pack(side=LEFT)
-        Radiobutton(fRepModelLine2, text='Elitism (Steady-state):', value='STEADY', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
-        self.entSS = Entry(fRepModelLine2, width=5, background='white', justify=CENTER, textvariable=self.RepSS, font=self.top.font_Text)
-        self.entSS.pack(side=RIGHT)
-        Label(fRepModelLine2, text='Chr.:', font=self.top.font_Text).pack(side=RIGHT)
-        self.ValidRepSS = [1, False, self.entSS]
+        Radiobutton(fRepModelLine2, text='Elitism (Steady-state)', value='STEADY', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
+        #self.entSS = Entry(fRepModelLine2, width=5, background='white', justify=CENTER, textvariable=self.RepSS, font=self.top.font_Text)
+        #self.entSS.pack(side=RIGHT)
+        #Label(fRepModelLine2, text='Extra chrom.:', font=self.top.font_Text).pack(side=RIGHT)
+        #self.ValidRepSS = [1, False, self.entSS]
 
-        Radiobutton(fRepModelLine3, text='Population boom:', value='BOOM', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
-        self.entB = Entry(fRepModelLine3, width=5, background='white', justify=CENTER, textvariable=self.RepB, font=self.top.font_Text)
-        self.entB.pack(side=RIGHT)
-        Label(fRepModelLine3, text='Ratio.:', font=self.top.font_Text).pack(side=RIGHT)
-        self.ValidRepB = [1, False, self.entB]
+        Radiobutton(fRepModelLine3, text='Population boom', value='BOOM', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
+        #self.entB = Entry(fRepModelLine3, width=5, background='white', justify=CENTER, textvariable=self.RepB, font=self.top.font_Text)
+        #self.entB.pack(side=RIGHT)
+        #Label(fRepModelLine3, text='Chr.:', font=self.top.font_Text).pack(side=RIGHT)
+        #self.ValidRepB = [1, False, self.entB]
         
         Checkbutton(fRepModelLine4, text=' Allow duplicates', variable=self.RepDup, font=self.top.font_Text).pack(side=LEFT)
         
         self.Validator = [self.ValidNbGen, self.ValidNbGenFreq, self.ValidNbChrom, self.ValidNbTopChrom,
                           self.ValidCrossRate, self.ValidMutaRate, self.ValidFitAlpha, self.ValidFitPeak,
-                          self.ValidFitScale, self.ValidRepSS, self.ValidRepB, 
+                          self.ValidFitScale, #self.ValidRepSS, self.ValidRepB, 
                           self.ValidAGAk1, self.ValidAGAk2, self.ValidAGAk3, self.ValidAGAk4]
-
+        
         return self.fGAParam
 
     ''' ==================================================================================
@@ -389,6 +407,7 @@ class GAParam(Tabs.Tab):
     =================================================================================  '''    
     def RepModel_Toggle(self, *args):
         
+        '''
         if self.RepModel.get() == 'STEADY':
             self.entSS.config(state='normal')
             self.entB.config(state='disabled')
@@ -396,7 +415,10 @@ class GAParam(Tabs.Tab):
         elif self.RepModel.get() == 'BOOM':
             self.entSS.config(state='disabled')
             self.entB.config(state='normal')
-            
+        '''
+        
+        return
+ 
     ''' ==================================================================================
     FUNCTION FitModel_Toggle: Disables/enables the edit box according to checkstate
     =================================================================================  '''    

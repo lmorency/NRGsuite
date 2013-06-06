@@ -31,6 +31,8 @@ import os
 import shutil
 import glob
 import CleftObj
+import random
+import string
 
 #=========================================================================================
 '''                        ---  DIRECTORY MANAGEMENT  ---                          '''
@@ -74,33 +76,35 @@ class Manage:
     
     # Copy files from the Temp to the Save directory
     def save_Temp(self):
+        
+        while True:
+            Session = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(30))
+            self.SessionPath = os.path.join(self.top.GetCleftSaveProject_Dir,Session)
             
+            if not os.path.isdir(self.SessionPath):
+                os.makedirs(self.SessionPath)
+                break
+        
         nCopy = 0
         for Cleft in self.top.Default.TempBindingSite.listClefts:
-
-            SavePath = os.path.join(self.top.GetCleftSaveProject_Dir, Cleft.UTarget)
             
-            if not os.path.isdir(SavePath):
-                os.makedirs(SavePath)
-                
-            DestFile = os.path.join(SavePath,os.path.basename(Cleft.CleftFile))
             try:
-                shutil.copy(Cleft.CleftFile, DestFile)
-                nCopy = nCopy + 1
-            except:
-                pass
-                #self.top.DisplayMessage("  ERROR: Could not copy file '" + Cleft.CleftFile + "'", 2)
+                DestFile = os.path.join(self.SessionPath,os.path.split(Cleft.CleftFile)[1])
+                shutil.copy(Cleft.CleftFile, self.SessionPath)
+                Cleft.CleftFile = DestFile
 
-            Cleft.CleftFile = DestFile
-
+                nCopy += 1
+                
+            except shutil.Error:
+                self.top.DisplayMessage("  ERROR: The following file was not copied: '" + Cleft.CleftFile + "'", 2)
+            
         if nCopy:
             self.top.DisplayMessage("  Successfully copied (" + str(nCopy) + ") cleft object file(s)", 0)
         else:
             self.top.DisplayMessage("  No cleft object file(s) were copied", 0)
-
+            
         self.top.CopySession = True
-        
-        return
+
         
     # Copies the temporary Partition file
     def copy_TempPartition(self, PartitionFile, OutputFile):

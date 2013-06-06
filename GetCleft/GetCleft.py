@@ -65,10 +65,10 @@ class displayGetCleft(Base.Base):
     
         # Default view
         self.Btn_Config_Clicked()
-
+        
         # Remove all temporary clefts in Temporary Dir
         self.Manage.Clean()
-
+        
     def Build_Tabs(self):
     
         # Build class objects of each tab
@@ -80,18 +80,16 @@ class displayGetCleft(Base.Base):
         self.listBtnTabs = [ self.Btn_Config, self.Btn_Volume, self.Btn_CropCleft ]
         self.listTabs = [ self.Default, self.Crop, self.Volume ]
     
-        return
-    
     def Clean(self):
     
-        files = os.listdir(self.GetCleftProject_Dir)
+        files = os.listdir(self.GetCleftTempProject_Dir)
 
         for file in files:
             try:
-                os.remove(os.path.join(self.GetCleftProject_Dir,file))
+                os.remove(os.path.join(self.GetCleftTempProject_Dir,file))
             except OSError:
                 pass
-    
+        
     def Set_Folders(self):
     
         self.GetCleftInstall_Dir = os.path.join(self.Install_Dir,'GetCleft')
@@ -107,14 +105,12 @@ class displayGetCleft(Base.Base):
         self.TargetProject_Dir = os.path.join(self.Project_Dir,'Target')
         self.CleftProject_Dir = os.path.join(self.Project_Dir,'Cleft')
 
-        self.GetCleftSaveProject_Dir = os.path.join(self.GetCleftProject_Dir,'Save')
-        self.GetCleftTempProject_Dir = os.path.join(self.GetCleftProject_Dir,'Temp')
+        self.GetCleftSaveProject_Dir = os.path.join(self.GetCleftProject_Dir,'.Save')
+        self.GetCleftTempProject_Dir = os.path.join(self.GetCleftProject_Dir,'.Temp')
 
         self.Folders.extend( [  self.GetCleftProject_Dir, self.TargetProject_Dir, self.CleftProject_Dir,
                                 self.GetCleftSaveProject_Dir, self.GetCleftTempProject_Dir ] )
 
-        return
-    
     ''' ==================================================================================
     FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
     ==================================================================================  '''        

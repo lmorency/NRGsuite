@@ -64,7 +64,7 @@ class Base:
         self.Color_Red = '#FF9999'
         self.Color_White = '#FFFFFF'
         self.Color_Black = '#000000'
-                
+        
         self.root = root
         self.root.title(self.Name)
 
@@ -100,7 +100,7 @@ class Base:
         
         self.ProcessError = False
         self.ProcessRunning = False
-
+        
         self.fMain = Frame(self.root)
         self.fMain.pack(expand=True)
         
@@ -113,7 +113,7 @@ class Base:
         self.MakeMenuBar()
         
         self.After_Init()
-
+        
         self.Clean()
         
         return

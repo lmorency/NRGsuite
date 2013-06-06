@@ -53,7 +53,7 @@ class SimulateVars(Vars.Vars):
     def __init__(self):
         
         self.ResultsContainer = Result.ResultsContainer()
-
+    
 
 class Simulate(Tabs.Tab):
     
@@ -95,9 +95,9 @@ class Simulate(Tabs.Tab):
 
         self.IdleStatus()
         self.Reset_Buttons()
-    
-        self.ConfigMD5 = self.Manage.Hash_CONFIG()
         
+        self.ConfigMD5 = self.Manage.Hash_CONFIG()
+
         self.ResultsName_Toggle()
         
     ''' =============================================================================== 
@@ -125,7 +125,7 @@ class Simulate(Tabs.Tab):
         Button(fConfRes, text='Save', command=self.Btn_Save_Results_Clicked, font=self.top.font_Text).pack(side=LEFT)
         Entry(fConfRes, textvariable=self.ResultsName, font=self.top.font_Text, state='disabled', disabledbackground=self.top.Color_White,
                         disabledforeground=self.top.Color_Black, justify=CENTER).pack(side=LEFT, fill=X, expand=True)
-
+        
         fNaviRes = Frame(self.fRes)
         #fNaviRes.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
 
@@ -133,7 +133,6 @@ class Simulate(Tabs.Tab):
         Button(fNaviRes, text='Show parent', font=self.top.font_Text).pack(side=LEFT)
         Button(fNaviRes, text='Show next child', font=self.top.font_Text).pack(side=LEFT)
         Button(fNaviRes, text='Show previous child', font=self.top.font_Text).pack(side=LEFT)
-
 
         fTable = Frame(self.fSimulate, height=150, pady=5, padx=5)
         fTable.pack(side=BOTTOM, fill=BOTH, expand=True)
@@ -148,7 +147,8 @@ class Simulate(Tabs.Tab):
                                    self.top.Color_Blue)
         self.Table.Draw()
         
-
+        #fSep = Frame(self.fSimulate, height=3, relief=RAISED).pack(side=BOTTOM, fill=X, expand=True, pady=5)
+        
         #==================================================================================
         '''                         --- LEFT AND RIGHT ---                              '''
         #==================================================================================       
@@ -265,11 +265,11 @@ class Simulate(Tabs.Tab):
         if not self.Manage.Create_Folders():
             self.DisplayMessage('  ERROR: Could not create complex folder', 1)
             return
-
-        if not self.Manage.Move_Files():
-            self.DisplayMessage('  ERROR: Could not move input files to RESULT folder', 1)
-            return
-
+        
+        #if not self.Manage.Move_Files():
+        #    self.DisplayMessage('  ERROR: Could not move input files to RESULT folder', 1)
+        #    return
+        
         if not self.Manage.Executable_Exists():
             self.DisplayMessage('  ERROR: Could not find FlexAID executable', 1)
             return
@@ -289,8 +289,8 @@ class Simulate(Tabs.Tab):
         self.Manage.Get_VarAtoms()
         self.Manage.Get_DisAngDih()
         self.Manage.Get_RecAtom()
-
-        #self.DisplayMessage('   RESULT file(s) will be saved in: ', 0)
+        
+        self.DisplayMessage('   RESULT file(s) will be saved in: ', 0)
         self.DisplayMessage(self.Manage.FlexAIDRunSimulationProject_Dir, 0)
 
         # Start the simulation
@@ -310,7 +310,6 @@ class Simulate(Tabs.Tab):
                                                     self.Manage.CONFIG,
                                                     self.Manage.ga_inp,
                                                     os.path.join(self.Manage.FlexAIDRunSimulationProject_Dir,'RESULT') )
-        
         self.Results = True
         
         if bContinue:
@@ -318,7 +317,7 @@ class Simulate(Tabs.Tab):
         
         self.Vars.ResultsContainer = Result.ResultsContainer()
         self.Vars.ResultsContainer.ConfigMD5 = self.ConfigMD5
-        
+
         if bContinue:
             self.Vars.ResultsContainer.ParentResult = ParentResultsContainer
         

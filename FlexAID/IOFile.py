@@ -52,10 +52,14 @@ if __debug__:
 class IOFileVars(Vars.Vars):
     
     Complex = StringVar()
-    TargetMD5 = StringVar()
+    #TargetMD5 = StringVar()
+    ProcessedTargetPath = StringVar()
     TargetPath = StringVar()
     TargetName = StringVar()
-    LigandMD5 = StringVar()
+    #LigandMD5 = StringVar()
+    ProcessedLigandPath = StringVar()
+    ProcessedLigandINPPath = StringVar()
+    ProcessedLigandICPath = StringVar()
     LigandPath = StringVar()
     LigandName = StringVar()
     AtomTypes = StringVar()
@@ -86,25 +90,33 @@ class IOFile(Tabs.Tab):
     TargetSupportedFormats = [ ('PDB File','*.pdb') ]
     
     SmilesLigand = 'SMILES_LIGAND__'
-    #ReferenceLigand = 'REFERENCE_LIGAND__'
-    ReferenceLigand = 'LIGAND__'
+    ReferenceLigand = 'REFERENCE_LIGAND__'
+    Ligand = 'LIGAND__'
+    Target = 'TARGET__'
     ExtractObject = 'EXTRACTED_OBJECT__'
     
     def Def_Vars(self):
         
         self.defaultOption = StringVar()
         self.FetchPDB = StringVar()
-        self.ReferencePath = StringVar()
+        #self.ReferencePath = StringVar()
         self.ResSeq = IntVar()
                 
         # vars class objects
         self.Complex = self.Vars.Complex
-        self.TargetMD5 = self.Vars.TargetMD5
+
+        self.ProcessedTargetPath = self.Vars.ProcessedTargetPath
+        #self.TargetMD5 = self.Vars.TargetMD5
         self.TargetPath = self.Vars.TargetPath
         self.TargetName = self.Vars.TargetName
-        self.LigandMD5 = self.Vars.LigandMD5
+
+        self.ProcessedLigandPath = self.Vars.ProcessedLigandPath
+        self.ProcessedLigandINPPath = self.Vars.ProcessedLigandINPPath
+        self.ProcessedLigandICPath = self.Vars.ProcessedLigandICPath
+        #self.LigandMD5 = self.Vars.LigandMD5
         self.LigandPath = self.Vars.LigandPath
         self.LigandName = self.Vars.LigandName
+
         self.AtomTypes = self.Vars.AtomTypes
         self.SmilesString = self.Vars.SmilesString
         self.SmilesName = self.Vars.SmilesName
@@ -114,17 +126,22 @@ class IOFile(Tabs.Tab):
 
     def Init_Vars(self):
 
-        #print("Init Vars for IOFile")
-        self.TargetMD5.set('')
+        self.ProcessedTargetPath.set('')
+        #self.TargetMD5.set('')
         self.TargetPath.set('')
         self.TargetName.set('')
-        self.LigandMD5.set('')
+
+        self.ProcessedLigandPath.set('')
+        self.ProcessedLigandINPPath.set('')
+        self.ProcessedLigandICPath.set('')
+        #self.LigandMD5.set('')
         self.LigandPath.set('')
         self.LigandName.set('')
+
         self.SmilesString.set('')
         self.SmilesName.set('')
 
-        self.ReferencePath.set('')
+        #self.ReferencePath.set('')
         self.defaultOption.set('')
         self.FetchPDB.set('')
         self.AtomTypes.set('Sybyl')
@@ -136,16 +153,15 @@ class IOFile(Tabs.Tab):
         
         # flags
         self.ProcessOnly = False
-        self.ProcessedLigand = False
-        self.ProcessedTarget = False
         
         self.Vars.dictAtomTypes.clear()
         self.Vars.dictNeighbours.clear()
         self.Vars.dictFlexBonds.clear()
     
+    """
     ''' ==================================================================================
-    FUNCTION Check_Integrity: Checks if the referenced files are the same upon loading
-    =================================================================================  '''    
+    FUNCTION Check_Integrity: Checks if the referenced files are the same upon loading    
+    =================================================================================  '''
     def Check_Integrity(self):
         
         if (self.TargetName.get() != '' and General.hashfile(self.TargetPath.get()) != self.TargetMD5.get()) or \
@@ -153,6 +169,7 @@ class IOFile(Tabs.Tab):
             return 1
             
         return 0
+    """
     
     ''' ==================================================================================
     FUNCTION Load_Session: Actions related to when a new session is loaded
@@ -162,13 +179,19 @@ class IOFile(Tabs.Tab):
         self.Btn_DisplayObject_Clicked('Ligand')
         self.Btn_DisplayObject_Clicked('Target')
     
+        if self.ProcessedLigandPath.get():
+            self.Load_ProcConvLigand(self.ProcessedLigandPath.get(), self.Ligand, True)
+
+        if self.ProcessedTargetPath.get():
+            self.Load_ProcConvLigand(self.ProcessedTargetPath.get(), self.Target, True)
+
     ''' ==================================================================================
     FUNCTION Before_Kill_Frame: Actions related before killing the frame
     =================================================================================  '''    
     def Before_Kill_Frame(self):
                
         # Process ligand
-        if not self.ProcessedLigand:
+        if not self.ProcessedLigandPath.get():
             self.top.ProcessError = False
             
             self.ProcessLigand( True, self.LigandPath.get(), self.ATOM_INDEX, self.AtomTypes.get(), 
@@ -177,13 +200,19 @@ class IOFile(Tabs.Tab):
             if self.top.ProcessError:
                 return False
             else:
-                self.ProcessedLigand = True
+                self.ProcessedLigandPath.set(os.path.join(self.top.FlexAIDTempProject_Dir,
+                                                          os.path.split(os.path.splitext(self.LigandPath.get())[0])[1]) + '_ref.pdb')
+                self.ProcessedLigandINPPath.set(os.path.join(self.top.FlexAIDTempProject_Dir,
+                                                             os.path.split(os.path.splitext(self.LigandPath.get())[0])[1]) + '.inp')
+                self.ProcessedLigandICPath.set(os.path.join(self.top.FlexAIDTempProject_Dir,
+                                                            os.path.split(os.path.splitext(self.LigandPath.get())[0])[1]) + '.ic')
+                
                 self.ResSeq.set(self.RESIDUE_NUMBER)
                 
-                ReferencePath = os.path.join(self.top.FlexAIDSimulationProject_Dir, 'LIGAND_ref.pdb')
-                self.ReferencePath.set(ReferencePath)
+                #ReferencePath = os.path.join(self.top.FlexAIDTempProject_Dir, 'LIGAND_ref.pdb')
+                #self.ReferencePath.set(ReferencePath)
         
-        if not self.ProcessedTarget:
+        if not self.ProcessedTargetPath.get():
             self.top.ProcessError = False
             
             self.ProcessTarget( True, self.TargetPath.get(), self.ATOM_INDEX, self.AtomTypes.get(),
@@ -192,13 +221,14 @@ class IOFile(Tabs.Tab):
             if self.top.ProcessError:
                 return False
             else:
-                self.ProcessedTarget = True
-        
+                self.ProcessedTargetPath.set(os.path.join(self.top.FlexAIDTempProject_Dir,
+                                                          os.path.split(os.path.splitext(self.TargetPath.get())[0])[1]) + '.inp.pdb')
+                
         # Store content of ligand input files
         if self.store_InpFile():
             return False
         else:
-            if self.Load_ProcConvLigand(self.ReferencePath.get(), self.ReferenceLigand, False):
+            if self.Load_ProcConvLigand(self.ProcessedLigandPath.get(), self.Ligand, False):
                 return False
 
         return True
@@ -241,20 +271,20 @@ class IOFile(Tabs.Tab):
     FUNCTION Convert_Smiles: Converts the smiles string to a viewable molecule format
     ================================================================================== '''
     def Convert_Smiles(self):
-        
-        self.ProcessLigand( True, 0, '', 0, True, False, 1)
+
+        self.ProcessLigand( True, self.LigandPath.get(), 0, '', 0, True, False, 1, False)
         
         if self.top.ProcessError:
             return 1
         
         return 0
-    
+        
     ''' ==================================================================================
     FUNCTION Convert_Smiles: Write the Smiles to a .smi file
     ================================================================================== '''    
     def Write_Smiles(self, Filebase):
         
-        LigandPath = os.path.join(self.top.FlexAIDSimulationProject_Dir, Filebase + '.smi')
+        LigandPath = os.path.join(self.top.FlexAIDTempProject_Dir, Filebase + '.smi')
         
         try:
             handle = open(LigandPath, 'w')
@@ -282,15 +312,15 @@ class IOFile(Tabs.Tab):
             self.Enable_Frame()
 
             if Convert and self.SmilesString.get():
-            
+                
                 Filebase = self.SmilesLigand
                 if self.SmilesName.get():
                     Filebase = self.SmilesName.get()
-
+                    
                 if not self.Write_Smiles(Filebase) and not self.Convert_Smiles() and \
                    not self.Move_TempLigand(Filebase):
                     
-                    LigandFile = os.path.join(self.top.FlexAIDSimulationProject_Dir, Filebase + '.mol2')
+                    LigandFile = os.path.join(self.top.FlexAIDTempProject_Dir, Filebase + '.mol2')
                     
                     try:
                         cmd.delete(Filebase)
@@ -304,13 +334,12 @@ class IOFile(Tabs.Tab):
                        not self.Validate_ObjectSelection(Filebase, 'Ligand', 1):
                            
                         self.LigandName.set(Filebase)
-
+                        
                         if self.ForceSaveObject(LigandFile, Filebase, 'Ligand'):
                             self.LigandPath.set('')
                             self.LigandName.set('')
                         
                         #self.ProcessOnly = True
-                        self.ProcessedLigand = False
                                                 
                     else:
                         self.LigandPath.set('')
@@ -318,24 +347,28 @@ class IOFile(Tabs.Tab):
                 else:
                     self.LigandPath.set('')
                     self.LigandName.set('')
-                    
+    
+                self.ProcessedLigandPath.set('')
+                self.ProcessedLigandINPPath.set('')
+                self.ProcessedLigandICPath.set('')
+
             self.top.ChildWindow = None
             
     ''' ==================================================================================
                          Reset tabs when the target/ligand is modified
     ================================================================================== '''             
     def Target_Toggle(self, *args):
-        
+
         # Reset binding-site and target flexibility
         self.top.Config1.Init_Vars()
-        
+
         # Clear constraint because there might be ligand-target constraints
         self.top.Config2.Vars.dictConstraints.clear()
 
         self.top.Simulate.Init_Vars()
 
         self.ValidateLigTarget()
-    
+        
     def Ligand_Toggle(self, *args):
         
         self.ValidateLigTarget()
@@ -351,7 +384,7 @@ class IOFile(Tabs.Tab):
             self.top.Go_Step1()
         
         self.Complex.set(self.TargetName.get() + '-' + self.LigandName.get())
-    
+        
     ''' ==================================================================================
     FUNCTION Reset_Ligand: Rests all parameters variables to processing of the ligand
     ================================================================================== '''    
@@ -359,17 +392,20 @@ class IOFile(Tabs.Tab):
         
         self.Gen3D.set(0)
         self.Anchor.set(-1)
-
+        
         self.Vars.dictAtomTypes.clear()
         self.Vars.dictFlexBonds.clear()
         self.Vars.dictNeighbours.clear()
         
         self.top.Config2.Init_Vars()
-
+        
         self.top.Simulate.Init_Vars()
-
+        
         self.ProcessOnly = False
-        self.ProcessedLigand = False
+        
+        self.ProcessedLigandPath.set('')
+        self.ProcessedLigandINPPath.set('')
+        self.ProcessedLigandICPath.set('')
 
     ''' ==================================================================================
     FUNCTION After_Show: Actions related after showing the frame
@@ -378,7 +414,7 @@ class IOFile(Tabs.Tab):
                 
         #Show the list of selection/objects in case the user already worked in PyMOL
         self.Btn_RefreshOptMenu_Clicked()
-    
+        
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
     ==================================================================================  '''  
@@ -387,11 +423,11 @@ class IOFile(Tabs.Tab):
         try:
             self.TargetNameTrace = self.TargetName.trace('w',self.Target_Toggle)
             self.LigandNameTrace = self.LigandName.trace('w',self.Ligand_Toggle)
-            self.AtomTypesTrace = self.AtomTypes.trace('w',self.AtomTypes_Toggle)
-            self.Gen3DTrace = self.Gen3D.trace('w',self.Gen3D_Toggle)
+            #self.AtomTypesTrace = self.AtomTypes.trace('w',self.AtomTypes_Toggle)
+            #self.Gen3DTrace = self.Gen3D.trace('w',self.Gen3D_Toggle)
         except:
             pass
-    
+            
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     ==================================================================================  '''  
@@ -400,15 +436,16 @@ class IOFile(Tabs.Tab):
         try:
             self.TargetName.trace_vdelete('w',self.TargetNameTrace)
             self.LigandName.trace_vdelete('w',self.LigandNameTrace)
-            self.AtomTypes.trace_vdelete('w',self.AtomTypesTrace)
-            self.Gen3D.trace_vdelete('w',self.Gen3DTrace)
+            #self.AtomTypes.trace_vdelete('w',self.AtomTypesTrace)
+            #self.Gen3D.trace_vdelete('w',self.Gen3DTrace)
         except:
             pass
     
     ''' ==================================================================================
     FUNCTION AtomTypes_Toggle: Toggle the controls related to Atom Types
     =================================================================================  '''    
-    def AtomTypes_Toggle(self, *args):
+    #def AtomTypes_Toggle(self, *args):
+    def AtomTypes_Toggle(self):
         
         if self.AtomTypes.get() != 'Gaudreault':
             self.top.Config3.optSolventType.config(state='normal')
@@ -421,15 +458,21 @@ class IOFile(Tabs.Tab):
         self.Vars.dictAtomTypes.clear()
 
         # Need for processing the ligand again if atom typing is changed
-        self.ProcessedLigand = False
-        self.ProcessedTarget = False
+        self.ProcessedTargetPath.set('')
+
+        self.ProcessedLigandPath.set('')
+        self.ProcessedLigandINPPath.set('')
+        self.ProcessedLigandICPath.set('')
 
     ''' ==================================================================================
     FUNCTION Gen3D_Toggle: Toggles the generation of a 3D molecule
     =================================================================================  '''    
-    def Gen3D_Toggle(self, *args):
+    #def Gen3D_Toggle(self, *args):
+    def Gen3D_Toggle(self):
         
-        self.ProcessedLigand = False
+        self.ProcessedLigandPath.set('')
+        self.ProcessedLigandINPPath.set('')
+        self.ProcessedLigandICPath.set('')
         
     ''' ==================================================================================
     FUNCTION Frame: Generate the Input / Output Files frame in the the middle 
@@ -546,7 +589,7 @@ class IOFile(Tabs.Tab):
         EntLigand.pack(side=LEFT, fill=X)
         EntLigand.config(state='disabled')
         Checkbutton(fPDBligandLine2, variable=self.Gen3D, text=' Generate 3D conformation',
-            font=self.font_Text, justify=RIGHT).pack(side=LEFT)
+            font=self.font_Text, justify=RIGHT, command=self.Gen3D_Toggle).pack(side=LEFT)
 
         #==================================================================================
         #                                 Processing of molecules
@@ -566,8 +609,10 @@ class IOFile(Tabs.Tab):
 
         Label(fProcessingLine2, text='Atom typing:', justify=RIGHT, font=self.font_Text).pack(side=LEFT, anchor=E, padx=10)
 
-        Radiobutton(fProcessingLine2, text='Sobolev', variable=self.AtomTypes, value="Sobolev", font=self.font_Text).pack(side=LEFT)
-        Radiobutton(fProcessingLine2, text='Gaudreault', variable=self.AtomTypes, value="Gaudreault", font=self.font_Text).pack(side=LEFT, padx=10)
+        Radiobutton(fProcessingLine2, text='Sobolev', variable=self.AtomTypes,
+                    value="Sobolev", font=self.font_Text).pack(side=LEFT)
+        Radiobutton(fProcessingLine2, text='Gaudreault', variable=self.AtomTypes, 
+                    value="Gaudreault", font=self.font_Text).pack(side=LEFT, padx=10)
         Radiobutton(fProcessingLine2, text='Sybyl', variable=self.AtomTypes, value="Sybyl", font=self.font_Text).pack(side=LEFT)
         
         return self.fIOFile
@@ -604,9 +649,9 @@ class IOFile(Tabs.Tab):
     FUNCTION Btn_Input_Clicked: Selects the anchor atom of the ligand
     ==================================================================================  '''    
     def Btn_Input_Clicked(self):
-
-        if self.PyMOL:
         
+        if self.PyMOL:
+            
             self.SmilesRunning(True, False)
             
             self.top.ChildWindow = Smiles.Smiles(self, self.SmilesString, self.SmilesName)
@@ -621,14 +666,16 @@ class IOFile(Tabs.Tab):
 
             self.VarPath = self.LigandPath
             self.VarName = self.LigandName
-            self.VarMD5 = self.LigandMD5
+            self.VarProc = self.ProcessedLigandPath
+            #self.VarMD5 = self.LigandMD5
             
         elif objtype == 'Target':
             self.savepath = self.top.TargetProject_Dir        
 
             self.VarPath = self.TargetPath
             self.VarName = self.TargetName
-            self.VarMD5 = self.TargetMD5
+            self.VarProc = self.ProcessedLigandPath
+            #self.VarMD5 = self.TargetMD5
 
     ''' ==================================================================================
     FUNCTION Validate_ObjectSelection: Validates whether the obj exists on the current state
@@ -735,7 +782,7 @@ class IOFile(Tabs.Tab):
             
             self.VarPath.set(os.path.normpath(Path))
             self.VarName.set(Name)
-            self.VarMD5.set(General.hashfile(self.VarPath.get()))
+            #self.VarMD5.set(General.hashfile(self.VarPath.get()))
             
             if objtype == 'Ligand':
                 self.Reset_Ligand()
@@ -767,7 +814,7 @@ class IOFile(Tabs.Tab):
         if len(Path) > 0:
         
             Path = os.path.normpath(Path)
-
+            
             if General.validate_String(Path, '', True, False, True):
                 self.DisplayMessage("  ERROR: Could not load the file because it has an invalid name.", 2)
                 return
@@ -799,7 +846,7 @@ class IOFile(Tabs.Tab):
                 self.VarPath.set('')
                 self.VarName.set('')
             
-            self.VarMD5.set(General.hashfile(self.VarPath.get()))
+            #self.VarMD5.set(General.hashfile(self.VarPath.get()))
 
             self.DisplayMessage("  Successfully loaded the object: '" + self.VarName.get() + "'", 0)
         
@@ -849,7 +896,7 @@ class IOFile(Tabs.Tab):
             
             self.LigandPath.set(os.path.normpath(LigandPath))
             self.LigandName.set(LigandName)
-            self.LigandMD5.set(General.hashfile(self.LigandPath.get()))
+            #self.LigandMD5.set(General.hashfile(self.LigandPath.get()))
 
             self.Reset_Ligand()
             
@@ -869,8 +916,7 @@ class IOFile(Tabs.Tab):
         
         if self.PyMOL:
             try:
-                cmd.set("auto_zoom", 0)
-                
+                cmd.set("auto_zoom", 0)                
                 cmd.load(LigandFile, ObjectName, state=1)
                 cmd.refresh()
                 
@@ -901,7 +947,7 @@ class IOFile(Tabs.Tab):
     ================================================================================== '''        
     def Move_TempLigand(self, Filebase):
 
-        LigandFile = os.path.join(self.top.FlexAIDSimulationProject_Dir, Filebase + '.mol2')
+        LigandFile = os.path.join(self.top.FlexAIDTempProject_Dir, Filebase + '.mol2')
         TempLigandFile = LigandFile + '.tmp'
         
         try:
@@ -930,22 +976,23 @@ class IOFile(Tabs.Tab):
                     cmd.zoom(self.VarName.get())    
                     cmd.refresh()
             except:
+                self.VarName.set('')
+                self.VarPath.set('')
+                self.VarProc.set('')
+                
                 self.DisplayMessage("  ERROR: An error occured while displaying the object.", 1)
-                return
     
     #=======================================================================
     ''' Store inp file information (flexible bonds, atom types)  '''
     #=======================================================================   
     def store_InpFile(self):
             
-        inpFilePath = os.path.join(self.top.FlexAIDSimulationProject_Dir,'LIGAND.inp')
-
         inpInfo = dict()
         flexInfo = dict()
 
         #Read the inp file and get the flexible bonds
         try:
-            file = open(inpFilePath, 'r')
+            file = open(self.ProcessedLigandINPPath.get(), 'r')
             inpLines = file.readlines()
             file.close()
 
@@ -1007,7 +1054,7 @@ class IOFile(Tabs.Tab):
                   Forced as flexible,
                   Number of atoms defining the bond,
                   Atom list defining bond ] '''
-
+            
             dictList = [ 0, 0, len(flexInfo[index]) ]
             for i in range(0, len(flexInfo[index])):
                 dictList.append(flexInfo[index][i])
@@ -1033,7 +1080,9 @@ class IOFile(Tabs.Tab):
             self.Enable_Frame()
             
             if self.Anchor.get() != self.top.WizardResult:
-                self.ProcessedLigand = False
+                self.ProcessedLigandPath.set('')
+                self.ProcessedLigandINPPath.set('')
+                self.ProcessedLigandICPath.set('')
                 
                 self.Vars.dictAtomTypes.clear()
                 self.Vars.dictNeighbours.clear()

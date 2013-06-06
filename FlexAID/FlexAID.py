@@ -32,6 +32,9 @@ from Tkinter import *
 import os
 import sys
 import pickle
+import shutil
+import random
+import string
 import tkFileDialog
 
 import Base
@@ -50,20 +53,26 @@ import Simulate
 class displayFlexAID(Base.Base):
     
     def Init_Vars(self):
-                
+        
+        self.SessionPath = ''
         self.SaveSessionFile = ''
-    
+        
     def After_Init(self):
                 
         # default Tab (IOFile)
         self.Btn_IOFiles_Clicked()
-
+        
         # By default hide advanced tabs
         self.bAdvancedView = False
         self.Btn_Toggle_AdvView()
 
+        # set files to copy when saving a session
+        self.SessionVars = [ self.IOFile.Vars.LigandPath, self.IOFile.Vars.ProcessedLigandPath,
+                             self.IOFile.Vars.ProcessedLigandINPPath, self.IOFile.Vars.ProcessedLigandICPath,
+                             self.IOFile.Vars.TargetPath, self.IOFile.Vars.ProcessedTargetPath ]
+        
     def Build_Tabs(self):
-    
+        
         # Build class objects of each tab
         self.IOFile = IOFile.IOFile(self, self.PyMOL, self.Btn_IOFiles, 'IOFile', IOFile.IOFileVars())
         self.Config1 = Config1.Config1(self, self.PyMOL, self.Btn_Config1, 'Config1', Config1.Config1Vars())
@@ -76,16 +85,16 @@ class displayFlexAID(Base.Base):
         
         self.listBtnTabs = [self.Btn_IOFiles, self.Btn_Config1, self.Btn_Config2, 
                             self.Btn_Config3, self.Btn_GAParam, self.Btn_Simulate]
-
+        
         return
 
     def Clean(self):
-    
-        files = os.listdir(self.FlexAIDSimulationProject_Dir)
+        
+        files = os.listdir(self.FlexAIDTempProject_Dir)
 
         for file in files:
             try:
-                os.remove(os.path.join(self.FlexAIDSimulationProject_Dir,file))
+                os.remove(os.path.join(self.FlexAIDTempProject_Dir,file))
             except OSError:
                 pass
     
@@ -102,14 +111,16 @@ class displayFlexAID(Base.Base):
 
         self.FlexAIDProject_Dir = os.path.join(self.Project_Dir,'FlexAID')
         self.GetCleftProject_Dir = os.path.join(self.Project_Dir,'GetCleft')
-        self.GetCleftSaveProject_Dir = os.path.join(self.GetCleftProject_Dir,'Save')
-
+        self.GetCleftSaveProject_Dir = os.path.join(self.GetCleftProject_Dir,'.Save')
+        
         self.CleftProject_Dir = os.path.join(self.Project_Dir,'Cleft')
         self.TargetProject_Dir = os.path.join(self.Project_Dir,'Target')
 
         self.FlexAIDLigandProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Ligand')
         self.FlexAIDSimulationProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Simulation')
         self.FlexAIDSessionProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Session')
+        self.FlexAIDTempProject_Dir = os.path.join(self.FlexAIDProject_Dir,'.Temp')
+        self.FlexAIDSaveProject_Dir = os.path.join(self.FlexAIDProject_Dir,'.Save')
         self.FlexAIDResultsProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Results')
         self.FlexAIDBindingSiteProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Binding_Site')
         self.FlexAIDTargetFlexProject_Dir = os.path.join(self.FlexAIDProject_Dir,'Target_Flexibility')
@@ -117,8 +128,9 @@ class displayFlexAID(Base.Base):
         self.Folders.extend( [  self.FlexAIDProject_Dir, self.GetCleftProject_Dir, self.GetCleftSaveProject_Dir,
                                 self.CleftProject_Dir, self.TargetProject_Dir, self.FlexAIDLigandProject_Dir,
                                 self.FlexAIDSimulationProject_Dir, self.FlexAIDSessionProject_Dir, self.FlexAIDResultsProject_Dir,
-                                self.FlexAIDBindingSiteProject_Dir, self.FlexAIDTargetFlexProject_Dir ] )
-    
+                                self.FlexAIDBindingSiteProject_Dir, self.FlexAIDTargetFlexProject_Dir,
+                                self.FlexAIDSaveProject_Dir, self.FlexAIDTempProject_Dir ] )
+        
     ''' ==================================================================================
     FUNCTION MakeMenuBar: Builds the menu on the upper left corner    
     ==================================================================================  '''        
@@ -276,31 +288,34 @@ class displayFlexAID(Base.Base):
             
             try:
                 in_ = open(LoadFile, 'r')
+                self.SessionPath = pickle.load(in_)
+                
                 for Tab in self.listTabs:
-                    try:
-                        Tab.Vars = pickle.load(in_)
-                        Tab.Vars.refresh()
-                        
-                        if Tab.Check_Integrity():
-                            self.Reset_All()
-                            self.DisplayMessage("  ERROR: The loading of the session failed the integrity check.", 2)
-                            return
+                    Tab.Vars = pickle.load(in_)
+                    Tab.Vars.refresh()
+                    
+                    if Tab.Check_Integrity():
+                        self.Reset_All()
+                        self.DisplayMessage("  ERROR: The loading of the session failed the integrity check.", 2)
+                        return
                             
-                        Tab.Load_Session()
-                        
-                    except:
-                        pass
+                    Tab.Load_Session()
                         
                 in_.close()
                 
+                self.SaveSessionFile = LoadFile
                 self.DisplayMessage("  The session '" + os.path.split(LoadFile)[1] + "' was loaded successfully.", 2)
                 
-                self.SaveSessionFile = ''
+                return
 
+            except pickle.UnpicklingError:
+                self.DisplayMessage("  ERROR: Could not properly load the session: " + str(sys.exc_info()), 2)
             except:
-                self.DisplayMessage("  ERROR: Could not properly load the session", 2)
                 self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
-    
+
+            self.SessionPath = ''
+            self.SaveSessionFile = ''
+                
     ''' ==================================================================================
     FUNCTION ValidateSaveProject: Validates if a file was saved in the right folder
     ==================================================================================  '''    
@@ -324,38 +339,38 @@ class displayFlexAID(Base.Base):
         return 0
 
     ''' ==================================================================================
-    FUNCTION Save_Session: Saves the current session
+    FUNCTION Save_SessionFile: Saves the current session
     ==================================================================================  '''        
-    def Save_Session(self, SaveFile):
+    def Save_SessionFile(self, SaveFile):
 
         if len(SaveFile) > 0:
-
+            
             SaveFile = os.path.normpath(SaveFile)
             
             if General.validate_String(SaveFile, '.nrgfs', True, True, False):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                 return
-
+            
             if self.ValidateSaveProject(SaveFile, 'Session'):
                 self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
                 return
-
+            
             try:
                 out = open(SaveFile, 'w')
+                pickle.dump(self.SessionPath, out)
+                
                 for Tab in self.listTabs:
-                    try:
-                        pickle.dump(Tab.Vars, out)
-                    except:
-                        pass
+                    pickle.dump(Tab.Vars, out)
                 out.close()
                 
                 self.SaveSessionFile = SaveFile
                 self.DisplayMessage("  The session '" + os.path.split(SaveFile)[1] + "' was saved successfully.", 2)
                 
+            except pickle.PicklingError:
+                self.DisplayMessage("  ERROR: Could not properly save the session: " + str(sys.exc_info()), 2)
             except:
-                self.DisplayMessage("  ERROR: Could not properly save the session:", 2)
                 self.DisplayMessage("  Unexpected error: " + str(sys.exc_info()), 2)
-
+                
     ''' ==================================================================================
     FUNCTION Btn_Save_Session: Saves the current session
     ==================================================================================  '''        
@@ -364,27 +379,52 @@ class displayFlexAID(Base.Base):
         if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
             self.ValidateWindowRunning():
             return
-
+            
         if self.SaveSessionFile == '':
             self.Btn_SaveAs_Session()
         else:
-            self.Save_Session(self.SaveSessionFile)
+            self.Copy_SessionFiles()
+            self.Save_SessionFile(self.SaveSessionFile)
 
     ''' ==================================================================================
-    FUNCTION Btn_Save_Session: Saves the current session
+    FUNCTION Btn_SaveAs_Session: Saves the current session under a new name
     ==================================================================================  '''        
     def Btn_SaveAs_Session(self):
 
         if self.ValidateProcessRunning() or self.ValidateWizardRunning() or \
             self.ValidateWindowRunning():
             return
-
+        
         SaveFile = tkFileDialog.asksaveasfilename(initialdir=self.FlexAIDSessionProject_Dir,
                                   title='Save the Session file', initialfile='default_session',
                                   filetypes=[('NRG FlexAID Session','*.nrgfs')], defaultextension='.nrgfs')
         
-        self.Save_Session(SaveFile)
+        if len(SaveFile):
+            
+            while True:
+                Session = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(30))
+                self.SessionPath = os.path.join(self.FlexAIDSaveProject_Dir,Session)
+                
+                if not os.path.isdir(self.SessionPath):
+                    os.makedirs(self.SessionPath)
+                    break
+
+            self.Copy_SessionFiles()
+            self.Save_SessionFile(SaveFile)
         
+    ''' ==================================================================================
+    FUNCTION Copy_SessionFiles: Moves the files that are project-specific
+    ==================================================================================  '''        
+    def Copy_SessionFiles(self):
+        
+        for Var in self.SessionVars:
+            if Var.get():
+                try:
+                    shutil.copy(Var.get(), self.SessionPath)
+                    Var.set(os.path.join(self.SessionPath,os.path.split(Var.get())[1]))
+                except shutil.Error:
+                    self.DisplayMessage("The following session file was not copied: " + Var.get(), 1)
+            
     ''' ==================================================================================
     FUNCTION Btn_*_Clicked: Display the Tab options menu
     ================================================================================== '''    
@@ -452,7 +492,7 @@ class displayFlexAID(Base.Base):
             Tab.Init_Vars()
     
     ''' ==================================================================================
-    FUNCTION ValidateResiduValue: Validate the residue entered 
+    FUNCTION ValidateResiduValue: Validate the residue entered
     ================================================================================== '''
     def ValidateResiduValue(self, event):
         

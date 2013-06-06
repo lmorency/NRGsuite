@@ -31,8 +31,8 @@ class Config3Vars(Vars.Vars):
 
     CompFct = StringVar()
     UseDEE = IntVar()
-    IncludeHET = IntVar()
-    ExcludeHOH = IntVar()
+    ExcludeHET = IntVar()
+    IncludeHOH = IntVar()
     DEE_Clash_Threshold = StringVar()
     Permeability = StringVar()
     SolventType = StringVar()
@@ -48,8 +48,8 @@ class Config3(Tabs.Tab):
 
         self.CompFct = self.Vars.CompFct
         self.UseDEE = self.Vars.UseDEE
-        self.IncludeHET = self.Vars.IncludeHET
-        self.ExcludeHOH = self.Vars.ExcludeHOH
+        self.ExcludeHET = self.Vars.ExcludeHET
+        self.IncludeHOH = self.Vars.IncludeHOH
         self.DEE_Clash_Threshold = self.Vars.DEE_Clash_Threshold
         self.Permeability = self.Vars.Permeability
         self.SolventType = self.Vars.SolventType
@@ -64,8 +64,8 @@ class Config3(Tabs.Tab):
         self.CompFct.set('VCT')
 
         self.UseDEE.set(0)
-        self.IncludeHET.set(1)
-        self.ExcludeHOH.set(1)
+        self.ExcludeHET.set(0)
+        self.IncludeHOH.set(0)
         
         self.DEE_Clash_Threshold.set('0.25')
         self.Permeability.set('0.1')
@@ -92,7 +92,7 @@ class Config3(Tabs.Tab):
     def Trace(self):
 
         try:
-            self.IncludeHETTrace = self.IncludeHET.trace('w',self.IncludeHET_Toggle)
+            self.ExcludeHETTrace = self.ExcludeHET.trace('w',self.ExcludeHET_Toggle)
             self.SolventTypeTrace = self.SolventType.trace('w',self.SolventType_Toggle)
             self.DEETrace = self.UseDEE.trace('w',self.DEE_Toggle)
 
@@ -129,7 +129,7 @@ class Config3(Tabs.Tab):
     def Del_Trace(self):
 
         try:
-            self.IncludeHET.trace_vdelete('w',self.IncludeHETTrace)
+            self.ExcludeHET.trace_vdelete('w',self.ExcludeHETTrace)
             self.SolventType.trace_vdelete('w',self.SolventTypeTrace)
             self.UseDEE.trace_vdelete('w',self.DEETrace)
             self.Permeability.trace_vdelete('w',self.PermeabilityTrace)
@@ -142,14 +142,14 @@ class Config3(Tabs.Tab):
             pass        
 
     ''' ==================================================================================
-    FUNCTION IncludeHET_Toggle: Toggle the controls related to Including HET Groups
+    FUNCTION ExcludeHET_Toggle: Toggle the controls related to Including HET Groups
     =================================================================================  '''    
-    def IncludeHET_Toggle(self, *args):
+    def ExcludeHET_Toggle(self, *args):
         
-        if self.IncludeHET.get():
-            self.chkHOH.config(state='normal')
-        else:
+        if self.ExcludeHET.get():
             self.chkHOH.config(state='disabled')
+        else:
+            self.chkHOH.config(state='normal')
 
     ''' ==================================================================================
     FUNCTION SolventType_Toggle: Toggle the controls related to Solvent Types
@@ -192,7 +192,7 @@ class Config3(Tabs.Tab):
         fC3Right.pack(side=RIGHT, fill=BOTH, expand=True)
 
         #==================================================================================
-        # Include/Exclude HET Groups
+        # Exclude/Include HET Groups
         #==================================================================================
         fHET = Frame(fC3Left)
         fHET.pack(fill=X, side=TOP, padx=5, pady=5)
@@ -204,9 +204,9 @@ class Config3(Tabs.Tab):
         fHETLine3.pack(fill=X, padx=5, pady=2)
 
         Label(fHETLine1, text='HET groups', font=self.top.font_Title).pack(side=LEFT, anchor=W)
-        Checkbutton(fHETLine2, text=' Include bound molecules', variable=self.IncludeHET, font=self.top.font_Text).pack(side=LEFT)
+        Checkbutton(fHETLine2, text=' Exclude bound molecules', variable=self.ExcludeHET, font=self.top.font_Text).pack(side=LEFT)
         
-        self.chkHOH = Checkbutton(fHETLine3, text=' Exclude water molecules', variable=self.ExcludeHOH, font=self.top.font_Text)
+        self.chkHOH = Checkbutton(fHETLine3, text=' Include water molecules', variable=self.IncludeHOH, font=self.top.font_Text)
         self.chkHOH.pack(side=LEFT)
 
         #==================================================================================
@@ -229,7 +229,7 @@ class Config3(Tabs.Tab):
         # Delta (variations of distances/angles)
         #==================================================================================
         fSearchSpace = Frame(fC3Right, border=1, relief=RAISED)
-        fSearchSpace.pack(fill=BOTH, expand=True, padx=5, pady=5)
+        fSearchSpace.pack(fill=X, expand=True, padx=5, pady=5, anchor=N)
 
         Label(fSearchSpace, text='Search space', font=self.top.font_Title_H).pack(side=TOP, fill=X, expand=True, pady=2)
         
@@ -268,14 +268,14 @@ class Config3(Tabs.Tab):
         # Side-chain optimization (DEE)
         #==================================================================================
         fDEE = Frame(fSearchSpace)#, bd=1, relief=SUNKEN)
-        fDEE.pack(fill=X, side=TOP, padx=5, pady=5)
-        fDEELine1 = Frame(fDelta)
+        #fDEE.pack(fill=X, side=TOP, padx=5, pady=5)
+        fDEELine1 = Frame(fDEE)
         fDEELine1.pack(fill=X, side=TOP, padx=5, pady=2)
-        fDEELine2 = Frame(fDelta)
+        fDEELine2 = Frame(fDEE)
         fDEELine2.pack(fill=X, side=TOP, padx=5, pady=2)
-        fDEELine3 = Frame(fDelta)
+        fDEELine3 = Frame(fDEE)
         fDEELine3.pack(fill=X, side=TOP, padx=5, pady=2)
-        fDEELine4 = Frame(fDelta)
+        fDEELine4 = Frame(fDEE)
         fDEELine4.pack(fill=X, side=TOP, padx=5, pady=2)
 
         Label(fDEELine1, text='Side-chain optimization', font=self.top.font_Title).pack(side=TOP, anchor=W)        

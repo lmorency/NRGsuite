@@ -114,7 +114,7 @@ class ProcLig(threading.Thread):
             # use default outputting for the target
             commandline += ' -target'
         else:
-            #commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIGAND') + '"'
+            #commandline += ' -o ' + '"' + os.path.join(self.FlexAID.FlexAIDTempProject_Dir,'LIGAND') + '"'
         
             if self.Gen3D:
                 commandline += ' --gen3D'
@@ -176,11 +176,15 @@ class ProcLig(threading.Thread):
     def Copy_MoleculeFile(self):
 
         try:
+            '''
             if self.Target:
-                self.TmpMoleculeFile = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, 'TARGET.pdb')
+                self.TmpMoleculeFile = os.path.join(self.FlexAID.FlexAIDTempProject_Dir, 'TARGET.pdb')
             else:
-                self.TmpMoleculeFile = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir, 'LIGAND.pdb')
-            
+                self.TmpMoleculeFile = os.path.join(self.FlexAID.FlexAIDTempProject_Dir, 'LIGAND.pdb')
+            '''
+            self.TmpMoleculeFile = os.path.join(self.FlexAID.FlexAIDTempProject_Dir,
+                                                os.path.split(self.MoleculeFile)[1])
+
             copy(self.MoleculeFile, self.TmpMoleculeFile)
             
         except IOError:

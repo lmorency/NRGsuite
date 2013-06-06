@@ -48,7 +48,7 @@ class Manage:
         self.Config3 = self.FlexAID.Config3
         self.GAParam = self.FlexAID.GAParam
         
-        self.LOGFILE = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'log.txt')
+        self.LOGFILE = os.path.join(self.FlexAID.FlexAIDTempProject_Dir,'log.txt')
         self.LOGFILETMP = self.LOGFILE + '.tmp'
 
         self.Now = str(datetime.now())
@@ -60,12 +60,7 @@ class Manage:
         self.Ligand = self.IOFile.LigandName.get()
         self.COMPLEX = self.IOFile.Complex.get().upper()
         
-        self.TmpFile = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'file.tmp')
-
-        self.TargetFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'TARGET.inp.pdb')
-        self.RefFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIGAND_ref.pdb')
-        self.INPFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIGAND.inp')
-        self.ICFlexAIDSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIGAND.ic')
+        self.TmpFile = os.path.join(self.FlexAID.FlexAIDTempProject_Dir,'file.tmp')
 
         self.VarAtoms = list()
         self.listTmpPDB = list()
@@ -79,8 +74,6 @@ class Manage:
     def Reference_Folders(self):
 
         self.FlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,self.COMPLEX,self.Now)
-        self.INPFlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.inp')
-        self.ICFlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAIDRunSimulationProject_Dir,self.Ligand + '.ic')
         
         self.BINDINGSITE = os.path.join(self.FlexAIDRunSimulationProject_Dir,'binding_site.pdb')
         
@@ -92,7 +85,8 @@ class Manage:
 
         self.CONFIG = os.path.join(self.FlexAIDRunSimulationProject_Dir,'CONFIG.inp')
         self.ga_inp = os.path.join(self.FlexAIDRunSimulationProject_Dir,'ga_inp.dat')
-
+        self.Report = os.path.join(self.FlexAIDRunSimulationProject_Dir,'report.txt')
+        
     ''' ==============================================================================
     @summary: Create_Folders: Creation AND/OR copy of the required files  
     ============================================================================== '''          
@@ -119,6 +113,7 @@ class Manage:
 
         return True
 
+    """
     ''' ==============================================================================
     @summary: Move_Files: Moves the required input files
     ============================================================================== '''          
@@ -133,7 +128,8 @@ class Manage:
             return False
 
         return True
-
+    """
+    
     ''' ==============================================================================
     @summary: Clean: Clean unecessary files and unset state files
     ============================================================================== '''          
@@ -203,9 +199,9 @@ class Manage:
 
         hasher = hashlib.md5()
         
-        hasher = General.hashfile_update(self.IOFile.TargetPath.get(), hasher)
-        hasher = General.hashfile_update(self.INPFlexAIDSimulationProject_Dir, hasher)
-
+        hasher = General.hashfile_update(self.IOFile.ProcessedTargetPath.get(), hasher)
+        hasher = General.hashfile_update(self.IOFile.ProcessedLigandINPPath.get(), hasher)
+        
         #hasher.update('SPACER 0.375\n')
         
         rngOpt = self.Config1.RngOpt.get()
@@ -218,7 +214,7 @@ class Manage:
             line += ' %.3f\n' % self.Config1.Vars.BindingSite.Sphere.Radius
             
             hasher.update(line)
-
+            
         elif rngOpt == 'LOCCLF':
             self.Config1.Generate_CleftBindingSite()
             
@@ -241,7 +237,7 @@ class Manage:
             hasher.update('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n')
         
         if self.Config2.UseReference.get():
-            hasher.update('RMSDST ' + self.IOFile.ReferencePath.get() + '\n')
+            hasher.update('RMSDST ' + self.IOFile.ProcessedLigandPath.get() + '\n')
         
         # Ligand flexibility
         order = sorted(self.IOFile.Vars.dictFlexBonds.keys())
@@ -254,18 +250,17 @@ class Manage:
             hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n')
 
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
-            hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','SYBYL_emat.dat') + '\n')
-
+            hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n')
+        
         # permeability of atoms
         Permea = 1.00 - float(self.Config3.Permeability.get())
         hasher.update('PERMEA ' + str(Permea) + '\n')
         
         # heterogroups consideration
-        if self.Config3.IncludeHET.get():
-            hasher.update('INCHET' + '\n')
-            
-            if self.Config3.ExcludeHOH.get():
-                hasher.update('RMVHOH' + '\n')
+        if self.Config3.ExcludeHET.get():
+            hasher.update('EXCHET' + '\n')
+        elif self.Config3.IncludeHOH.get():
+            hasher.update('INCHOH' + '\n')
     
         #config_file.write('VARDIS ' + self.Config3.DeltaDistance.get() + '\n')
         hasher.update('VARANG ' + self.Config3.DeltaAngle.get() + '\n')
@@ -287,10 +282,10 @@ class Manage:
 
         # Save the data to the configuration file
         config_file = open(self.CONFIG, 'w')
-
-        config_file.write('PDBNAM ' + self.IOFile.TargetPath.get() + '\n')
         
-        config_file.write('INPLIG ' + self.INPFlexAIDSimulationProject_Dir + '\n')
+        config_file.write('PDBNAM ' + self.IOFile.ProcessedTargetPath.get() + '\n')
+        
+        config_file.write('INPLIG ' + self.IOFile.ProcessedLigandINPPath.get() + '\n')
         config_file.write('METOPT GA\n')
 
         #config_file.write('BPKENM ' + self.Config1.BPE.get() + '\n')
@@ -333,7 +328,7 @@ class Manage:
             config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n')
         
         if self.Config2.UseReference.get():
-            config_file.write('RMSDST ' + self.IOFile.ReferencePath.get() + '\n')
+            config_file.write('RMSDST ' + self.IOFile.ProcessedLigandPath.get() + '\n')
         
         # Ligand flexibility
         order = sorted(self.IOFile.Vars.dictFlexBonds.keys())
@@ -346,18 +341,17 @@ class Manage:
             config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n')
 
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
-            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','SYBYL_emat.dat') + '\n')
+            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n')
 
         # permeability of atoms
         Permea = 1.00 - float(self.Config3.Permeability.get())
         config_file.write('PERMEA ' + str(Permea) + '\n')
         
         # heterogroups consideration
-        if self.Config3.IncludeHET.get():
-            config_file.write('INCHET' + '\n')
-            
-            if self.Config3.ExcludeHOH.get():
-                config_file.write('RMVHOH' + '\n')
+        if self.Config3.ExcludeHET.get():
+            config_file.write('EXCHET' + '\n')
+        elif self.Config3.IncludeHOH.get():
+            config_file.write('INCHOH' + '\n')
 
         #config_file.write('VARDIS ' + self.Config3.DeltaDistance.get() + '\n')
         config_file.write('VARANG ' + self.Config3.DeltaAngle.get() + '\n')
@@ -370,7 +364,7 @@ class Manage:
             config_file.write('SLVPEN ' + self.Config3.SolventTerm.get() + '\n')
 
         config_file.write('STATEP ' + self.FlexAIDRunSimulationProject_Dir  + '\n')
-        config_file.write('TEMPOP ' + self.FlexAID.FlexAIDSimulationProject_Dir  + '\n')
+        config_file.write('TEMPOP ' + self.FlexAID.FlexAIDTempProject_Dir  + '\n')
                 
         config_file.write('DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n')
 
@@ -434,9 +428,11 @@ class Manage:
 
         gaInp_file.write('REPMODEL ' + self.GAParam.RepModel.get() + '\n')
         if self.GAParam.RepModel.get() == 'BOOM':
-            gaInp_file.write('BOOMFRAC %.2f\n' % float(self.GAParam.RepB.get()))
+            #gaInp_file.write('BOOMFRAC %.2f\n' % float(self.GAParam.RepB.get()))
+            gaInp_file.write('BOOMFRAC 1.00\n')
         elif self.GAParam.RepModel.get() == 'STEADY':
-            gaInp_file.write('STEADNUM ' + str(self.GAParam.RepSS.get()) + '\n')
+            #gaInp_file.write('STEADNUM ' + str(self.GAParam.RepSS.get()) + '\n')
+            gaInp_file.write('STEADNUM ' + str(self.GAParam.NbChrom.get()) + '\n')
 
         if self.GAParam.RepDup.get():
             gaInp_file.write('DUPLICAT\n')
@@ -526,12 +522,12 @@ class Manage:
 
         # Store file content
         try:
-            inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'r')
+            inpFile = open(self.IOFile.ProcessedLigandINPPath.get(), 'r')
             lines = inpFile.readlines()
             inpFile.close()
 
             # Re-write file
-            inpFile = open(self.INPFlexAIDSimulationProject_Dir, 'w')
+            inpFile = open(self.IOFile.ProcessedLigandINPPath.get(), 'w')
             for line in lines:
                 if line.startswith('HETTYP'):
                     index = line[6:11].strip()
@@ -555,7 +551,7 @@ class Manage:
         self.dictCoordRef.clear()
 
         try:
-            file = open(self.IOFile.ReferencePath.get(),'r')
+            file = open(self.IOFile.ProcessedLigandPath.get(),'r')
             self.ReferenceLines = file.readlines()
             file.close()
 
@@ -581,8 +577,8 @@ class Manage:
         
         # Create the custom path for the temporary pdb files
         for i in range (int(self.GAParam.NbTopChrom.get()) + 1):
-            self.listTmpPDB.append(os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,'LIGAND' + str(i) + '.pdb'))
-    
+            self.listTmpPDB.append(os.path.join(self.FlexAID.FlexAIDTempProject_Dir,'LIGAND' + str(i) + '.pdb'))
+        
     ''' ==================================================================================
     FUNCTION Get_RecAtom: Create a dictionary containing the atoms neighbours
     ==================================================================================  '''
@@ -591,7 +587,7 @@ class Manage:
         self.RecAtom.clear()
 
         try:
-            file = open(self.INPFlexAIDSimulationProject_Dir)
+            file = open(self.IOFile.ProcessedLigandINPPath.get())
             inpLines = file.readlines()
             file.close()
             
@@ -613,7 +609,7 @@ class Manage:
         self.DisAngDih.clear()
                 
         try:
-            file = open(self.ICFlexAIDSimulationProject_Dir)
+            file = open(self.IOFile.ProcessedLigandICPath.get())
             icLines = file.readlines()
             file.close()
             
@@ -638,7 +634,7 @@ class Manage:
         NoAtom2 = 0
         NoAtom1 = 0
 
-        file = open(self.INPFlexAIDSimulationProject_Dir)
+        file = open(self.IOFile.ProcessedLigandINPPath.get())
         inpLines = file.readlines()
         file.close()
         
@@ -656,3 +652,107 @@ class Manage:
                         NoAtom1 = noAtom
         
         self.VarAtoms.extend( [ NoAtom3, NoAtom2, NoAtom1 ] )
+
+    ''' ==================================================================================
+    @summary: Write_Report: Writes the final report of the simulation
+    ================================================================================== '''
+    def Write_Report(self):
+        
+        return
+        """
+        # Save the data to the configuration file
+        report_file = open(self.Report, 'w')
+        
+        report_file.write('%-25s%s\n' % ('Target name', self.IOFile.TargetName.get()))
+        report_file.write('%-25s%s\n' % ('Target file', self.IOFile.TargetPath.get()))
+
+        report_file.write('%-25s%s\n' % ('Ligand name', self.IOFile.LigandName.get()))
+        report_file.write('%-25s%s\n' % ('Ligand file', self.IOFile.LigandPath.get()))
+
+        report_file.write('%-25s%s\n' % ('Method optimization', 'Genetic algorithms'))
+        report_file.write('%-25s%s\n' % ('Scoring function', 'Complementarity function'))
+        
+        rngOpt = self.Config1.RngOpt.get()
+        if rngOpt == 'LOCCEN':
+            report_file.write('%-25s%s\n' % ('Binding-site definition', 'Sphere'))
+            report_file.write('%-25s%s\n' % ('Sphere center (x,y,z)', 
+                                           str(self.Config1.Vars.BindingSite.Sphere.Center[0]) + ',' + \
+                                           str(self.Config1.Vars.BindingSite.Sphere.Center[1]) + ',' + \
+                                           str(self.Config1.Vars.BindingSite.Sphere.Center[2])))
+            report_file.write('%-25s%s\n' % ('Sphere radius', str(self.Config1.Vars.BindingSite.Sphere.Radius)))
+
+        elif rngOpt == 'LOCCLF':
+            report_file.write('%-25s%s\n' % ('Binding-site definition', 'Cleft'))
+            
+        report_file.write('%-25s%s\n' % ('Binding-site resolution', '0.375A'))
+            self.Config1.Generate_CleftBindingSite()
+            self.Copy_BindingSite()
+           
+        nflexsc = self.Config1.Vars.TargetFlex.Count_SideChain()
+        if nflexsc > 0:
+            report_file.write('%-25s%s\n' % ('Target flexibility', 'Yes'))
+            report_file.write('%-25s%s\n' % ('Number of flexible side-chains', str(nflexsc)))
+            report_file.write('%-25s%s\n' % ('Flexible side-chains', self.Config1.Vars.TargetFlex.Output_List()))
+        else:
+            report_file.write('%-25s%s\n' % ('Target flexibility', 'No'))
+        
+        nflexbonds = len(self.IOFile.Vars.dictFlexBonds.keys())
+        if nflexbonds > 0:
+            report_file.write('%-25s%s\n' % ('Ligand flexibility', 'Yes'))
+            report_file.write('%-25s%s\n' % ('Number flexible bonds', str(nflexbonds)))            
+        else:
+            report_file.write('%-25s%s\n' % ('Ligand flexibility', 'No'))
+        
+        report_file.write('%-25s%s\n' % ('Translational degree of freedom', str(nflexbonds)))            
+        
+        if len(self.Config2.Vars.dictConstraints):
+            ConsFile = os.path.join(self.FlexAIDRunSimulationProject_Dir,'cons.lst')
+            self.Create_ConsFile(ConsFile)
+            config_file.write('CONSTR ' + ConsFile + '\n')
+        
+        if self.Config2.IntTranslation.get():
+            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - -1\n')
+            
+        if self.Config2.IntRotation.get():
+            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n')
+        
+        if self.Config2.UseReference.get():
+            config_file.write('RMSDST ' + self.IOFile.ProcessedLigandPath.get() + '\n')
+                
+        report_file.write('%-25s%s\n' % ('Atom types definition', self.IOFile.AtomTypes.get()))
+        
+        if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
+            report_file.write('%-25s%s\n' % ('Pairwise energy matrix', 'scr_bin.dat'))
+            
+        elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
+            report_file.write('%-25s%s\n' % ('Pairwise energy matrix', 'M6_cons_3.dat'))
+            
+        elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
+            report_file.write('%-25s%s\n' % ('Pairwise energy matrix', 'MC_10p_3.dat'))
+        
+        # permeability of atoms
+        report_file.write('%-25s%s\n' % ('Van der Waals permeability',
+                                         float(self.Config3.Permeability.get()) * 100.0 + '%'))
+        
+        # heterogroups consideration
+        if self.Config3.ExcludeHET.get():
+            report_file.write('%-25s%s\n' % ('Heteogroups excluded', 'Yes'))
+        elif self.Config3.IncludeHOH.get():
+            report_file.write('%-25s%s\n' % ('Heteogroups excluded', 'No'))
+            report_file.write('%-25s%s\n' % ('Water molecules included', 'Yes'))
+        
+        report_file.write('%-25s%s\n' % ('Delta angle', self.Config3.DeltaAngle.get() + ' degrees'))
+        report_file.write('%-25s%s\n' % ('Delta dihedrals', self.Config3.DeltaDihedral.get() + ' degrees'))
+        report_file.write('%-25s%s\n' % ('Delta flexible dihedrals', self.Config3.DeltaDihedralFlex.get() + ' degrees'))
+
+        if self.Config3.SolventTypeIndex.get() == 0:        
+            report_file.write('%-25s%s\n' % ('Solvent type', 'No-type'))
+            report_file.write('%-25s%s\n' % ('Solvent term', str(self.Config3.SolventTerm.get())))
+        else:
+            report_file.write('%-25s%s\n' % ('Solvent type', 'Type-based'))
+        
+        report_file.write('%-25s%s\n' % ('Maximum docking results', '10'))
+        
+        return
+        """
+    

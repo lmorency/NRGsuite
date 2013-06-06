@@ -44,7 +44,7 @@ class flexbond(Wizard):
     SelFlexDisplay = 'SELECTED_BONDS__'
     AtomDisplay = 'HIGHLIGHT_ATOM__'
     
-    Translation = [1000,1000,1000]
+    Translation = [ 1000, 1000, 1000 ]
     
     #=======================================================================
     ''' Initialization of the interface '''
@@ -62,7 +62,7 @@ class flexbond(Wizard):
         self.dictFlexBonds = self.FlexAID.IOFile.Vars.dictFlexBonds
         self.dictNeighbours = self.FlexAID.IOFile.Vars.dictNeighbours
 
-        self.RefLigand = self.FlexAID.IOFile.ReferencePath.get()
+        self.RefLigand = self.FlexAID.IOFile.ProcessedLigandPath.get()
 
         self.View = cmd.get_view()
         self.State = cmd.get_state()

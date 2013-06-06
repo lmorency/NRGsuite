@@ -31,10 +31,13 @@ from Tkinter import *
 
 from subprocess import Popen, PIPE
 from time import time
+from glob import glob
 
 import os
+import re
 import Tabs
 import tkFileDialog
+import tkMessageBox
 import General
 import CleftObj
 import BindingSite
@@ -277,8 +280,7 @@ class Default(Tabs.Tab):
 
         #Label(fBasicLine5, text='Output cleft basename:', font=self.top.font_Text).pack(side=LEFT)
         self.EntryOutput = Entry(fBasicLine5, textvariable=self.OutputFileValue, background='white', font=self.top.font_Text, justify=CENTER)
-        #EntryOutput.pack(side=RIGHT)
-        #args_list = [EntryOutput, self.OutputFileValue, -1, -1, -1, 'Output filename', 'str']
+        #self.EntryOutput.pack(side=RIGHT)
         self.ValidOutput = [ 1, False, self.EntryOutput ]
 
         #Button(fBasicLine5, text='Advanced parameters', font=self.top.font_Text, width=20, relief=RIDGE, command=self.Btn_AdvancedOptions).pack(side=RIGHT)
@@ -359,7 +361,7 @@ class Default(Tabs.Tab):
 
         # Clean temporary files
         self.top.Manage.Clean()
-
+        
         self.top.Go_Step1()
         self.ChartBar.delete('all')
         
@@ -453,7 +455,7 @@ class Default(Tabs.Tab):
                 self.top.EditSession = False
 
                 self.top.Crop.Reset_Step1()
-
+                
             else:
                 self.DisplayMessage("  No clefts found for object/selection '" +
                                     self.LastdefaultOption + "'", 0)
@@ -486,9 +488,9 @@ class Default(Tabs.Tab):
             OutputPath = os.path.join(OutputPath,self.OutputFileValue.get())
         else:
             OutputPath = os.path.join(OutputPath,self.defaultOption.get())
-
+        
         Args += ' -o "' + OutputPath + '"'
-
+        
         # Number of clefts maximum
         Args += ' -t ' + self.NbCleft.get()          
             
@@ -635,38 +637,80 @@ class Default(Tabs.Tab):
     FUNCTION Btn_Save_Clefts: Asks for user to save clefts
     ==================================================================================  '''        
     def Btn_Save_Clefts(self):
-
-        if not self.PyMOL:
-            return
         
         if self.TempBindingSite.Count_Cleft() > 0:
             
-            self.Update_TempBindingSite()
+            DefaultPath = os.path.join(self.top.CleftProject_Dir,self.defaultOption.get().upper())
+            if not os.path.isdir(DefaultPath):
+                os.makedirs(DefaultPath)
             
-            self.top.Manage.save_Temp()
+            SaveFile = tkFileDialog.asksaveasfilename(initialdir=DefaultPath, title='Choose the Cleft base filename',
+                                                      initialfile=self.defaultOption.get())
             
-            for CleftName in self.TempBindingSite.Get_SortedCleftNames():
-                
-                Cleft = self.TempBindingSite.Get_CleftName(CleftName)
-                CleftPath = os.path.join(self.top.CleftProject_Dir,Cleft.UTarget)
-                
-                if not os.path.isdir(CleftPath):
-                    os.makedirs(CleftPath)
-                    
-                CleftSaveFile = os.path.join(CleftPath,os.path.basename(os.path.splitext(Cleft.CleftFile)[0]) + '.nrgclf')
+            if SaveFile:
 
-                try:
-                    out = open(CleftSaveFile, 'w')
-                    pickle.dump(Cleft, out)
-                    out.close()
+                SaveFile = os.path.normpath(SaveFile)
+                
+                if DefaultPath not in SaveFile:
+                    self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
+                    return
+                
+                if glob(SaveFile + "_sph_*.nrgclf"):
+                    message = "The Cleft base filename you selected is already taken. " + \
+                              "Are you sure you want to overwrite the files?\n" + \
+                              "This may result in unexpected errors as the files may be used in saved session."
+                
+                    answer = tkMessageBox.askquestion("Question",
+                                                      message=message,
+                                                      icon='warning')
+                    if str(answer) == 'no':
+                        self.top.DisplayMessage("  The saving of clefts was cancelled.", 2)
+                        return
+            
+                self.Update_TempBindingSite()
+                self.top.Manage.save_Temp()
+                
+                for CleftName in self.TempBindingSite.Get_SortedCleftNames():
                     
-                    #self.top.DisplayMessage("  Successfully saved '" + CleftSaveFile + "'", 0)
-                except:
-                    self.top.DisplayMessage("  ERROR: Could not save binding-site '" + CleftSaveFile + "'", 1)
-                    continue
-        
-        else:
-            self.top.DisplayMessage("  No clefts to save as 'clefts'", 2)
+                    Cleft = self.TempBindingSite.Get_CleftName(CleftName)
+                    #CleftPath = os.path.join(self.top.CleftProject_Dir,Cleft.UTarget)
+                    
+                    m = re.match('(\S+)(_sph_(\d+))', CleftName)
+                    if m:
+                        CleftNamePrefix = m.group(1) 
+                        CleftNameSuffix = m.group(2)
+                    else:
+                        continue
+                    
+                    #if not os.path.isdir(CleftPath):
+                    #    os.makedirs(CleftPath)
+                    
+                    NewCleftNamePrefix = os.path.split(SaveFile)[1]
+                    CleftSaveFile = SaveFile + CleftNameSuffix + '.nrgclf'
+
+                    # rename cleft objects in pymol also if renamed
+                    if NewCleftNamePrefix != CleftNamePrefix:
+                        
+                        try:
+                            cmd.set_name(CleftName, NewCleftNamePrefix + CleftNameSuffix)
+                        except:
+                            self.top.DisplayMessage("  ERROR: Failed to rename cleft '" + Cleft.CleftName + "'", 2)
+                            continue
+
+                    Cleft.CleftName = NewCleftNamePrefix + CleftNameSuffix
+                    
+                    try:
+                        out = open(CleftSaveFile, 'w')
+                        pickle.dump(Cleft, out)
+                        out.close()
+                    
+                        #self.top.DisplayMessage("  Successfully saved '" + CleftSaveFile + "'", 0)
+                    except:
+                        self.top.DisplayMessage("  ERROR: Could not save binding-site '" + CleftSaveFile + "'", 1)
+                        continue
+                                                        
+            else:
+                self.top.DisplayMessage("  No clefts to save.", 2)
     
     ''' ==================================================================================
     FUNCTION Load_Clefts: Loads the list of temp clefts
@@ -696,9 +740,6 @@ class Default(Tabs.Tab):
     ==================================================================================  '''                 
     def Update_TempBindingSite(self):
         
-        if not self.PyMOL:
-            return
-
         self.TempBindingSite.listClefts = \
             [ Cleft for Cleft in self.TempBindingSite.listClefts \
                 if General_cmd.object_Exists(Cleft.CleftName) ]
@@ -721,9 +762,6 @@ class Default(Tabs.Tab):
     ==========================================================='''           
     def SetPartitionColor(self, Sel):
         
-        if not self.PyMOL:
-            return
-
         try:
             mycolors = {'colors': []}
             cmd.iterate( Sel, 'colors.append(color)', space=mycolors)

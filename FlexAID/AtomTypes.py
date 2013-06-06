@@ -59,7 +59,7 @@ class setType(Wizard):
         self.State = cmd.get_state()
                 
         #self.pdbPath = self.FlexAID.SimPath + 'tmp.pdb'
-        self.pdbPath = self.FlexAID.IOFile.ReferencePath.get()
+        self.pdbPath = self.FlexAID.IOFile.ProcessedLigandPath.get()
         
         self.ErrorCode = 1
 

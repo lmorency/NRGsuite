@@ -25,13 +25,8 @@ import time
 import re
 
 # Regular expression patterns
-RESERVED_NAMES =    'TOP_\d+__|' + \
-                    'RESULT_\d+__|' + \
-                    '.*_sph_.*|' + \
-                    'BINDINGSITE_AREA__|' + \
-                    'REFERENCE_LIGAND__|' + \
-		    'LIGAND__'
-
+RESERVED_NAMES =    '*__|' + \
+                    '.*_sph_.*'
 
 ''' ==========================================================
   is_ATOM: Determines whether a residue is an ATOM or HETATM  

@@ -44,27 +44,24 @@ class Vars:
     # First unpickle objects, list and dict
     # Then Vars because they are bound to controls
     def __setstate__(self, dict_data):
-
-        #print dict_data
+        
         Vars.dict_vars.clear()
-
+        
         for k in dict_data.keys():
             v = dict_data[k]
-
-            # object is a StringVar, IntVar, etc.            
+            
+            # object is a StringVar, IntVar, etc.
             if k.startswith('_'):
                 svar = k[1:]
                 Vars.dict_vars[svar] = v
                 
                 del dict_data[k]
-
+                
         self.__dict__.update(dict_data)
         
-        return
-    
     # refresh the values of Vars to trigger Tracers
     def refresh(self):
-    
+        
         for k, v in Vars.dict_vars.iteritems():
             var = self.__class__.__dict__.get(k)
             if var is not None:

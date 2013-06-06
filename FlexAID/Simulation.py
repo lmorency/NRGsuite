@@ -124,7 +124,7 @@ class Parse(threading.Thread):
         self.LOGFILETMP = self.top.Manage.LOGFILETMP
         self.ParseFile = self.LOGFILE
 
-        self.ReferencePath = self.FlexAID.IOFile.ReferencePath.get()
+        self.ReferencePath = self.FlexAID.IOFile.ProcessedLigandPath.get()
         self.listSideChain = self.FlexAID.Config1.Vars.TargetFlex.listSideChain
         self.BindingSiteDisplay = self.FlexAID.Config1.BindingSiteDisplay
                 

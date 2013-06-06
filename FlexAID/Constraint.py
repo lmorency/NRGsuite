@@ -59,8 +59,8 @@ class constraint(Wizard):
         self.top = top
         self.FlexAID = self.top.top
 
-        self.RefLigand = self.FlexAID.IOFile.ReferencePath.get()
-
+        self.RefLigand = self.FlexAID.IOFile.ProcessedLigandPath.get()
+        
         self.ActiveCons = self.top.ActiveCons
         self.dictConstraints = self.top.Vars.dictConstraints
         
