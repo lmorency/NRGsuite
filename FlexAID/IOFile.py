@@ -184,7 +184,7 @@ class IOFile(Tabs.Tab):
 
         if self.ProcessedTargetPath.get():
             self.Load_ProcConvLigand(self.ProcessedTargetPath.get(), self.Target, True)
-
+            
     ''' ==================================================================================
     FUNCTION Before_Kill_Frame: Actions related before killing the frame
     =================================================================================  '''    
@@ -230,6 +230,9 @@ class IOFile(Tabs.Tab):
             else:
                 self.ProcessedTargetPath.set(os.path.join(self.top.FlexAIDTempProject_Dir,
                                                           os.path.split(os.path.splitext(self.TargetPath.get())[0])[1]) + '.inp.pdb')
+
+                if self.Load_ProcConvLigand(self.ProcessedTargetPath.get(), self.Target, False):
+                    return False
                 
         return True
     
@@ -639,9 +642,6 @@ class IOFile(Tabs.Tab):
     ==================================================================================  '''    
     def Btn_Anchor_Clicked(self):
 
-        if not self.PyMOL:
-            return
-
         if self.LigandPath.get():
                             
             self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath.get(), self.Anchor.get())
@@ -654,11 +654,9 @@ class IOFile(Tabs.Tab):
     ==================================================================================  '''    
     def Btn_Input_Clicked(self):
         
-        if self.PyMOL:
+        self.SmilesRunning(True, False)
             
-            self.SmilesRunning(True, False)
-            
-            self.top.ChildWindow = Smiles.Smiles(self, self.SmilesString, self.SmilesName)
+        self.top.ChildWindow = Smiles.Smiles(self, self.SmilesString, self.SmilesName)
         
     ''' ==================================================================================
     FUNCTION Set_Object_Variables: Sets class level variables
@@ -922,18 +920,17 @@ class IOFile(Tabs.Tab):
         
         auto_zoom = cmd.get("auto_zoom")
         
-        if self.PyMOL:
-            try:
-                cmd.set("auto_zoom", 0)                
-                cmd.load(LigandFile, ObjectName, state=1)
-                cmd.refresh()
+        try:
+            cmd.set("auto_zoom", 0)                
+            cmd.load(LigandFile, ObjectName, state=1)
+            cmd.refresh()
                 
-                if Zoom:
-                    cmd.zoom(ObjectName)
-                    cmd.refresh()
-            except:
-                self.DisplayMessage('  ERROR: Could not load the ligand file in PyMOL', 1)
-                Error = 1
+            if Zoom:
+                cmd.zoom(ObjectName)
+                cmd.refresh()
+        except:
+            self.DisplayMessage('  ERROR: Could not load the ligand file in PyMOL', 1)
+            Error = 1
         
         cmd.set("auto_zoom", auto_zoom)
         
@@ -945,9 +942,6 @@ class IOFile(Tabs.Tab):
     ==================================================================================  '''                
     def Btn_RefreshOptMenu_Clicked(self): 
         
-        if not self.PyMOL:
-            return
-            
         General_cmd.Refresh_DDL(self.optionMenuWidget, self.defaultOption, [], None)
    
     ''' ==================================================================================

@@ -40,21 +40,21 @@ class UpdateScreen:
 
         # TOPn to edit
         self.TOP = TOP
-
+        
         # Starting index of line
         self.colNo = colNo
         
         # input line to parse
         self.Line = Line
-
+        
         # State on which updating is happening
         self.State = State
-
+        
         self.dictFlexBonds = self.top.dictFlexBonds
-
+        
         self.LigandName = self.top.FlexAID.IOFile.LigandName.get()
         self.TargetName = self.top.FlexAID.IOFile.TargetName.get()
-
+        
         self.LigandObj = self.LigandName + '_' + str(self.TOP+1)
         self.TargetObj = self.TargetName + '_' + str(self.TOP+1)
         
@@ -327,7 +327,7 @@ class UpdateScreen:
             for residue in self.top.listSideChain:
 
                 #print "Setting dihedrals for " + residue
-
+                
                 # Were any rotamers accepted for this side-chain
                 if self.top.dictSideChainNRot.get(residue,''):
 
