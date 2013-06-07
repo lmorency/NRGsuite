@@ -18,6 +18,7 @@
 '''
 
 from Tkinter import *
+from pymol import util
 
 import os
 import re
@@ -121,14 +122,14 @@ class Simulate(Tabs.Tab):
         fConfRes.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
 
         Label(fConfRes, text='Pre-generated results:', width=30, font=self.top.font_Text).pack(side=LEFT)
-        Button(fConfRes, text='Load', command=self.Btn_Load_Results_Clicked, font=self.top.font_Text).pack(side=LEFT)
-        Button(fConfRes, text='Save', command=self.Btn_Save_Results_Clicked, font=self.top.font_Text).pack(side=LEFT)
+        Button(fConfRes, text='Load', command=self.Btn_Load_Results_Clicked, width=10, font=self.top.font_Text).pack(side=LEFT)
+        #Button(fConfRes, text='Save', command=self.Btn_Save_Results_Clicked, font=self.top.font_Text).pack(side=LEFT)
         Entry(fConfRes, textvariable=self.ResultsName, font=self.top.font_Text, state='disabled', disabledbackground=self.top.Color_White,
                         disabledforeground=self.top.Color_Black, justify=CENTER).pack(side=LEFT, fill=X, expand=True)
         
         fNaviRes = Frame(self.fRes)
         #fNaviRes.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
-
+        
         Label(fNaviRes, text='Results navigation', width=30, font=self.top.font_Text).pack(side=LEFT)
         Button(fNaviRes, text='Show parent', font=self.top.font_Text).pack(side=LEFT)
         Button(fNaviRes, text='Show next child', font=self.top.font_Text).pack(side=LEFT)
@@ -137,7 +138,7 @@ class Simulate(Tabs.Tab):
         fTable = Frame(self.fSimulate, height=150, pady=5, padx=5)
         fTable.pack(side=BOTTOM, fill=BOTH, expand=True)
         fTable.pack_propagate(0)
-
+        
         self.Table = MultiList.Table(fTable, 5,
                                    [ 'Color', 'TOP', 'CF', 'Fitness', 'Last RMSD' ],
                                    [ 65, 65, 167, 167, 167 ],
@@ -222,7 +223,7 @@ class Simulate(Tabs.Tab):
         fSim_DisplayLine3 = Frame(fSim_Display)
         fSim_DisplayLine3.pack(side=TOP, fill=X)
         
-        Label(fSim_DisplayLine1, text='Display options of TOP and RESULT objects', font=self.top.font_Title).pack(side=LEFT)
+        Label(fSim_DisplayLine1, text='Display options of TOP objects', font=self.top.font_Title).pack(side=LEFT)
         
         Label(fSim_DisplayLine2, text='Ligand:', font=self.top.font_Text).pack(side=LEFT)
         
@@ -599,35 +600,76 @@ class Simulate(Tabs.Tab):
     def Load_Results(self):
         
         self.Manage.Load_ResultFiles()
+        
+    ''' ==================================================================================
+    FUNCTION: Displays nicely the result complex
+    ==================================================================================  '''               
+    def Nice_Display(self, Result, ResultName):
+        
+        cmd.hide('everything', ResultName)
+        cmd.refresh()
+        
+        cmd.show('cartoon', ResultName)
+        cmd.refresh()
+                
+        for opt in Result.Optimizable:
+            if opt.rnc[:3] == 'LIG':
+                cmd.show('lines', 'byres(resn LIG around 5.0) & ' + ResultName)
+            
+            res = opt.rnc[:3].replace('-','')
+            num = opt.rnc[3:len(opt.rnc)-1].replace('-','')
+            chn = opt.rnc[-1:].replace('-','')
+            
+            sele =  'resn ' + res + ' & resi ' + num + ' & chain \''  + chn + '\' & ' + ResultName
+            cmd.show('sticks', sele)
+            cmd.color('white', sele)
+        
+        util.cnc(ResultName)
+        cmd.refresh()
+    
+    ''' ==================================================================================
+    FUNCTION: Displays the h-bonds
+    ==================================================================================  '''               
+    def Highlight_HBonds(self, Result, ResultName, ResultHBondsName):
+        
+        cmd.distance(ResultHBondsName, 
+                     'resn LIG & ' + ResultName,
+                     ResultName + ' & !resn LIG',
+                     3.5, # distance in A
+                     2)   # mode (2=polar atoms)
 
     ''' ==================================================================================
     FUNCTION: Shows the result in the PyMOL viewer
     ==================================================================================  '''               
     def Show_Results(self):
-        
+
         i = 0
-        
+
         for key in sorted(self.dictSimData.keys()):
             
             Result = self.Vars.ResultsContainer.Get_ResultID(key)
             if Result is not None:
                 try:
                     ResultName = 'RESULT_' + str(Result.ResultID) + '__'
-                    
+                    ResultHBondsName = 'RESULT_' + str(Result.ResultID) + '_H_BONDS__'
+
                     cmd.load(Result.ResultFile, ResultName, state=1)
                     cmd.refresh()
-                    
+
                     cmd.color(self.PymolColorList[i], ResultName)
                     cmd.refresh()
+
+                    self.Nice_Display(Result, ResultName)
+                    self.Highlight_HBonds(Result, ResultName, ResultHBondsName)
                     
                 except:
                     continue
-                
+
                 i += 1
-        
-        self.Modify_LigDisplay()
-        self.Modify_Display(self.SimCartoonDisplay, 'cartoon')
-        self.Modify_Display(self.SimLinesDisplay, 'lines')
+                    
+        #self.Modify_LigDisplay()
+        #self.Modify_Display(self.SimCartoonDisplay, 'cartoon')
+        #self.Modify_Display(self.SimLinesDisplay, 'lines')
     
     ''' ==================================================================================
     FUNCTION Modify_LigDisplay: Modifies how the ligand is visualized in the TOP*/RESULT* objects
@@ -640,14 +682,14 @@ class Simulate(Tabs.Tab):
             cmd.hide('everything', 'TOP_*__ & resn LIG')
             cmd.refresh()
 
-            cmd.hide('everything', 'RESULT_*__ & resn LIG')
-            cmd.refresh()
+            #cmd.hide('everything', 'RESULT_*__ & resn LIG')
+            #cmd.refresh()
             
             cmd.show(display, 'TOP_*__ & resn LIG')
             cmd.refresh()
 
-            cmd.show(display, 'RESULT_*__ & resn LIG')
-            cmd.refresh()
+            #cmd.show(display, 'RESULT_*__ & resn LIG')
+            #cmd.refresh()
 
         except:
             pass
@@ -663,8 +705,8 @@ class Simulate(Tabs.Tab):
                 cmd.show(display, 'TOP_*__ & ! resn LIG')
                 cmd.refresh()
 
-                cmd.show(display, 'RESULT_*__ & ! resn LIG')
-                cmd.refresh()
+                #cmd.show(display, 'RESULT_*__ & ! resn LIG')
+                #cmd.refresh()
                 
             except:
                 pass
@@ -674,8 +716,8 @@ class Simulate(Tabs.Tab):
                 cmd.hide(display, 'TOP_*__ & ! resn LIG')
                 cmd.refresh()
 
-                cmd.hide(display, 'RESULT_*__ & ! resn LIG')
-                cmd.refresh()
+                #cmd.hide(display, 'RESULT_*__ & ! resn LIG')
+                #cmd.refresh()
             except:
                 pass                
     
@@ -733,9 +775,22 @@ class Simulate(Tabs.Tab):
                 #    NRes = NRes + 1
                 
                 self.Process_ResultsContainer()
+                
+                Results_Dir = os.path.join(self.top.FlexAIDResultsProject_Dir, self.top.IOFile.Complex.get().upper())
+                if not os.path.isdir(Results_Dir):
+                    os.makedirs(Results_Dir)
+                    
+                Results_File = os.path.join(Results_Dir,self.Manage.Now + '.nrgfr')
+                
+                self.Save_Results(Results_File)
+                self.ResultsName.set(os.path.splitext(os.path.split(Results_File)[1])[0])
+                
             else:
                 self.Vars.ResultsContainer = None
-                shutil.rmtree(self.Manage.FlexAIDRunSimulationProject_Dir, True)
+                try:
+                    shutil.rmtree(self.Manage.FlexAIDRunSimulationProject_Dir, True)
+                except shutil.Error:
+                    pass
             
             self.Reset_Buttons()
     
@@ -764,7 +819,6 @@ class Simulate(Tabs.Tab):
         if not os.path.isdir(Results_Dir):
             Results_Dir = self.top.FlexAIDResultsProject_Dir
 
-        
         LoadFile = tkFileDialog.askopenfilename(initialdir=Results_Dir,
                                                 filetypes=[('NRG FlexAID Results','*.nrgfr')],
                                                 title='Load a Results file')
@@ -821,22 +875,30 @@ class Simulate(Tabs.Tab):
             if General.validate_String(SaveFile, '.nrgfr', True, True, False):
                 self.DisplayMessage("  ERROR: Could not save the file because you entered an invalid name.", 2)
                 return
-
+                
             if self.top.ValidateSaveProject(SaveFile, 'Results'):
                 self.DisplayMessage("  ERROR: The file can only be saved at its default location", 2)
                 return
-    
-            try:
-                out = open(SaveFile, 'w')
-                pickle.dump(self.Vars.ResultsContainer, out)
-                out.close()
 
-                self.ResultsName.set(os.path.basename(os.path.splitext(SaveFile)[0]))
-
-                self.DisplayMessage("  Successfully saved '" + SaveFile + "'", 2)
-            except:
-                self.DisplayMessage("  ERROR: Could not save Results file.", 2)
+            self.Save_Results(SaveFile)
             
+    ''' ==================================================================================
+    FUNCTION ResultsName_Toggle: Toggles the continue button
+    ==================================================================================  '''        
+    def Save_Results(self, SaveFile):
+                            
+        try:
+            out = open(SaveFile, 'w')
+            pickle.dump(self.Vars.ResultsContainer, out)
+            out.close()
+            
+            self.ResultsName.set(os.path.basename(os.path.splitext(SaveFile)[0]))
+            
+            self.DisplayMessage("  Successfully saved '" + SaveFile + "'", 2)
+            
+        except:
+            self.DisplayMessage("  ERROR: Could not save Results file.", 2)
+
     ''' ==================================================================================
     FUNCTION ResultsName_Toggle: Toggles the continue button
     ==================================================================================  '''        
