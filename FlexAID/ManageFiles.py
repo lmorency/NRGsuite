@@ -709,7 +709,11 @@ class Manage:
         else:
             report_file.write('%-35s%s\n' % ('Target flexibility', 'No'))
         
-        nflexbonds = len(self.IOFile.Vars.dictFlexBonds.keys())
+        nflexbonds = 0
+        for k in self.IOFile.Vars.dictFlexBonds.keys():
+            if self.IOFile.Vars.dictFlexBonds[k][0]:
+                nflexbonds += 1
+        
         if nflexbonds > 0:
             report_file.write('%-35s%s\n' % ('Ligand flexibility', 'Yes'))
             report_file.write('%-35s%s\n' % ('Number flexible bonds', str(nflexbonds)))            
