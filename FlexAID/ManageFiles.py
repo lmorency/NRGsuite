@@ -91,7 +91,7 @@ class Manage:
     @summary: Create_Folders: Creation AND/OR copy of the required files  
     ============================================================================== '''          
     def Create_Folders(self):
-       
+        
         try:
             if not os.path.isdir(self.FlexAIDRunSimulationProject_Dir):
                 os.makedirs(self.FlexAIDRunSimulationProject_Dir)
@@ -156,7 +156,7 @@ class Manage:
 
             if os.path.isfile(self.LOGFILETMP):
                 os.remove(self.LOGFILETMP)
-
+            
         except:
             return False
 

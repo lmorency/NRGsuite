@@ -19,6 +19,7 @@
 
 from Tkinter import *
 from pymol import util
+from subprocess import Popen
 
 import os
 import re
@@ -62,7 +63,7 @@ class Simulate(Tabs.Tab):
         
         self.SimStatus = StringVar()
         self.ProgBarText = StringVar()
-
+        
         # vars class objects
         self.ResultsName = self.Vars.ResultsName
         self.SimLigDisplay = self.Vars.SimLigDisplay
@@ -70,7 +71,7 @@ class Simulate(Tabs.Tab):
         self.SimLinesDisplay = self.Vars.SimLinesDisplay
         
         self.Manage = ManageFiles.Manage(self)
-    
+        
     def Init_Vars(self):
         
         self.ResultsName.set('')
@@ -117,15 +118,17 @@ class Simulate(Tabs.Tab):
         self.fRes.pack(fill=BOTH, side=BOTTOM, padx=5, pady=10)
 
         Label(self.fRes, text='Simulation results', font=self.top.font_Title_H).pack(side=TOP, fill=X, pady=3)
-
+        
         fConfRes = Frame(self.fRes)
         fConfRes.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
-
+        
         Label(fConfRes, text='Pre-generated results:', width=30, font=self.top.font_Text).pack(side=LEFT)
         Button(fConfRes, text='Load', command=self.Btn_Load_Results_Clicked, width=10, font=self.top.font_Text).pack(side=LEFT)
         #Button(fConfRes, text='Save', command=self.Btn_Save_Results_Clicked, font=self.top.font_Text).pack(side=LEFT)
         Entry(fConfRes, textvariable=self.ResultsName, font=self.top.font_Text, state='disabled', disabledbackground=self.top.Color_White,
                         disabledforeground=self.top.Color_Black, justify=CENTER).pack(side=LEFT, fill=X, expand=True)
+
+        Button(self.fRes, text='View report', command=self.Btn_View_Report, font=self.top.font_Text).pack(side=TOP, fill=X, padx=3)
         
         fNaviRes = Frame(self.fRes)
         #fNaviRes.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
@@ -245,6 +248,31 @@ class Simulate(Tabs.Tab):
         
         return self.fSimulate
     
+
+
+    ''' =============================================================================== 
+    FUNCTION Btn_View_Report: Views the final report of a simulation
+    ===============================================================================  '''     
+    def Btn_View_Report(self):
+
+        if self.Vars.ResultsContainer.Report:
+
+            if self.top.OSid == 'WIN':
+                apps = ['notepad']
+            elif self.top.OSid == 'MAC':
+                apps = ['open']
+            elif self.top.OSid == 'LINUX':
+                apps = ['gedit','kedit']
+
+            for app in apps:
+                try:
+                    Popen([app, self.Vars.ResultsContainer.Report])
+                    break
+                except OSError:
+                    self.top.DisplayMessage(" Unrecognized application: ", app)
+                except:
+                    pass
+        
     ''' =============================================================================== 
     FUNCTION Btn_ContinueSim: Continue a simulation from an existing one
     ===============================================================================  '''     
@@ -324,6 +352,8 @@ class Simulate(Tabs.Tab):
 
         if bContinue:
             self.Vars.ResultsContainer.ParentResult = ParentResultsContainer
+        
+        self.Vars.ResultsContainer.Report = self.Manage.Report
         
         # START SIMULATION
         self.DisplayMessage('  Starting executable thread.', 2)
