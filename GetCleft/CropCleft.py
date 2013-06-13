@@ -260,7 +260,8 @@ class CropCleft(Tabs.Tab):
                 self.update_Spheres()
                 self.Vertex = self.write_Partition()
                 self.displayPartition()
-
+                self.Step2Selection.set('')
+                
     ''' ==========================================================
     highlight_Step: highlights active step in Cropping
     ==========================================================='''           
@@ -556,10 +557,10 @@ class CropCleft(Tabs.Tab):
 
         self.OptCleftStep2['menu'].delete(0, 'end')
 
-        self.Step2Selection.set('')
+        #self.Step2Selection.set('')
         for key in sorted(self.dictSpheres.keys(), key=str.lower):
             self.OptCleftStep2['menu'].add_command(label=key, command=lambda temp = key: self.OptCleftStep2.setvar(self.OptCleftStep2.cget("textvariable"), value = temp))
-            self.Step2Selection.set(key)
+            #self.Step2Selection.set(key)
         
     ''' ==========================================================
     Get_SphereID: Returns a valid SphereID in dictionary
@@ -611,6 +612,7 @@ class CropCleft(Tabs.Tab):
             self.update_Spheres()
             self.Vertex = self.write_Partition()
             self.displayPartition()
+            self.Step2Selection.set('')
 
         else:
             self.top.DisplayMessage("Could not execute task: A Wizard is active")
