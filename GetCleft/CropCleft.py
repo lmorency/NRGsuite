@@ -221,7 +221,7 @@ class CropCleft(Tabs.Tab):
         Step3bBtn2 = Button(fCropStep3Line1, width=20, height=20, image=self.Img_Button[2], command=self.Step3_Prev)
         Step3bBtn2.pack(side=RIGHT, anchor=E, padx=2)
         
-        Label(fCropStep3Line2, text='Cleft name:', font=self.top.font_Text, width=15).pack(side=LEFT)
+        Label(fCropStep3Line2, text='Cleft prefix name:', font=self.top.font_Text, width=15).pack(side=LEFT)
                 
         self.Step3bEntry = Entry(fCropStep3Line2, width=25,textvariable=self.Step3Output, disabledforeground = 'black', justify=CENTER, font=self.top.font_Text)
         self.Step3bEntry.pack(side=LEFT, anchor=E)
@@ -463,7 +463,7 @@ class CropCleft(Tabs.Tab):
                 cmd.refresh()
                 
                 partition_rgb = self.top.Default.SetPartitionColor(self.Cleft.CleftName)
-                    
+                
                 if len(partition_rgb):
                 
                     cmd.color('partition', Output)

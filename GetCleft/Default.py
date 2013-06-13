@@ -546,6 +546,7 @@ class Default(Tabs.Tab):
     def DisplayColorChart(self):
         
         nClefts = self.TempBindingSite.Count_Cleft()
+        CleftNames = self.TempBindingSite.Get_SortedCleftNames()
         
         self.ChartBar.delete('all')
         
@@ -556,9 +557,13 @@ class Default(Tabs.Tab):
         
         LeftCoord = 0
         RightCoord = 0
-
+        
         for i in range(0, nClefts):
             
+            m = re.search("_sph_(\d+(_pt)?)", CleftNames[i])
+            if m:
+                text = m.group(1)
+                
             if i == (nClefts-1):
                 RightCoord = int(self.ChartBar.cget('width'))
             else:    
@@ -568,7 +573,7 @@ class Default(Tabs.Tab):
                                            fill=self.ColorHex[i])
             
             self.ChartBar.create_text((LeftCoord + RightCoord)/2, int(self.ChartBar.cget('height'))/2,
-                                      text=str(i+1), font=self.top.font_Title_H)
+                                      text=text, font=self.top.font_Title_H)
             
             LeftCoord = RightCoord
 
@@ -675,9 +680,9 @@ class Default(Tabs.Tab):
                     Cleft = self.TempBindingSite.Get_CleftName(CleftName)
                     #CleftPath = os.path.join(self.top.CleftProject_Dir,Cleft.UTarget)
                     
-                    m = re.match('(\S+)(_sph_(\d+))', CleftName)
+                    m = re.match('(\S+)(_sph_(\d+)(_pt)?)', CleftName)
                     if m:
-                        CleftNamePrefix = m.group(1) 
+                        CleftNamePrefix = m.group(1)
                         CleftNameSuffix = m.group(2)
                     else:
                         continue
