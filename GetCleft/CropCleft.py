@@ -303,6 +303,9 @@ class CropCleft(Tabs.Tab):
             General.setState(self.fCropStep1)
             General.setState(self.fCropStep2)
             General.setState(self.fCropStep3, 'normal')
+            
+            # de-activate re-naming of partition 06/18/13
+            self.Step3bEntry.config(state='disabled')
 
     ''' ==========================================================
     color_Step: Colors recursively widgets
@@ -613,7 +616,7 @@ class CropCleft(Tabs.Tab):
             self.Vertex = self.write_Partition()
             self.displayPartition()
             self.Step2Selection.set('')
-
+            
         else:
             self.top.DisplayMessage("Could not execute task: A Wizard is active")
 

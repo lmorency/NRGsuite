@@ -41,13 +41,13 @@ import General
 from subprocess import Popen, PIPE
 
 
-class ProcLig(threading.Thread):
-#class ProcLig():
+#class ProcLig(threading.Thread):
+class ProcLig():
 
     def __init__(self, top, MoleculeFile, StartAtomIndex, AtomTypes, AnchorAtom, 
                  ConvertOnly, ProcessOnly, Gen3D, Target, Callback):
         
-        threading.Thread.__init__(self)
+        #threading.Thread.__init__(self)
 
         self.top = top
         self.FlexAID = self.top.top
@@ -68,39 +68,18 @@ class ProcLig(threading.Thread):
         
         self.StartAtomIndex = StartAtomIndex
         
-        self.start()
-        #self.run()
+        #self.start()
+        self.run()
         
     def run(self):
         
         self.FlexAID.ProcessRunning = True
         
-        if self.Target:
-            molecule = 'target'
-        else:
-            molecule = 'ligand'
-        
         if not self.Copy_MoleculeFile():
             #self.FlexAID.DisplayMessage("  Processing %s molecule..." % molecule, 0)
             rv = self.process()
-
-        """
-        else:
-            self.FlexAID.DisplayMessage("  ERROR: The %s could not be copied to temp folder" % molecule, 1)
-
-        if not rv:
-            if self.ConvertOnly:
-                self.FlexAID.DisplayMessage("  The %s was converted successfully" % molecule, 0)
-            else:
-                self.FlexAID.DisplayMessage("  The %s was processed successfully" % molecule, 0)
-        else:
-            if self.ConvertOnly:
-                self.FlexAID.DisplayMessage("  ERROR: The %s could not be converted" % molecule, 1)
-            else:
-                self.FlexAID.DisplayMessage("  ERROR: The %s could not be processed" % molecule, 1)
-        """
         
-        self.Callback(False, '', 0, '', 0, False, False, 0, False)
+        self.Callback(False, '', 0, '', 0, False, False, 0, False, '')
         self.FlexAID.ProcessRunning = False
         
         return rv

@@ -39,5 +39,5 @@ class TargetFlex:
     ==================================================================================  '''           
     def Output_List(self):
         
-        return ','.join(listSideChain)
+        return ','.join(self.listSideChain)
 

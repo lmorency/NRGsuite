@@ -441,9 +441,6 @@ class Config1(Tabs.Tab):
     ==================================================================================  '''               
     def Create_NewSphere(self):
         
-        if not self.PyMOL:
-            return
-                
         Center = General_cmd.Get_CenterOfMass2(self.top.IOFile.TargetName.get(), cmd.get_state())
         Width = General_cmd.Get_MaxWidth(self.top.IOFile.TargetName.get(), cmd.get_state())
 
@@ -459,9 +456,6 @@ class Config1(Tabs.Tab):
     FUNCTION SelectFlexibleSideChains: Starts the flexible side-chain wizard
     ==================================================================================  '''               
     def SelectFlexibleSideChains(self):
-
-        if not self.PyMOL:
-            return
 
         self.FlexSCRunning(True)
         self.top.ActiveWizard = FlexSideChain.flexSC(self)
@@ -812,13 +806,11 @@ class Config1(Tabs.Tab):
     ================================================================================== '''          
     def Sphere_Clicked(self):
 
-        if self.PyMOL:
+        self.SphereRunning(True)
 
-            self.SphereRunning(True)
-
-            self.top.ActiveWizard = Sphere.Sphere(self, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize, '')
-            cmd.set_wizard(self.top.ActiveWizard)
-            self.top.ActiveWizard.Start()
+        self.top.ActiveWizard = Sphere.Sphere(self, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize, '')
+        cmd.set_wizard(self.top.ActiveWizard)
+        self.top.ActiveWizard.Start()
 
     # Deletes the binding-site object
     def Delete_BindingSite(self):
@@ -856,9 +848,6 @@ class Config1(Tabs.Tab):
     # Center the sphere based on the selection
     def CenterSphere(self, sel):
 
-        if not self.PyMOL:
-            return
-        
         if not self.top.WizardRunning():
             return
 
@@ -871,9 +860,6 @@ class Config1(Tabs.Tab):
 
     # Listbox Menu Refresh values  
     def Btn_OptSphRefresh_Clicked(self):
-
-        if not self.PyMOL:
-            return
 
         exc = [ self.BindingSiteDisplay, self.SphereDisplay ]
         General_cmd.Refresh_DDL(self.OptMenuSphere,self.defOptSphere,exc,self.CenterSphere)
@@ -934,9 +920,6 @@ class Config1(Tabs.Tab):
     FUNCTION Display_BindingSite: Displays the binding-site of the target
     ================================================================================== '''        
     def Display_BindingSite(self):
-
-        if not self.PyMOL:
-            return
 
         auto_zoom = cmd.get("auto_zoom")
         cmd.set("auto_zoom", 0)

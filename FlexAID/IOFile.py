@@ -194,8 +194,8 @@ class IOFile(Tabs.Tab):
         if not self.ProcessedLigandPath.get():
             self.top.ProcessError = False
             
-            self.ProcessLigand( True, self.LigandPath.get(), self.ATOM_INDEX, self.AtomTypes.get(), 
-                                self.Anchor.get(), False, self.ProcessOnly, self.Gen3D.get(), False )
+            self.ProcessMolecule( True, self.LigandPath.get(), self.ATOM_INDEX, self.AtomTypes.get(), 
+                                  self.Anchor.get(), False, self.ProcessOnly, self.Gen3D.get(), False, 'ligand' )
             
             if self.top.ProcessError:
                 return False
@@ -222,8 +222,8 @@ class IOFile(Tabs.Tab):
         if not self.ProcessedTargetPath.get():
             self.top.ProcessError = False
             
-            self.ProcessTarget( True, self.TargetPath.get(), self.ATOM_INDEX, self.AtomTypes.get(),
-                                self.Anchor.get(), False, False, False, True )
+            self.ProcessMolecule( True, self.TargetPath.get(), self.ATOM_INDEX, self.AtomTypes.get(),
+                                self.Anchor.get(), False, False, False, True, 'target' )
             
             if self.top.ProcessError:
                 return False
@@ -237,49 +237,30 @@ class IOFile(Tabs.Tab):
         return True
     
     ''' ==================================================================================
-    FUNCTION ProcessLigand: Processes ligand PDB file using Process_Ligand
+    FUNCTION ProcessMolecule: Processes the target or the ligand
     ================================================================================== '''    
-    def ProcessLigand(self, boolRun, MoleculeFile, StartAtomIndex, AtomTypes,
-                      Anchor, ConvertOnly, ProcessOnly, Gen3D, Target):
+    def ProcessMolecule(self, boolRun, MoleculeFile, StartAtomIndex, AtomTypes,
+                        Anchor, ConvertOnly, ProcessOnly, Gen3D, Target, Molecule):
         
         if boolRun:
             self.Disable_Frame()
             
             self.top.ProcessRunning = True
-            self.DisplayMessage("  Processing the ligand...", 1)
+            self.DisplayMessage("  Processing the " + Molecule + "...", 1)
             
             p = ProcessLigand.ProcLig(self, MoleculeFile, StartAtomIndex, AtomTypes, Anchor,
-                                      ConvertOnly, ProcessOnly, Gen3D, Target, self.ProcessLigand)
-            p.join()
+                                      ConvertOnly, ProcessOnly, Gen3D, Target, self.ProcessMolecule)
+            #p.join()
             
         else:
             self.Enable_Frame()
         
-    ''' ==================================================================================
-    FUNCTION ProcessTarget: Processes target PDB file
-    ================================================================================== '''
-    def ProcessTarget(self, boolRun, MoleculeFile, StartAtomIndex, AtomTypes, 
-                      Anchor, ConvertOnly, ProcessOnly, Gen3D, Target):
-        
-        if boolRun:
-            self.Disable_Frame()
-            
-            self.top.ProcessRunning = True
-            self.DisplayMessage("  Processing the target...", 1)
-            
-            p = ProcessLigand.ProcLig(self, MoleculeFile, StartAtomIndex, AtomTypes, Anchor,
-                                      ConvertOnly, ProcessOnly, Gen3D, Target, self.ProcessTarget)
-            p.join()
-            
-        else:
-            self.Enable_Frame()
-    
     ''' ==================================================================================
     FUNCTION Convert_Smiles: Converts the smiles string to a viewable molecule format
     ================================================================================== '''
     def Convert_Smiles(self):
 
-        self.ProcessLigand( True, self.LigandPath.get(), 0, '', 0, True, False, 1, False)
+        self.ProcessMolecule( True, self.LigandPath.get(), 0, '', 0, True, False, 1, False, 'ligand')
         
         if self.top.ProcessError:
             return 1

@@ -51,11 +51,6 @@ class Manage:
         self.LOGFILE = os.path.join(self.FlexAID.FlexAIDTempProject_Dir,'log.txt')
         self.LOGFILETMP = self.LOGFILE + '.tmp'
 
-        self.Now = str(datetime.now())
-        self.Now = self.Now[0:int(self.Now.rfind('.'))]
-        self.Now = self.Now.replace(':','-')
-        self.Now = self.Now.replace(' ','-')
-
         self.Target = self.IOFile.TargetName.get()
         self.Ligand = self.IOFile.LigandName.get()
         self.COMPLEX = self.IOFile.Complex.get().upper()
@@ -73,6 +68,11 @@ class Manage:
     ============================================================================== '''          
     def Reference_Folders(self):
 
+        self.Now = str(datetime.now())
+        self.Now = self.Now[0:int(self.Now.rfind('.'))]
+        self.Now = self.Now.replace(':','-')
+        self.Now = self.Now.replace(' ','-')
+        
         self.FlexAIDRunSimulationProject_Dir = os.path.join(self.FlexAID.FlexAIDSimulationProject_Dir,self.COMPLEX,self.Now)
         
         self.BINDINGSITE = os.path.join(self.FlexAIDRunSimulationProject_Dir,'binding_site.pdb')
@@ -175,7 +175,7 @@ class Manage:
                 TOP = int(m.group(1)) + 1
                 Res = Result.Result(file, TOP)
                 
-                self.top.Vars.ResultsContainer.Results.append(Res)
+                self.top.ResultsContainer.Results.append(Res)
                 continue
             
             m = re.search("RESULT_INI\.pdb$", file)
@@ -183,13 +183,13 @@ class Manage:
                 Res = Result.Result(file, 'REF')
                 
                 if self.Config2.UseReference.get():
-                    self.top.Vars.ResultsContainer.Results.append(Res)
+                    self.top.ResultsContainer.Results.append(Res)
                     
                 continue                
 
             m = re.search("RESULT_par\.res$", file)
             if m:
-                self.top.Vars.ResultsContainer.ResultParams = file
+                self.top.ResultsContainer.ResultParams = file
                 continue
     
     ''' ==================================================================================
@@ -416,7 +416,7 @@ class Manage:
         gaInp_file.write('MUTARATE %.3f\n' % float(self.GAParam.MutaRate.get()))
 
         if bContinue:
-            gaInp_file.write('POPINIMT IPFILE ' + self.top.Vars.ResultsContainer.ResultParams + '\n')
+            gaInp_file.write('POPINIMT IPFILE ' + self.top.ResultsContainer.ResultParams + '\n')
         else:
             gaInp_file.write('POPINIMT RANDOM\n')
 
@@ -656,10 +656,12 @@ class Manage:
     ''' ==================================================================================
     @summary: Write_Report: Writes the final report of the simulation
     ================================================================================== '''
-    def Write_Report(self):
+    def Write_Report(self, bContinue=False):
         
         # Save the data to the configuration file
         report_file = open(self.Report, 'w')
+
+        report_file.write('%-35s%s\n' % ('Docking parameters', ''))
         
         report_file.write('%-35s%s\n' % ('Target name', self.IOFile.TargetName.get()))
         report_file.write('%-35s%s\n' % ('Target file', self.IOFile.TargetPath.get()))
@@ -776,5 +778,40 @@ class Manage:
         
         report_file.write('%-35s%s\n' % ('Maximum docking results', '10'))
         
+        report_file.write('\n')
+        report_file.write('%-35s%s\n' % ('Genetic algorithms parameters', ''))
+
+        report_file.write('%-35s%s\n' % ('Number chromosomes', str(self.GAParam.NbChrom.get())))
+        report_file.write('%-35s%s\n' % ('Number generations', str(self.GAParam.NbGen.get())))
+        
+        if self.GAParam.UseAGA.get():
+            report_file.write('%-35s%s\n' % ('Adaptive genetic operators', 'Yes'))
+            report_file.write('%-35s%s\n' % ('Maximum crossover rate', self.GAParam.AGAk1.get()))
+            report_file.write('%-35s%s\n' % ('Maximum mutation rate', self.GAParam.AGAk2.get()))
+        else:
+            report_file.write('%-35s%s\n' % ('Adaptive genetic operators', 'No'))
+            report_file.write('%-35s%s\n' % ('Crossover rate', self.GAParam.CrossRate.get()))
+            report_file.write('%-35s%s\n' % ('Mutation rate', self.GAParam.MutaRate.get()))
+        
+        if bContinue:
+            report_file.write('%-35s%s\n' % ('Start from random population', 'No'))
+        else:
+            report_file.write('%-35s%s\n' % ('Start from random population', 'Yes'))
+            
+        if self.GAParam.FitModel.get() == 'PSHARE':
+            report_file.write('%-35s%s\n' % ('Fitness model', 'Shared'))
+        else:
+            report_file.write('%-35s%s\n' % ('Fitness model', 'Linear'))
+
+        if self.GAParam.RepModel.get() == 'BOOM':
+            report_file.write('%-35s%s\n' % ('Reproduction model', 'Population boom'))
+        else:
+            report_file.write('%-35s%s\n' % ('Reproduction model', 'Steady-state'))
+
+        if self.GAParam.RepDup.get():
+            report_file.write('%-35s%s\n' % ('Allow duplicates', 'Yes'))
+        else:
+            report_file.write('%-35s%s\n' % ('Allow duplicates', 'No'))
+            
         return
         

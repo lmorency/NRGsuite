@@ -47,29 +47,28 @@ if __debug__:
 
 class SimulateVars(Vars.Vars):
     
-    ResultsName = StringVar()
     SimLigDisplay = StringVar()
     SimCartoonDisplay = IntVar()
     SimLinesDisplay = IntVar()
 
     def __init__(self):
         
-        self.ResultsContainer = Result.ResultsContainer()
-    
+        return
 
 class Simulate(Tabs.Tab):
     
     def Def_Vars(self):
         
+        self.ResultsName = StringVar()
         self.SimStatus = StringVar()
         self.ProgBarText = StringVar()
         
         # vars class objects
-        self.ResultsName = self.Vars.ResultsName
         self.SimLigDisplay = self.Vars.SimLigDisplay
         self.SimCartoonDisplay = self.Vars.SimCartoonDisplay
         self.SimLinesDisplay = self.Vars.SimLinesDisplay
         
+        self.ResultsContainer = Result.ResultsContainer()
         self.Manage = ManageFiles.Manage(self)
         
     def Init_Vars(self):
@@ -83,10 +82,10 @@ class Simulate(Tabs.Tab):
         
         self.BarWidth = 0
         self.BarHeight = 0
-
+        
         self.dictSimData = {}
         
-        self.Vars.ResultsContainer.Clear()
+        self.ResultsContainer.Clear()
         
         self.ProcessParsing = False
         
@@ -99,7 +98,7 @@ class Simulate(Tabs.Tab):
         self.Reset_Buttons()
         
         self.ConfigMD5 = self.Manage.Hash_CONFIG()
-
+        
         self.ResultsName_Toggle()
         
     ''' =============================================================================== 
@@ -255,21 +254,21 @@ class Simulate(Tabs.Tab):
     ===============================================================================  '''     
     def Btn_View_Report(self):
 
-        if self.Vars.ResultsContainer.Report:
+        if self.ResultsContainer.Report:
 
             if self.top.OSid == 'WIN':
                 apps = ['notepad']
             elif self.top.OSid == 'MAC':
                 apps = ['open']
             elif self.top.OSid == 'LINUX':
-                apps = ['gedit','kedit']
+                apps = ['kate','gedit','kedit']
 
             for app in apps:
                 try:
-                    Popen([app, self.Vars.ResultsContainer.Report])
+                    Popen([app, self.ResultsContainer.Report])
                     break
                 except OSError:
-                    self.top.DisplayMessage(" Unrecognized application: ", app)
+                    self.top.DisplayMessage(" Unrecognized application: " +  app, 2)
                 except:
                     pass
         
@@ -312,7 +311,7 @@ class Simulate(Tabs.Tab):
         self.Manage.Create_ga_inp(bContinue)
 
         self.DisplayMessage('   Writing report...', 2)
-        self.Manage.Write_Report()
+        self.Manage.Write_Report(bContinue)
         
         self.DisplayMessage('   Saving and modifying input files...', 2)
         #self.Manage.Modify_Input()
@@ -342,18 +341,18 @@ class Simulate(Tabs.Tab):
                                                     self.Manage.CONFIG,
                                                     self.Manage.ga_inp,
                                                     os.path.join(self.Manage.FlexAIDRunSimulationProject_Dir,'RESULT') )
-        self.Results = True
+        self.Results = False
         
         if bContinue:
-            ParentResultsContainer = self.Vars.ResultsContainer
+            ParentResultsContainer = self.ResultsContainer
         
-        self.Vars.ResultsContainer = Result.ResultsContainer()
-        self.Vars.ResultsContainer.ConfigMD5 = self.ConfigMD5
+        self.ResultsContainer = Result.ResultsContainer()
+        self.ResultsContainer.ConfigMD5 = self.ConfigMD5
 
         if bContinue:
-            self.Vars.ResultsContainer.ParentResult = ParentResultsContainer
+            self.ResultsContainer.ParentResult = ParentResultsContainer
         
-        self.Vars.ResultsContainer.Report = self.Manage.Report
+        self.ResultsContainer.Report = self.Manage.Report
         
         # START SIMULATION
         self.DisplayMessage('  Starting executable thread.', 2)
@@ -491,7 +490,7 @@ class Simulate(Tabs.Tab):
         NRes = 0
         self.dictSimData.clear()
         
-        for Result in self.Vars.ResultsContainer.Results:
+        for Result in self.ResultsContainer.Results:
             
             self.dictSimData[Result.ResultID] = [ Result.CF, 'N/A', Result.RMSD ]
             
@@ -581,16 +580,15 @@ class Simulate(Tabs.Tab):
     def Btn_AbortSim(self):
         
         if self.SimStatus.get() == 'Running...':
-        
+            
             try:
                 #Create the .abort file
                 abort_file = open(self.Manage.ABORT, 'w')
                 abort_file.close()
-                
             except OSError:
                 self.DisplayMessage('  ERROR: An error occured while trying to abort the simulation.', 0)
                 return
-
+                
             self.Btn_PauseResume.config(state='disabled')
             self.Btn_Stop.config(state='disabled')
             self.Btn_Abort.config(state='disabled')
@@ -598,7 +596,6 @@ class Simulate(Tabs.Tab):
             self.Clean_Update()
             self.AbortStatus()
             self.Parse.ParseFile = self.Manage.LOGFILE
-            self.Results = False
     
     ''' =============================================================================== 
     FUNCTION Btn_StopSim: Stop the simulation 
@@ -677,7 +674,7 @@ class Simulate(Tabs.Tab):
 
         for key in sorted(self.dictSimData.keys()):
             
-            Result = self.Vars.ResultsContainer.Get_ResultID(key)
+            Result = self.ResultsContainer.Get_ResultID(key)
             if Result is not None:
                 try:
                     ResultName = 'RESULT_' + str(Result.ResultID) + '__'
@@ -796,8 +793,11 @@ class Simulate(Tabs.Tab):
             self.top.root.after(self.top.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
             
         else:
+            self.Reset_Buttons()
+            
             # Results were generated.
             if self.Results:
+                #print "Results were generated!"
                 self.Load_Results()
                 
                 NRes = self.Manage.NUMBER_RESULTS
@@ -809,21 +809,21 @@ class Simulate(Tabs.Tab):
                 Results_Dir = os.path.join(self.top.FlexAIDResultsProject_Dir, self.top.IOFile.Complex.get().upper())
                 if not os.path.isdir(Results_Dir):
                     os.makedirs(Results_Dir)
-                    
+                
                 Results_File = os.path.join(Results_Dir,self.Manage.Now + '.nrgfr')
                 
                 self.Save_Results(Results_File)
                 self.ResultsName.set(os.path.splitext(os.path.split(Results_File)[1])[0])
                 
             else:
-                self.Vars.ResultsContainer = None
+                self.ResultsContainer = None
                 try:
                     shutil.rmtree(self.Manage.FlexAIDRunSimulationProject_Dir, True)
                 except shutil.Error:
                     pass
-            
-            self.Reset_Buttons()
-    
+
+                self.ResultsName.set('')
+                
     ''' ==================================================================================
     FUNCTION Process_ResultsContainer: updates the data and show the results
     ==================================================================================  '''
@@ -864,7 +864,7 @@ class Simulate(Tabs.Tab):
                 
                 if TmpResultsContainer is not None and len(TmpResultsContainer.Results):
                 
-                    self.Vars.ResultsContainer = TmpResultsContainer
+                    self.ResultsContainer = TmpResultsContainer
                     self.Process_ResultsContainer()
                     
                     self.ResultsName.set(os.path.basename(os.path.splitext(LoadFile)[0]))
@@ -885,7 +885,7 @@ class Simulate(Tabs.Tab):
            self.top.ValidateWindowRunning():
             return
         
-        if self.Vars.ResultsContainer is None or not len(self.Vars.ResultsContainer.Results):
+        if self.ResultsContainer is None or not len(self.ResultsContainer.Results):
             self.DisplayMessage("  No result file(s) to save.", 2)
             return
         
@@ -919,10 +919,10 @@ class Simulate(Tabs.Tab):
                             
         try:
             out = open(SaveFile, 'w')
-            pickle.dump(self.Vars.ResultsContainer, out)
+            pickle.dump(self.ResultsContainer, out)
             out.close()
             
-            self.ResultsName.set(os.path.basename(os.path.splitext(SaveFile)[0]))
+            #self.ResultsName.set(os.path.basename(os.path.splitext(SaveFile)[0]))
             
             self.DisplayMessage("  Successfully saved '" + SaveFile + "'", 2)
             
@@ -937,7 +937,7 @@ class Simulate(Tabs.Tab):
         self.Btn_Continue.config(state='disabled')
         
         if self.ResultsName.get():
-            if self.ConfigMD5 == self.Vars.ResultsContainer.ConfigMD5:
+            if self.ConfigMD5 == self.ResultsContainer.ConfigMD5:
                 self.Btn_Continue.config(state='normal')
 
     ''' ==================================================================================

@@ -200,198 +200,11 @@ class Parse(threading.Thread):
         while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
             
             time.sleep(self.INTERVAL)
-            
-            # Once copied cannot go change file (safe-protection)
-            ParseFile = self.ParseFile 
-                        
-            if self.top.SimStatus.get() == 'Paused.':
-                continue
-            
-            elif self.CopyRead(ParseFile):
-                self.Error = True
-                self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files'
+
+            if self.ParseLines():
                 break
-                
-            if self.nRead.get(ParseFile):
-                # Resume a file that was not read completely
-                self.Lines = self.Lines[self.nRead[ParseFile]:]
-            else:
-                self.nRead[ParseFile] = 0
-            
-            for Line in self.Lines:
-                
-                # check line completion
-                m = re.search('\n', Line)
-                if m:
-                    self.nRead[ParseFile] = self.nRead[ParseFile] + 1
-                else:
-                    # EOF signal - will resume from here next time
-                    break
-                
-                m = re.match("Grid\[(\d+)\]=", Line)
-                if m:
-                    index = int(m.group(1))
-                
-                    strcoor = Line[(Line.find('=')+1):]
-                    self.GridVertex[index] = [  float(strcoor[0:8].strip()), 
-                                                float(strcoor[8:16].strip()),
-                                                float(strcoor[16:24].strip())]
-
-                    continue
-
-
-                m = re.match("(\s*(\d+) \()", Line)
-                if m:
-                    #print Line
-                    
-                    self.TOP = int(m.group(2))
-
-                    # Find starting index where to parse column values
-                    colNo = len(m.group(1))
-
-                    if self.Best == 'energy' and self.Generation != -1 and self.TOP != -1:
-
-                        # Reading the values calculated for the generation
-                        if (self.Generation % self.NbGenFreq) == 0 or self.Generation == self.NbTotalGen:
-
-                            ID = str(self.Generation) + '.' + str(self.TOP)
-                            #print("updating " + ID)
-
-                            #print Line
-                            Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
-                                                                self.Translation, self.Rotation )
-                            
-                            if (self.TOP+1) == self.NbTopChrom:
-                                self.State = self.CurrentState
-
-                                # Update energy/fitness table
-                                self.queue.put(lambda: self.top.update_DataList())
-                                
-                                self.top.Modify_LigDisplay()
-                                self.top.Modify_Display(self.top.SimCartoonDisplay, 'cartoon')
-                                self.top.Modify_Display(self.top.SimLinesDisplay, 'lines')
-                        
-                        else:
-                            self.UpdateDataList(Line, self.TOP, 0, None)
-                            
-                            if (self.TOP+1) == self.NbTopChrom:
-                                self.queue.put(lambda: self.top.update_DataList())
-                        
-                        # Ready to read another file
-                        if (self.TOP+1) == self.NbTopChrom:
-                        
-                            self.nRead[ParseFile] = 0
-                                
-                            if self.Generation == self.NbTotalGen:
-                                self.ParseFile = self.LOGFILE
-                                
-                            else:
-                                if self.Remove_UPDATE():
-                                    self.Error = True
-                                    self.ErrorMsg = '*NRGsuite ERROR: Could not successfully remove .update file'
-                                    break
-                                                                    
-                    continue
-
-                m = re.match("Generation:\s*(\d+)\s+", Line)
-                if m:
-                    #print Line
-                    
-                    self.Generation = int(m.group(1))
-                    #print("Generation " + str(self.Generation))
-                    self.CurrentState = self.State + 1
-
-                    #print "will update progressbar"
-                    self.queue.put(lambda: self.top.progressBarHandler(self.Generation, self.NbTotalGen))
-
-                    continue
-
-                m = re.match("best by (\w+)\s+", Line)
-                if m:
-                    #print Line
-
-                    self.Best = m.group(1)
-                    #print "Best by " + self.Best
-                    continue
-            
-                m = re.match("clustering all individuals", Line)
-                if m:
-                    #print Line
-                    self.queue.put(lambda: self.top.ClusterStatus())
-
-                    continue
-
-                m = re.match("Rotamer for", Line)
-                if m:                        
-                    self.AddRotamerFromLine(Line)
-                
-                    continue
-
-                m = re.match("Done.", Line)
-                if m:                    
-                    continue
-
-                m = re.match("shiftval=", Line)
-                if m and self.FlexStatus != '':
-
-                    # Shift values for fixed dihedrals between pair-triplets of atoms
-                    fields = Line.split()
-                    MergeAtomsAB = fields[1] + fields[2]
-                    self.FixedAngle[MergeAtomsAB] = fields[5]                   
-                                            
-                    continue
-
-                m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
-                if m:                        
-                    self.ListAtom.append(int(m.group(1)))
-                    if len(self.ListAtom) == self.nbAtoms:
-                        # Order the FLEDIH based on the atoms occurences
-                        self.OrderFledih()
-                
-                    continue
-                
-                m = re.match("the protein center of coordinates is:\s+(\S+)\s+(\S+)\s+(\S+)\s+", Line)
-                if m:
-                    self.Ori[0] = float(m.group(1))
-                    self.Ori[1] = float(m.group(2))
-                    self.Ori[2] = float(m.group(3))
-
-                    self.OriX[0] = self.Ori[0] + 1.0  # X
-                    self.OriX[1] = self.Ori[1]        # Y
-                    self.OriX[2] = self.Ori[2]        # Z
-                
-                    self.OriY[0] = self.Ori[0]        # X
-                    self.OriY[1] = self.Ori[1] + 1.0  # Y
-                    self.OriY[2] = self.Ori[2]        # Z
-                
-                    continue            
-                
-                m = re.match("SIGMA_SHARE", Line)
-                if m:                            
-                    # send ready to simulate signal  
-                    print('  Signal sent to start simulation')
-                    self.queue.put(lambda: self.top.RunStatus())
-
-                    #self.ParseGA = True
-                    self.ParseFile = self.UPDATE
-
-                    continue
-            
-                # track errors
-                m = re.match("ERROR", Line)
-                if m:
-                    Line = Line.rstrip('\n')
-                    self.ErrorMsg = '*FlexAID ' + Line
-                    
-                    try:
-                        self.FlexAID.Run.terminate()
-                    except:
-                        pass
-                    
-                    break
-
-            if self.Error:
-                break
+        
+        self.ParseLines()
         
         # Put back the auto_zoom to on
         cmd.set("auto_zoom", -1)
@@ -402,16 +215,220 @@ class Parse(threading.Thread):
             self.queue.put(lambda: self.top.SuccessStatus())
     
             if self.top.Results:
-                cmd.disable("TOP_*__")
-                cmd.refresh()
                 cmd.enable("RESULT_*")
                 cmd.refresh()
+
+            cmd.disable("TOP_*__")
+            cmd.refresh()
                 
             cmd.frame(1)
         
         self.top.ProcessParsing = False
 
         print("FlexAID parsing thread has ended.")
+    
+        
+    '''
+    @summary: SUBROUTINE ParseLines: parses the lines of the parsing file (logfile or update file)
+    '''
+    def ParseLines(self):
+
+        # Once copied cannot go change file (safe-protection)
+        ParseFile = self.ParseFile
+
+        if self.top.SimStatus.get() == 'Paused.':
+            return 0
+
+        elif self.CopyRead(ParseFile):
+            self.Error = True
+            self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files'
+            return 1
+
+        if self.nRead.get(ParseFile):
+            # Resume a file that was not read completely
+            self.Lines = self.Lines[self.nRead[ParseFile]:]
+        else:
+            self.nRead[ParseFile] = 0
+
+        for Line in self.Lines:
+
+            # check line completion
+            m = re.search('\n', Line)
+            if m:
+                self.nRead[ParseFile] += 1
+            else:
+                # EOF signal - will resume from here next time
+                break
+            
+            #print Line
+            
+            m = re.match("Grid\[(\d+)\]=", Line)
+            if m:
+                index = int(m.group(1))
+
+                strcoor = Line[(Line.find('=')+1):]
+                self.GridVertex[index] = [  float(strcoor[0:8].strip()), 
+                                            float(strcoor[8:16].strip()),
+                                            float(strcoor[16:24].strip())]
+
+                continue
+
+
+            m = re.match("(\s*(\d+) \()", Line)
+            if m:
+                #print Line
+
+                self.TOP = int(m.group(2))
+
+                # Find starting index where to parse column values
+                colNo = len(m.group(1))
+
+                if self.Best == 'energy' and self.Generation != -1 and self.TOP != -1:
+
+                    # Reading the values calculated for the generation
+                    if (self.Generation % self.NbGenFreq) == 0 or self.Generation == self.NbTotalGen:
+
+                        ID = str(self.Generation) + '.' + str(self.TOP)
+                        #print("updating " + ID)
+
+                        #print Line
+                        Update = UpdateScreen.UpdateScreen( self, ID, colNo, Line, self.CurrentState, self.TOP, 
+                                                            self.Translation, self.Rotation )
+
+                        if (self.TOP+1) == self.NbTopChrom:
+                            self.State = self.CurrentState
+
+                            # Update energy/fitness table
+                            self.queue.put(lambda: self.top.update_DataList())
+
+                            self.top.Modify_LigDisplay()
+                            self.top.Modify_Display(self.top.SimCartoonDisplay, 'cartoon')
+                            self.top.Modify_Display(self.top.SimLinesDisplay, 'lines')
+
+                    else:
+                        self.UpdateDataList(Line, self.TOP, 0, None)
+
+                        if (self.TOP+1) == self.NbTopChrom:
+                            self.queue.put(lambda: self.top.update_DataList())
+
+                    # Ready to read another file
+                    if (self.TOP+1) == self.NbTopChrom:
+
+                        self.nRead[ParseFile] = 0
+
+                        if self.Generation == self.NbTotalGen:
+                            self.ParseFile = self.LOGFILE
+
+                        else:
+                            if self.Remove_UPDATE():
+                                self.Error = True
+                                self.ErrorMsg = '*NRGsuite ERROR: Could not successfully remove .update file'
+                                return 1
+
+                continue
+
+            m = re.match("Generation:\s*(\d+)\s+", Line)
+            if m:
+                #print Line
+
+                self.Generation = int(m.group(1))
+                #print("Generation " + str(self.Generation))
+                self.CurrentState = self.State + 1
+
+                #print "will update progressbar"
+                self.queue.put(lambda: self.top.progressBarHandler(self.Generation, self.NbTotalGen))
+
+                continue
+
+            m = re.match("best by (\w+)\s+", Line)
+            if m:
+                #print Line
+
+                self.Best = m.group(1)
+                #print "Best by " + self.Best
+                continue
+
+            m = re.match("clustering all individuals", Line)
+            if m:
+                #print Line
+                self.top.Results = True
+                self.queue.put(lambda: self.top.ClusterStatus())
+
+                continue
+
+            m = re.match("Rotamer for", Line)
+            if m:                        
+                self.AddRotamerFromLine(Line)
+
+                continue
+
+            m = re.match("Done.", Line)
+            if m:
+                continue
+
+            m = re.match("shiftval=", Line)
+            if m and self.FlexStatus != '':
+
+                # Shift values for fixed dihedrals between pair-triplets of atoms
+                fields = Line.split()
+                MergeAtomsAB = fields[1] + fields[2]
+                self.FixedAngle[MergeAtomsAB] = fields[5]                   
+
+                continue
+
+            m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
+            if m:                        
+                self.ListAtom.append(int(m.group(1)))
+                if len(self.ListAtom) == self.nbAtoms:
+                    # Order the FLEDIH based on the atoms occurences
+                    self.OrderFledih()
+
+                continue
+
+            m = re.match("the protein center of coordinates is:\s+(\S+)\s+(\S+)\s+(\S+)\s+", Line)
+            if m:
+                self.Ori[0] = float(m.group(1))
+                self.Ori[1] = float(m.group(2))
+                self.Ori[2] = float(m.group(3))
+                
+                self.OriX[0] = self.Ori[0] + 1.0  # X
+                self.OriX[1] = self.Ori[1]        # Y
+                self.OriX[2] = self.Ori[2]        # Z
+
+                self.OriY[0] = self.Ori[0]        # X
+                self.OriY[1] = self.Ori[1] + 1.0  # Y
+                self.OriY[2] = self.Ori[2]        # Z
+
+                continue            
+
+            m = re.match("SIGMA_SHARE", Line)
+            if m:                            
+                # send ready to simulate signal  
+                print('  Signal sent to start simulation')
+                self.queue.put(lambda: self.top.RunStatus())
+
+                #self.ParseGA = True
+                self.ParseFile = self.UPDATE
+
+                continue
+
+            # track errors
+            m = re.match("ERROR", Line)
+            if m:
+                Line = Line.rstrip('\n')
+                self.ErrorMsg = '*FlexAID ' + Line
+
+                try:
+                    self.FlexAID.Run.terminate()
+                except:
+                    pass
+
+                return 1
+
+        if self.Error:
+            return 1
+        
+        return 0
 
     '''=========================================================================
        UpdateDataList: Updates the table containing energy/fitness values
@@ -521,7 +538,7 @@ class Parse(threading.Thread):
         
         #  0      1    2     3      4           5        6        7
         #Rotamer for GLU81- with dihedrals  -87.647  -80.859   27.236            
-
+        
         if self.dictSideChainNRot.get(words[2],''):
             for i in range(5,len(words)):
                 self.dictSideChainRotamers[words[2]].append(float(words[i].strip()))
