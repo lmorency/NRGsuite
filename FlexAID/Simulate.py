@@ -127,7 +127,9 @@ class Simulate(Tabs.Tab):
         Entry(fConfRes, textvariable=self.ResultsName, font=self.top.font_Text, state='disabled', disabledbackground=self.top.Color_White,
                         disabledforeground=self.top.Color_Black, justify=CENTER).pack(side=LEFT, fill=X, expand=True)
 
-        Button(self.fRes, text='View report', command=self.Btn_View_Report, font=self.top.font_Text).pack(side=TOP, fill=X, padx=3)
+        self.BtnViewReport = Button(self.fRes, text='View report', command=self.Btn_View_Report, font=self.top.font_Text)
+        self.BtnViewReport.pack(side=TOP, fill=X, padx=3)
+        self.BtnViewReport.config(state='disabled')
         
         fNaviRes = Frame(self.fRes)
         #fNaviRes.pack(side=TOP, fill=X, expand=True, padx=5, pady=5)
@@ -206,7 +208,7 @@ class Simulate(Tabs.Tab):
         
         self.RectPB = self.ProgressBar.create_rectangle(0, 0, 0, self.ProgressBar.winfo_reqheight(), fill=self.top.Color_Blue, width=0)
         self.TextPB = self.ProgressBar.create_text(self.ProgressBar.winfo_reqwidth()/2, self.ProgressBar.winfo_reqheight()/2, text='', fill='black')
-       
+        
         self.BarWidth = self.ProgressBar.cget("width")
         self.BarHeight = self.ProgressBar.cget("height")
         
@@ -935,8 +937,10 @@ class Simulate(Tabs.Tab):
     def ResultsName_Toggle(self, *args):
 
         self.Btn_Continue.config(state='disabled')
+        self.BtnViewReport.config(state='disabled')
         
         if self.ResultsName.get():
+            self.BtnViewReport.config(state='normal')
             if self.ConfigMD5 == self.ResultsContainer.ConfigMD5:
                 self.Btn_Continue.config(state='normal')
 
