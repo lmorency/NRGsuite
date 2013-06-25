@@ -276,6 +276,8 @@ class flexSC(Wizard):
         self.FlexAID.ActiveWizard = None
 
         cmd.set_wizard()
+        cmd.refresh()
+
         #cmd.set_view(self.View)
         
      #=======================================================================   

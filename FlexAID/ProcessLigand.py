@@ -143,11 +143,14 @@ class ProcLig():
                 self.set_environment('BABEL_DATADIR', os.path.join(self.FlexAIDWRKInstall_Dir,'data'))
                 self.FlexAID.Run = Popen(commandline, shell=True, stderr=PIPE, stdout=PIPE)
 
-            (out,err) = self.FlexAID.Run.communicate()
+            #self.FlexAID.Run.wait()
+            
+            out, err = self.FlexAID.Run.communicate()
             #print "out", out
             #print "err", err
             
             if self.FlexAID.Run.returncode != 0:
+                print "ProcessError!"
                 self.FlexAID.ProcessError = True
                 return 1
             

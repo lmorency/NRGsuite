@@ -581,22 +581,24 @@ class CropCleft(Tabs.Tab):
     ==========================================================='''           
     def Step2_Add(self):
 
-        if self.PyMOL:
-
-            if self.top.ActiveWizard is None:
+        if self.top.ActiveWizard is None:
                 
-                self.SphereID = self.Get_SphereID()
-                self.Sphere = SphereObj.SphereObj(self.Width/1.5, self.Width, self.Center)
+            self.SphereID = self.Get_SphereID()
+            print "New sphereID = ", self.SphereID
+            
+            self.Sphere = SphereObj.SphereObj(self.Width/1.5, self.Width, self.Center)
                 
-                self.SphereRunning(True)
+            self.SphereRunning(True)
 
-                self.top.ActiveWizard = Sphere.Sphere(self, self.Sphere, self.SphereID, self.SphereSize,
+            self.top.ActiveWizard = Sphere.Sphere(self, self.Sphere, self.SphereID, self.SphereSize,
                                                       "The grayed volume of the cleft is the volume that will be conserved.")
-                cmd.set_wizard(self.top.ActiveWizard)
-                self.top.ActiveWizard.Start()
+            cmd.set_wizard(self.top.ActiveWizard)
+            cmd.refresh()
+            
+            self.top.ActiveWizard.Start()
 
-            else:
-                self.top.DisplayMessage("Could not execute task: A Wizard is active")
+        else:
+            self.top.DisplayMessage("Could not execute task: A Wizard is active")
 
     ''' ==========================================================
     Step2_Delete: Deletes a sphere for partitionning
@@ -604,6 +606,7 @@ class CropCleft(Tabs.Tab):
     def Step2_Delete(self):
 
         if self.top.ActiveWizard is None:
+            print self.Step2Selection.get()
             del self.dictSpheres[self.Step2Selection.get()]
 
             try:
@@ -627,11 +630,15 @@ class CropCleft(Tabs.Tab):
 
         if self.top.ActiveWizard is None and self.Sphere is not None:
             
+            print self.Step2Selection.get()
+            
             self.SphereRunning(True)
 
             self.top.ActiveWizard = Sphere.Sphere(self, self.Sphere, self.Step2Selection.get(), self.SphereSize,
                                                     "The grayed volume of the cleft is the volume that will be conserved.")
             cmd.set_wizard(self.top.ActiveWizard)
+            cmd.refresh()
+            
             self.top.ActiveWizard.Start()
 
         else:
@@ -669,15 +676,16 @@ class CropCleft(Tabs.Tab):
         
         if self.Sphere != None:
             # Only display sphere in current state
-            cmd.pseudoatom(self.SphereDisplay, pos=self.Sphere.Center, vdw=self.Sphere.Radius, color='purpleblue', state=cmd.get_state())
+            cmd.pseudoatom(self.SphereDisplay, pos=self.Sphere.Center, vdw=self.Sphere.Radius,
+                           color='purpleblue', state=cmd.get_state())
             cmd.refresh()
 
             cmd.hide('nonbonded',self.SphereDisplay)
             cmd.refresh()
-
+            
             cmd.show('spheres', self.SphereDisplay)
             cmd.refresh()
-
+            
             cmd.set('sphere_transparency', 0.7, self.SphereDisplay)
             cmd.rebuild(self.SphereDisplay)
 

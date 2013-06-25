@@ -628,6 +628,8 @@ class IOFile(Tabs.Tab):
             self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath.get(), self.Anchor.get())
             
             cmd.set_wizard(self.top.ActiveWizard)
+            cmd.refresh()
+
             self.top.ActiveWizard.Start()
     
     ''' ==================================================================================

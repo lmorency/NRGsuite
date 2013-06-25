@@ -210,6 +210,7 @@ class setType(Wizard):
 
             cmd.set_wizard()
             cmd.set_view(self.View)
+            cmd.refresh()
 
             self.top.SATRunning(False)
 

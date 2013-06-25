@@ -178,6 +178,7 @@ class constraint(Wizard):
         
         cmd.set_view(self.View)
         cmd.set_wizard()
+        cmd.refresh()
 
     #=======================================================================
     ''' Button Done selected '''

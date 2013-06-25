@@ -110,6 +110,8 @@ class Config2(Tabs.Tab):
         self.top.ActiveWizard = FlexBonds.flexbond(self)
         
         cmd.set_wizard(self.top.ActiveWizard)
+        cmd.refresh()
+
         self.top.ActiveWizard.Start()
             
     ''' ==================================================================================
@@ -160,6 +162,8 @@ class Config2(Tabs.Tab):
         self.top.ActiveWizard = AtomTypes.setType(self, self.top.IOFile.OldTypes.get())
 
         cmd.set_wizard(self.top.ActiveWizard)
+        cmd.refresh()
+
         self.top.ActiveWizard.Start()
             
     ''' ==================================================================================
@@ -184,6 +188,7 @@ class Config2(Tabs.Tab):
 
         self.top.ActiveWizard = Constraint.constraint(self)
         cmd.set_wizard(self.top.ActiveWizard)
+        cmd.refresh()
 
         self.top.ActiveWizard.Start()
 

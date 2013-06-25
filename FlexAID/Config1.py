@@ -460,6 +460,7 @@ class Config1(Tabs.Tab):
         self.FlexSCRunning(True)
         self.top.ActiveWizard = FlexSideChain.flexSC(self)
         cmd.set_wizard(self.top.ActiveWizard)
+        cmd.refresh()
 
         self.top.ActiveWizard.Start()
         
@@ -810,6 +811,8 @@ class Config1(Tabs.Tab):
 
         self.top.ActiveWizard = Sphere.Sphere(self, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize, '')
         cmd.set_wizard(self.top.ActiveWizard)
+        cmd.refresh()
+
         self.top.ActiveWizard.Start()
 
     # Deletes the binding-site object

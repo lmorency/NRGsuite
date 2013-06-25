@@ -225,7 +225,7 @@ class UpdateScreen:
                     # ==================================================================
 
                     # If the dihangle between atoms NEED to be modified
-                    if self.dictFlexBonds[k][0] == 1: 
+                    if self.dictFlexBonds[k][0] == 1:
 
                         # Read and move to next column
                         ColValue = float(self.Line[self.colNo:self.colNo+10])
@@ -237,8 +237,9 @@ class UpdateScreen:
                             self.top.DisAngDih[int(self.dictFlexBonds[k][3])][2] = ColValue
 
                         # Is there MULTIPLE atoms that define the flexible bond
-                        elif self.dictFlexBonds[k][2] > 1:                                                        
+                        elif self.dictFlexBonds[k][2] > 1:
 
+                            #print "How many defines this flexible bonds", self.dictFlexBonds[k][2]
                             # Multiple possibilities, need to mix up the atoms number
                             # Example: [1 ,2 ,3] will give [1], [1, 2], [2, 3]
 
@@ -246,28 +247,30 @@ class UpdateScreen:
                             self.top.DisAngDih[int(self.dictFlexBonds[k][3])][2] = ColValue
 
                             for flexA in range(1, self.dictFlexBonds[k][2]):
-
+                                
                                 ATflex_A = self.dictFlexBonds[k][flexA + 2]
                                 ATflex_B = self.dictFlexBonds[k][flexA + 3]
 
-                                #print("*****************************************")
-                                ATmerge = ATflex_A + ATflex_B
-
-                                # SEARCH for the 2 atoms in FLEDIH that will be present
-                                # in SHIFTVAL
-
+                                ATmerge = ''
+                                ATmergeAB = ATflex_A + ATflex_B
+                                ATmergeBA = ATflex_B + ATflex_A
+                                
                                 # Be sure the key exist before calling the value
-                                if self.top.FixedAngle.has_key(ATmerge):
-
-                                    #print("1st Atom: " + str(ATflex_A))
-                                    #print("2nd Atom: " + str(ATflex_B))
-                                    #print("ShiftVal: " + str(ATmerge))
-
+                                if self.top.FixedAngle.has_key(ATmergeAB):
+                                    ATmerge = ATmergeAB
+                                    Factor = 1
+                                elif self.top.FixedAngle.has_key(ATmergeBA):
+                                    ATmerge = ATmergeBA
+                                    Factor = -1
+                                
+                                if ATmerge:
                                     # Get the constant angle IN SHIFTVAL
                                     ConstAngle = float(self.top.FixedAngle[ATmerge])
-
+                                    #print "ConstAngle", ConstAngle
+                                    
                                     # ADD the constant Angle WITH the Column value in the LOGFILE
-                                    ColValue = ColValue + ConstAngle
+                                    ColValue = ColValue + float(Factor)*ConstAngle
+                                    #print "ColValue", ColValue
 
                                     # SET the 2nd ATOM Dihedral Angle...
                                     self.top.DisAngDih[int(ATflex_B)][2] = ColValue

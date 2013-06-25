@@ -108,7 +108,8 @@ class Sphere(Wizard):
         self.App.ActiveWizard = None
 
         cmd.set_wizard()
-
+        cmd.refresh()
+        
     #=======================================================================
     ''' Display the Sphere in Pymol '''
     #=======================================================================    
@@ -136,7 +137,7 @@ class Sphere(Wizard):
 
             cmd.show('spheres', self.SphereDisplay)
             cmd.refresh()
- 
+            
         except:
             self.ErrorCode = 1
 

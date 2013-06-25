@@ -368,12 +368,13 @@ class Parse(threading.Thread):
 
             m = re.match("shiftval=", Line)
             if m and self.FlexStatus != '':
-
+                
                 # Shift values for fixed dihedrals between pair-triplets of atoms
                 fields = Line.split()
                 MergeAtomsAB = fields[1] + fields[2]
-                self.FixedAngle[MergeAtomsAB] = fields[5]                   
-
+                self.FixedAngle[MergeAtomsAB] = fields[5]
+                #print "FixedAngle[%s] = %s" % (MergeAtomsAB, fields[5])
+                
                 continue
 
             m = re.match("lout\[\d+\]=\s*(\d+)\s+", Line)
