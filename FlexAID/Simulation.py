@@ -304,9 +304,9 @@ class Parse(threading.Thread):
                             # Update energy/fitness table
                             self.queue.put(lambda: self.top.update_DataList())
 
-                            self.top.Modify_LigDisplay()
-                            self.top.Modify_Display(self.top.SimCartoonDisplay, 'cartoon')
-                            self.top.Modify_Display(self.top.SimLinesDisplay, 'lines')
+                            self.queue.put(lambda: self.top.Modify_LigDisplay())
+                            self.queue.put(lambda: self.top.Modify_Display(self.top.SimCartoonDisplay, 'cartoon'))
+                            self.queue.put(lambda: self.top.Modify_Display(self.top.SimLinesDisplay, 'lines'))
 
                     else:
                         self.UpdateDataList(Line, self.TOP, 0, None)
@@ -583,7 +583,7 @@ class Parse(threading.Thread):
     
     '''
     @summary: SUBROUTINE: CopyRead_UPDATE: Tries to copy then read the .read (log.txt OR .update) file
-    '''   
+    '''
     def CopyRead(self, ParseFile):
     
         TIME = 0
