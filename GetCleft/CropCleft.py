@@ -238,7 +238,8 @@ class CropCleft(Tabs.Tab):
     def SphereRunning(self, boolRun):
 
         if boolRun:
-
+            self.Start_Update()
+            
             try:
                 cmd.delete(self.SphereDisplay)
                 cmd.refresh()
@@ -251,6 +252,7 @@ class CropCleft(Tabs.Tab):
             self.SphereSize.set(self.Sphere.Radius)
     
         else:
+            self.End_Update()
             self.Enable_Frame()
             
             if not self.top.WizardError and self.top.WizardResult == 2:
@@ -584,14 +586,13 @@ class CropCleft(Tabs.Tab):
         if self.top.ActiveWizard is None:
                 
             self.SphereID = self.Get_SphereID()
-            print "New sphereID = ", self.SphereID
             
             self.Sphere = SphereObj.SphereObj(self.Width/1.5, self.Width, self.Center)
                 
             self.SphereRunning(True)
-
-            self.top.ActiveWizard = Sphere.Sphere(self, self.Sphere, self.SphereID, self.SphereSize,
-                                                      "The grayed volume of the cleft is the volume that will be conserved.")
+            
+            self.top.ActiveWizard = Sphere.Sphere(self, self.queue, self.Sphere, self.SphereID, self.SphereSize,
+                                                  "The grayed volume of the cleft is the volume that will be conserved.")
             cmd.set_wizard(self.top.ActiveWizard)
             cmd.refresh()
             
@@ -606,7 +607,6 @@ class CropCleft(Tabs.Tab):
     def Step2_Delete(self):
 
         if self.top.ActiveWizard is None:
-            print self.Step2Selection.get()
             del self.dictSpheres[self.Step2Selection.get()]
 
             try:
@@ -630,12 +630,10 @@ class CropCleft(Tabs.Tab):
 
         if self.top.ActiveWizard is None and self.Sphere is not None:
             
-            print self.Step2Selection.get()
-            
             self.SphereRunning(True)
-
-            self.top.ActiveWizard = Sphere.Sphere(self, self.Sphere, self.Step2Selection.get(), self.SphereSize,
-                                                    "The grayed volume of the cleft is the volume that will be conserved.")
+            
+            self.top.ActiveWizard = Sphere.Sphere(self, self.queue, self.Sphere, self.Step2Selection.get(), self.SphereSize,
+                                                  "The grayed volume of the cleft is the volume that will be conserved.")
             cmd.set_wizard(self.top.ActiveWizard)
             cmd.refresh()
             

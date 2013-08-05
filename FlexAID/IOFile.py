@@ -624,14 +624,15 @@ class IOFile(Tabs.Tab):
     def Btn_Anchor_Clicked(self):
 
         if self.LigandPath.get():
-                            
-            self.top.ActiveWizard = Anchor.anchor(self, self.LigandPath.get(), self.Anchor.get())
             
+            self.AnchorRunning(True)
+            
+            self.top.ActiveWizard = Anchor.anchor(self, self.queue, self.LigandPath.get(), self.Anchor.get())
             cmd.set_wizard(self.top.ActiveWizard)
             cmd.refresh()
 
             self.top.ActiveWizard.Start()
-    
+            
     ''' ==================================================================================
     FUNCTION Btn_Input_Clicked: Selects the anchor atom of the ligand
     ==================================================================================  '''    
@@ -1061,10 +1062,13 @@ class IOFile(Tabs.Tab):
     def AnchorRunning(self, boolRun):
         
         if boolRun:
+            self.Start_Update()
             self.Disable_Frame()
-        else:
-            self.Enable_Frame()
             
+        else:
+            self.End_Update()
+            self.Enable_Frame()
+
             if self.Anchor.get() != self.top.WizardResult:
                 self.ProcessedLigandPath.set('')
                 self.ProcessedLigandINPPath.set('')

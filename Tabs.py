@@ -20,9 +20,13 @@
 from Tkinter import *
 
 import General
+import Queue
 
 class Tab:
 
+    # 100 ms
+    TKINTER_UPDATE_INTERVAL = 100
+    
     def __init__(self, top, PyMOL, FrameButton, FrameName, Vars):
 
         self.PyMOL = PyMOL
@@ -39,16 +43,16 @@ class Tab:
         self.Color_Blue = self.top.Color_Blue
         self.Color_White = self.top.Color_White
         self.Color_Red = self.top.Color_Red
-
+        
         self.DisplayMessage = self.top.DisplayMessage
-
+        
         self.StateList = []
         self.Validator = []
-
+        
         self.Vars = Vars
         self.Def_Vars()
         self.Init_Vars()
-
+        
         self.fFrame = self.Frame()
         self.Trace()
                 
@@ -254,3 +258,55 @@ class Tab:
 
         General.backState(self.fFrame, self.StateList)
 
+    ''' ==================================================================================
+    FUNCTION Start_Update: Starts updating Tkinter with tasks in the queue
+    ==================================================================================  '''               
+    def Start_Update(self):
+        
+        self.queue = Queue.Queue()
+        
+        self.QueueParse = True
+        self.Update_Tkinter()
+
+    ''' ==================================================================================
+    FUNCTION Condition_Update: Tests tab specific conditions to trigger stopping
+    ==================================================================================  '''               
+    def Condition_Update(self):
+
+        if self.QueueParse:
+            return True
+        else:
+            return False
+        
+    ''' ==================================================================================
+    FUNCTION End_Update: Stops updating Tkinter interface using the queue
+    ==================================================================================  '''               
+    def End_Update(self):
+        
+        self.QueueParse = False
+        
+    ''' ==================================================================================
+    FUNCTION After_Update: Executes tasks when done updating Tkinter
+    ==================================================================================  '''               
+    def After_Update(self):
+
+        # override this method in base class
+        return
+        
+    ''' ==================================================================================
+    FUNCTION Update_Tkinter: update the tkinter interface (tasks queued from the worker)
+    ==================================================================================  '''               
+    def Update_Tkinter(self):
+        
+        # Check every 100 ms if there is something new in the queue.
+        while self.queue.qsize():
+            try:
+                func = self.queue.get()
+                func()
+            except Queue.Empty:
+                pass
+        
+        if self.Condition_Update():
+            self.top.root.after(self.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
+        else:
+            self.After_Update()

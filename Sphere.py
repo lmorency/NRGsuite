@@ -27,13 +27,14 @@ import General_cmd
 
 class Sphere(Wizard):
 
-    def __init__(self, top, Sphere, SphereDisplay, SphereSize, ExtraPrompt):
+    def __init__(self, top, queue, Sphere, SphereDisplay, SphereSize, ExtraPrompt):
 
         #print "New instance of flexsphere Wizard"
 
         Wizard.__init__(self)
 
         self.top = top
+        self.queue = queue
         self.App = self.top.top
 
         self.App.WizardError = False
@@ -72,18 +73,17 @@ class Sphere(Wizard):
             self.ErrorCode = 0
 
         except:
-            self.App.DisplayMessage("  ERROR: Could not start the Sphere wizard", 1)
-            self.App.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.App.DisplayMessage("  ERROR: Could not start the Sphere wizard", 1))
+            self.queue.put(lambda: self.App.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
             
-
         if self.DisplaySphere():
-            self.App.DisplayMessage("  ERROR: Could not display the Sphere", 1)
-            self.App.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.App.DisplayMessage("  ERROR: Could not display the Sphere", 1))
+            self.queue.put(lambda: self.App.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
-
+            
     #=======================================================================
     ''' Quits the wizard '''
     #=======================================================================    
@@ -104,7 +104,8 @@ class Sphere(Wizard):
             self.App.WizardError = True
 
         # Re-enable controls
-        self.top.SphereRunning(False)
+        self.queue.put(lambda: self.top.SphereRunning(False))
+        
         self.App.ActiveWizard = None
 
         cmd.set_wizard()
@@ -147,7 +148,7 @@ class Sphere(Wizard):
     ''' Resize the sphere '''
     #=======================================================================      
     def ResizeSphere(self):
-
+        
         self.SphereView.Set_Radius(self.SphereSize.get())
 
         try:
@@ -155,8 +156,8 @@ class Sphere(Wizard):
             cmd.rebuild(self.SphereDisplay)
             cmd.refresh()
         except:
-            self.App.DisplayMessage("  ERROR: Could not resize the Sphere", 1)
-            self.App.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.App.DisplayMessage("  ERROR: Could not resize the Sphere", 1))
+            self.queue.put(lambda: self.App.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
     
     def get_prompt(self):
@@ -169,8 +170,8 @@ class Sphere(Wizard):
         self.SphereSize.set(self.SphereView.Radius)
 
         if self.DisplaySphere():
-            self.App.DisplayMessage("  ERROR: Could not display the Sphere", 1)
-            self.App.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.App.DisplayMessage("  ERROR: Could not display the Sphere", 1))
+            self.queue.put(lambda: self.App.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
 

@@ -26,7 +26,6 @@ import re
 import pickle
 import shutil
 import glob
-import Queue
 import tkFileDialog
 
 import MultiList
@@ -138,16 +137,16 @@ class Simulate(Tabs.Tab):
         Button(fNaviRes, text='Show parent', font=self.top.font_Text).pack(side=LEFT)
         Button(fNaviRes, text='Show next child', font=self.top.font_Text).pack(side=LEFT)
         Button(fNaviRes, text='Show previous child', font=self.top.font_Text).pack(side=LEFT)
-
+        
         fTable = Frame(self.fSimulate, height=150, pady=5, padx=5)
         fTable.pack(side=BOTTOM, fill=BOTH, expand=True)
         fTable.pack_propagate(0)
         
-        self.Table = MultiList.Table(fTable, 5,
-                                   [ 'Color', 'TOP', 'Apparent CF', 'Fitness', 'Last RMSD' ],
-                                   [ 65, 65, 167, 167, 167 ],
-                                   [ 0, 6, 6, 6, 6 ],
-                                   [ False, True, True, True, True ],
+        self.Table = MultiList.Table(fTable, 6,
+                                   [ 'Color', 'TOP', 'CF', 'Apparent CF', 'Fitness', 'Last RMSD' ],
+                                   [ 40, 40, 167, 167, 120, 97 ],
+                                   [ 0, 6, 6, 6, 6, 6 ],
+                                   [ False, True, True, True, True, True ],
                                    self.top.font_Text,
                                    self.top.Color_Blue)
         self.Table.Draw()
@@ -263,16 +262,18 @@ class Simulate(Tabs.Tab):
             elif self.top.OSid == 'MAC':
                 apps = ['open']
             elif self.top.OSid == 'LINUX':
-                apps = ['kate','gedit','kedit']
+                apps = ['gedit','kate','kedit']
 
             for app in apps:
                 try:
                     Popen([app, self.ResultsContainer.Report])
-                    break
+                    return
                 except OSError:
-                    self.top.DisplayMessage(" Unrecognized application: " +  app, 2)
+                    pass
                 except:
                     pass
+
+            self.top.DisplayMessage("  ERROR: No text editor found for your operating system", 2)
         
     ''' =============================================================================== 
     FUNCTION Btn_ContinueSim: Continue a simulation from an existing one
@@ -360,14 +361,11 @@ class Simulate(Tabs.Tab):
         self.DisplayMessage('  Starting executable thread.', 2)
         self.Start = Simulation.Start(self, commandline)
         
-        # Stacking up tasks related to updating Tkinter
-        self.queue = Queue.Queue()
-        
         # START PARSING AS THREAD
         self.DisplayMessage('  Starting parsing thread.', 2)
-        self.Parse = Simulation.Parse(self, self.queue)
-        
-        self.Update_Tkinter()
+
+        self.Start_Update()
+        self.Parse = Simulation.Parse(self, self.queue)        
         
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
@@ -479,10 +477,10 @@ class Simulate(Tabs.Tab):
         self.Table.Clear()
         
         for key in range(1, len(self.ColorList) + 1):
-            self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ],
+            self.Table.Add( [ '', key, 0.000, 0.000, 0.000, 0.000 ],
                             [ self.ColorList[key-1], None, None, None, None ] )
                             
-            self.dictSimData[key] = [ 0.0, 0.0, 'N/A' ]
+            self.dictSimData[key] = [ 0.0, 0.0, 0.0, 'N/A' ]
     
     ''' ==================================================================================
     FUNCTION update_DataResults: Updates the dictionary with the values of the results
@@ -494,7 +492,7 @@ class Simulate(Tabs.Tab):
         
         for Result in self.ResultsContainer.Results:
             
-            self.dictSimData[Result.ResultID] = [ Result.CF, 'N/A', Result.RMSD ]
+            self.dictSimData[Result.ResultID] = [ Result.CF, Result.CFapp, 'N/A', Result.RMSD ]
             
             if Result.ResultID != 'REF':
                 NRes = NRes + 1
@@ -511,11 +509,13 @@ class Simulate(Tabs.Tab):
         i = 0
         for key in sorted(self.dictSimData.keys()):
             if key == 'REF':
-                self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], '0.000' ],
-                                [ self.top.Color_White, None, None, None, None ] )
+                self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], 
+                                  self.dictSimData[key][2], '0.000' ],
+                                [ self.top.Color_White, None, None, None, None, None ] )
             else:
-                self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], self.dictSimData[key][2] ],
-                                [ self.ColorList[i], None, None, None, None ] )
+                self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1],
+                                  self.dictSimData[key][2], self.dictSimData[key][3] ],
+                                [ self.ColorList[i], None, None, None, None, None ] )
                 i += 1
     
     ''' =============================================================================== 
@@ -779,52 +779,50 @@ class Simulate(Tabs.Tab):
         return
     
     ''' ==================================================================================
-    FUNCTION Update_Tkinter: update the tkinter interface (tasks queued from the worker)
+    FUNCTION Condition_Update: Tests tab specific conditions to trigger stopping
     ==================================================================================  '''               
-    def Update_Tkinter(self):
-        
-        # Check every 100 ms if there is something new in the queue.
-        while self.queue.qsize():
-            try:
-                func = self.queue.get()
-                func()
-            except Queue.Empty:
-                pass
-        
-        if self.top.ProcessRunning or self.ProcessParsing:
-            self.top.root.after(self.top.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
-            
-        else:
-            self.Reset_Buttons()
-            
-            # Results were generated.
-            if self.Results:
-                #print "Results were generated!"
-                self.Load_Results()
-                
-                NRes = self.Manage.NUMBER_RESULTS
-                #if self.top.Config2.UseReference.get():
-                #    NRes = NRes + 1
-                
-                self.Process_ResultsContainer()
-                
-                Results_Dir = os.path.join(self.top.FlexAIDResultsProject_Dir, self.top.IOFile.Complex.get().upper())
-                if not os.path.isdir(Results_Dir):
-                    os.makedirs(Results_Dir)
-                
-                Results_File = os.path.join(Results_Dir,self.Manage.Now + '.nrgfr')
-                
-                self.Save_Results(Results_File)
-                self.ResultsName.set(os.path.splitext(os.path.split(Results_File)[1])[0])
-                
-            else:
-                self.ResultsContainer = None
-                try:
-                    shutil.rmtree(self.Manage.FlexAIDRunSimulationProject_Dir, True)
-                except shutil.Error:
-                    pass
+    def Condition_Update(self):
 
-                self.ResultsName.set('')
+        if self.top.ProcessRunning or self.ProcessParsing:
+            return True
+        else:
+            return False
+            
+    ''' ==================================================================================
+    FUNCTION After_Update: Executes tasks when done updating Tkinter
+    ==================================================================================  '''               
+    def After_Update(self):
+        
+        self.Reset_Buttons()
+
+        # Results were generated.
+        if self.Results:
+            #print "Results were generated!"
+            self.Load_Results()
+
+            NRes = self.Manage.NUMBER_RESULTS
+            #if self.top.Config2.UseReference.get():
+            #    NRes = NRes + 1
+
+            self.Process_ResultsContainer()
+
+            Results_Dir = os.path.join(self.top.FlexAIDResultsProject_Dir, self.top.IOFile.Complex.get().upper())
+            if not os.path.isdir(Results_Dir):
+                os.makedirs(Results_Dir)
+
+            Results_File = os.path.join(Results_Dir,self.Manage.Now + '.nrgfr')
+
+            self.Save_Results(Results_File)
+            self.ResultsName.set(os.path.splitext(os.path.split(Results_File)[1])[0])
+
+        else:
+            self.ResultsContainer = None
+            try:
+                shutil.rmtree(self.Manage.FlexAIDRunSimulationProject_Dir, True)
+            except shutil.Error:
+                pass
+
+            self.ResultsName.set('')
                 
     ''' ==================================================================================
     FUNCTION Process_ResultsContainer: updates the data and show the results

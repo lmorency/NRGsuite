@@ -49,13 +49,14 @@ class flexbond(Wizard):
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
-    def __init__(self, top):
+    def __init__(self, top, queue):
         
         #print "New instance of flexbond Class.\n"
 
         Wizard.__init__(self)
 
         self.top = top
+        self.queue = queue
         self.FlexAID = self.top.top
         self.FlexAID.WizardError = False
         
@@ -101,29 +102,29 @@ class flexbond(Wizard):
             self.ErrorCode = 0
 
         except:
-            self.top.DisplayMessage("  ERROR: Could not start the Flexible Bonds wizard", 1)
-            self.top.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.top.DisplayMessage("  ERROR: Could not start the Flexible Bonds wizard", 1))
+            self.queue.put(lambda: self.top.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
 
         # Display the ligand from the PDB file
         if self.DisplayLigand():
-            self.top.DisplayMessage("  ERROR: Could not display the ligand", 1)
-            self.top.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.top.DisplayMessage("  ERROR: Could not display the ligand", 1))
+            self.queue.put(lambda: self.top.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
 
         # Display all Possible Flexible Bonds
         if self.show_FlexibleBonds():
-            self.top.DisplayMessage("  ERROR: Could not display the flexible bonds", 1)
-            self.top.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.top.DisplayMessage("  ERROR: Could not display the flexible bonds", 1))
+            self.queue.put(lambda: self.top.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
 
         # Display all Selected Flexible Bonds
         if self.show_SelectedBonds():
-            self.top.DisplayMessage("  ERROR: Could not display the selected flexible bonds", 1)
-            self.top.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.top.DisplayMessage("  ERROR: Could not display the selected flexible bonds", 1))
+            self.queue.put(lambda: self.top.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
         
@@ -160,7 +161,7 @@ class flexbond(Wizard):
         if self.ErrorCode > 0:
             self.FlexAID.WizardError = True
         
-        self.top.FlexBondsRunning(False)
+        self.queue.put(lambda: self.top.FlexBondsRunning(False))
         self.FlexAID.ActiveWizard = None
 
         cmd.set_wizard()
@@ -449,7 +450,7 @@ class flexbond(Wizard):
             cmd.mask(self.AtomDisplay)
 
         except:
-            self.top.DisplayMessage("Failed to highlight atom upon selecting atom", 1)
+            self.queue.put(lambda: self.top.DisplayMessage("  ERROR: Failed to highlight atom upon selecting atom", 1))
             return
             
     #=======================================================================   

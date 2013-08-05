@@ -23,6 +23,7 @@ import os
 import tkFileDialog
 import Vars
 import Tabs
+import Queue
 import Constants
 import General
 import SphereObj
@@ -458,10 +459,10 @@ class Config1(Tabs.Tab):
     def SelectFlexibleSideChains(self):
 
         self.FlexSCRunning(True)
-        self.top.ActiveWizard = FlexSideChain.flexSC(self)
+        self.top.ActiveWizard = FlexSideChain.flexSC(self,self.queue)
         cmd.set_wizard(self.top.ActiveWizard)
         cmd.refresh()
-
+        
         self.top.ActiveWizard.Start()
         
     ''' ==================================================================================
@@ -470,8 +471,10 @@ class Config1(Tabs.Tab):
     def FlexSCRunning(self, boolRun):
         
         if boolRun:
+            self.Start_Update()
             self.Disable_Frame()
         else:
+            self.End_Update()
             self.Enable_Frame()
             
             #self.Update_FlexSideChain_DDL()
@@ -691,7 +694,7 @@ class Config1(Tabs.Tab):
         res = residue[0:3]
         num = residue[3:(len(residue)-1)]
         chn = residue[(len(residue)-1):len(residue)]
-
+        
         TargetName = self.top.IOFile.TargetName.get()
         
         selString = ' resn ' + res
@@ -808,11 +811,10 @@ class Config1(Tabs.Tab):
     def Sphere_Clicked(self):
 
         self.SphereRunning(True)
-
-        self.top.ActiveWizard = Sphere.Sphere(self, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize, '')
+        self.top.ActiveWizard = Sphere.Sphere(self, self.queue, self.Vars.BindingSite.Sphere, self.SphereDisplay, self.SphereSize, '')
         cmd.set_wizard(self.top.ActiveWizard)
         cmd.refresh()
-
+        
         self.top.ActiveWizard.Start()
 
     # Deletes the binding-site object
@@ -827,10 +829,12 @@ class Config1(Tabs.Tab):
     def SphereRunning(self, boolRun):
 
         if boolRun:
+            self.Start_Update()
             self.Disable_Frame(self.Btn_OptSphRefresh,self.OptMenuSphere,self.sclResizeSphere,self.lblCenter,self.lblRadius)
             self.Delete_BindingSite()
 
         else:
+            self.End_Update()
             self.Enable_Frame()
 
             # Reset RngOpt to None if there was an error

@@ -86,14 +86,14 @@ class Base:
         #==================================================================================
         FontType = Prefs.GetFontType()
         FontSize = Prefs.GetFontSize()
-
+        
         self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)        
         self.font_Title_H = tkFont.Font(family=FontType,size=FontSize + 1, weight=tkFont.BOLD)        
         self.font_Text = tkFont.Font(family=FontType,size=FontSize)
         self.font_Text_H = tkFont.Font(family=FontType,size=FontSize + 1)
         self.font_Text_I = tkFont.Font(family=FontType,size=FontSize, slant=tkFont.ITALIC)
         self.font_Text_U = tkFont.Font(family=FontType,size=FontSize, underline=True)       
-
+        
         self.ChildWindow = None
         self.ActiveFrame = None
         self.Run = None
@@ -115,9 +115,7 @@ class Base:
         self.After_Init()
         
         self.Clean()
-        
-        return
-        
+                
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
     ==================================================================================  '''  

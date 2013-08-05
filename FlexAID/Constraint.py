@@ -52,11 +52,12 @@ class constraint(Wizard):
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
-    def __init__(self, top):
+    def __init__(self, top, queue):
               
         Wizard.__init__(self)
 
         self.top = top
+        self.queue = queue
         self.FlexAID = self.top.top
 
         self.RefLigand = self.FlexAID.IOFile.ProcessedLigandPath.get()
@@ -90,20 +91,20 @@ class constraint(Wizard):
             self.ErrorCode = 0
 
         except:
-            self.FlexAID.DisplayMessage("  ERROR: Could not start the constraints wizard", 1)
-            self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not start the constraints wizard", 1))
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
 
         if self.Display_Ligand():
-            self.FlexAID.DisplayMessage("  ERROR: Could not display the ligand", 1)
-            self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not display the ligand", 1))
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
 
         if self.refresh_display():
-            self.FlexAID.DisplayMessage("  ERROR: Could not display the constraints", 1)
-            self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not display the constraints", 1))
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
         
@@ -173,7 +174,7 @@ class constraint(Wizard):
         if self.ErrorCode > 0:
             self.FlexAID.WizardError = True
 
-        self.top.ConsRunning(False)
+        self.queue.put(lambda: self.top.ConsRunning(False))
         self.FlexAID.ActiveWizard = None
         
         cmd.set_view(self.View)
@@ -195,7 +196,7 @@ class constraint(Wizard):
     def btn_Clear(self):
 
         self.dictConstraints.clear()
-        self.ActiveCons.set('')
+        self.queue.put(lambda: self.ActiveCons.set(''))
         
     #=======================================================================
     ''' Resets to pick the first atom '''
@@ -223,17 +224,17 @@ class constraint(Wizard):
                     info.extend([ at.index, at.resn, at.resi, at.chain, at.name,
                                   at.coord[0], at.coord[1], at.coord[2] ])
             elif listlen > 1:
-                self.FlexAID.DisplayMessage("  ERROR: Multiple atoms were selected",1)
+                self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Multiple atoms were selected",1))
                 return info
 
             elif listlen == 0:
-                self.FlexAID.DisplayMessage("  ERROR: No atoms could be selected on the current state",1)
+                self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: No atoms could be selected on the current state",1))
                 return info
                 
             cmd.deselect()
             
         except:
-            self.FlexAID.DisplayMessage("  ERROR: Could not retrieve atom info", 1)
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not retrieve atom info", 1))
             self.Quit_Wizard()
         
         return info
@@ -366,7 +367,7 @@ class constraint(Wizard):
                                                         ]
                                                         
                         if not self.ActiveCons.get():
-                            self.ActiveCons.set(distobj)
+                            self.queue.put(lambda: self.ActiveCons.set(distobj))
                         else:
                             self.refresh_display()
 
@@ -393,7 +394,6 @@ class constraint(Wizard):
     def highlight_Active(self):
         
         Error = 0
-
         
         try:
             # Cleaning
@@ -469,8 +469,8 @@ class constraint(Wizard):
             
         if not Active:
             Active = First
-
-        self.ActiveCons.set(Active)
+            
+        self.queue.put(lambda: self.ActiveCons.set(Active))
     
     #=======================================================================
     ''' Move up to the previous active constraint '''
@@ -496,7 +496,7 @@ class constraint(Wizard):
         if not Active:
             Active = First
             
-        self.ActiveCons.set(Active)
+        self.queue.put(lambda: self.ActiveCons.set(Active))
     
 
     #=======================================================================

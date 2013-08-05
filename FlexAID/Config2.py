@@ -106,8 +106,8 @@ class Config2(Tabs.Tab):
 
         self.FlexStatus.set('')
         self.FlexBondsRunning(True)
-
-        self.top.ActiveWizard = FlexBonds.flexbond(self)
+        
+        self.top.ActiveWizard = FlexBonds.flexbond(self, self.queue)
         
         cmd.set_wizard(self.top.ActiveWizard)
         cmd.refresh()
@@ -135,9 +135,11 @@ class Config2(Tabs.Tab):
     def FlexBondsRunning(self,boolRun):
 
         if boolRun:
+            self.Start_Update()
             self.Disable_Frame()
             
         else:
+            self.End_Update()
             self.Enable_Frame()
             
             if self.top.WizardError or self.top.WizardResult == 0:
@@ -183,10 +185,10 @@ class Config2(Tabs.Tab):
 
         if not self.PyMOL:
             return
-            
+        
         self.ConsRunning(True)
-
-        self.top.ActiveWizard = Constraint.constraint(self)
+        
+        self.top.ActiveWizard = Constraint.constraint(self, self.queue)
         cmd.set_wizard(self.top.ActiveWizard)
         cmd.refresh()
 
@@ -198,11 +200,15 @@ class Config2(Tabs.Tab):
     def ConsRunning(self, boolRun):
         
         if boolRun:
+            self.Start_Update()
+            
             if self.ActiveCons.get():
                 self.Disable_Frame(self.lblInteraction, self.sclConsDist)
             else:
                 self.Disable_Frame(self.lblInteraction)
         else:
+            self.End_Update()
+            
             self.Enable_Frame()
 
             if self.top.WizardResult == 0:
@@ -337,7 +343,7 @@ class Config2(Tabs.Tab):
     def parse_cons(self, constraint):
 
         l = []
-
+        
         l.append(constraint[1:constraint.find(' ')])
 
         st = constraint.find(' ') + 1
@@ -363,7 +369,7 @@ class Config2(Tabs.Tab):
                 self.sclConsDist.config(state='disabled')
             
             self.top.ActiveWizard.refresh_display()
-
+            
     ''' ==================================================================================
     FUNCTION ConsDist_Toggle: The active constraint's interaction distance is changed
     ================================================================================== '''        
@@ -374,7 +380,7 @@ class Config2(Tabs.Tab):
             self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
             
             self.top.ActiveWizard.refresh_distance()
-
+            
     ''' ==================================================================================
     FUNCTION Load_Message: Display the message based on the menu selected
     ================================================================================== '''        

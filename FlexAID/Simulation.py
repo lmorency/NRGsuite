@@ -430,38 +430,42 @@ class Parse(threading.Thread):
             return 1
         
         return 0
-
+        
     '''=========================================================================
        UpdateDataList: Updates the table containing energy/fitness values
     ========================================================================='''
     def UpdateDataList(self, Line, TOP, Reference, dictCoord):
         
         try:
-            PrevRMSD = self.top.dictSimData[TOP+1][2]
+            PrevRMSD = self.top.dictSimData[TOP+1][3]
         except:
             PrevRMSD = 'N/A'
                 
         try:
             
             #Get index position of energy column
-            colNo = Line.rfind("value=") + 6
-            to = Line.rfind("fitnes=")
+            #colNo = Line.rfind("value=") + 6
+            colNo = Line.rfind("cf=")
+            colNo2 = Line.rfind("cf.app=")
+            colNo3 = Line.rfind("fitnes=")
             
             if colNo != -1:
                 #Update the energy of the dictionary
-                self.top.dictSimData[TOP+1][0] = Line[colNo:to].strip()     # Energy
+                self.top.dictSimData[TOP+1][0] = Line[(colNo+3):colNo2].strip()     # Energy
             else:
                 self.top.dictSimData[TOP+1][0] = 'N/A'
 
-            #Get index position of the fitness column
-            colNo = to + 7
-            to = Line.rfind("\n")
-            
             if colNo != -1:
-                #Update the fitnes of the dictionary
-                self.top.dictSimData[TOP+1][1] = Line[colNo:to].strip()    # Fitness
+                #Update the energy of the dictionary
+                self.top.dictSimData[TOP+1][1] = Line[(colNo2+7):colNo3].strip()     # Energy (apparent)
             else:
                 self.top.dictSimData[TOP+1][1] = 'N/A'
+                
+            if colNo != -1:
+                #Update the fitnes of the dictionary
+                self.top.dictSimData[TOP+1][2] = Line[(colNo3+7):].strip()    # Fitness
+            else:
+                self.top.dictSimData[TOP+1][2] = 'N/A'
 
             # RMSD of ligand
             if Reference:
@@ -472,7 +476,7 @@ class Parse(threading.Thread):
             else:
                 RMSD = PrevRMSD
 
-            self.top.dictSimData[TOP+1][2] = RMSD
+            self.top.dictSimData[TOP+1][3] = RMSD
 
         except:
             self.top.DisplayMessage("  ERROR: Could not update data list.", 2)

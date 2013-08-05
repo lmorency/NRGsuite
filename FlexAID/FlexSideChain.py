@@ -41,13 +41,14 @@ class flexSC(Wizard):
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
-    def __init__(self, top):
+    def __init__(self, top, queue):
         
         #print "New instance of FlexSC Wizard"
 
         Wizard.__init__(self)
 
         self.top = top
+        self.queue = queue
         self.FlexAID = self.top.top
 
         self.FlexAID.WizardError = False
@@ -83,10 +84,10 @@ class flexSC(Wizard):
     def Start(self):
         
         cmd.refresh_wizard()
-
+        
         # Display all Selected Flexible Bonds
         if self.show_SelectedSC():
-            self.FlexAID.DisplayMessage("  ERROR: Could not display selected flexible side-chains", 1)
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not display selected flexible side-chains", 1))
             self.Quit_Wizard()
             return
 
@@ -272,7 +273,7 @@ class flexSC(Wizard):
 
         self.FlexAID.WizardResult = self.TargetFlex.Count_SideChain()
 
-        self.top.FlexSCRunning(False)
+        self.queue.put(lambda: self.top.FlexSCRunning(False))
         self.FlexAID.ActiveWizard = None
 
         cmd.set_wizard()
@@ -349,7 +350,7 @@ class flexSC(Wizard):
             cmd.refresh()
             
         except:
-            self.FlexAID.DisplayMessage("  ERROR: Could not highlight residue upon selection", 2)
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not highlight residue upon selection", 2))
 
         cmd.set("auto_zoom", self.auto_zoom)
 

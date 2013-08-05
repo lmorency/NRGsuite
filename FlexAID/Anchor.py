@@ -36,13 +36,14 @@ class anchor(Wizard):
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
-    def __init__(self, top, LigandPath, AnchorAtom):
+    def __init__(self, top, queue, LigandPath, AnchorAtom):
         
         #print("New instance of anchor Class.\n")
 
         Wizard.__init__(self)
 
         self.top = top
+        self.queue = queue
         self.FlexAID = self.top.top
         self.FlexAID.WizardError = False
         
@@ -75,15 +76,15 @@ class anchor(Wizard):
             self.ErrorCode = 0
             
         except:
-            self.FlexAID.DisplayMessage("  ERROR: Could not start the Anchor Atom wizard", 1)
-            self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not start the Anchor Atom wizard", 1))
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
 
         # Display the ligand from the PDB file
         if self.DisplayLigand() or self.RefreshDisplay():
-            self.FlexAID.DisplayMessage("  ERROR: Could not display the ligand", 1)
-            self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1)
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not display the ligand", 1))
+            self.queue.put(lambda: self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
         
@@ -116,8 +117,8 @@ class anchor(Wizard):
         cmd.set_wizard()
         cmd.set_view(self.View)
         cmd.refresh()
-        
-        self.top.AnchorRunning(False)
+                
+        self.queue.put(lambda: self.top.AnchorRunning(False))
         
     #=======================================================================
     ''' Displays the ligand to change anchor '''
