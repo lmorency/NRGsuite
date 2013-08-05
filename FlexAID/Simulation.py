@@ -124,6 +124,9 @@ class Parse(threading.Thread):
         self.LOGFILETMP = self.top.Manage.LOGFILETMP
         self.ParseFile = self.LOGFILE
 
+        self.LigandName = self.FlexAID.IOFile.LigandName.get()
+        self.TargetName = self.FlexAID.IOFile.TargetName.get()
+        
         self.ReferencePath = self.FlexAID.IOFile.ProcessedLigandPath.get()
         self.listSideChain = self.FlexAID.Config1.Vars.TargetFlex.listSideChain
         self.BindingSiteDisplay = self.FlexAID.Config1.BindingSiteDisplay
@@ -236,7 +239,7 @@ class Parse(threading.Thread):
         # Once copied cannot go change file (safe-protection)
         ParseFile = self.ParseFile
 
-        if self.top.SimStatus.get() == 'Paused.':
+        if self.top.Paused:
             return 0
 
         elif self.CopyRead(ParseFile):
@@ -479,7 +482,7 @@ class Parse(threading.Thread):
             self.top.dictSimData[TOP+1][3] = RMSD
 
         except:
-            self.top.DisplayMessage("  ERROR: Could not update data list.", 2)
+            self.queue.put(lambda: self.top.DisplayMessage("  ERROR: Could not update data list.", 2))
             return 1
 
         return 0

@@ -87,6 +87,7 @@ class Simulate(Tabs.Tab):
         self.ResultsContainer.Clear()
         
         self.ProcessParsing = False
+        self.Paused = False
         
     ''' ==================================================================================
     FUNCTION After_Show: Actions related after showing the frame
@@ -247,9 +248,7 @@ class Simulate(Tabs.Tab):
                     font=self.top.font_Text).pack(side=RIGHT)
         
         return self.fSimulate
-    
-
-
+        
     ''' =============================================================================== 
     FUNCTION Btn_View_Report: Views the final report of a simulation
     ===============================================================================  '''     
@@ -345,6 +344,7 @@ class Simulate(Tabs.Tab):
                                                     self.Manage.ga_inp,
                                                     os.path.join(self.Manage.FlexAIDRunSimulationProject_Dir,'RESULT') )
         self.Results = False
+        self.Paused = False
         
         if bContinue:
             ParentResultsContainer = self.ResultsContainer
@@ -365,7 +365,7 @@ class Simulate(Tabs.Tab):
         self.DisplayMessage('  Starting parsing thread.', 2)
 
         self.Start_Update()
-        self.Parse = Simulation.Parse(self, self.queue)        
+        self.Parse = Simulation.Parse(self, self.queue)
         
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
@@ -399,23 +399,23 @@ class Simulate(Tabs.Tab):
 
     ''' =============================================================================== 
     FUNCTION InitStatus: Initializes necessary variables from FlexAID parsing thread
-    ===============================================================================  '''     
+    ===============================================================================  '''   
     def InitStatus(self):
 
         self.lblSimStatus.config(fg='cyan')
         self.SimStatus.set('Initializing...')
 
-    ''' =============================================================================== 
+    ''' ===============================================================================
     FUNCTION RunStatus: Signal given to parse genetic algorithm
-    ===============================================================================  '''     
+    ===============================================================================  '''
     def RunStatus(self):
 
         self.lblSimStatus.config(fg='blue')
         self.SimStatus.set('Running...')
 
-    ''' =============================================================================== 
+    ''' ===============================================================================
     FUNCTION PauseStatus: Signal given to pause FlexAID
-    ===============================================================================  '''     
+    ===============================================================================  '''
     def PauseStatus(self):
 
         self.lblSimStatus.config(fg='purple')
@@ -560,7 +560,8 @@ class Simulate(Tabs.Tab):
             self.Btn_Abort.config(state='disabled')
 
             self.PauseStatus()
-          
+            self.Paused = True
+
         elif self.SimStatus.get() == 'Paused.':
         
             if os.path.isfile(self.Manage.PAUSE):
@@ -575,7 +576,8 @@ class Simulate(Tabs.Tab):
             self.Btn_Abort.config(state='normal')
 
             self.RunStatus()
-    
+            self.Paused = False
+
     ''' =============================================================================== 
     FUNCTION Btn_AbortSim: Abort the simulation 
     ===============================================================================  '''    
@@ -597,7 +599,9 @@ class Simulate(Tabs.Tab):
 
             self.Clean_Update()
             self.AbortStatus()
+            
             self.Parse.ParseFile = self.Manage.LOGFILE
+            self.Paused = False
     
     ''' =============================================================================== 
     FUNCTION Btn_StopSim: Stop the simulation 
@@ -622,7 +626,8 @@ class Simulate(Tabs.Tab):
             self.Clean_Update()
             self.StopStatus()
             self.Parse.ParseFile = self.Manage.LOGFILE
-    
+            self.Paused = False
+
     ''' ==================================================================================
     FUNCTION: Loads all result files
     ==================================================================================  '''               

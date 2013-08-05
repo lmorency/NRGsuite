@@ -52,8 +52,8 @@ class UpdateScreen:
         
         self.dictFlexBonds = self.top.dictFlexBonds
         
-        self.LigandName = self.top.FlexAID.IOFile.LigandName.get()
-        self.TargetName = self.top.FlexAID.IOFile.TargetName.get()
+        self.LigandName = self.top.LigandName
+        self.TargetName = self.top.TargetName
         
         self.LigandObj = self.LigandName + '_' + str(self.TOP+1)
         self.TargetObj = self.TargetName + '_' + str(self.TOP+1)
