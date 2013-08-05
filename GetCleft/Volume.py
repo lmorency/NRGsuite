@@ -25,7 +25,6 @@ import Tabs
 import tkMessageBox
 import MultiList
 import threading
-import Queue
 
 if __debug__:
     import General_cmd
@@ -43,9 +42,6 @@ class RunVolume(threading.Thread):
         
         self.Clefts = Clefts
         self.Iterations = Iterations
-        
-        self.GetCleft.ProcessError = False
-        self.GetCleft.ProcessRunning = True
         
         self.start()
         
@@ -107,8 +103,8 @@ class EstimateVolume(Tabs.Tab):
 
         try:
             self.IterationsTrace = self.Iterations.trace('w', lambda *args, **kwargs:
-                                                              self.Validate_Field(input=self.EntryIterations, var=self.Iterations, min=1,
-                                                              max=5, ndec=-1, tag='Number of iterations', _type=int))
+                                                         self.Validate_Field(input=self.EntryIterations, var=self.Iterations, min=1,
+                                                                             max=5, ndec=-1, tag='Number of iterations', _type=int))
         except:
             pass
             
@@ -199,36 +195,27 @@ class EstimateVolume(Tabs.Tab):
         return self.fVolume
         
     ''' ==================================================================================
+    FUNCTION Condition_Update: Tests tab specific conditions to trigger stopping
+    ==================================================================================  '''               
+    def Condition_Update(self):
+
+        if self.top.ProcessRunning:
+            return True
+        else:
+            return False
+            
+    ''' ==================================================================================
     FUNCTION Calc_Volume: Calculates the volume of a cleft
     ==================================================================================  '''    
     def Calc_Volume(self, Clefts, Iterations):
 
+        self.top.ProcessError = False
+        self.top.ProcessRunning = True
+
         self.VolumeRunning(True)
-        
-        self.queue = Queue.Queue()
         
         Process = RunVolume(self, self.queue, Clefts, Iterations)
         
-        self.Update_Tkinter()
-        
-    ''' ==================================================================================
-    FUNCTION Update_Tkinter: update the tkinter interface (tasks queued from the worker)
-    ==================================================================================  '''               
-    def Update_Tkinter(self):
-        
-        # Check every 100 ms if there is something new in the queue.
-        while self.queue.qsize():
-            try:
-                func = self.queue.get()
-                func()
-            except Queue.Empty:
-                pass
-        
-        if self.top.ProcessRunning:
-            self.top.root.after(self.top.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
-        else:
-            return
-
     ''' ==================================================================================
     FUNCTION Calculates the volume of the selected cleft only 
     ==================================================================================  '''    
@@ -300,8 +287,10 @@ class EstimateVolume(Tabs.Tab):
     def VolumeRunning(self, boolRun):
                 
         if boolRun:
+            self.Start_Update()
             self.Disable_Frame()
         else:
+            self.End_Update()
             self.Enable_Frame()
             
             self.Init_Table()

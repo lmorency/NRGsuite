@@ -445,7 +445,6 @@ class Parse(threading.Thread):
             PrevRMSD = 'N/A'
                 
         try:
-            
             #Get index position of energy column
             #colNo = Line.rfind("value=") + 6
             colNo = Line.rfind("cf=")

@@ -43,7 +43,6 @@ import CleftObj
 import BindingSite
 
 import threading
-import Queue
 import Color
 import pickle
 
@@ -71,9 +70,6 @@ class Start(threading.Thread):
         self.cmdline = cmdline
         print(self.cmdline)
         
-        self.GetCleft.ProcessError = False
-        self.GetCleft.ProcessRunning = True
-
         # Start the thread
         self.start()
 
@@ -99,7 +95,7 @@ class Start(threading.Thread):
         
         self.GetCleft.Run = None
         self.GetCleft.ProcessRunning = False
-                
+        
         self.queue.put(lambda: self.top.GetCleftRunning(False))
 
         print("GetCleft starting thread has ended.")
@@ -413,52 +409,50 @@ class Default(Tabs.Tab):
         
         # Clear temporary clefts
         self.Btn_Clear_Clicked()
+
+        self.top.ProcessError = False
+        self.top.ProcessRunning = True
+
         self.GetCleftRunning(True)
-        
-        self.queue = Queue.Queue()
         
         # Run GetCleft
         StartRun = Start(self, self.queue, Command_Line)
         
-        self.Update_Tkinter()
-        
     ''' ==================================================================================
-    FUNCTION Update_Tkinter: update the tkinter interface (tasks queued from the worker)
+    FUNCTION Condition_Update: Tests tab specific conditions to trigger stopping
     ==================================================================================  '''               
-    def Update_Tkinter(self):
-        
-        # Check every 100 ms if there is something new in the queue.
-        while self.queue.qsize():
-            try:
-                func = self.queue.get()
-                func()
-            except Queue.Empty:
-                pass
-        
+    def Condition_Update(self):
+
         if self.top.ProcessRunning:
-            self.top.root.after(self.top.TKINTER_UPDATE_INTERVAL, self.Update_Tkinter)
+            return True
         else:
-            # Store clefts and show them
-            self.top.Manage.delete_Temp()
-            self.top.Manage.store_Temp(self.LastdefaultOption)
-            
-            nCleft = self.TempBindingSite.Count_Cleft()
-            if nCleft > 0:
-                
-                self.DisplayMessage("  Stored (" + str(nCleft) + 
-                                    ") cleft objects from object/selection '" +
-                                    self.LastdefaultOption + "'", 0)
+            return False
 
-                self.Display_Temp()
-                self.top.Go_Step2()
-                self.top.CopySession = False
-                self.top.EditSession = False
+    ''' ==================================================================================
+    FUNCTION After_Update: Executes tasks when done updating Tkinter
+    ==================================================================================  '''               
+    def After_Update(self):
+        
+        # Store clefts and show them
+        self.top.Manage.delete_Temp()
+        self.top.Manage.store_Temp(self.LastdefaultOption)
+        
+        nCleft = self.TempBindingSite.Count_Cleft()
+        if nCleft > 0:
+            self.DisplayMessage("  Stored (" + str(nCleft) + 
+                                ") cleft objects from object/selection '" +
+                                self.LastdefaultOption + "'", 0)
 
-                self.top.Crop.Reset_Step1()
-                
-            else:
-                self.DisplayMessage("  No clefts found for object/selection '" +
-                                    self.LastdefaultOption + "'", 0)
+            self.Display_Temp()
+            self.top.Go_Step2()
+            self.top.CopySession = False
+            self.top.EditSession = False
+
+            self.top.Crop.Reset_Step1()
+
+        else:
+            self.DisplayMessage("  No clefts found for object/selection '" +
+                                self.LastdefaultOption + "'", 0)
 
     ''' ========================================================
                  Display all temporary clefts
@@ -492,7 +486,7 @@ class Default(Tabs.Tab):
         Args += ' -o "' + OutputPath + '"'
         
         # Number of clefts maximum
-        Args += ' -t ' + self.NbCleft.get()          
+        Args += ' -t ' + self.NbCleft.get()
             
         # Size of spheres
         Args += ' -l ' + str(self.MinRadius.get())
@@ -536,8 +530,10 @@ class Default(Tabs.Tab):
     def GetCleftRunning(self, boolRun):
         
         if boolRun:
+            self.Start_Update()
             self.Disable_Frame()
         else:
+            self.End_Update()
             self.Enable_Frame()
     
     ''' ==================================================================================
@@ -645,12 +641,12 @@ class Default(Tabs.Tab):
         
         if self.TempBindingSite.Count_Cleft() > 0:
             
-            DefaultPath = os.path.join(self.top.CleftProject_Dir,self.defaultOption.get().upper())
+            DefaultPath = os.path.join(self.top.CleftProject_Dir,self.LastdefaultOption.upper())
             if not os.path.isdir(DefaultPath):
                 os.makedirs(DefaultPath)
             
             SaveFile = tkFileDialog.asksaveasfilename(initialdir=DefaultPath, title='Choose the Cleft base filename',
-                                                      initialfile=self.defaultOption.get())
+                                                      initialfile=self.LastdefaultOption)
             
             if SaveFile:
 

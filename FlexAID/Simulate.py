@@ -101,6 +101,9 @@ class Simulate(Tabs.Tab):
         
         self.ResultsName_Toggle()
         
+        self.BarWidth = self.ProgressBar.cget("width")
+        self.BarHeight = self.ProgressBar.cget("height")
+        
     ''' =============================================================================== 
     FUNCTION Frame: Generate the CSimulation frame in the the middle frame 
                     section.
@@ -208,9 +211,6 @@ class Simulate(Tabs.Tab):
         
         self.RectPB = self.ProgressBar.create_rectangle(0, 0, 0, self.ProgressBar.winfo_reqheight(), fill=self.top.Color_Blue, width=0)
         self.TextPB = self.ProgressBar.create_text(self.ProgressBar.winfo_reqwidth()/2, self.ProgressBar.winfo_reqheight()/2, text='', fill='black')
-        
-        self.BarWidth = self.ProgressBar.cget("width")
-        self.BarHeight = self.ProgressBar.cget("height")
         
         Label(fSim_ProgressLine3, text='Genetic algorithm progress:', font=self.top.font_Text).pack(side=LEFT)
         Label(fSim_ProgressLine3, textvariable=self.ProgBarText, font=self.top.font_Text).pack(side=RIGHT) 
@@ -762,7 +762,7 @@ class Simulate(Tabs.Tab):
         
         try:
             percentage = float(Generation)/float(Total)
-
+            
             if percentage > 1.0:
                 percentage = 1.0
 
@@ -777,7 +777,7 @@ class Simulate(Tabs.Tab):
 
             self.ProgressBar.coords(self.RectPB, 0, 0, barValue, self.BarHeight)
             self.ProgressBar.itemconfigure(self.TextPB, text=text)
-
+            
         except:
             pass
 
