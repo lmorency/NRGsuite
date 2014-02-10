@@ -465,8 +465,11 @@ class Manage:
             Line = 'RESIDU ' + str(ResSeq).rjust(4) + ' ' + ChainID + ' ' + ResName + '\n'
             FlexFile.write(Line)
             
-        if os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','rotobs.lst')):
-            FlexFile.write('ROTOBS\n')
+
+        if os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','Lovell_LIB.dat')):
+            FlexFile.write('ROTLIB\n')
+        #if os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','rotobs.lst')):
+        #    FlexFile.write('ROTOBS\n')
 
         FlexFile.close()
 

@@ -76,7 +76,7 @@ class Base:
 
         #self.root.geometry()   # Interface DIMENSIONS
         #self.root.maxsize(WINDOWWIDTH,WINDOWHEIGHT)
-        #self.root.minsize(WINDOWWIDTH,WINDOWHEIGHT)
+        self.root.minsize(WINDOWWIDTH,WINDOWHEIGHT)
         self.root.protocol('WM_DELETE_WINDOW', self.Quit)
 
         General.CenterWindow(self.root,WINDOWWIDTH,WINDOWHEIGHT)

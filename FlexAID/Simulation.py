@@ -447,6 +447,7 @@ class Parse(threading.Thread):
         try:
             #Get index position of energy column
             #colNo = Line.rfind("value=") + 6
+            #   3 (   4868.00    -180.00    -180.00    -180.00 )  cf=   67.444 cf.app=   67.444 fitnes=   14.799
             colNo = Line.rfind("cf=")
             colNo2 = Line.rfind("cf.app=")
             colNo3 = Line.rfind("fitnes=")

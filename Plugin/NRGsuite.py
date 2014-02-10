@@ -177,7 +177,7 @@ if OSid != 'UNKNOWN':
                 
                 self.RootFlexAID = Toplevel(self.root)
                 FlexAID.displayFlexAID(self.RootFlexAID, self, menuindex, self.Project_Dir, Install_Dir, 
-                                       NRGsuite_Path, OSid, True, 'FlexAID', 700, 600)
+                                       NRGsuite_Path, OSid, True, 'FlexAID', 800, 600)
                     
             #================================================================================
             # Load an existing Project

@@ -80,7 +80,7 @@ class Config3(Tabs.Tab):
             self.SolventType.set('< No type >')
             self.SolventTypeIndex.set(0)
 
-        self.SolventTerm.set('5.0')
+        self.SolventTerm.set('200.0')
 
         self.DeltaAngle.set('2.5')
         self.DeltaDihedral.set('2.5')
@@ -117,8 +117,8 @@ class Config3(Tabs.Tab):
                                                                                 max=1.00, ndec=2, tag='Dead-end-elimination clash', _type=float))
 
             self.SolventTermTrace = self.SolventTerm.trace('w', lambda *args, **kwargs:
-                                                                self.Validate_Field(input=self.entSolventTerm, var=self.SolventTerm, min=-10.0,
-                                                                max=10.0, ndec=1, tag='Solvent term', _type=float))
+                                                                self.Validate_Field(input=self.entSolventTerm, var=self.SolventTerm, min=-200.0,
+                                                                max=200.0, ndec=1, tag='Solvent term', _type=float))
 
         except:
             pass
@@ -165,7 +165,7 @@ class Config3(Tabs.Tab):
             if self.top.IOFile.AtomTypes.get() == 'Gaudreault':
                 self.SolventTypeIndex.set(13)
             elif self.top.IOFile.AtomTypes.get() == 'Sybyl':
-                self.SolventTypeIndex.set(27)
+                self.SolventTypeIndex.set(40)
             
     ''' ==================================================================================
     FUNCTION DEE_Toggle: Disables/enables the edit box according to checkstate
