@@ -169,7 +169,7 @@ class GAParam(Tabs.Tab):
             self.FitAlphaTrace = self.FitAlpha.trace('w', lambda *args, **kwargs:
                                                           self.Validate_Field(input=self.entAlpha, var=self.FitAlpha, min=0.00,
                                                           max=100.00, ndec=2, tag='Fitness alpha', _type=float))
-
+            
             #self.RepSSTrace = self.RepSS.trace('w', lambda *args, **kwargs:
             #                                        self.Validate_Field(input=self.entSS, var=self.RepSS, min=1,
             #                                        max=1000, ndec=-1, tag='Reproduction steady-state', _type=int))
@@ -181,7 +181,7 @@ class GAParam(Tabs.Tab):
 
         except:
             pass
-
+    
     ''' ==================================================================================
     FUNCTION Del_Trace: Deletes observer callbacks
     =================================================================================  '''    

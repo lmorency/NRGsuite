@@ -343,6 +343,11 @@ class Manage:
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
             config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n')
 
+        # normalize area
+        config_file.write('NORMAR' + '\n')
+        # no intramolecular interactions
+        config_file.write('NOINTR' + '\n')
+
         # permeability of atoms
         Permea = 1.00 - float(self.Config3.Permeability.get())
         config_file.write('PERMEA ' + str(Permea) + '\n')
@@ -432,8 +437,8 @@ class Manage:
             gaInp_file.write('BOOMFRAC 1.00\n')
         elif self.GAParam.RepModel.get() == 'STEADY':
             #gaInp_file.write('STEADNUM ' + str(self.GAParam.RepSS.get()) + '\n')
-            gaInp_file.write('STEADNUM ' + str(self.GAParam.NbChrom.get()) + '\n')
-
+            gaInp_file.write('STEADNUM ' + str(self.GAParam.NbChrom.get() - self.GAParam.NbChrom.get()* 0.05) + '\n')
+            
         if self.GAParam.RepDup.get():
             gaInp_file.write('DUPLICAT\n')
 
