@@ -87,7 +87,7 @@ class CropCleft(Tabs.Tab):
     FUNCTION Trace: Adds a callback function to StringVars
     ==================================================================================  '''  
     def Trace(self):
-
+        
         try:
             self.Step1SelectionTrace = self.Step1Selection.trace('w', self.Toggle_Step1)
             self.Step2SelectionTrace = self.Step2Selection.trace('w', self.Toggle_Step2)
@@ -249,6 +249,7 @@ class CropCleft(Tabs.Tab):
             self.Disable_Frame(self.ResizeSphere,self.lblRadius)
             
             self.ResizeSphere.config(from_=0.5,to=self.Sphere.MaxRadius)
+            print self.Sphere.Print()
             self.SphereSize.set(self.Sphere.Radius)
     
         else:
@@ -576,7 +577,9 @@ class CropCleft(Tabs.Tab):
         while self.dictSpheres.get('SPHERE_' + str(ID), ''):
             ID = ID + 1
 
-        return 'SPHERE_' + str(ID)
+        sphereid = 'SPHERE_' + str(ID)
+        
+        return sphereid
         
     ''' ==========================================================
     Step2_Add: Adds a new sphere for partitionning
@@ -588,7 +591,7 @@ class CropCleft(Tabs.Tab):
             self.SphereID = self.Get_SphereID()
             
             self.Sphere = SphereObj.SphereObj(self.Width/1.5, self.Width, self.Center)
-                
+            
             self.SphereRunning(True)
             
             self.top.ActiveWizard = Sphere.Sphere(self, self.queue, self.Sphere, self.SphereID, self.SphereSize,
@@ -607,8 +610,10 @@ class CropCleft(Tabs.Tab):
     def Step2_Delete(self):
 
         if self.top.ActiveWizard is None:
-            del self.dictSpheres[self.Step2Selection.get()]
-
+            
+            if self.dictSpheres.get(self.Step2Selection.get()):
+                del self.dictSpheres[self.Step2Selection.get()]
+            
             try:
                 cmd.delete(self.SphereDisplay)
                 cmd.refresh()
@@ -630,6 +635,11 @@ class CropCleft(Tabs.Tab):
 
         if self.top.ActiveWizard is None and self.Sphere is not None:
             
+            if not self.dictSpheres.get(self.Step2Selection.get()):
+                return
+            
+            self.SphereID = self.Step2Selection.get()
+
             self.SphereRunning(True)
             
             self.top.ActiveWizard = Sphere.Sphere(self, self.queue, self.Sphere, self.Step2Selection.get(), self.SphereSize,
