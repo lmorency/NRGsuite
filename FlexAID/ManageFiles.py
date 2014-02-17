@@ -250,7 +250,8 @@ class Manage:
             hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n')
 
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
-            hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n')
+            #hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n')
+            hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_5p_norm_P10_M2_2.dat') + '\n')
         
         # permeability of atoms
         Permea = 1.00 - float(self.Config3.Permeability.get())
@@ -341,7 +342,8 @@ class Manage:
             config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n')
 
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
-            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n')
+            #config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n')
+            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_5p_norm_P10_M2_2.dat') + '\n')
 
         # normalize area
         config_file.write('NORMAR' + '\n')
