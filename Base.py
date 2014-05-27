@@ -36,7 +36,9 @@ class Base:
 
     # in milliseconds
     TKINTER_UPDATE_INTERVAL = 100
-    VERSION = '2.38b'
+    
+    WEBSITE = 'http://bcb.med.usherbrooke.ca/'
+    VERSION = '2.38c'
     
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface

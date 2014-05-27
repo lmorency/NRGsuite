@@ -31,6 +31,7 @@
 from Tkinter import *
 
 import os
+import webbrowser
 import Base
 import NRGsuite
 
@@ -101,6 +102,7 @@ class displayAbout(Base.Base):
     FUNCTION Banner_Clicked: Opens up the NRG website
     ==================================================================================  '''
     def Banner_Clicked(self):
-
-        return
+        
+        webbrowser.open_new_tab(self.WEBSITE)
+        
         
