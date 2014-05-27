@@ -72,9 +72,9 @@ class GAParam(Tabs.Tab):
     def Init_Vars(self):
                 
         self.NbTopChrom.set('5')
-        self.NbGenFreq.set('10')
-        self.NbGen.set('300')
-        self.NbChrom.set('300')
+        self.NbGenFreq.set('25')
+        self.NbGen.set('500')
+        self.NbChrom.set('500')
         self.CrossRate.set('0.900')
         self.MutaRate.set('0.025')
         self.FitModel.set('PSHARE')

@@ -36,12 +36,13 @@ class Base:
 
     # in milliseconds
     TKINTER_UPDATE_INTERVAL = 100
-
+    VERSION = '2.38b'
+    
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
     ================================================================================== '''
     def __init__(self, root, top, menuindex, Project_Dir, Install_Dir, NRGsuite_Dir, OSid, PyMOL, Name, WINDOWWIDTH, WINDOWHEIGHT):
-                
+        
         self.Name = Name
         self.OSid = OSid
         self.PyMOL = PyMOL
@@ -73,13 +74,16 @@ class Base:
         self.menuindex = menuindex
         if self.menuindex != -1:
             self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='disabled')
-
+        
+        self.WINDOWWIDTH = WINDOWWIDTH
+        self.WINDOWHEIGHT = WINDOWHEIGHT
+        
         #self.root.geometry()   # Interface DIMENSIONS
         #self.root.maxsize(WINDOWWIDTH,WINDOWHEIGHT)
-        self.root.minsize(WINDOWWIDTH,WINDOWHEIGHT)
+        self.root.minsize(self.WINDOWWIDTH,self.WINDOWHEIGHT)
         self.root.protocol('WM_DELETE_WINDOW', self.Quit)
-
-        General.CenterWindow(self.root,WINDOWWIDTH,WINDOWHEIGHT)
+        
+        General.CenterWindow(self.root,self.WINDOWWIDTH,self.WINDOWHEIGHT)
         
         #================================================================================== 
         #                 SET the default fonts of the interface
@@ -87,12 +91,12 @@ class Base:
         FontType = Prefs.GetFontType()
         FontSize = Prefs.GetFontSize()
         
-        self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)        
-        self.font_Title_H = tkFont.Font(family=FontType,size=FontSize + 1, weight=tkFont.BOLD)        
+        self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)
+        self.font_Title_H = tkFont.Font(family=FontType,size=FontSize + 1, weight=tkFont.BOLD)
         self.font_Text = tkFont.Font(family=FontType,size=FontSize)
         self.font_Text_H = tkFont.Font(family=FontType,size=FontSize + 1)
         self.font_Text_I = tkFont.Font(family=FontType,size=FontSize, slant=tkFont.ITALIC)
-        self.font_Text_U = tkFont.Font(family=FontType,size=FontSize, underline=True)       
+        self.font_Text_U = tkFont.Font(family=FontType,size=FontSize, underline=True)
         
         self.ChildWindow = None
         self.ActiveFrame = None
@@ -370,10 +374,10 @@ class Base:
     
     ''' ==================================================================================
     FUNCTION Set_Folders: Builds the list of folders that will be built
-    ==================================================================================  '''  
+    ==================================================================================  '''
     def Set_Folders(self):
-
-            return
+        
+        return
 
     ''' ==================================================================================
     FUNCTION Validate_Folders: Make all the folders necessary for running the project

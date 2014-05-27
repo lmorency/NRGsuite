@@ -72,8 +72,10 @@ if OSid != 'UNKNOWN':
         Project_Path = os.path.join(Install_Dir,'Project')
         FlexAID_Path = os.path.join(Install_Dir,'FlexAID')
         GetCleft_Path = os.path.join(Install_Dir,'GetCleft')
+        About_Path = os.path.join(Install_Dir,'About')
         
-        if os.path.isdir(Project_Path) and os.path.isdir(FlexAID_Path) and os.path.isdir(GetCleft_Path):
+        if os.path.isdir(Project_Path) and os.path.isdir(FlexAID_Path) and \
+           os.path.isdir(GetCleft_Path) and os.path.isdir(About_Path):
         
             sys.path.append(Install_Dir)
             
@@ -89,6 +91,9 @@ if OSid != 'UNKNOWN':
             sys.path.append(GetCleft_Path)
             import GetCleft
             
+            sys.path.append(About_Path)
+            import About
+            
             from Tkinter import *
             
             #------------------------------------------------------------------#
@@ -102,7 +107,7 @@ if OSid != 'UNKNOWN':
                 
                 self.RootFlexAID = None
                 self.RootGetCleft = None
-
+                
                 # ADD a new main menu named Project to the menu bar
                 #self.menuBar.addmenu('NRGsuite', 'Najmanovich Research Group Suite')
                 self.menuBar.addcascademenu('Plugin',
@@ -158,8 +163,16 @@ if OSid != 'UNKNOWN':
                                          label='   Open GetCleft...',
                                          command = lambda s=self, menuindex=7 : StartGetCleft(s, menuindex))
                 
+                # ADD a seperator to the main menu 
+                self.menuBar.addmenuitem('NRGsuite','separator')
+
+                self.menuBar.addmenuitem('NRGsuite', 'command',
+                                         'CfgFile',
+                                         label='   About',
+                                         command = lambda s=self, menuindex=9 : StartAbout(s, menuindex))
+                
                 # Make the Load  - Create projects button clickable only
-                EnableDisableMenu(self, ['normal','normal','disabled','disabled','disabled','disabled'] )
+                EnableDisableMenu(self, ['normal','normal','disabled','disabled','disabled','disabled','normal'] )
             
             #================================================================================
             # STARTING GetCleft Conditional... 
@@ -201,6 +214,14 @@ if OSid != 'UNKNOWN':
             def StartPreferences(self, menuindex):
                 
                 return
+                
+            #================================================================================
+            # Loads the about menu to see versionning
+            #================================================================================
+            def StartAbout(self, menuindex):
+                
+                About.displayAbout(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
+                                   NRGsuite_Path, OSid, True, 'About', 400, 350)
             
             #================================================================================
             # Close the actual Project
@@ -215,7 +236,7 @@ if OSid != 'UNKNOWN':
                     self.RootGetCleft.destroy()
                     print('  GetCleft interface successfully closed.')
                        
-                EnableDisableMenu(self, ['normal','normal','disabled','disabled','disabled','disabled'] )
+                EnableDisableMenu(self, ['normal','normal','disabled','disabled','disabled','disabled','normal'] )
 
                 print('\n   The project \'' + self.ProjectName + '\' was closed.')
 
@@ -231,9 +252,8 @@ if OSid != 'UNKNOWN':
                 self.menuBar.component('NRGsuite-menu').entryconfig(4, state=states.pop(0))    # preferences
                 self.menuBar.component('NRGsuite-menu').entryconfig(6, state=states.pop(0))    # flexaid
                 self.menuBar.component('NRGsuite-menu').entryconfig(7, state=states.pop(0))    # getcleft
-                  
-                return
-            
+                self.menuBar.component('NRGsuite-menu').entryconfig(9, state=states.pop(0))    # about
+                
         else:
             tkMessageBox.showerror('Programs MISSING',
                                    'The FlexAID and GetCleft applications ' + 

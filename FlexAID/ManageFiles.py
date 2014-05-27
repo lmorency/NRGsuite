@@ -35,7 +35,8 @@ if __debug__:
 class Manage:
 
     NUMBER_RESULTS = 10
-
+    GRID_SPACING = 0.375
+    
     def __init__(self, top):
         
         #print("New instance of Manage Class")
@@ -193,6 +194,141 @@ class Manage:
                 continue
     
     ''' ==================================================================================
+    @summary: Print_OPTIMZ: Prints the OPTIMZ lines of CONFIG input
+    ================================================================================== '''
+    def Print_OPTIMZ(self):
+        
+        lines = ''
+        
+        if self.Config2.IntTranslation.get():
+            lines += 'OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - -1\n'
+            
+        if self.Config2.IntRotation.get():
+            lines += 'OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n'
+        
+        # Ligand flexibility
+        order = sorted(self.IOFile.Vars.dictFlexBonds.keys())
+        lines += self.Add_FlexBonds(order)
+        
+        return lines
+
+    ''' ================================================================================== 
+    @summary: Print_RMSDST: Prints the RMSDST line of CONFIG input                       
+    ================================================================================== '''
+    def Print_RMSDST(self):
+
+        if self.Config2.UseReference.get():
+            return 'RMSDST ' + self.IOFile.ProcessedLigandPath.get() + '\n'
+        
+        return ''
+
+    ''' ==================================================================================
+    @summary: Print_IMATRX: Prints the IMATRX line of CONFIG input                        
+    ================================================================================== '''
+    def Print_IMATRX(self):
+
+        if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
+            return 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','scr_bin.dat') + '\n'
+
+        elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
+            return 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n'
+
+        elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
+            #return 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n'
+            #return 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_5p_norm_P10_M2_2.dat') + '\n'
+            return 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_st0r5.2_6.dat') + '\n'
+            
+        return ''
+
+    ''' ==================================================================================
+    @summary: Print_PERMEA: Prints the PERMEA line of CONFIG input                        
+    ================================================================================== '''
+    def Print_PERMEA(self):
+        
+        Permea = 1.00 - float(self.Config3.Permeability.get())
+        return 'PERMEA ' + str(Permea) + '\n'
+
+    ''' ==================================================================================
+    @summary: Print_VAR: Prints the VAR* lines of CONFIG input                        
+    ================================================================================== '''
+    def Print_VAR(self):
+
+        lines = ''
+        #lines += 'VARDIS ' + self.Config3.DeltaDistance.get() + '\n'
+        lines += 'VARANG ' + self.Config3.DeltaAngle.get() + '\n'
+        lines += 'VARDIH ' + self.Config3.DeltaDihedral.get() + '\n'
+        lines += 'VARFLX ' + self.Config3.DeltaDihedralFlex.get() + '\n'
+        
+        return lines
+
+    ''' ==================================================================================
+    @summary: Print_SLV: Prints the SLV* lines of CONFIG input                        
+    ================================================================================== '''
+    def Print_SLV(self):
+
+        lines = ''
+        lines += 'SLVTYP ' + str(self.Config3.SolventTypeIndex.get()) + '\n'
+        if self.Config3.SolventTypeIndex.get() == 0:
+            lines += 'SLVPEN ' + self.Config3.SolventTerm.get() + '\n'
+        
+        return lines
+
+    ''' ==================================================================================
+    @summary: Print_HET: Prints HET* related lines of CONFIG input                        
+    ================================================================================== '''
+    def Print_HET(self):
+
+        lines = ''
+        # heterogroups consideration
+        if self.Config3.ExcludeHET.get():
+            lines += 'EXCHET' + '\n'
+        elif self.Config3.IncludeHOH.get():
+            lines += 'INCHOH' + '\n'
+            
+        return lines
+        
+    ''' ==================================================================================
+    @summary: Print_CONSTANTS: Prints CONSTANTS variables of CONFIG input                        
+    ================================================================================== '''
+    def Print_CONSTANTS(self):
+        
+        lines = ''
+       
+        # genetic-algorithms
+        lines += 'METOPT GA' + '\n'
+ 
+        # binding-site grid spacing
+        lines += 'SPACER ' + str(self.GRID_SPACING) + '\n'
+        
+        # vcontacts plane definition
+        lines += 'VCTPLA R' + '\n'
+        # normalize area
+        lines += 'NORMAR' + '\n'
+        # no intramolecular interactions
+        lines += 'NOINTR' + '\n'
+        # vcontacts indexing
+        lines += 'VINDEX' + '\n'
+        # omit buried atoms in vonctacts calculations
+        #lines += 'OMITBU' + '\n'
+        
+        # output/input paths
+        lines += 'STATEP ' + self.FlexAIDRunSimulationProject_Dir  + '\n'
+        lines +='TEMPOP ' + self.FlexAID.FlexAIDTempProject_Dir  + '\n'
+        lines +='DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n'
+        
+        # maximum number of results
+        lines +='MAXRES ' + str(self.NUMBER_RESULTS) + '\n'
+        
+        # nrgsuite related variables
+        lines +='NRGSUI' + '\n'
+        lines +='NRGOUT 60' + '\n'
+        lines +='GRDBUF 1000' + '\n'
+        
+        lines +='ENDINP\n'
+
+        return lines
+
+    ''' ==================================================================================
     @summary: Hash_CONFIG: Hashes the contents of the CONFIG recursively
     ================================================================================== '''
     def Hash_CONFIG(self):
@@ -201,8 +337,6 @@ class Manage:
         
         hasher = General.hashfile_update(self.IOFile.ProcessedTargetPath.get(), hasher)
         hasher = General.hashfile_update(self.IOFile.ProcessedLigandINPPath.get(), hasher)
-        
-        #hasher.update('SPACER 0.375\n')
         
         rngOpt = self.Config1.RngOpt.get()
         
@@ -227,53 +361,17 @@ class Manage:
                         
         if len(self.Config2.Vars.dictConstraints):
             self.Create_ConsFile(self.TmpFile)
-
+            
             hasher = General.hashfile_update(self.TmpFile, hasher)
 
-        if self.Config2.IntTranslation.get():
-            hasher.update('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - -1\n')
-            
-        if self.Config2.IntRotation.get():
-            hasher.update('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n')
+        hasher.update(self.Print_OPTIMZ())
+        hasher.update(self.Print_RMSDST())
+        hasher.update(self.Print_IMATRX())
+        hasher.update(self.Print_PERMEA())
+        hasher.update(self.Print_VAR())
+        hasher.update(self.Print_SLV())
+        hasher.update(self.Print_HET())
         
-        if self.Config2.UseReference.get():
-            hasher.update('RMSDST ' + self.IOFile.ProcessedLigandPath.get() + '\n')
-        
-        # Ligand flexibility
-        order = sorted(self.IOFile.Vars.dictFlexBonds.keys())
-        hasher.update(self.Add_FlexBonds(order))
-
-        if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
-            hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','scr_bin.dat') + '\n')
-
-        elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
-            hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n')
-
-        elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
-            #hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n')
-            hasher.update('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_5p_norm_P10_M2_2.dat') + '\n')
-        
-        # permeability of atoms
-        Permea = 1.00 - float(self.Config3.Permeability.get())
-        hasher.update('PERMEA ' + str(Permea) + '\n')
-        
-        # heterogroups consideration
-        if self.Config3.ExcludeHET.get():
-            hasher.update('EXCHET' + '\n')
-        elif self.Config3.IncludeHOH.get():
-            hasher.update('INCHOH' + '\n')
-    
-        #config_file.write('VARDIS ' + self.Config3.DeltaDistance.get() + '\n')
-        hasher.update('VARANG ' + self.Config3.DeltaAngle.get() + '\n')
-        hasher.update('VARDIH ' + self.Config3.DeltaDihedral.get() + '\n')
-        hasher.update('VARFLX ' + self.Config3.DeltaDihedralFlex.get() + '\n')
-
-        hasher.update('SLVTYP ' + str(self.Config3.SolventTypeIndex.get()) + '\n')
-        if self.Config3.SolventTypeIndex.get() == 0:
-            hasher.update('SLVPEN ' + self.Config3.SolventTerm.get() + '\n')
-        
-        hasher.update('MAXRES ' + str(self.NUMBER_RESULTS) + '\n')
-                
         return hasher.digest()
 
     ''' ==================================================================================
@@ -287,15 +385,11 @@ class Manage:
         config_file.write('PDBNAM ' + self.IOFile.ProcessedTargetPath.get() + '\n')
         
         config_file.write('INPLIG ' + self.IOFile.ProcessedLigandINPPath.get() + '\n')
-        config_file.write('METOPT GA\n')
 
-        #config_file.write('BPKENM ' + self.Config1.BPE.get() + '\n')
         config_file.write('COMPLF ' + self.Config3.CompFct.get() + '\n')
         
         rngOpt = self.Config1.RngOpt.get()
 
-        config_file.write('SPACER 0.375\n')
-        
         if rngOpt == 'LOCCEN':
             line = 'RNGOPT LOCCEN'
             line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[0]
@@ -321,69 +415,16 @@ class Manage:
             ConsFile = os.path.join(self.FlexAIDRunSimulationProject_Dir,'cons.lst')
             self.Create_ConsFile(ConsFile)
             config_file.write('CONSTR ' + ConsFile + '\n')
-
-        if self.Config2.IntTranslation.get():
-            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - -1\n')
             
-        if self.Config2.IntRotation.get():
-            config_file.write('OPTIMZ ' + str(self.IOFile.ResSeq.get())  + ' - 0\n')
+        config_file.write(self.Print_OPTIMZ())
+        config_file.write(self.Print_RMSDST())
+        config_file.write(self.Print_IMATRX())
+        config_file.write(self.Print_PERMEA())
+        config_file.write(self.Print_VAR())
+        config_file.write(self.Print_SLV())
+        config_file.write(self.Print_HET())
+        config_file.write(self.Print_CONSTANTS())
         
-        if self.Config2.UseReference.get():
-            config_file.write('RMSDST ' + self.IOFile.ProcessedLigandPath.get() + '\n')
-        
-        # Ligand flexibility
-        order = sorted(self.IOFile.Vars.dictFlexBonds.keys())
-        config_file.write(self.Add_FlexBonds(order))
-
-        if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
-            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','scr_bin.dat') + '\n')
-
-        elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
-            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n')
-
-        elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
-            #config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n')
-            config_file.write('IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_5p_norm_P10_M2_2.dat') + '\n')
-
-        # normalize area
-        config_file.write('NORMAR' + '\n')
-        # no intramolecular interactions
-        config_file.write('NOINTR' + '\n')
-
-        # permeability of atoms
-        Permea = 1.00 - float(self.Config3.Permeability.get())
-        config_file.write('PERMEA ' + str(Permea) + '\n')
-        
-        # heterogroups consideration
-        if self.Config3.ExcludeHET.get():
-            config_file.write('EXCHET' + '\n')
-        elif self.Config3.IncludeHOH.get():
-            config_file.write('INCHOH' + '\n')
-
-        #config_file.write('VARDIS ' + self.Config3.DeltaDistance.get() + '\n')
-        config_file.write('VARANG ' + self.Config3.DeltaAngle.get() + '\n')
-        config_file.write('VARDIH ' + self.Config3.DeltaDihedral.get() + '\n')
-        config_file.write('VARFLX ' + self.Config3.DeltaDihedralFlex.get() + '\n')
-
-
-        config_file.write('SLVTYP ' + str(self.Config3.SolventTypeIndex.get()) + '\n')
-        if self.Config3.SolventTypeIndex.get() == 0:
-            config_file.write('SLVPEN ' + self.Config3.SolventTerm.get() + '\n')
-
-        config_file.write('STATEP ' + self.FlexAIDRunSimulationProject_Dir  + '\n')
-        config_file.write('TEMPOP ' + self.FlexAID.FlexAIDTempProject_Dir  + '\n')
-                
-        config_file.write('DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n')
-
-        config_file.write('MAXRES ' + str(self.NUMBER_RESULTS) + '\n')
-        
-        config_file.write('NRGSUI\n')
-        config_file.write('NRGOUT 60\n')
-        
-        config_file.write('GRDBUF 1000\n')
-
-        config_file.write('ENDINP\n')
-
         config_file.close()
         
         return

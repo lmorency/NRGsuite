@@ -82,18 +82,18 @@ class displayLoadProject(Base.Base):
         #==================================================================================
         '''                  --- TOP FRAME OF THE INTERFACE ---                          '''
         #==================================================================================
-        fTitle = Frame(self.fMain, relief=RIDGE, border=1, width=460, height=40, bg=self.Color_White)
+        fTitle = Frame(self.fMain, relief=RIDGE, border=1, width=self.WINDOWWIDTH, height=40, bg=self.Color_White)
         fTitle.pack(fill=X, expand=True)
-        fTitle.pack_propagate(0)        
+        fTitle.pack_propagate(0)
         
         Title = Label(fTitle, text='Load an existing NRG suite project.', bg=self.Color_White, font=self.font_Title)
         Title.pack(padx=10, side=LEFT, anchor=W)        
         
-        self.fTop = Frame(self.fMain, relief=RIDGE, border=0, width=460, height=240)        
+        self.fTop = Frame(self.fMain, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=240)
         self.fTop.pack(fill=X, expand=True, padx=10)
-        self.fTop.pack_propagate(0) 
+        self.fTop.pack_propagate(0)
         
-        fLblList = Frame(self.fTop, relief=RIDGE, border=0, width=460, height=30)
+        fLblList = Frame(self.fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=30)
         
         LblList = Label(fLblList, text='Project(s) list:', font=self.font_Text)
         LblList.pack(side=LEFT, anchor=S, pady=2)
@@ -105,7 +105,7 @@ class displayLoadProject(Base.Base):
         '''                       --- LISTBOX FRAME SECTION ---                         '''
         #==================================================================================
 
-        fProjList = Frame(self.fTop, relief=RIDGE, border=1, width=460, height=110)
+        fProjList = Frame(self.fTop, relief=RIDGE, border=1, width=self.WINDOWWIDTH, height=110)
         fProjList.pack(fill=X, expand=True)
         fProjList.pack_propagate(0)
 
@@ -126,7 +126,7 @@ class displayLoadProject(Base.Base):
         #==================================================================================
         '''              --- NAME & PATH SELECTED - FRAME SECTION ---                   '''
         #==================================================================================        
-        fProjName = Frame(self.fTop, relief=RIDGE, border=0, width=460, height=35)
+        fProjName = Frame(self.fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=35)
         
         fProjName_L = Frame(fProjName, relief=RIDGE, border=0, width=100, height=35)
         fProjName_R = Frame(fProjName, relief=RIDGE, border=0, width=360, height=35)
@@ -148,7 +148,7 @@ class displayLoadProject(Base.Base):
         fProjName.pack(fill=X, expand=True)
         fProjName.pack_propagate(0)
         
-        fProjPath = Frame(self.fTop, relief=RIDGE, border=0, width=460, height=35)
+        fProjPath = Frame(self.fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=35)
         
         fProjPath_L = Frame(fProjPath, relief=RIDGE, border=0, width=100, height=35)
         fProjPath_R = Frame(fProjPath, relief=RIDGE, border=0, width=360, height=35)
@@ -171,7 +171,7 @@ class displayLoadProject(Base.Base):
         fProjPath.pack(fill=X, expand=True)
         fProjPath.pack_propagate(0)
         
-        fButtons = Frame(self.fTop, relief=RIDGE, border=0, width=460, height=40)
+        fButtons = Frame(self.fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=40)
         
         #self.Btn_Browse = Button(fButtons, text='Browse', width=7, command=self.Btn_Browse_Clicked)
         #self.Btn_Browse.pack(side=LEFT, anchor=SW, pady=3)
@@ -191,7 +191,7 @@ class displayLoadProject(Base.Base):
         '''                  --- BOTTOM FRAME OF THE INTERFACE ---                      '''
         #==================================================================================
         
-        fBottom = Frame(self.fMain, relief=RIDGE, border=0, width=460, height=60)
+        fBottom = Frame(self.fMain, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=60)
         
         # Messages Box
         fMsg = Frame(fBottom, border=1, width=440, height=50, relief=SUNKEN)        

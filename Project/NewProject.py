@@ -74,9 +74,9 @@ class displayNewProject(Base.Base):
         '''                  --- TOP FRAME OF THE INTERFACE ---                          '''
         #==================================================================================
         
-        self.fTop = Frame(self.fMain, relief=RIDGE, border=0, width=400, height=260)        
+        self.fTop = Frame(self.fMain, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=260)        
 
-        fTitle = Frame(self.fTop, relief=RIDGE, border=1, width=400, height=40, bg=self.Color_White)
+        fTitle = Frame(self.fTop, relief=RIDGE, border=1, width=self.WINDOWWIDTH, height=40, bg=self.Color_White)
         
         Title = Label(fTitle, text='Create a new NRG suite Project.', bg=self.Color_White)
         Title.pack(padx=10, side=LEFT, anchor=W)
@@ -85,7 +85,7 @@ class displayNewProject(Base.Base):
         fTitle.pack(fill=X, expand=True)
         fTitle.pack_propagate(0)
         
-        fProjName = Frame(self.fTop, relief=RIDGE, border=0, width=400, height=50)
+        fProjName = Frame(self.fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=50)
         
         Name = Label(fProjName, text='Project name:')
         Name.pack(padx=10, side=LEFT, anchor=W)
@@ -99,7 +99,7 @@ class displayNewProject(Base.Base):
         fProjName.pack(fill=X, expand=True, padx=10)
         fProjName.pack_propagate(0)
         
-        fProjContent = Frame(self.fTop, relief=RIDGE, border=0, width=400, height=30)
+        fProjContent = Frame(self.fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=30)
         
         Content = Label(fProjContent, text='Project contents:')
         Content.pack(padx=10, side=LEFT, anchor=S)
@@ -108,7 +108,7 @@ class displayNewProject(Base.Base):
         fProjContent.pack(fill=X, expand=True, padx=10)
         fProjContent.pack_propagate(0)
         
-        fDefault = Frame(self.fTop, relief=RIDGE, border=0, width=400, height=30)
+        fDefault = Frame(self.fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=30)
         
         Default = Checkbutton(fDefault, text='  Use default', variable=self.useDefault, command=self.Default_Checked)
         Default.pack(padx=25, side=LEFT, anchor=W)
@@ -117,7 +117,7 @@ class displayNewProject(Base.Base):
         fDefault.pack(fill=X, expand=True, padx=10)
         fDefault.pack_propagate(0)
         
-        fDirectory = Frame(self.fTop, relief=RIDGE, border=0, width=400, height=30)
+        fDirectory = Frame(self.fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=30)
         
         Directory = Label(fDirectory, text='Create project directory under:')
         Directory.pack(padx=10, side=LEFT, anchor=W)
@@ -126,7 +126,7 @@ class displayNewProject(Base.Base):
         fDirectory.pack(fill=X, expand=True, padx=10)
         fDirectory.pack_propagate(0)
         
-        fDirPath = Frame(self.fTop, relief=RIDGE, border=0, width=400, height=30)
+        fDirPath = Frame(self.fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=30)
         
         PadDir = Label(fDirPath, text='')
         PadDir.pack(padx=13, side=LEFT, anchor=W)       
@@ -145,7 +145,7 @@ class displayNewProject(Base.Base):
         fDirPath.pack(fill=X, expand=True, padx=10)
         fDirPath.pack_propagate(0)
         
-        fButtons = Frame(self.fTop, relief=RIDGE, border=0, width=400, height=50)        
+        fButtons = Frame(self.fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=50)        
     
         Btn_Cancel = Button(fButtons, text='Cancel', width=7, command=self.Btn_Cancel_Clicked)
         Btn_Cancel.pack(side=RIGHT, anchor=SE, pady=3)
@@ -166,7 +166,7 @@ class displayNewProject(Base.Base):
         '''                  --- BOTTOM FRAME OF THE INTERFACE ---                          '''
         #==================================================================================
         
-        fBottom = Frame(self.fMain, relief=RIDGE, border=0, width=400, height=60)
+        fBottom = Frame(self.fMain, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=60)
         
         # Messages Box
         fMsg = Frame(fBottom, border=1, width=380, height=50, relief=SUNKEN)        

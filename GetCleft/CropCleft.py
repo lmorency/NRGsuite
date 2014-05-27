@@ -78,10 +78,10 @@ class CropCleft(Tabs.Tab):
         
         self.TempPartition = os.path.join(self.top.GetCleftProject_Dir,'tmppart.pdb')
 
-        self.Img_Button = [ PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/stop.gif')),
-                            PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/down.gif')),
-                            PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/up.gif')),
-                            PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images/ok.gif')) ]
+        self.Img_Button = [ PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images','stop.gif')),
+                            PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images','down.gif')),
+                            PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images','up.gif')),
+                            PhotoImage(file=os.path.join(self.top.GetCleftInstall_Dir,'images','ok.gif')) ]
     
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars

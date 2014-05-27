@@ -77,13 +77,13 @@ class Config3(Tabs.Tab):
             self.SolventType.set('< Type-based >')
             self.SolventTypeIndex.set(13)
         elif self.top.IOFile.AtomTypes.get() == 'Sybyl':
-            self.SolventType.set('< No type >')
-            self.SolventTypeIndex.set(0)
-
-        self.SolventTerm.set('200.0')
-
-        self.DeltaAngle.set('2.5')
-        self.DeltaDihedral.set('2.5')
+            self.SolventType.set('< Type-based >')
+            self.SolventTypeIndex.set(40)
+        
+        self.SolventTerm.set('0.0')
+        
+        self.DeltaAngle.set('5.0')
+        self.DeltaDihedral.set('5.0')
         self.DeltaDihedralFlex.set('10.0')
 
     ''' ==================================================================================
