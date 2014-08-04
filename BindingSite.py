@@ -72,8 +72,8 @@ class BindingSite:
         
         CleftNames = list()
         for Cleft in self.listClefts:
-            CleftNames.append(Cleft.CleftName)
-
+            CleftNames.append(str(Cleft.CleftName))
+            
         return sorted(CleftNames, key=str.lower)
 
     ''' ==================================================================================

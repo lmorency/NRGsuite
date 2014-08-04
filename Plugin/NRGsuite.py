@@ -237,7 +237,7 @@ if OSid != 'UNKNOWN':
                     print('  GetCleft interface successfully closed.')
                        
                 EnableDisableMenu(self, ['normal','normal','disabled','disabled','disabled','disabled','normal'] )
-
+                
                 print('\n   The project \'' + self.ProjectName + '\' was closed.')
 
             #================================================================================        

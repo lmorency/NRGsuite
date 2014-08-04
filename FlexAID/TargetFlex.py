@@ -10,7 +10,7 @@ class TargetFlex:
     def Add_SideChain(self, Residue):
 
         if self.listSideChain.count(Residue) == 0:
-            self.listSideChain.append(Residue)
+            self.listSideChain.append(str(Residue))
 
     ''' ==================================================================================
     FUNCTION Remove_SideChain: Removes a flexible side chain to array list
@@ -18,7 +18,7 @@ class TargetFlex:
     def Remove_SideChain(self, Residue):
         
         if self.listSideChain.count(Residue) != 0:
-            self.listSideChain.remove(Residue)
+            self.listSideChain.remove(str(Residue))
 
     ''' ==================================================================================
     FUNCTION Clear_SideChain: Empties the list of flexible side chain

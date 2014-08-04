@@ -330,8 +330,8 @@ class displayLoadProject(Base.Base):
     ==================================================================================  '''
     def After_Quit(self):
         
-        NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal' ] )    
-
+        NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal', 'normal' ] )
+    
     ''' ==================================================================================
     FUNCTION Btn_Browse_Clicked: Browse to specify the directory to install the project.
     ==================================================================================  '''        

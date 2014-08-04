@@ -198,7 +198,7 @@ class displayNewProject(Base.Base):
     ==================================================================================  '''
     def After_Quit(self):
         
-        NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal' ] )    
+        NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal', 'normal' ] )
 
     ''' ==================================================================================
     FUNCTION Btn_Create_Clicked: Create the new project then quit the application.

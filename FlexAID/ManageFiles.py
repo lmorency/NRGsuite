@@ -355,10 +355,8 @@ class Manage:
             hasher = General.hashfile_update(self.Config1.CleftTmpPath, hasher)
         
         if self.Config1.Vars.TargetFlex.Count_SideChain() > 0:
-            self.Create_FlexFile(self.TmpFile)
-
-            hasher = General.hashfile_update(self.TmpFile, hasher)
-                        
+            hasher.update(self.Print_FLEXSC())
+            
         if len(self.Config2.Vars.dictConstraints):
             self.Create_ConsFile(self.TmpFile)
             
@@ -406,17 +404,16 @@ class Manage:
             line += self.BINDINGSITE + '\n'
             config_file.write(line)
 
-        if self.Config1.Vars.TargetFlex.Count_SideChain() > 0:
-            FlexSCFile = os.path.join(self.FlexAIDRunSimulationProject_Dir,'flexSC.lst')
-            self.Create_FlexFile(FlexSCFile)
-            config_file.write('FLEXSC ' + FlexSCFile + '\n')
-
         if len(self.Config2.Vars.dictConstraints):
             ConsFile = os.path.join(self.FlexAIDRunSimulationProject_Dir,'cons.lst')
             self.Create_ConsFile(ConsFile)
             config_file.write('CONSTR ' + ConsFile + '\n')
             
         config_file.write(self.Print_OPTIMZ())
+
+        if self.Config1.Vars.TargetFlex.Count_SideChain() > 0:
+            config_file.write(self.Print_FLEXSC())
+
         config_file.write(self.Print_RMSDST())
         config_file.write(self.Print_IMATRX())
         config_file.write(self.Print_PERMEA())
@@ -492,29 +489,29 @@ class Manage:
         gaInp_file.close()
     
     ''' ==================================================================================
-    FUNCTION Create_FlexFile: Create the Flex file list that contain the residue selected 
-                              for the Flexible Side Chain.
+    FUNCTION Print_FLEXSC: Prints the lines of the flexible side-chains
     ==================================================================================  '''          
-    def Create_FlexFile(self,outfile):
+    def Print_FLEXSC(self):
         
-        FlexFile = open(outfile, 'w')
-                  
+        lines = ''
+        
         for item in self.Config1.Vars.TargetFlex.listSideChain:
-            lastch = len(item) - 1
-            ResName = item[0:3]
-            ChainID = item[lastch]
-            ResSeq = item[3:(lastch)]
-
-            Line = 'RESIDU ' + str(ResSeq).rjust(4) + ' ' + ChainID + ' ' + ResName + '\n'
-            FlexFile.write(Line)
+            try:
+                lastch = len(item) - 1
+                ResName = item[0:3]
+                ChainID = item[lastch]
+                ResSeq = int(item[3:(lastch)])
+            except ValueError:
+                continue
             
-
+            lines += 'FLEXSC %d %s %s\n' % (ResSeq, ChainID, ResName)
+            
         if os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','Lovell_LIB.dat')):
-            FlexFile.write('ROTLIB\n')
+            lines += 'ROTLIB\n'
         #if os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','rotobs.lst')):
-        #    FlexFile.write('ROTOBS\n')
+        #    lines += 'ROTOBS\n'
 
-        FlexFile.close()
+        return lines
 
     ''' ==================================================================================
     FUNCTION Create_ConsFile: Creates the constraints file
@@ -522,7 +519,7 @@ class Manage:
     def Create_ConsFile(self,outfile):
                     
         ConsFile = open(outfile, 'w')
-                  
+        
         for key in sorted(self.Config2.Vars.dictConstraints, key=str.lower):
             
             atom1 = self.Config2.parse_cons(self.Config2.Vars.dictConstraints[key][0])

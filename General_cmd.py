@@ -146,7 +146,7 @@ def Refresh_DDL(widget, var, exc, fun):
         widget['menu'].delete(0, END)
 
         if len(list) > 0:
-            list = [ item for item in list if not re.match(RESERVED_NAMES, item) ]
+            list = [ str(item) for item in list if not re.match(RESERVED_NAMES, item) ]
             
             for item in sorted(list, key=str.lower):
                 type = cmd.get_type(str(item))
