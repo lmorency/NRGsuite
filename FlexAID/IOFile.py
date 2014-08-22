@@ -1041,8 +1041,12 @@ class IOFile(Tabs.Tab):
                   Forced as flexible,
                   Number of atoms defining the bond,
                   Atom list defining bond ] '''
+
+            if self.Prefs.ToggleAllFlexibleBonds:
+                dictList = [ 1, 0, len(flexInfo[index]) ]
+            else:
+                dictList = [ 0, 0, len(flexInfo[index]) ]
             
-            dictList = [ 0, 0, len(flexInfo[index]) ]
             for i in range(0, len(flexInfo[index])):
                 dictList.append(flexInfo[index][i])
                 

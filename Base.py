@@ -27,7 +27,7 @@ import tkFont
 import Prefs
 import General
 
-class Base:
+class Base(object):
 
     ActiveWizard = None
     
@@ -43,7 +43,7 @@ class Base:
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
     ================================================================================== '''
-    def __init__(self, root, top, menuindex, Project_Dir, Install_Dir, NRGsuite_Dir, OSid, PyMOL, Name, WINDOWWIDTH, WINDOWHEIGHT):
+    def __init__(self, root, top, menuindex, Project_Dir, Install_Dir, NRGsuite_Dir, OSid, PyMOL, Name, WINDOWWIDTH, WINDOWHEIGHT, RootPrefs):
         
         self.Name = Name
         self.OSid = OSid
@@ -60,6 +60,8 @@ class Base:
         self.Set_Folders()
         self.Validate_Folders()
         
+        self.Prefs = RootPrefs
+
         self.Color_Green = '#CCFFCC'
         self.Color_Grey = '#EDEDED'
         self.Color_Gray = '#EDEDED'
@@ -72,7 +74,7 @@ class Base:
         self.root.title(self.Name)
 
         self.top = top
-        
+
         self.menuindex = menuindex
         if self.menuindex != -1:
             self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='disabled')
@@ -90,8 +92,9 @@ class Base:
         #================================================================================== 
         #                 SET the default fonts of the interface
         #==================================================================================
-        FontType = Prefs.GetFontType()
-        FontSize = Prefs.GetFontSize()
+        
+        FontType = self.Prefs.GetFontType()
+        FontSize = self.Prefs.GetFontSize()
         
         self.font_Title = tkFont.Font(family=FontType,size=FontSize, weight=tkFont.BOLD)
         self.font_Title_H = tkFont.Font(family=FontType,size=FontSize + 1, weight=tkFont.BOLD)

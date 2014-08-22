@@ -27,7 +27,7 @@ class Tab:
     # 100 ms
     TKINTER_UPDATE_INTERVAL = 100
     
-    def __init__(self, top, PyMOL, FrameButton, FrameName, Vars):
+    def __init__(self, top, PyMOL, FrameButton, FrameName, Vars, Prefs):
 
         self.PyMOL = PyMOL
 
@@ -53,6 +53,8 @@ class Tab:
         self.Def_Vars()
         self.Init_Vars()
         
+        self.Prefs = Prefs
+
         self.fFrame = self.Frame()
         self.Trace()
                 
