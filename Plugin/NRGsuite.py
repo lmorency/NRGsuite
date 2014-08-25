@@ -176,7 +176,7 @@ if OSid != 'UNKNOWN':
                                          command = lambda s=self, menuindex=9 : StartAbout(s, menuindex))
                 
                 # Make the Load  - Create projects button clickable only
-                EnableDisableMenu(self, ['normal','normal','disabled','disabled','disabled','disabled','normal'] )
+                EnableDisableMenu(self, ['normal','normal','disabled','normal','disabled','disabled','normal'] )
             
             #================================================================================
             # STARTING GetCleft Conditional... 
