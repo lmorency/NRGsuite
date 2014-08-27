@@ -159,10 +159,16 @@ class displayPrefs(Base.Base):
             self.Prefs.ToggleAllFlexibleBonds = 1
             return 1
 
+     ''' ====================================================================================================
+    FUNCTION Update_FontSize: Update the Prefs class with current FontSize value
+    ========================================================================================================  '''    
     def Update_FontSize(self, val):
         self.Prefs.FontSize = val
         self.FontSize_IntVar.set(val)
 
+     ''' ====================================================================================================
+    FUNCTION Update_FontTYpe: Update the Prefs class with current FontType value
+    ========================================================================================================  '''    
     def Update_FontType(self, val):
         self.Prefs.FontType = val
         self.FontType_StringVar.set(val)
