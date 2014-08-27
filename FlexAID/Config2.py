@@ -147,7 +147,7 @@ class Config2(Tabs.Tab):
             
             elif self.top.WizardResult > 0:
                 Status = ' (' + str(self.top.WizardResult) + ') flexible bond(s) set'
-                
+
             self.FlexStatus.set(Status)
     
     ''' ==================================================================================

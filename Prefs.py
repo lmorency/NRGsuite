@@ -32,16 +32,6 @@ import os
 import cPickle as pickle
 
 import Base
-# import NRGsuite
-
-
-class MyOptionMenu(OptionMenu):
-    def __init__(self, master, status, fonType, fontSize, *options):
-        self.var = StringVar(master)
-        self.var.set(status)
-        OptionMenu.__init__(self, master, self.var, *options)
-        self.config(font=(fontType,(fontSize)),width=12)
-        self['menu'].config(font=('fontType',(fontSize)))
 
 
 """ *********************************************************************************
@@ -79,7 +69,6 @@ class Prefs(object):
                     self.PreferenceFilePath = Preferences.PreferenceFilePath
                 else:
                     self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
-                print 'Load_User_Prefs completed'
 
             except Exception, e:
                 # Catch exceptions 
@@ -159,14 +148,14 @@ class displayPrefs(Base.Base):
             self.Prefs.ToggleAllFlexibleBonds = 1
             return 1
 
-     ''' ====================================================================================================
+    ''' ====================================================================================================
     FUNCTION Update_FontSize: Update the Prefs class with current FontSize value
     ========================================================================================================  '''    
     def Update_FontSize(self, val):
         self.Prefs.FontSize = val
         self.FontSize_IntVar.set(val)
 
-     ''' ====================================================================================================
+    ''' ====================================================================================================
     FUNCTION Update_FontTYpe: Update the Prefs class with current FontType value
     ========================================================================================================  '''    
     def Update_FontType(self, val):
@@ -239,7 +228,6 @@ class displayPrefs(Base.Base):
     FUNCTION After_Quit: Do some tasks after killing a frame
     ==================================================================================  '''
     def After_Quit(self):
-        # NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal' ])
         return
     ''' ==================================================================================
     FUNCTION Btn_Default_Clicked: Sets back the default config
