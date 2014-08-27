@@ -35,6 +35,18 @@ import Base
 # import NRGsuite
 
 
+class MyOptionMenu(OptionMenu):
+    def __init__(self, master, status, fonType, fontSize, *options):
+        self.var = StringVar(master)
+        self.var.set(status)
+        OptionMenu.__init__(self, master, self.var, *options)
+        self.config(font=(fontType,(fontSize)),width=12)
+        self['menu'].config(font=('fontType',(fontSize)))
+
+
+""" *********************************************************************************
+    CLASS Prefs: Main Class used to define NRGsuite preferences 
+    *********************************************************************************  """ 
 class Prefs(object):
 
     # FONT SETTINGS
@@ -69,7 +81,7 @@ class Prefs(object):
                     self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
                 print 'Load_User_Prefs completed'
 
-            except:
+            except Exception, e:
                 # Catch exceptions 
                 print 'exception entered in Prefs.Load_User_Prefs'
 
@@ -92,7 +104,7 @@ class Prefs(object):
         try:
             with open(self.PreferenceFilePath,"wb") as f:
                 pickle.dump(self,f)
-        except:
+        except Exception, e:
             # error code || error message required "unable to write preferences"
             print 'exception in Prefs.Write_User_Prefs'
             print self.PreferenceFilePath
@@ -112,15 +124,29 @@ class Prefs(object):
 class displayPrefs(Base.Base):
 
     def Def_Vars(self):
+        # IntVar() used for the ToggleAllFlexibleBonds Checkbutoton()
         self.ToggleAllFlexibleBonds_Var = IntVar(0)
+        # IntVar() used for the FontSize OptionMenu()
+        self.FontSize_IntVar = IntVar()
+        self.FontSize_IntVar.set(self.Prefs.DefaultFontSize)
+        # StringVar() used for the FontType OptionMenu()
+        self.FontType_StringVar = StringVar()
+        self.FontType_StringVar.set(self.Prefs.DefaultFontType)
 
     def Init_Vars(self):
+        # ToggleAllFlexibleBonds preferred value set
         if self.Prefs.ToggleAllFlexibleBonds == 1:
             self.ToggleAllFlexibleBonds_Var.set(1)
+        # FontType preferred value set
+        if self.Prefs.FontType != self.FontType_StringVar.get():
+            self.FontType_StringVar.set(self.Prefs.FontType)
+        # FontSize preferred value set
+        if self.Prefs.FontSize != self.FontSize_IntVar.get():
+            self.FontSize_IntVar.set(self.Prefs.FontSize)
 
-    ''' ==================================================================================
-    FUNCTION Frame_Main: 
-    =================================================================================  '''    
+    ''' ====================================================================================================
+    FUNCTION Update_ToggleAllFlexibleBonds: Update the Prefs class with current ToggleAllFlexibleBonds value
+    ========================================================================================================  '''    
     def Update_ToggleAllFlexibleBonds(self):
         # if self.ToggleAllFlexibleBonds_Var.get() == 1 and self.Prefs.ToggleAllFlexibleBonds == 1:
         if self.Prefs.ToggleAllFlexibleBonds == 1:
@@ -132,6 +158,14 @@ class displayPrefs(Base.Base):
             self.ToggleAllFlexibleBonds_Var.set(1)
             self.Prefs.ToggleAllFlexibleBonds = 1
             return 1
+
+    def Update_FontSize(self, val):
+        self.Prefs.FontSize = val
+        self.FontSize_IntVar.set(val)
+
+    def Update_FontType(self, val):
+        self.Prefs.FontType = val
+        self.FontType_StringVar.set(val)
 
     ''' ==================================================================================
     FUNCTION SaveDefault: Save & Write the user's preferences into Preference file
@@ -149,18 +183,35 @@ class displayPrefs(Base.Base):
         fText = Frame(self.fMain, border=1)#, bg='red')
         fText.pack(fill=X, side=TOP, pady=10)
 
-        Title = Label(fText, text='NRGsuite Preferences Panel', height=3, font=self.font_Title)
+        Title = Label(fText, text='NRGsuite Preferences Panel', height=3, font=(self.Prefs.FontType,18))
         Title.pack(side=TOP, anchor=N)
+        Title.pack_propagate(0)
+        # fSep = Frame(fText, height=20, border=1) #, bg='green')
+        # fSep.pack(side=TOP, fill=X)
+        # fSep.pack_propagate(0)
 
-        FontType = Label(fText, text='Preferred Font Type')
-        FontType.pack(side=TOP)
-        FontSize = Label(fText, text='Preferred Font Size')
-        FontSize.pack(side=TOP)
+        # FonType OptionMenu widget
+        fFont_options = Frame(fText)
+        fFont_options.pack(side=TOP,fill=X,padx=5,pady=5)
+        
+        fFontType_Label = Label(fFont_options, text='Preferred Font Type : ', font=(self.Prefs.FontType,16))
+        fFontType_Label.pack(side=LEFT)
+        # fFontType_Label.pack_propagate(0)
 
-        fSep = Frame(fText, height=20, border=1) #, bg='green')
-        fSep.pack(side=TOP, fill=X)
+        fontypes = ["arial", "tahoma", "helvetica", "times"]
+        fFontType_OptionMenu = OptionMenu(fFont_options, self.FontType_StringVar,*fontypes,command=self.Update_FontType)
+        fFontType_OptionMenu.pack(side=LEFT)
+        # fFontType_OptionMenu.pack_propagate(0)
 
-        ToggleAllFlexibleBonds = Checkbutton(fText,variable=self.ToggleAllFlexibleBonds_Var,command=self.Update_ToggleAllFlexibleBonds,text='Automatically consider all rotable bonds of the ligand as flexible during the simulation')
+        fFontSize_Label = Label(fFont_options, text=' : Preferred Font Size', font=(self.Prefs.FontType,16))
+        fFontSize_Label.pack(side=RIGHT)
+
+        fontsizes = [10,11,12,13,14]
+        fFontSize_OptionMenu = OptionMenu(fFont_options, self.FontSize_IntVar,*fontsizes,command=self.Update_FontSize)
+        fFontSize_OptionMenu.pack(side=RIGHT)
+        
+
+        ToggleAllFlexibleBonds = Checkbutton(fTop,variable=self.ToggleAllFlexibleBonds_Var,command=self.Update_ToggleAllFlexibleBonds,text='Automatically consider all rotable bonds of the ligand as flexible during the simulation')
         ToggleAllFlexibleBonds.pack(side=TOP)
 
         fButtons = Frame(fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=50)#, bg='green')
@@ -177,7 +228,6 @@ class displayPrefs(Base.Base):
         fButtons.pack(side=RIGHT, fill=X, expand=True)
         fButtons.pack_propagate(0)
         fTop.pack(fill=X, side=TOP, pady=10)
-        # fTomp.
 
     ''' ==================================================================================
     FUNCTION After_Quit: Do some tasks after killing a frame
