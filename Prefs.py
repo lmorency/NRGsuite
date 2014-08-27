@@ -181,9 +181,6 @@ class displayPrefs(Base.Base):
         Title = Label(fText, text='NRGsuite Preferences Panel', height=3, font=(self.Prefs.FontType,18))
         Title.pack(side=TOP, anchor=N)
         Title.pack_propagate(0)
-        # fSep = Frame(fText, height=20, border=1) #, bg='green')
-        # fSep.pack(side=TOP, fill=X)
-        # fSep.pack_propagate(0)
 
         # FonType OptionMenu widget
         fFont_options = Frame(fText)
@@ -224,11 +221,6 @@ class displayPrefs(Base.Base):
         fButtons.pack_propagate(0)
         fTop.pack(fill=X, side=TOP, pady=10)
 
-    ''' ==================================================================================
-    FUNCTION After_Quit: Do some tasks after killing a frame
-    ==================================================================================  '''
-    def After_Quit(self):
-        return
     ''' ==================================================================================
     FUNCTION Btn_Default_Clicked: Sets back the default config
     ================================================================================== '''    
@@ -272,12 +264,4 @@ class displayPrefs(Base.Base):
 
         self.TextMessage.yview(INSERT)        
         self.TextMessage.config(state='disabled')
-                
-
-    ''' ==================================================================================
-    FUNCTION Before_Quit: Execute tasks before exitting the application
-    ==================================================================================  '''
-    def Before_Quit(self):
-    
-        return
         
