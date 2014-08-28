@@ -190,7 +190,7 @@ class displayPrefs(Base.Base):
         fFontType_Label.pack(side=LEFT)
         # fFontType_Label.pack_propagate(0)
 
-        fontypes = ["arial", "tahoma", "helvetica", "times"]
+        fontypes = ["Arial", "Tahoma", "Helvetica", "Times"]
         fFontType_OptionMenu = OptionMenu(fFont_options, self.FontType_StringVar,*fontypes,command=self.Update_FontType)
         fFontType_OptionMenu.pack(side=LEFT)
         # fFontType_OptionMenu.pack_propagate(0)
@@ -203,23 +203,23 @@ class displayPrefs(Base.Base):
         fFontSize_OptionMenu.pack(side=RIGHT)
         
 
-        ToggleAllFlexibleBonds = Checkbutton(fTop,variable=self.ToggleAllFlexibleBonds_Var,command=self.Update_ToggleAllFlexibleBonds,text='Automatically consider all rotable bonds of the ligand as flexible during the simulation')
+        ToggleAllFlexibleBonds = Checkbutton(fTop,variable=self.ToggleAllFlexibleBonds_Var,command=self.Update_ToggleAllFlexibleBonds,text='Automatically consider all rotable bonds of the ligand as flexible during the simulation',font=(self.Prefs.FontType,self.Prefs.FontSize))
         ToggleAllFlexibleBonds.pack(side=TOP)
 
-        fButtons = Frame(fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=50)#, bg='green')
+        fButtons = Frame(fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=60)#, bg='green')
 
-        Btn_Save = Button(fButtons, text='Save Preferences', width=12, command=self.Btn_Save_Clicked, font=self.font_Text)
-        Btn_Save.pack(side=RIGHT,anchor=SE,pady=3)
+        Btn_Save = Button(fButtons, text='Save Preferences', width=12, command=self.Btn_Save_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Btn_Save.pack(side=RIGHT,anchor=S,pady=0)
 
-        Btn_Restore_Default = Button(fButtons, text='Restore Defaults', width=12, command=self.Btn_Default_Clicked, font=self.font_Text)
-        Btn_Restore_Default.pack(side=RIGHT, anchor=SE,pady=3)
+        Btn_Restore_Default = Button(fButtons, text='Restore Defaults', width=12, command=self.Btn_Default_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Btn_Restore_Default.pack(side=RIGHT, anchor=S,pady=0)
 
-        Btn_Cancel = Button(fButtons, text='Cancel', width=12, command=self.Btn_Cancel_Clicked, font=self.font_Text)
-        Btn_Cancel.pack(side=RIGHT, anchor=SE, pady=3)
+        Btn_Cancel = Button(fButtons, text='Cancel', width=12, command=self.Btn_Cancel_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Btn_Cancel.pack(side=RIGHT, anchor=S, pady=0)
 
         fButtons.pack(side=RIGHT, fill=X, expand=True)
         fButtons.pack_propagate(0)
-        fTop.pack(fill=X, side=TOP, pady=10)
+        fTop.pack(fill=X, side=TOP, pady=0)
 
     ''' ==================================================================================
     FUNCTION Btn_Default_Clicked: Sets back the default config
