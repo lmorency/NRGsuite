@@ -40,8 +40,8 @@ import Base
 class Prefs(object):
 
     # FONT SETTINGS
-    DefaultFontType = 'helvetica'
-    DefaultFontSize = 10
+    DefaultFontType = 'Helvetica'
+    DefaultFontSize = 11
 
     def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0,PreferenceFilePath = None):
         self.FontType = self.DefaultFontType
@@ -173,7 +173,7 @@ class displayPrefs(Base.Base):
     =================================================================================  '''    
     def Frame_Main(self):
         self.Prefs.Load_User_Prefs()
-        fTop = Frame(self.fMain, height=100, border=1)#, bg='blue')
+        fTop = Frame(self.fMain, height=25, border=1)#, bg='blue')
 
         fText = Frame(self.fMain, border=1)#, bg='red')
         fText.pack(fill=X, side=TOP, pady=10)
@@ -190,18 +190,21 @@ class displayPrefs(Base.Base):
         fFontType_Label.pack(side=LEFT)
         # fFontType_Label.pack_propagate(0)
 
-        fontypes = ["Arial", "Tahoma", "Helvetica", "Times"]
+        fontypes = ["Arial", "Tahoma", "Helvetica", "Courrier", "Lucida", "Times"]
+        fontypes.sort()
         fFontType_OptionMenu = OptionMenu(fFont_options, self.FontType_StringVar,*fontypes,command=self.Update_FontType)
+        fFontType_OptionMenu.configure(font=(self.Prefs.FontType,self.Prefs.FontSize))
         fFontType_OptionMenu.pack(side=LEFT)
-        # fFontType_OptionMenu.pack_propagate(0)
+        fFontType_OptionMenu.pack_propagate(0)
 
         fFontSize_Label = Label(fFont_options, text=' : Preferred Font Size', font=(self.Prefs.FontType,16))
         fFontSize_Label.pack(side=RIGHT)
 
         fontsizes = [10,11,12,13,14]
         fFontSize_OptionMenu = OptionMenu(fFont_options, self.FontSize_IntVar,*fontsizes,command=self.Update_FontSize)
+        fFontSize_OptionMenu.configure(font=(self.Prefs.FontType,self.Prefs.FontSize))
         fFontSize_OptionMenu.pack(side=RIGHT)
-        
+        fFontSize_OptionMenu.pack_propagate(0)
 
         ToggleAllFlexibleBonds = Checkbutton(fTop,variable=self.ToggleAllFlexibleBonds_Var,command=self.Update_ToggleAllFlexibleBonds,text='Automatically consider all rotable bonds of the ligand as flexible during the simulation',font=(self.Prefs.FontType,self.Prefs.FontSize))
         ToggleAllFlexibleBonds.pack(side=TOP)
