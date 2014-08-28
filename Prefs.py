@@ -71,7 +71,8 @@ class Prefs(object):
                     self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
 
             except Exception, e:
-                # Catch exceptions 
+                # Catch exceptions
+                self.Load_User_Prefs()
                 print 'exception entered in Prefs.Load_User_Prefs'
 
     ''' ==================================================================================
