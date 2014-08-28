@@ -193,7 +193,8 @@ class displayPrefs(Base.Base):
 
         fontypes = ["Arial", "Tahoma", "Helvetica", "Courrier", "Lucida", "Times"]
         fontypes.sort()
-        fFontType_OptionMenu = OptionMenu(fFont_options, self.FontType_StringVar,*fontypes,command=self.Update_FontType)
+        fFontType_OptionMenu = OptionMenu(fFont_options, self.FontType_StringVar,
+                                          command=self.Update_FontType, *fontypes)
         fFontType_OptionMenu.configure(font=(self.Prefs.FontType,self.Prefs.FontSize))
         fFontType_OptionMenu.pack(side=LEFT)
         fFontType_OptionMenu.pack_propagate(0)
@@ -202,7 +203,8 @@ class displayPrefs(Base.Base):
         fFontSize_Label.pack(side=RIGHT)
 
         fontsizes = [10,11,12,13,14]
-        fFontSize_OptionMenu = OptionMenu(fFont_options, self.FontSize_IntVar,*fontsizes,command=self.Update_FontSize)
+        fFontSize_OptionMenu = OptionMenu(fFont_options, self.FontSize_IntVar,
+                                          command=self.Update_FontSize,*fontsizes)
         fFontSize_OptionMenu.configure(font=(self.Prefs.FontType,self.Prefs.FontSize))
         fFontSize_OptionMenu.pack(side=RIGHT)
         fFontSize_OptionMenu.pack_propagate(0)
