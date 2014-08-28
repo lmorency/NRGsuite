@@ -69,26 +69,26 @@ class displayAbout(Base.Base):
         fText = Frame(self.fMain, border=1) #, bg='yellow')
         fText.pack(fill=X,side=TOP, pady=10)
         
-        Title = Label(fText, text='NRGsuite', height=3, font=(self.Prefs.FontType, 16))
+        Title = Label(fText, text='NRGsuite', height=3, font=self.font_Title)
         Title.pack(side=TOP, anchor=N)
         
-        Development = Label(fText, text='Developped by Francis Gaudreault', font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Development = Label(fText, text='Developped by Francis Gaudreault', font=self.font_Text)
         Development.pack(side=TOP)
-        Supervision = Label(fText, text='Supervised by Dr. Rafael Najmanovich', font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Supervision = Label(fText, text='Supervised by Dr. Rafael Najmanovich', font=self.font_Text)
         Supervision.pack(side=TOP)
-        Thanks = Label(fText, text='Special thanks to Eugène Morin and Dominic Duchêne', font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Thanks = Label(fText, text='Special thanks to Eugène Morin and Dominic Duchêne', font=self.font_Text)
         Thanks.pack(side=TOP)
 
         fSep = Frame(fText, height=20, border=1) #, bg='green')
         fSep.pack(side=TOP, fill=X)
 
-        Version = Label(fText, text='Version ' + self.VERSION, height=3, font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Version = Label(fText, text='Version ' + self.VERSION, height=3, font=self.font_Text)
         Version.pack(side=TOP)
         
-        Copyright = Label(fText, text='Copyright © 2010-2014 Najmanovich Research Group', font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Copyright = Label(fText, text='Copyright © 2010-2014 Najmanovich Research Group', font=self.font_Text)
         Copyright.pack(side=TOP)
 
-        Rights = Label(fText, text='All rights reserved', font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Rights = Label(fText, text='All rights reserved', font=self.font_Text)
         Rights.pack(side=TOP)
         
     ''' ==================================================================================

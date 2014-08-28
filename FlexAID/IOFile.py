@@ -1042,7 +1042,7 @@ class IOFile(Tabs.Tab):
                   Number of atoms defining the bond,
                   Atom list defining bond ] '''
 
-            if self.Prefs.ToggleAllFlexibleBonds:
+            if self.Prefs.ToggleAllFlexibleBonds == 1:
                 dictList = [ 1, 0, len(flexInfo[index]) ]
             else:
                 dictList = [ 0, 0, len(flexInfo[index]) ]

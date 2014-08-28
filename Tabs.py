@@ -31,6 +31,8 @@ class Tab(object):
 
         self.PyMOL = PyMOL
 
+        self.Prefs = Prefs
+        
         self.top = top
         self.Tab = FrameButton
         self.FrameName = FrameName
@@ -52,8 +54,6 @@ class Tab(object):
         self.Vars = Vars
         self.Def_Vars()
         self.Init_Vars()
-        
-        self.Prefs = Prefs
 
         self.fFrame = self.Frame()
         self.Trace()

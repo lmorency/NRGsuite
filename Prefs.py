@@ -72,7 +72,6 @@ class Prefs(object):
 
             except Exception, e:
                 # Catch exceptions
-                self.Load_User_Prefs()
                 print 'exception entered in Prefs.Load_User_Prefs'
 
     ''' ==================================================================================
@@ -98,7 +97,6 @@ class Prefs(object):
         except Exception, e:
             # error code || error message required "unable to write preferences"
             print 'exception in Prefs.Write_User_Prefs'
-            print self.PreferenceFilePath
 
     ''' ==================================================================================
     FUNCTION Write_User_Prefs: Save & Write the user's preferences into Preference file
@@ -180,7 +178,7 @@ class displayPrefs(Base.Base):
         fText = Frame(self.fMain, border=1)#, bg='red')
         fText.pack(fill=X, side=TOP, pady=10)
 
-        Title = Label(fText, text='NRGsuite Preferences Panel', height=3, font=(self.Prefs.FontType,18))
+        Title = Label(fText, text='NRGsuite Preferences Panel', height=3, font=self.font_Title_H)
         Title.pack(side=TOP, anchor=N)
         Title.pack_propagate(0)
 
@@ -188,7 +186,7 @@ class displayPrefs(Base.Base):
         fFont_options = Frame(fText)
         fFont_options.pack(side=TOP,fill=X,padx=5,pady=5)
         
-        fFontType_Label = Label(fFont_options, text='Preferred Font Type : ', font=(self.Prefs.FontType,16))
+        fFontType_Label = Label(fFont_options, text='Preferred Font Type : ', font=self.font_Text_H)
         fFontType_Label.pack(side=LEFT)
         # fFontType_Label.pack_propagate(0)
 
@@ -196,32 +194,32 @@ class displayPrefs(Base.Base):
         fontypes.sort()
         fFontType_OptionMenu = OptionMenu(fFont_options, self.FontType_StringVar,
                                           command=self.Update_FontType, *fontypes)
-        fFontType_OptionMenu.configure(font=(self.Prefs.FontType,self.Prefs.FontSize))
+        fFontType_OptionMenu.configure(font=self.font_Text)
         fFontType_OptionMenu.pack(side=LEFT)
         fFontType_OptionMenu.pack_propagate(0)
 
-        fFontSize_Label = Label(fFont_options, text=' : Preferred Font Size', font=(self.Prefs.FontType,16))
+        fFontSize_Label = Label(fFont_options, text=' : Preferred Font Size', font=self.font_Text_H)
         fFontSize_Label.pack(side=RIGHT)
 
         fontsizes = [10,11,12,13,14]
         fFontSize_OptionMenu = OptionMenu(fFont_options, self.FontSize_IntVar,
                                           command=self.Update_FontSize,*fontsizes)
-        fFontSize_OptionMenu.configure(font=(self.Prefs.FontType,self.Prefs.FontSize))
+        fFontSize_OptionMenu.configure(font=self.font_Text)
         fFontSize_OptionMenu.pack(side=RIGHT)
         fFontSize_OptionMenu.pack_propagate(0)
 
-        ToggleAllFlexibleBonds = Checkbutton(fTop,variable=self.ToggleAllFlexibleBonds_Var,command=self.Update_ToggleAllFlexibleBonds,text='Automatically consider all rotable bonds of the ligand as flexible during the simulation',font=(self.Prefs.FontType,self.Prefs.FontSize))
+        ToggleAllFlexibleBonds = Checkbutton(fTop,variable=self.ToggleAllFlexibleBonds_Var,command=self.Update_ToggleAllFlexibleBonds,text='Automatically consider all rotable bonds of the ligand as flexible during the simulation',font=self.font_Text)
         ToggleAllFlexibleBonds.pack(side=TOP)
 
         fButtons = Frame(fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=60)#, bg='green')
 
-        Btn_Save = Button(fButtons, text='Save Preferences', width=12, command=self.Btn_Save_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Btn_Save = Button(fButtons, text='Save Preferences', width=12, command=self.Btn_Save_Clicked, font=self.font_Text)
         Btn_Save.pack(side=RIGHT,anchor=S,pady=0)
 
-        Btn_Restore_Default = Button(fButtons, text='Restore Defaults', width=12, command=self.Btn_Default_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Btn_Restore_Default = Button(fButtons, text='Restore Defaults', width=12, command=self.Btn_Default_Clicked, font=self.font_Text)
         Btn_Restore_Default.pack(side=RIGHT, anchor=S,pady=0)
 
-        Btn_Cancel = Button(fButtons, text='Cancel', width=12, command=self.Btn_Cancel_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
+        Btn_Cancel = Button(fButtons, text='Cancel', width=12, command=self.Btn_Cancel_Clicked, font=self.font_Text)
         Btn_Cancel.pack(side=RIGHT, anchor=S, pady=0)
 
         fButtons.pack(side=RIGHT, fill=X, expand=True)
