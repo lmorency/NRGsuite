@@ -46,7 +46,7 @@ class Prefs(object):
     def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0,PreferenceFilePath = None):
         self.FontType = self.DefaultFontType
         self.FontSize = self.DefaultFontSize
-        self.ToggleAllFlexibleBonds = 0
+        self.ToggleAllFlexibleBonds = ToggleAllFlexibleBonds
         self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
         self.Load_User_Prefs()
 
@@ -72,7 +72,7 @@ class Prefs(object):
 
             except Exception, e:
                 # Catch exceptions
-                print 'exception entered in Prefs.Load_User_Prefs'
+                print 'exception caught in Prefs.Load_User_Prefs'
 
     ''' ==================================================================================
     FUNCTION GetFontType: Returns the font type preferred by the user
@@ -96,7 +96,7 @@ class Prefs(object):
             f.close()
         except Exception, e:
             # error code || error message required "unable to write preferences"
-            print 'exception in Prefs.Write_User_Prefs'
+            print 'exception caught in Prefs.Write_User_Prefs'
 
     ''' ==================================================================================
     FUNCTION Write_User_Prefs: Save & Write the user's preferences into Preference file
