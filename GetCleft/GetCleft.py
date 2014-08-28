@@ -72,10 +72,10 @@ class displayGetCleft(Base.Base):
     def Build_Tabs(self):
     
         # Build class objects of each tab
-        self.Default = Default.Default(self, self.PyMOL, self.Btn_Config, 'Default', None)
+        self.Default = Default.Default(self, self.PyMOL, self.Btn_Config, 'Default', None, self.Prefs)
         self.Manage = ManageFiles2.Manage(self)
-        self.Crop = CropCleft.CropCleft(self, self.PyMOL, self.Btn_CropCleft, 'Partition', None)
-        self.Volume = Volume.EstimateVolume(self, self.PyMOL, self.Btn_Volume, 'Volume', None)
+        self.Crop = CropCleft.CropCleft(self, self.PyMOL, self.Btn_CropCleft, 'Partition', None, self.Prefs)
+        self.Volume = Volume.EstimateVolume(self, self.PyMOL, self.Btn_Volume, 'Volume', None, self.Prefs)
         
         self.listBtnTabs = [ self.Btn_Config, self.Btn_Volume, self.Btn_CropCleft ]
         self.listTabs = [ self.Default, self.Crop, self.Volume ]
@@ -140,15 +140,15 @@ class displayGetCleft(Base.Base):
         fTop.pack(fill=BOTH, expand=True)#, padx=10, pady=10, ipady=10, ipadx=10, side=TOP)
         fTop.pack_propagate(0)
         
-        self.Btn_Config = Button(fTop, text='Generate', bg=self.Color_White, command=self.Btn_Config_Clicked, font=self.font_Text)
+        self.Btn_Config = Button(fTop, text='Generate', bg=self.Color_White, command=self.Btn_Config_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
         self.Btn_Config.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Config.config(state='normal')
 
-        self.Btn_CropCleft = Button(fTop, text='Partition', bg=self.Color_Grey, command=self.Btn_CropCleft_Clicked, font=self.font_Text)
+        self.Btn_CropCleft = Button(fTop, text='Partition', bg=self.Color_Grey, command=self.Btn_CropCleft_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
         self.Btn_CropCleft.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_CropCleft.config(state='disabled')
 
-        self.Btn_Volume = Button(fTop, text='Volume', bg=self.Color_Grey, command=self.Btn_Volume_Clicked, font=self.font_Text)
+        self.Btn_Volume = Button(fTop, text='Volume', bg=self.Color_Grey, command=self.Btn_Volume_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
         self.Btn_Volume.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Volume.config(state='disabled')
 
@@ -169,16 +169,16 @@ class displayGetCleft(Base.Base):
         fBottomRight = Frame(fBottom)
         fBottomRight.pack(fill=Y, side=RIGHT)
 
-        Btn_Default = Button(fBottomRight, text='Default', command=self.Btn_Default_Clicked, font=self.font_Text)
+        Btn_Default = Button(fBottomRight, text='Default', command=self.Btn_Default_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
         Btn_Default.pack(side=TOP, fill=X)
 
-        #Btn_SaveDefault = Button(fBottomRight, text='Save as default', command=self.Btn_SaveDefault_Clicked, font=self.font_Text)
+        #Btn_SaveDefault = Button(fBottomRight, text='Save as default', command=self.Btn_SaveDefault_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
         #Btn_SaveDefault.pack(side=TOP, fill=X)
 
-        #Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=self.font_Text)
+        #Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=(self.Prefs.FontType,self.Prefs.FontSize))
         #Btn_Restore.pack(side=TOP, fill=X)
 
-        Btn_Quit = Button(fBottomRight, text='Close', command=self.Quit, font=self.font_Text)
+        Btn_Quit = Button(fBottomRight, text='Close', command=self.Quit, font=(self.Prefs.FontType,self.Prefs.FontSize))
         Btn_Quit.pack(side=BOTTOM, fill=X)
 
         fBottomLeft = Frame(fBottom)
@@ -190,7 +190,7 @@ class displayGetCleft(Base.Base):
         scrollBar = Scrollbar(fBottomLeft)
         scrollBar.pack(side=RIGHT, fill=Y)
 
-        self.TextMessage = Text(fBottomLeft, border=1, background=self.Color_Grey, font=self.font_Text)
+        self.TextMessage = Text(fBottomLeft, border=1, background=self.Color_Grey, font=(self.Prefs.FontType,self.Prefs.FontSize))
         self.TextMessage.pack(side=RIGHT, fill=BOTH, expand=True)
 
         scrollBar.config(command=self.TextMessage.yview)

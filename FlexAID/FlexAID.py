@@ -198,27 +198,27 @@ class displayFlexAID(Base.Base):
         self.fTop.pack(fill=BOTH, expand=True)#, padx=10, pady=10, ipady=10, ipadx=10, side=TOP)
         self.fTop.pack_propagate(0)
 
-        self.Btn_IOFiles = Button(self.fTop, text='Input Files', bg=self.Color_White, command=self.Btn_IOFiles_Clicked, font=self.font_Text)
+        self.Btn_IOFiles = Button(self.fTop, text='Input Files', bg=self.Color_White, command=self.Btn_IOFiles_Clicked, font=(self.Prefs.FontType, self.Prefs.FontSize))
         self.Btn_IOFiles.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_IOFiles.config(state='normal')
 
-        self.Btn_Config1 = Button(self.fTop, text='Target Cfg', bg=self.Color_Grey, command=self.Btn_Config1_Clicked, font=self.font_Text)
+        self.Btn_Config1 = Button(self.fTop, text='Target Cfg', bg=self.Color_Grey, command=self.Btn_Config1_Clicked, font=(self.Prefs.FontType, self.Prefs.FontSize))
         self.Btn_Config1.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Config1.config(state='disabled')
 
-        self.Btn_Config2 = Button(self.fTop, text='Ligand Cfg', bg=self.Color_Grey, command=self.Btn_Config2_Clicked, font=self.font_Text)
+        self.Btn_Config2 = Button(self.fTop, text='Ligand Cfg', bg=self.Color_Grey, command=self.Btn_Config2_Clicked, font=(self.Prefs.FontType, self.Prefs.FontSize))
         self.Btn_Config2.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Config2.config(state='disabled')
 
-        self.Btn_Config3 = Button(self.fTop, text='Scoring Cfg', bg=self.Color_Grey, command=self.Btn_Config3_Clicked, font=self.font_Text)
+        self.Btn_Config3 = Button(self.fTop, text='Scoring Cfg', bg=self.Color_Grey, command=self.Btn_Config3_Clicked, font=(self.Prefs.FontType, self.Prefs.FontSize))
         self.Btn_Config3.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Config3.config(state='disabled')
         
-        self.Btn_GAParam = Button(self.fTop, text='GA Param', bg=self.Color_Grey, command=self.Btn_GAParam_Clicked, font=self.font_Text)
+        self.Btn_GAParam = Button(self.fTop, text='GA Param', bg=self.Color_Grey, command=self.Btn_GAParam_Clicked, font=(self.Prefs.FontType, self.Prefs.FontSize))
         self.Btn_GAParam.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_GAParam.config(state='disabled')    
 
-        self.Btn_Simulate = Button(self.fTop, text='Simulate', bg=self.Color_Grey, command=self.Btn_Simulate_Clicked, font=self.font_Text)
+        self.Btn_Simulate = Button(self.fTop, text='Simulate', bg=self.Color_Grey, command=self.Btn_Simulate_Clicked, font=(self.Prefs.FontType, self.Prefs.FontSize))
         self.Btn_Simulate.pack(side=LEFT, fill=BOTH, expand=True)
         self.Btn_Simulate.config(state='disabled') 
                 
@@ -243,16 +243,16 @@ class displayFlexAID(Base.Base):
         fBottomRight = Frame(fBottom)
         fBottomRight.pack(fill=Y, side=RIGHT)
 
-        Btn_Default = Button(fBottomRight, text='Default', width=15, command=self.Btn_Default_Clicked, font=self.font_Text)
+        Btn_Default = Button(fBottomRight, text='Default', width=15, command=self.Btn_Default_Clicked, font=(self.Prefs.FontType, self.Prefs.FontSize))
         Btn_Default.pack(side=TOP, fill=X)
 
-        #Btn_SaveDefault = Button(fBottomRight, text='Save as default', command=self.Btn_SaveDefault_Clicked, font=self.font_Text)
+        #Btn_SaveDefault = Button(fBottomRight, text='Save as default', command=self.Btn_SaveDefault_Clicked, font=(self.Prefs.FontType, self.Prefs.FontSize))
         #Btn_SaveDefault.pack(side=TOP, fill=X)
 
-        #Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=self.font_Text)
+        #Btn_Restore = Button(fBottomRight, text='Restore', command=self.Btn_Restore_Clicked, font=(self.Prefs.FontType, self.Prefs.FontSize))
         #Btn_Restore.pack(side=TOP, fill=X)
 
-        Btn_Quit = Button(fBottomRight, text='Close', width=15, command=self.Quit, font=self.font_Text)
+        Btn_Quit = Button(fBottomRight, text='Close', width=15, command=self.Quit, font=(self.Prefs.FontType, self.Prefs.FontSize))
         Btn_Quit.pack(side=BOTTOM, fill=X)
 
         fBottomLeft = Frame(fBottom)
@@ -261,7 +261,7 @@ class displayFlexAID(Base.Base):
         scrollBar = Scrollbar(fBottomLeft)
         scrollBar.pack(side=RIGHT, fill=Y)
 
-        self.TextMessage = Text(fBottomLeft, border=1, background=self.Color_Grey, font=self.font_Text)
+        self.TextMessage = Text(fBottomLeft, border=1, background=self.Color_Grey, font=(self.Prefs.FontType, self.Prefs.FontSize))
         self.TextMessage.pack(side=RIGHT, fill=BOTH, expand=True)
 
         scrollBar.config(command=self.TextMessage.yview)
