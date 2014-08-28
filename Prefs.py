@@ -60,6 +60,7 @@ class Prefs(object):
                 # loading pickle object directly from user's preference file
                 f = open(self.PreferenceFilePath, "rb")
                 Preferences = pickle.load(f)
+                f.close()
                 self.FontType = Preferences.FontType
                 self.FontSize = Preferences.FontSize
                 if Preferences.ToggleAllFlexibleBonds == 1:
@@ -92,6 +93,7 @@ class Prefs(object):
         try:
             f = open(self.PreferenceFilePath,"wb")
             pickle.dump(self,f)
+            f.close()
         except Exception, e:
             # error code || error message required "unable to write preferences"
             print 'exception in Prefs.Write_User_Prefs'
