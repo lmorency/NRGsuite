@@ -39,6 +39,7 @@ import Geometry
 
 class constraint(Wizard):
 
+    AtomDisplay = 'HIGHLIGHT_ATOM__'
     CYLINDER_WIDTH = 0.06
     
     DefaultConsDist = '2.5'
@@ -61,7 +62,8 @@ class constraint(Wizard):
         self.FlexAID = self.top.top
 
         self.RefLigand = self.FlexAID.IOFile.ProcessedLigandPath.get()
-        
+        self.TargetName = self.FlexAID.IOFile.TargetName.get()
+
         self.ActiveCons = self.top.ActiveCons
         self.dictConstraints = self.top.Vars.dictConstraints
         
@@ -165,6 +167,9 @@ class constraint(Wizard):
             cmd.delete(self.LigDisplay)
             cmd.refresh()
 
+            cmd.delete(self.AtomDisplay)
+            cmd.refresh()
+
             cmd.deselect()
             cmd.unpick()
             
@@ -258,6 +263,7 @@ class constraint(Wizard):
             
             if len(self.atom1) > 0:
                 self.pickNextAtom()
+                self.highlight_Atom(self.atom1)
             
         else:
             self.atom2 = self.get_Atom(name)
@@ -265,8 +271,9 @@ class constraint(Wizard):
             if len(self.atom2) > 0:
                 if self.AnalyzeConstraint(self.atom1,self.atom2):
                     self.ErrorStatus = [ "An unexpected error occured. Try again." ]
-
+                self.highlight_Atom(self.atom2)
             self.pick_count = 0
+            cmd.delete(self.AtomDisplay)
             cmd.refresh_wizard()
 
     #=======================================================================
@@ -289,7 +296,6 @@ class constraint(Wizard):
             #        0     1      2     3     4
             #atom1 [907, 'BTN', '300', 'A', 'O3', 14.692000389099121, -0.44600000977516174, -8.2049999237060547] + name
             #atom2 [234, 'SER', '45', 'A', 'OG', 14.543999671936035, 0.81300002336502075, -12.081999778747559]
-            
             if atom1[3] == '': atom1[3] = '-'
             if atom2[3] == '': atom2[3] = '-'
 
@@ -301,7 +307,6 @@ class constraint(Wizard):
                 leftsel += ' & chain ' + atom1[3]
             else:
                 leftsel += ' & chain \'\''
-            
             obj = self.Get_Target_or_Lig(leftsel)
             if not obj:
                 self.ErrorStatus = [ "You can only select atoms from the target or the constraint ligand objects. Try again." ]
@@ -314,14 +319,12 @@ class constraint(Wizard):
                     rightsel += ' & chain ' + atom2[3]
                 else:
                     rightsel += ' & chain \'\''
-                    
                 obj = self.Get_Target_or_Lig(rightsel)
                 if not obj:
                     self.ErrorStatus = [ "You can only select atoms from the target or the constraint ligand objects. Try again." ]
                     
                 else:
                     rightsel += obj
-
 
                     leftkey  = '#' + str(General_cmd.get_ID(atom1[0], leftsel))
                     while len(atom1[1]) != 3:
@@ -345,7 +348,6 @@ class constraint(Wizard):
                         self.ErrorStatus = [ "The selected constraint already exists. Try again." ]
 
                     else:
-                    
                         pointA = [ atom1[5], atom1[6], atom1[7] ]
                         pointB = [ atom2[5], atom2[6], atom2[7] ]
                         
@@ -365,12 +367,14 @@ class constraint(Wizard):
                                                             dist,                                # value of slider
                                                             middle                               # pseudoatom location
                                                         ]
-                                                        
-                        if not self.ActiveCons.get():
-                            self.queue.put(lambda: self.ActiveCons.set(distobj))
-                        else:
-                            self.refresh_display()
+                        
+                        self.queue.put(lambda: self.ActiveCons.set(distobj))
+                        self.refresh_display()
 
+                        # if self.ActiveCons.get() == '':
+                        #     self.queue.put(lambda: self.ActiveCons.set(distobj))
+                        # else:
+                        #     self.refresh_display()
         except:            
             return 1
         
@@ -381,8 +385,8 @@ class constraint(Wizard):
     #=======================================================================
     def Get_Target_or_Lig(self, sele):
 
-        if cmd.count_atoms(sele + ' & ' + self.FlexAID.IOFile.TargetName.get()):
-            return ' & ' + self.FlexAID.IOFile.TargetName.get()
+        if cmd.count_atoms(sele + ' & ' + self.TargetName):
+            return ' & ' + self.TargetName
         elif cmd.count_atoms(sele + ' & ' + self.LigDisplay):
             return ' & ' + self.LigDisplay
         else:
@@ -471,6 +475,7 @@ class constraint(Wizard):
             Active = First
             
         self.queue.put(lambda: self.ActiveCons.set(Active))
+        # self.refresh_display()
     
     #=======================================================================
     ''' Move up to the previous active constraint '''
@@ -497,6 +502,7 @@ class constraint(Wizard):
             Active = First
             
         self.queue.put(lambda: self.ActiveCons.set(Active))
+        # self.refresh_display()
     
 
     #=======================================================================
@@ -612,3 +618,24 @@ class constraint(Wizard):
          [ 2, 'Reset', 'cmd.get_wizard().btn_Reset()'],
          [ 2, 'Done','cmd.get_wizard().btn_Done()'],         
          ]
+
+    #=======================================================================   
+    ''' Highlight atom upon clicking '''
+    #=======================================================================    
+    def highlight_Atom(self, atom):
+
+        try:
+            cmd.pseudoatom(self.AtomDisplay, pos=atom[5:], vdw=0.30, color='white')
+            cmd.refresh()
+
+            cmd.hide('nonbonded', self.AtomDisplay)
+            cmd.refresh()
+
+            cmd.show('spheres', self.AtomDisplay)
+            cmd.refresh()
+
+            cmd.mask(self.AtomDisplay)
+
+        except:
+            self.queue.put(lambda: self.top.DisplayMessage("  ERROR: Failed to highlight atom upon selecting atom", 1))
+            return

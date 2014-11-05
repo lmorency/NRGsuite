@@ -67,7 +67,7 @@ class Config2(Tabs.Tab):
         
     def Init_Vars(self):
         
-        self.ActiveCons.set('')        
+        self.ActiveCons.set('')      
         self.UseReference.set(0)
         self.ConsDist.set(0.25)
         self.IntTranslation.set(1)
@@ -107,7 +107,7 @@ class Config2(Tabs.Tab):
         self.FlexStatus.set('')
         self.FlexBondsRunning(True)
         
-        self.top.ActiveWizard = FlexBonds.flexbond(self, self.queue)
+        self.top.ActiveWizard = FlexBonds.flexbond(self, self.queue, self.top.IOFile.ResSeq.get(),self.top.IOFile.ProcessedLigandPath.get())
         
         cmd.set_wizard(self.top.ActiveWizard)
         cmd.refresh()
@@ -216,7 +216,7 @@ class Config2(Tabs.Tab):
             else:
                 Status = ' (' + str(self.top.WizardResult) + ') constraint(s) set'
             
-            self.ConsStatus.set(Status)
+            self.queue.put(lambda: self.ConsStatus.set(Status))
             
     ''' ==================================================================================
     FUNCTION Frame: Generate the Configuration Options frame in the the middle 
@@ -364,7 +364,7 @@ class Config2(Tabs.Tab):
             
             if self.ActiveCons.get():
                 self.sclConsDist.config(state='normal')
-                self.ConsDist.set(self.Vars.dictConstraints[self.ActiveCons.get()][5])
+                self.queue.put(lambda:self.ConsDist.set(self.Vars.dictConstraints[self.ActiveCons.get()][5]))
             else:
                 self.sclConsDist.config(state='disabled')
             

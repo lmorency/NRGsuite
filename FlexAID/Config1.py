@@ -103,6 +103,7 @@ class Config1(Tabs.Tab):
         self.Vars.BindingSite.Clear()
 
         self.CleftTmpPath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,'tmp.pdb')
+        self.TargetName = self.top.IOFile.TargetName.get()
 
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
@@ -345,8 +346,7 @@ class Config1(Tabs.Tab):
     FUNCTION Get_TargetFlexPath: Returns the default path of target flexibility
     =================================================================================  '''
     def Get_TargetFlexPath(self):
-
-        TARGETNAME = self.top.IOFile.TargetName.get().upper()
+        TARGETNAME = self.TargetName.upper()
         TargetFlexPath = os.path.join(self.top.FlexAIDTargetFlexProject_Dir,TARGETNAME)
 
         return TargetFlexPath
@@ -442,8 +442,8 @@ class Config1(Tabs.Tab):
     ==================================================================================  '''
     def Create_NewSphere(self):
 
-        Center = General_cmd.Get_CenterOfMass2(self.top.IOFile.TargetName.get(), cmd.get_state())
-        Width = General_cmd.Get_MaxWidth(self.top.IOFile.TargetName.get(), cmd.get_state())
+        Center = General_cmd.Get_CenterOfMass2(self.TargetName, cmd.get_state())
+        Width = General_cmd.Get_MaxWidth(self.TargetName, cmd.get_state())
 
         if len(Center) > 0 and Width != -1:
             self.Vars.BindingSite.Sphere = SphereObj.SphereObj(Width/4.0,Width/2.0,Center)
@@ -695,8 +695,6 @@ class Config1(Tabs.Tab):
         num = residue[3:(len(residue)-1)]
         chn = residue[(len(residue)-1):len(residue)]
 
-        TargetName = self.top.IOFile.TargetName.get()
-
         selString = ' resn ' + res
         selString += ' & resi ' + num
 
@@ -708,7 +706,7 @@ class Config1(Tabs.Tab):
         selString += ' & ! name H*'
         selString += ' & ! name OXT'
 
-        selString += ' & ' + TargetName
+        selString += ' & ' + self.TargetName
 
         try:
             n = cmd.count_atoms(selString, state=1)
@@ -876,7 +874,7 @@ class Config1(Tabs.Tab):
     ==================================================================================  '''
     def Get_BindingSitePath(self):
 
-        TARGETNAME = self.top.IOFile.TargetName.get().upper()
+        TARGETNAME = self.TargetName.upper()
         BindingSitePath = os.path.join(self.top.FlexAIDBindingSiteProject_Dir,TARGETNAME)
 
         return BindingSitePath
@@ -886,7 +884,7 @@ class Config1(Tabs.Tab):
     ==================================================================================  '''
     def Get_CleftPath(self):
 
-        TARGETNAME = self.top.IOFile.TargetName.get().upper()
+        TARGETNAME = self.TargetName.upper()
         CleftPath = os.path.join(self.top.CleftProject_Dir,TARGETNAME)
 
         return CleftPath

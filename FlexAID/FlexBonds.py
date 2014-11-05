@@ -49,7 +49,7 @@ class flexbond(Wizard):
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
-    def __init__(self, top, queue):
+    def __init__(self, top, queue, ResSeq, LigandPath):
         
         #print "New instance of flexbond Class.\n"
 
@@ -59,11 +59,13 @@ class flexbond(Wizard):
         self.queue = queue
         self.FlexAID = self.top.top
         self.FlexAID.WizardError = False
+
+        self.ResSeq = ResSeq
         
         self.dictFlexBonds = self.FlexAID.IOFile.Vars.dictFlexBonds
         self.dictNeighbours = self.FlexAID.IOFile.Vars.dictNeighbours
 
-        self.RefLigand = self.FlexAID.IOFile.ProcessedLigandPath.get()
+        self.RefLigand = LigandPath
 
         self.View = cmd.get_view()
         self.State = cmd.get_state()
@@ -621,10 +623,9 @@ class flexbond(Wizard):
 
         if self.pick_count < 1:
             self.atom1 = self.get_Atom(name)
-            
+
             if len(self.atom1) > 0:
-                if int(self.atom1[2]) == self.FlexAID.IOFile.ResSeq.get() and \
-                        self.atom1[1] == 'LIG':
+                if int(self.atom1[2]) == self.ResSeq and self.atom1[1] == 'LIG':
                     self.pickNextAtom()
                     self.highlight_Atom(self.atom1)
                 else:
@@ -636,8 +637,7 @@ class flexbond(Wizard):
             self.atom2 = self.get_Atom(name)
 
             if len(self.atom2) > 0:
-                if int(self.atom2[2]) == self.FlexAID.IOFile.ResSeq.get() and \
-                        self.atom2[1] == 'LIG':
+                if int(self.atom2[2]) == self.ResSeq and self.atom2[1] == 'LIG':
                     self.pickNextAtom()
                     self.highlight_Atom(self.atom2)
 
