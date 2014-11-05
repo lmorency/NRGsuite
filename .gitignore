@@ -1,4 +1,7 @@
+*.pyc
+*/*.pyc
 GetCleft/WRK
 FlexAID/WRK
 *~
 .DS_Store
+.gitignore
