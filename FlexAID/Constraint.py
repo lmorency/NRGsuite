@@ -374,7 +374,7 @@ class constraint(Wizard):
                         self.ActiveConsMemory = distobj
                         self.refresh_display()
 
-                        # if self.ActiveCons.get() == '':
+                        # if not self.ActiveCons.get():
                         #     self.queue.put(lambda: self.ActiveCons.set(distobj))
                         # else:
                         #     self.refresh_display()
@@ -480,7 +480,8 @@ class constraint(Wizard):
         self.queue.put(lambda: self.ActiveCons.set(Active))
         self.ActiveConsMemory = Active
         self.highlight_Active()
-        # self.refresh_display()
+        cmd.zoom(self.ACTIVE)
+        cmd.refresh()
     
     #=======================================================================
     ''' Move up to the previous active constraint '''
@@ -509,8 +510,8 @@ class constraint(Wizard):
         self.queue.put(lambda: self.ActiveCons.set(Active))
         self.ActiveConsMemory = Active
         self.highlight_Active()
-        # self.refresh_display()
-    
+        cmd.zoom(self.ACTIVE)
+        cmd.refresh()  
 
     #=======================================================================
         ''' deletes the active constraint '''

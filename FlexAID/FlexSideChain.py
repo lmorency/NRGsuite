@@ -279,7 +279,7 @@ class flexSC(Wizard):
         cmd.set_wizard()
         cmd.refresh()
 
-        #cmd.set_view(self.View)
+        cmd.set_view(self.View)
         
      #=======================================================================   
     ''' gets atom information (coordinates and index)'''
