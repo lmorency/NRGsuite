@@ -65,6 +65,7 @@ class constraint(Wizard):
         self.TargetName = self.FlexAID.IOFile.TargetName.get()
 
         self.ActiveCons = self.top.ActiveCons
+        self.ActiveConsMemory = self.ActiveCons.get();
         self.dictConstraints = self.top.Vars.dictConstraints
         
         self.pick_count = 0
@@ -202,6 +203,7 @@ class constraint(Wizard):
 
         self.dictConstraints.clear()
         self.queue.put(lambda: self.ActiveCons.set(''))
+        self.ActiveConsMemory = ''
         
     #=======================================================================
     ''' Resets to pick the first atom '''
@@ -369,13 +371,14 @@ class constraint(Wizard):
                                                         ]
                         
                         self.queue.put(lambda: self.ActiveCons.set(distobj))
+                        self.ActiveConsMemory = distobj
                         self.refresh_display()
 
                         # if self.ActiveCons.get() == '':
                         #     self.queue.put(lambda: self.ActiveCons.set(distobj))
                         # else:
                         #     self.refresh_display()
-        except:            
+        except:
             return 1
         
         return 0
@@ -410,7 +413,7 @@ class constraint(Wizard):
             cmd.set("auto_zoom", 0)
             
             for key in self.dictConstraints.keys():
-                if key == self.ActiveCons.get():
+                if key == self.ActiveConsMemory:
                     
                     cons = self.dictConstraints[key]
                     
@@ -468,13 +471,15 @@ class constraint(Wizard):
             if not First:
                 First = key
             
-            if key == self.ActiveCons.get():
+            if key == self.ActiveConsMemory:
                 Next = True
             
         if not Active:
             Active = First
             
         self.queue.put(lambda: self.ActiveCons.set(Active))
+        self.ActiveConsMemory = Active
+        self.highlight_Active()
         # self.refresh_display()
     
     #=======================================================================
@@ -485,7 +490,7 @@ class constraint(Wizard):
         Active = ''
         First = ''
         Next = False
-        
+
         for key in reversed(sorted(self.dictConstraints.keys(), key=str.lower)):
             
             if Next:
@@ -495,13 +500,15 @@ class constraint(Wizard):
             if not First:
                 First = key
             
-            if key == self.ActiveCons.get():
+            if key == self.ActiveConsMemory:
                 Next = True
             
         if not Active:
             Active = First
             
         self.queue.put(lambda: self.ActiveCons.set(Active))
+        self.ActiveConsMemory = Active
+        self.highlight_Active()
         # self.refresh_display()
     
 
@@ -510,8 +517,8 @@ class constraint(Wizard):
     #=======================================================================
     def delete(self):
 
-        if self.ActiveCons.get():
-            del self.dictConstraints[self.ActiveCons.get()]
+        if self.ActiveConsMemory:
+            del self.dictConstraints[self.ActiveConsMemory]
             self.Next_Active()
 
     #=======================================================================
@@ -553,7 +560,7 @@ class constraint(Wizard):
         try:
             cmd.set("auto_zoom", 0)
             
-            Active = self.ActiveCons.get()
+            Active = self.ActiveConsMemory
             
             cmd.pseudoatom(self.MiddleDisplay,
                            pos=self.dictConstraints[Active][6],
