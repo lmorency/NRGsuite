@@ -22,7 +22,7 @@ from Tkinter import *
 import General
 import Queue
 
-class Tab:
+class Tab(object):
 
     # 100 ms
     TKINTER_UPDATE_INTERVAL = 100

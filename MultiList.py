@@ -2,7 +2,7 @@ from Tkinter import *
 
 import General
 
-class Table:
+class Table(object):
 
     def __init__(self, Master, nCol, ColNames, ColWidth, Spacer, Highlight, Font, Color):
         

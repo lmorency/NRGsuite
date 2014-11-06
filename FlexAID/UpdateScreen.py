@@ -24,7 +24,7 @@ import Geometry
 import Constants
 
 
-class UpdateScreen:
+class UpdateScreen(object):
 
     def __init__(self, top, ID, colNo, Line, State, TOP, Translation, Rotation):
         #threading.Thread.__init__(self)

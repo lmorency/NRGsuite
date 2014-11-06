@@ -2,7 +2,7 @@ import copy
 
 # Vars is a base class to override pickling
 
-class Vars:
+class Vars(object):
     
     dict_vars = {}
     

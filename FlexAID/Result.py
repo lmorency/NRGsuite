@@ -22,7 +22,7 @@ from Tkinter import *
 import re
 
 
-class CF:
+class CF(object):
 
     def __init__(self, ResNumC):
         
@@ -34,7 +34,7 @@ class CF:
         self.con = 0.0
     
 
-class Result:
+class Result(object):
     
     def __init__(self):
     
@@ -145,7 +145,7 @@ class Result:
                     break
                     
 
-class ResultsContainer:
+class ResultsContainer(object):
     
     def __init__(self):
 

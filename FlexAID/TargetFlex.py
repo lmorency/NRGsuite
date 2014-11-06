@@ -1,4 +1,4 @@
-class TargetFlex:
+class TargetFlex(object):
 
     def __init__(self):
 

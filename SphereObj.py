@@ -1,6 +1,6 @@
 import copy
 
-class SphereObj:
+class SphereObj(object):
 
     ''' ==================================================================================
     FUNCTION __init__: Default constructor

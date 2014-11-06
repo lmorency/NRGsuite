@@ -1,7 +1,7 @@
 import copy
 import hashlib
 
-class CleftObj:
+class CleftObj(object):
 
     def __init__(self):
 

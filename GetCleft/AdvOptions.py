@@ -31,7 +31,7 @@ import General
 @creation date:  Nov. 24 2011
 '''
 
-class AdvOptions:
+class AdvOptions(object):
 
     def __init__(self,top):
 

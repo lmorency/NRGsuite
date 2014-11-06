@@ -27,7 +27,7 @@ import tkFont
 import Prefs
 import General
 
-class Base:
+class Base(object):
 
     ActiveWizard = None
     
