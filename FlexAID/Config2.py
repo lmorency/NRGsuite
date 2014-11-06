@@ -64,6 +64,7 @@ class Config2(Tabs.Tab):
         self.IntTranslation = self.Vars.IntTranslation
         self.IntRotation = self.Vars.IntRotation
         self.ActiveCons = self.Vars.ActiveCons
+        self.ActiveConsMemory = self.ActiveCons.get()
         
     def Init_Vars(self):
         
@@ -202,7 +203,7 @@ class Config2(Tabs.Tab):
         if boolRun:
             self.Start_Update()
             
-            if self.ActiveCons.get():
+            if self.ActiveConsMemory:
                 self.Disable_Frame(self.lblInteraction, self.sclConsDist)
             else:
                 self.Disable_Frame(self.lblInteraction)
@@ -362,9 +363,9 @@ class Config2(Tabs.Tab):
         
         if self.top.WizardRunning():
             
-            if self.ActiveCons.get():
+            if self.ActiveConsMemory:
                 self.sclConsDist.config(state='normal')
-                self.queue.put(lambda:self.ConsDist.set(self.Vars.dictConstraints[self.ActiveCons.get()][5]))
+                self.queue.put(lambda:self.ConsDist.set(self.Vars.dictConstraints[self.ActiveConsMemory][5]))
             else:
                 self.sclConsDist.config(state='disabled')
             
@@ -377,7 +378,7 @@ class Config2(Tabs.Tab):
 
         if self.top.WizardRunning():
             
-            self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
+            self.Vars.dictConstraints[self.ActiveConsMemory][5] = self.ConsDist.get()
             
             self.top.ActiveWizard.refresh_distance()
             

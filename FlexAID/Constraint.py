@@ -211,7 +211,7 @@ class constraint(Wizard):
     def btn_Reset(self):
 
         self.pick_count = 0
-
+        cmd.delete(self.AtomDisplay)
         cmd.refresh_wizard()
 
     #=======================================================================   
