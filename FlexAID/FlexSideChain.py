@@ -337,7 +337,7 @@ class flexSC(Wizard):
             cmd.show('sticks', self.ResidueDisplay)
             cmd.refresh()
 
-            cmd.color('white', self.ResidueDisplay)
+            cmd.color('orange', self.ResidueDisplay)
             cmd.refresh()
 
             cmd.mask(self.ResidueDisplay)
@@ -381,7 +381,7 @@ class flexSC(Wizard):
             cmd.show('sticks', self.FlexSCDisplay)
             cmd.refresh()
 
-            cmd.color('orange', self.FlexSCDisplay)
+            cmd.color('white', self.FlexSCDisplay)
             cmd.refresh()
 
             cmd.label(self.FlexSCDisplay + " & name CA", "resn+resi")
