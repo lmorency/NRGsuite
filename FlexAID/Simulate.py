@@ -690,6 +690,7 @@ class Simulate(Tabs.Tab):
                     cmd.refresh()
 
                     cmd.color(self.PymolColorList[i], ResultName)
+                    util.cnc(ResultName)
                     cmd.refresh()
 
                     self.Nice_Display(Result, ResultName)

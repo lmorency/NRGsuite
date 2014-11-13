@@ -100,7 +100,6 @@ class Start(threading.Thread):
     
 
 class Parse(threading.Thread):
-#class Parse:
     
     # 100 msec
     INTERVAL = 0.10

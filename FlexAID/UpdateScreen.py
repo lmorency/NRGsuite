@@ -18,6 +18,7 @@
 
 '''
 from pymol import cmd
+from pymol import util
 
 #import threading
 import Geometry
@@ -139,12 +140,16 @@ class UpdateScreen(object):
             cmd.refresh()
 
             # Color ligand of solution TOP
-            cmd.color(self.top.top.PymolColorList[self.TOP], "(resn LIG & " + SolutionObj + " & present)")
+            Selection = "(resn LIG & " + SolutionObj + " & present)"
+            cmd.color(self.top.top.PymolColorList[self.TOP], Selection)
+            util.cnc(Selection)
             cmd.refresh()
            
             # Color side-chains of solution TOP
             if self.selSideChains != '':
-                cmd.color(self.top.top.PymolColorList[self.TOP], self.selSideChains.replace(self.TargetObj,SolutionObj))
+                selSC = self.selSideChains.replace(self.TargetObj,SolutionObj)
+                cmd.color(self.top.top.PymolColorList[self.TOP], selSC)
+                util.cnc(selSC)
                 cmd.refresh()
 
             #cmd.show(self.DefaultDisplay, "(resn LIG & sol_*__ & present)")
