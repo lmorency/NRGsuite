@@ -42,7 +42,7 @@ from subprocess import Popen, PIPE
 
 
 #class ProcLig(threading.Thread):
-class ProcLig():
+class ProcLig(object):
 
     def __init__(self, top, MoleculeFile, StartAtomIndex, AtomTypes, AnchorAtom, 
                  ConvertOnly, ProcessOnly, Gen3D, Target, Callback):

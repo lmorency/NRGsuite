@@ -32,7 +32,7 @@ import General
 if __debug__:
     import Constraint
 
-class Manage:
+class Manage(object):
 
     NUMBER_RESULTS = 10
     GRID_SPACING = 0.375

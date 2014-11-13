@@ -71,7 +71,6 @@ class Simulate(Tabs.Tab):
         self.Manage = ManageFiles.Manage(self)
         
     def Init_Vars(self):
-        
         self.ResultsName.set('')
         self.ProgBarText.set('... / ...')
         self.SimLigDisplay.set('sticks')
@@ -85,7 +84,7 @@ class Simulate(Tabs.Tab):
         self.dictSimData = {}
         
         self.ResultsContainer.Clear()
-        
+
         self.ProcessParsing = False
         self.Paused = False
         
@@ -691,6 +690,7 @@ class Simulate(Tabs.Tab):
                     cmd.refresh()
 
                     cmd.color(self.PymolColorList[i], ResultName)
+                    util.cnc(ResultName)
                     cmd.refresh()
 
                     self.Nice_Display(Result, ResultName)
@@ -821,7 +821,7 @@ class Simulate(Tabs.Tab):
             self.ResultsName.set(os.path.splitext(os.path.split(Results_File)[1])[0])
 
         else:
-            self.ResultsContainer = None
+            self.ResultsContainer.Clear()
             try:
                 shutil.rmtree(self.Manage.FlexAIDRunSimulationProject_Dir, True)
             except shutil.Error:

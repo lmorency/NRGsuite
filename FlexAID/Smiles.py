@@ -32,7 +32,7 @@ from Tkinter import *
 
 import General
 
-class Smiles:
+class Smiles(object):
     
     def __init__(self, top, SmilesString, SmilesName):
     

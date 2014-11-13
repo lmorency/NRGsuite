@@ -2,7 +2,7 @@ import copy
 import CleftObj
 import SphereObj
 
-class BindingSite:
+class BindingSite(object):
 
     def __init__(self):
 

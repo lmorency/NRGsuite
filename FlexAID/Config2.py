@@ -65,10 +65,11 @@ class Config2(Tabs.Tab):
         self.IntRotation = self.Vars.IntRotation
         self.ActiveCons = self.Vars.ActiveCons
         self.dictFlexBonds = self.top.IOFile.Vars.dictFlexBonds
+        self.ActiveConsMemory = self.ActiveCons.get()
         
     def Init_Vars(self):
         
-        self.ActiveCons.set('')        
+        self.ActiveCons.set('')      
         self.UseReference.set(0)
         self.ConsDist.set(0.25)
         self.IntTranslation.set(1)
@@ -107,7 +108,7 @@ class Config2(Tabs.Tab):
         self.FlexStatus.set('')
         self.FlexBondsRunning(True)
         
-        self.top.ActiveWizard = FlexBonds.flexbond(self, self.queue)
+        self.top.ActiveWizard = FlexBonds.flexbond(self, self.queue, self.top.IOFile.ResSeq.get(),self.top.IOFile.ProcessedLigandPath.get())
         
         cmd.set_wizard(self.top.ActiveWizard)
         cmd.refresh()
@@ -211,7 +212,7 @@ class Config2(Tabs.Tab):
         if boolRun:
             self.Start_Update()
             
-            if self.ActiveCons.get():
+            if self.ActiveConsMemory:
                 self.Disable_Frame(self.lblInteraction, self.sclConsDist)
             else:
                 self.Disable_Frame(self.lblInteraction)
@@ -224,6 +225,8 @@ class Config2(Tabs.Tab):
                 Status = 'No constraint(s) set'
             else:
                 Status = ' (' + str(self.top.WizardResult) + ') constraint(s) set'
+            
+            self.queue.put(lambda: self.ConsStatus.set(Status))
             
             self.ConsStatus.set(Status)
 
@@ -382,9 +385,9 @@ class Config2(Tabs.Tab):
         
         if self.top.WizardRunning():
             
-            if self.ActiveCons.get():
+            if self.ActiveConsMemory:
                 self.sclConsDist.config(state='normal')
-                self.ConsDist.set(self.Vars.dictConstraints[self.ActiveCons.get()][5])
+                self.queue.put(lambda:self.ConsDist.set(self.Vars.dictConstraints[self.ActiveConsMemory][5]))
             else:
                 self.sclConsDist.config(state='disabled')
             
@@ -397,7 +400,7 @@ class Config2(Tabs.Tab):
 
         if self.top.WizardRunning():
             
-            self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
+            self.Vars.dictConstraints[self.ActiveConsMemory][5] = self.ConsDist.get()
             
             self.top.ActiveWizard.refresh_distance()
             
