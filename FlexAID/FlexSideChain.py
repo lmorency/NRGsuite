@@ -96,7 +96,7 @@ class flexSC(Wizard):
         cmd.set("mouse_selection_mode", 1) # set selection mode to residue
 
         # Mask objects
-        self.exc = [ self.TargetName ]
+        self.exc = [ self.FlexAID.IOFile.Target ]
         General_cmd.mask_Objects(self.exc)
 
         # remove any possible selection before selecting atoms
