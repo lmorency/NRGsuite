@@ -823,7 +823,8 @@ class Simulate(Tabs.Tab):
         else:
             self.ResultsContainer.Clear()
             try:
-                shutil.rmtree(self.Manage.FlexAIDRunSimulationProject_Dir, True)
+                pass
+                # shutil.rmtree(self.Manage.FlexAIDRunSimulationProject_Dir, True)
             except shutil.Error:
                 pass
 
