@@ -119,10 +119,10 @@ class Table(object):
     FUNCTION OnButtonClick: Selects identical index from the other lists
     ==================================================================================  '''            
     def OnButtonClick(self, event, List):
-        
-        try:
+
+        if List.size() > 0:
             Index = List.nearest(event.y)
-        except:
+        else:
             return
         
         if Index != self.current and Index != '':
@@ -167,17 +167,17 @@ class Table(object):
     def Clear(self):
 
         for col in self.Columns.keys():
-	    try:
+            try:
                 self.Columns[col]['List'].selection_clear(0, END)
-	    except:
-		continue
+            except:
+                continue
 
         for col in self.Columns.keys():
-	    try:
+            try:
                 self.Columns[col]['List'].delete(0, END)
-	    except:
-		continue
-        
+            except:
+                continue
+
         self.current = None
         
     ''' ==================================================================================
