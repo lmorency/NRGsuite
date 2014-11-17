@@ -1,3 +1,4 @@
+import re
 import copy
 import CleftObj
 import SphereObj
@@ -70,11 +71,14 @@ class BindingSite(object):
     ================================================================================== '''
     def Get_SortedCleftNames(self):
         
+        convert = lambda text: int(text) if text.isdigit() else text.lower()
+        alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
+        
         CleftNames = list()
         for Cleft in self.listClefts:
             CleftNames.append(str(Cleft.CleftName))
-            
-        return sorted(CleftNames, key=str.lower)
+
+        return sorted(CleftNames, key = alphanum_key)
 
     ''' ==================================================================================
     FUNCTION Remove_Cleft: Remove a cleft only if it exists in the list
@@ -99,7 +103,7 @@ class BindingSite(object):
                 break
 
         self.Index_Cleft()
-        
+
     ''' ==================================================================================
     FUNCTION Clear_Cleft: Clears the clefts from the list
     ================================================================================== '''
