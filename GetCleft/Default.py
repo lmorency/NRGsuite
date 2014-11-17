@@ -721,7 +721,9 @@ class Default(Tabs.Tab):
         auto_zoom = cmd.get("auto_zoom")
         cmd.set("auto_zoom", 0)
         
-        for Cleft in self.TempBindingSite.listClefts:
+        # for Cleft in self.TempBindingSite.listClefts:
+        for CleftName in self.TempBindingSite.Get_SortedCleftNames():
+                Cleft = self.TempBindingSite.Get_CleftName(CleftName)
                 try:
                     cmd.load(Cleft.CleftFile, Cleft.CleftName, state=1)
                     cmd.refresh()
