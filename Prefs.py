@@ -36,17 +36,19 @@ import Base
 
 """ *********************************************************************************
     CLASS Prefs: Main Class used to define NRGsuite preferences 
-    *********************************************************************************  """ 
+    ********************************************************************************* """ 
 class Prefs(object):
 
     # FONT SETTINGS
     DefaultFontType = 'Helvetica'
     DefaultFontSize = 11
 
-    def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0,PreferenceFilePath = None):
+    def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0, PreferenceFilePath = None, AlwaysShowAdvancedView = 0):
+
         self.FontType = self.DefaultFontType
         self.FontSize = self.DefaultFontSize
         self.ToggleAllFlexibleBonds = ToggleAllFlexibleBonds
+        self.AlwaysShowAdvancedView = AlwaysShowAdvancedView
         self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
         self.Load_User_Prefs()
 
@@ -63,16 +65,25 @@ class Prefs(object):
                 f.close()
                 self.FontType = Preferences.FontType
                 self.FontSize = Preferences.FontSize
+
                 if Preferences.ToggleAllFlexibleBonds == 1:
                     self.ToggleAllFlexibleBonds = 1
+                
+                if Preferences.AlwaysShowAdvancedView == 1:
+                    self.AlwaysShowAdvancedView = 1
+
                 if os.path.isfile(Preferences.PreferenceFilePath):
                     self.PreferenceFilePath = Preferences.PreferenceFilePath
                 else:
                     self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
 
+
             except Exception, e:
                 # Catch exceptions
-                print 'exception caught in Prefs.Load_User_Prefs'
+                shutil.rmtree(self.PreferenceFilePath)
+                self.Load_User_Prefs()
+                print 'exception caught in Prefs.Load_User_Prefs. Old Preferences file removed.'
+                print 'reloading User\'s preferences.'
 
     ''' ==================================================================================
     FUNCTION GetFontType: Returns the font type preferred by the user
@@ -102,14 +113,17 @@ class Prefs(object):
     FUNCTION Write_User_Prefs: Save & Write the user's preferences into Preference file
     =================================================================================  '''
     def Restore_Default_Prefs(self):
-        self.FontType = self.DefaultFontType;
-        self.FontSize = self.DefaultFontSize;
+        self.FontType = self.DefaultFontType
+        self.FontSize = self.DefaultFontSize
         self.ToggleAllFlexibleBonds = 0
+        self.AlwaysShowAdvancedView = 0
         self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
         self.Write_User_Prefs()
 
 
-
+''' ==================================================================================
+CLASS displayPrefs :     
+=================================================================================  '''
 class displayPrefs(Base.Base):
 
     def Def_Vars(self):
@@ -137,12 +151,12 @@ class displayPrefs(Base.Base):
     FUNCTION Update_ToggleAllFlexibleBonds: Update the Prefs class with current ToggleAllFlexibleBonds value
     ========================================================================================================  '''    
     def Update_ToggleAllFlexibleBonds(self):
-        # if self.ToggleAllFlexibleBonds_Var.get() == 1 and self.Prefs.ToggleAllFlexibleBonds == 1:
+
         if self.Prefs.ToggleAllFlexibleBonds == 1:
             self.ToggleAllFlexibleBonds_Var.set(0)
             self.Prefs.ToggleAllFlexibleBonds = 0
             return 0
-        # elif self.ToggleAllFlexibleBonds_Var.get() == 0 and self.Prefs.ToggleAllFlexibleBonds == 0:
+
         elif self.Prefs.ToggleAllFlexibleBonds == 0:
             self.ToggleAllFlexibleBonds_Var.set(1)
             self.Prefs.ToggleAllFlexibleBonds = 1
@@ -172,15 +186,18 @@ class displayPrefs(Base.Base):
     FUNCTION Frame_Main: 
     =================================================================================  '''    
     def Frame_Main(self):
-        self.Prefs.Load_User_Prefs()
-        fTop = Frame(self.fMain, height=25, border=1)#, bg='blue')
 
-        fText = Frame(self.fMain, border=1)#, bg='red')
+        # Load User Preferences
+        self.Prefs.Load_User_Prefs()
+
+        fTop = Frame(self.fMain, height=25, border=1, bg='blue')
+
+        fText = Frame(self.fMain, border=1, bg='red')
         fText.pack(fill=X, side=TOP, pady=10)
 
-        Title = Label(fText, text='NRGsuite Preferences Panel', height=3, font=self.font_Title_H)
-        Title.pack(side=TOP, anchor=N)
-        Title.pack_propagate(0)
+        # Title = Label(fText, text='NRGsuite Preferences Panel', height=3, font=self.font_Title_H)
+        # Title.pack(side=TOP, anchor=N)
+        # Title.pack_propagate(0)
 
         # FonType OptionMenu widget
         fFont_options = Frame(fText)

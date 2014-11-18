@@ -217,7 +217,7 @@ if OSid != 'UNKNOWN':
             #================================================================================
             def StartPreferences(self, menuindex):
                 Prefs.displayPrefs(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                   NRGsuite_Path, OSid, True, 'Preferences', 575, 275, self.RootPrefs)
+                                   NRGsuite_Path, OSid, True, 'NRGsuite Preferences', 575, 275, self.RootPrefs)
                 
             #================================================================================
             # Loads the about menu to see versionning
