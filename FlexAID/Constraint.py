@@ -88,7 +88,7 @@ class constraint(Wizard):
             cmd.set("mouse_selection_mode", 0) # set selection mode to atomic
 
             # Mask objects
-            self.exc = [ self.FlexAID.IOFile.TargetName.get() ]
+            self.exc = [ self.TargetName, self.LigDisplay ]
             General_cmd.mask_Objects(self.exc)
 
             self.ErrorCode = 0

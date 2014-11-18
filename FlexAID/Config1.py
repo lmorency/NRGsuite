@@ -692,6 +692,7 @@ class Config1(Tabs.Tab):
     def Validate_EnterResidue(self, residue):
 
         res = residue[0:3]
+        print res
         num = residue[3:(len(residue)-1)]
         chn = residue[(len(residue)-1):len(residue)]
 
@@ -706,7 +707,7 @@ class Config1(Tabs.Tab):
         selString += ' & ! name H*'
         selString += ' & ! name OXT'
 
-        selString += ' & ' + self.TargetName
+        selString += ' & ' + self.top.IOFile.Target
 
         try:
             n = cmd.count_atoms(selString, state=1)
