@@ -248,16 +248,17 @@ class anchor(Wizard):
     ''' Pick an anchor atom then highlight it '''
     #=======================================================================
     def do_select(self, name):
-        
-        lt = cmd.index(name)
-        
+
+
+        lt = cmd.index(name + ' &  !hydrogens')
+
         for t in lt:
             if t[0] != self.LigDisplay:
-                self.ErrorStatus = [ "You can only select an atom from the object " + self.LigDisplay + ". Try again." ]
+                self.ErrorStatus = [ "You can only select a non-Hydrogen from the object " + self.LigDisplay + ". Try again." ]
             else:
                 self.AnchorAtom = General_cmd.get_ID(t[1],t[0])
                 self.RefreshDisplay()
             break
-            
+        print self.AnchorAtom
         cmd.deselect()
-            
+

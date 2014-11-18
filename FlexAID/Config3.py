@@ -31,6 +31,10 @@ class Config3Vars(Vars.Vars):
 
     CompFct = StringVar()
     UseDEE = IntVar()
+    RotInstances = IntVar()
+    RotPermeability = StringVar()
+    ExcludeIntra = IntVar()
+    LigandOnly = IntVar()
     ExcludeHET = IntVar()
     IncludeHOH = IntVar()
     DEE_Clash_Threshold = StringVar()
@@ -41,6 +45,7 @@ class Config3Vars(Vars.Vars):
     DeltaAngle = StringVar()
     DeltaDihedral = StringVar()
     DeltaDihedralFlex = StringVar()
+    GridSpacing = StringVar()
 
 class Config3(Tabs.Tab):
 
@@ -48,6 +53,10 @@ class Config3(Tabs.Tab):
 
         self.CompFct = self.Vars.CompFct
         self.UseDEE = self.Vars.UseDEE
+        self.RotInstances = self.Vars.RotInstances
+        self.RotPermeability = self.Vars.RotPermeability
+        self.ExcludeIntra = self.Vars.ExcludeIntra
+        self.LigandOnly = self.Vars.LigandOnly
         self.ExcludeHET = self.Vars.ExcludeHET
         self.IncludeHOH = self.Vars.IncludeHOH
         self.DEE_Clash_Threshold = self.Vars.DEE_Clash_Threshold
@@ -58,17 +67,22 @@ class Config3(Tabs.Tab):
         self.DeltaAngle = self.Vars.DeltaAngle
         self.DeltaDihedral = self.Vars.DeltaDihedral
         self.DeltaDihedralFlex = self.Vars.DeltaDihedralFlex
+        self.GridSpacing = self.Vars.GridSpacing
 
     def Init_Vars(self):
         
         self.CompFct.set('VCT')
 
         self.UseDEE.set(0)
+        self.RotInstances.set(0)
+        self.ExcludeIntra.set(1)
+        self.LigandOnly.set(0)
         self.ExcludeHET.set(0)
         self.IncludeHOH.set(0)
         
         self.DEE_Clash_Threshold.set('0.25')
         self.Permeability.set('0.1')
+        self.RotPermeability.set('0.2')
         
         if self.top.IOFile.AtomTypes.get() == 'Sobolev':
             self.SolventType.set('< No type >')
@@ -85,6 +99,7 @@ class Config3(Tabs.Tab):
         self.DeltaAngle.set('5.0')
         self.DeltaDihedral.set('5.0')
         self.DeltaDihedralFlex.set('10.0')
+        self.GridSpacing.set('0.375')
 
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback to StringVars
@@ -97,25 +112,33 @@ class Config3(Tabs.Tab):
             self.DEETrace = self.UseDEE.trace('w',self.DEE_Toggle)
 
             self.PermeabilityTrace = self.Permeability.trace('w', lambda *args, **kwargs:
-                                                                  self.Validate_Field(input=self.entPermea, var=self.Permeability, min=0.00,
-                                                                  max=1.00, ndec=2, tag='Van der Waals permeability', _type=float))
+                                                             self.Validate_Field(input=self.entPermea, var=self.Permeability, min=0.00,
+                                                                                 max=1.00, ndec=2, tag='Van der Waals permeability', _type=float))
+
+            self.RotPermeabilityTrace = self.RotPermeability.trace('w', lambda *args, **kwargs:
+                                                                   self.Validate_Field(input=self.entRotPerm, var=self.RotPermeability, min=0.00,
+                                                                                       max=1.00, ndec=2, tag='Rotamer permeability', _type=float))
+
+            self.GridSpacingTrace = self.GridSpacing.trace('w', lambda *args, **kwargs:
+                                                           self.Validate_Field(input=self.entGrid, var=self.GridSpacing, min=0.1,
+                                                                               max=1.0, ndec=3, tag='Grid spacing', _type=float))
 
             self.DeltaDihedralTrace = self.DeltaDihedral.trace('w', lambda *args, **kwargs:
-                                                                    self.Validate_Field(input=self.entDDih, var=self.DeltaDihedral, min=0.5,
-                                                                    max=10.0, ndec=1, tag='Delta dihedral', _type=float))
+                                                               self.Validate_Field(input=self.entDDih, var=self.DeltaDihedral, min=0.5,
+                                                                                   max=10.0, ndec=1, tag='Delta dihedral', _type=float))
 
             self.DeltaAngleTrace = self.DeltaAngle.trace('w', lambda *args, **kwargs:
-                                                              self.Validate_Field(input=self.entDAng, var=self.DeltaAngle, min=0.5,
-                                                              max=10.0, ndec=1, tag='Delta angle', _type=float))
+                                                         self.Validate_Field(input=self.entDAng, var=self.DeltaAngle, min=0.5,
+                                                                             max=10.0, ndec=1, tag='Delta angle', _type=float))
 
             self.DeltaDihedralFlexTrace = self.DeltaDihedralFlex.trace('w', lambda *args, **kwargs:
-                                                                            self.Validate_Field(input=self.entDDihFlex, var=self.DeltaDihedralFlex, min=1.0,
-                                                                            max=30.0, ndec=1, tag='Delta flexible dihedral', _type=float))
+                                                                       self.Validate_Field(input=self.entDDihFlex, var=self.DeltaDihedralFlex, min=1.0,
+                                                                                           max=30.0, ndec=1, tag='Delta flexible dihedral', _type=float))
 
             self.DEE_Clash_ThresholdTrace = self.DEE_Clash_Threshold.trace('w', lambda *args, **kwargs:
-                                                                                self.Validate_Field(input=self.entDEE, var=self.DEE_Clash_Threshold, min=0.00,
-                                                                                max=1.00, ndec=2, tag='Dead-end-elimination clash', _type=float))
-
+                                                                           self.Validate_Field(input=self.entDEE, var=self.DEE_Clash_Threshold, min=0.00,
+                                                                                               max=1.00, ndec=2, tag='Dead-end-elimination clash', _type=float))
+            
             self.SolventTermTrace = self.SolventTerm.trace('w', lambda *args, **kwargs:
                                                                 self.Validate_Field(input=self.entSolventTerm, var=self.SolventTerm, min=-200.0,
                                                                 max=200.0, ndec=1, tag='Solvent term', _type=float))
@@ -133,6 +156,8 @@ class Config3(Tabs.Tab):
             self.SolventType.trace_vdelete('w',self.SolventTypeTrace)
             self.UseDEE.trace_vdelete('w',self.DEETrace)
             self.Permeability.trace_vdelete('w',self.PermeabilityTrace)
+            self.RotPermeability.trace_vdelete('w',self.RotPermeabilityTrace)
+            self.GridSpacing.trace_vdelete('w',self.GridSpacingTrace)
             self.DeltaDihedral.trace_vdelete('w',self.DeltaDihedralTrace)
             self.DeltaAngle.trace_vdelete('w',self.DeltaAngleTrace)
             self.DeltaDihedralFlex.trace_vdelete('w',self.DeltaDihedralFlexTrace)
@@ -192,6 +217,22 @@ class Config3(Tabs.Tab):
         fC3Right.pack(side=RIGHT, fill=BOTH, expand=True)
 
         #==================================================================================
+        # Atom scoring section
+        #==================================================================================
+        fAtoms = Frame(fC3Left)
+        fAtoms.pack(fill=X, side=TOP, padx=5, pady=5)
+        fAtomsLine1 = Frame(fAtoms)
+        fAtomsLine1.pack(fill=X, padx=5, pady=2)
+        fAtomsLine2 = Frame(fAtoms)
+        fAtomsLine2.pack(fill=X, padx=5, pady=2)
+        fAtomsLine3 = Frame(fAtoms)
+        fAtomsLine3.pack(fill=X, padx=5, pady=2)
+
+        Label(fAtomsLine1, text='Atoms scoring', font=self.top.font_Title).pack(side=LEFT, anchor=W)
+        Checkbutton(fAtomsLine2, text=' Exclude intramolecular interactions', variable=self.ExcludeIntra, font=self.top.font_Text).pack(side=LEFT)
+        Checkbutton(fAtomsLine3, text=' Score ligand atoms only', variable=self.LigandOnly, font=self.top.font_Text).pack(side=LEFT)
+        
+        #==================================================================================
         # Exclude/Include HET Groups
         #==================================================================================
         fHET = Frame(fC3Left)
@@ -243,6 +284,8 @@ class Config3(Tabs.Tab):
         fDeltaLine3.pack(fill=X, side=TOP, padx=5, pady=2)
         fDeltaLine4 = Frame(fDelta)
         fDeltaLine4.pack(fill=X, side=TOP, padx=5, pady=2)
+        fDeltaLine5 = Frame(fDelta)
+        fDeltaLine5.pack(fill=X, side=TOP, padx=5, pady=2)
         
         Label(fDeltaLine1, text='DELTA parameters', font=self.top.font_Title).pack(side=LEFT, anchor=W)
 
@@ -264,9 +307,34 @@ class Config3(Tabs.Tab):
         self.entDDihFlex.pack(side=RIGHT, anchor=W)
         self.ValidDeltaDihedralFlex = [1, False, self.entDDihFlex]
 
+        # Grid Spacing
+        Label(fDeltaLine5, text='Grid spacing: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
+        self.entGrid = Entry(fDeltaLine5, textvariable=self.GridSpacing, font=self.top.font_Text, justify=CENTER, width=5)
+        self.entGrid.pack(side=RIGHT, anchor=W)
+        self.ValidGridSpacing = [1, False, self.entGrid]
+
         #==================================================================================
-        # Side-chain optimization (DEE)
-        #==================================================================================
+        # Side-chain flexibility
+        #==================================================================================        
+        fSCFlex = Frame(fSearchSpace)#, bd=1, relief=SUNKEN)
+        fSCFlex.pack(fill=X, side=TOP, padx=5, pady=5)
+        fSCFlexLine1 = Frame(fSCFlex)
+        fSCFlexLine1.pack(fill=X, side=TOP, padx=5, pady=2)
+        fSCFlexLine2 = Frame(fSCFlex)
+        fSCFlexLine2.pack(fill=X, side=TOP, padx=5, pady=2)
+        fSCFlexLine3 = Frame(fSCFlex)
+        fSCFlexLine3.pack(fill=X, side=TOP, padx=5, pady=2)
+        
+        Label(fSCFlexLine1, text='Side-chain flexibility', font=self.top.font_Title).pack(side=LEFT, anchor=W)
+
+        Label(fSCFlexLine2, text='Rotamer acceptance permeability: ', font=self.top.font_Text).pack(side=LEFT, anchor=W)
+        self.entRotPerm = Entry(fSCFlexLine2, textvariable=self.RotPermeability, font=self.top.font_Text, justify=CENTER, width=5)
+        self.entRotPerm.pack(side=RIGHT, anchor=W)
+        self.ValidRotPermeability = [1, False, self.entRotPerm]
+
+        Checkbutton(fSCFlexLine3, text=' Use rotamer instances', variable=self.RotInstances,
+                    font=self.top.font_Text, justify=LEFT).pack(anchor=W, side=RIGHT, fill=X)
+
         fDEE = Frame(fSearchSpace)#, bd=1, relief=SUNKEN)
         #fDEE.pack(fill=X, side=TOP, padx=5, pady=5)
         fDEELine1 = Frame(fDEE)
@@ -285,7 +353,7 @@ class Config3(Tabs.Tab):
         self.entDEE = Entry(fDEELine3, width=5, font=self.top.font_Text, textvariable=self.DEE_Clash_Threshold, state='disabled', justify=CENTER)
         self.entDEE.pack(side=RIGHT)
         self.ValidDEE = [1, False, self.entDEE]
-
+        
         #==================================================================================
         # Implicit Solvent Type
         #==================================================================================
@@ -313,10 +381,9 @@ class Config3(Tabs.Tab):
         self.ValidSolventTerm = [1, False, self.entSolventTerm]
 
 
-        self.Validator = [ self.ValidDEE, self.ValidPermeability,
-                           self.ValidDeltaAngle, self.ValidDeltaDihedral, 
-                           self.ValidDeltaDihedralFlex, self.ValidSolventTerm ]
-
+        self.Validator = [ self.ValidDEE, self.ValidPermeability, self.ValidGridSpacing,
+                           self.ValidDeltaAngle, self.ValidDeltaDihedral, self.ValidDeltaDihedralFlex,
+                           self.ValidRotPermeability, self.ValidSolventTerm ]
 
         return self.fConfig3
         

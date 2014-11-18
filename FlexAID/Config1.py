@@ -92,6 +92,7 @@ class Config1(Tabs.Tab):
         self.defOptCleft.set('')
         self.defOptResidue.set('')
         self.SphereSize.set(0.5)
+
         self.ResidueValue.set('')
 
         self.TargetFlexName.set('')
@@ -318,10 +319,11 @@ class Config1(Tabs.Tab):
 
         Button(fFlexSCRightLine1, text='Enter', command=self.Btn_EnterResidue_Clicked, font=self.top.font_Text).pack(side=RIGHT)
 
-        self.EntryResidu = Entry(fFlexSCRightLine1, textvariable=self.ResidueValue, background='white', width=10, justify=CENTER, font=self.top.font_Text)
+        self.EntryResidu = Entry(fFlexSCRightLine1, textvariable=self.ResidueValue, background='white',
+                                 width=10, justify=CENTER, font=self.top.font_Text)
         self.EntryResidu.pack(side=RIGHT, anchor=E)
 
-        Label(fFlexSCRightLine1, text='Residue code (e.g. ALA31A):', font=self.top.font_Text, justify=LEFT).pack(side=RIGHT, anchor=W)
+        Label(fFlexSCRightLine1, text='Residue code (e.g. ALA31A):', font=self.top.font_Text, justify=LEFT).pack(side=RIGHT, anchor=W, fill=X)
 
         '''
         #==================================================================================
@@ -692,6 +694,7 @@ class Config1(Tabs.Tab):
     def Validate_EnterResidue(self, residue):
 
         res = residue[0:3]
+        print res
         num = residue[3:(len(residue)-1)]
         chn = residue[(len(residue)-1):len(residue)]
 
@@ -706,7 +709,7 @@ class Config1(Tabs.Tab):
         selString += ' & ! name H*'
         selString += ' & ! name OXT'
 
-        selString += ' & ' + self.TargetName
+        selString += ' & ' + self.top.IOFile.Target
 
         try:
             n = cmd.count_atoms(selString, state=1)
