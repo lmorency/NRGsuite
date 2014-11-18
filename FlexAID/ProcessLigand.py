@@ -31,6 +31,7 @@
 '''
 
 from shutil import copy, Error
+from pymol import cmd
 
 import os
 import time
@@ -61,6 +62,7 @@ class ProcLig(object):
         self.ProcessOnly = ProcessOnly
         self.Gen3D = Gen3D
         self.Target = Target
+        self.TargetName = self.top.TargetName.get()
         
         self.Callback = Callback
         
@@ -76,7 +78,6 @@ class ProcLig(object):
         self.FlexAID.ProcessRunning = True
         
         if not self.Copy_MoleculeFile():
-            #self.FlexAID.DisplayMessage("  Processing %s molecule..." % molecule, 0)
             rv = self.process()
         
         self.Callback(False, '', 0, '', 0, False, False, 0, False, '')
@@ -152,15 +153,13 @@ class ProcLig(object):
             if self.FlexAID.Run.returncode != 0:
                 print "ProcessError!"
                 self.FlexAID.ProcessError = True
-                return 1
             
         except:
             self.FlexAID.ProcessError = True
-            return 1
+        finally:
+            self.FlexAID.Run = None
         
-        self.FlexAID.Run = None
-        
-        return 0
+        return self.FlexAID.ProcessError
 
     def Copy_MoleculeFile(self):
 
@@ -168,13 +167,15 @@ class ProcLig(object):
             self.TmpMoleculeFile = os.path.join(self.FlexAID.FlexAIDTempProject_Dir,
                                                 os.path.split(self.MoleculeFile)[1])
 
-            copy(self.MoleculeFile, self.TmpMoleculeFile)
+            if self.Target:
+                cmd.save(self.TmpMoleculeFile, self.TargetName + ' & ! hydrogens')
+            else:
+                copy(self.MoleculeFile, self.TmpMoleculeFile)
             
         except IOError:
             return 1
         except Error:
             pass
-        
         
         return 0
     

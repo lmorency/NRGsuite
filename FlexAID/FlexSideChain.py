@@ -37,7 +37,7 @@ class flexSC(Wizard):
 
     FlexSCDisplay = 'FLEXIBLE_SIDE_CHAINS__'
     ResidueDisplay = 'HIGHLIGHT_RESIDUE__'
-    
+
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
@@ -53,7 +53,7 @@ class flexSC(Wizard):
 
         self.FlexAID.WizardError = False
 
-        self.TargetName = self.FlexAID.IOFile.TargetName.get()
+        self.TargetName = self.FlexAID.IOFile.Target
         self.TargetFlex = self.top.Vars.TargetFlex
 
         self.ResidueName = '...'
@@ -96,8 +96,10 @@ class flexSC(Wizard):
         cmd.set("mouse_selection_mode", 1) # set selection mode to residue
 
         # Mask objects
-        self.exc = [ self.FlexAID.IOFile.Target ]
+        self.exc = [ self.TargetName ]
+        print self.TargetName
         General_cmd.mask_Objects(self.exc)
+        cmd.zoom(self.TargetName)
 
         # remove any possible selection before selecting atoms
         cmd.deselect()
@@ -297,7 +299,6 @@ class flexSC(Wizard):
                 for at in atoms.atom:
                     info.extend([ at.index, at.resn, at.resi, at.chain, at.name,
                                   at.coord[0], at.coord[1], at.coord[2] ])
-
                     break
 
             else:
