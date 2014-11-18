@@ -35,7 +35,6 @@ if __debug__:
 class Manage(object):
 
     NUMBER_RESULTS = 10
-    GRID_SPACING = 0.375
     
     def __init__(self, top):
         
@@ -249,7 +248,7 @@ class Manage(object):
         return 'PERMEA ' + str(Permea) + '\n'
 
     ''' ==================================================================================
-    @summary: Print_VAR: Prints the VAR* lines of CONFIG input                        
+    @summary: Print_VAR: Prints the VAR* and SPACER lines of CONFIG input
     ================================================================================== '''
     def Print_VAR(self):
 
@@ -258,6 +257,7 @@ class Manage(object):
         lines += 'VARANG ' + self.Config3.DeltaAngle.get() + '\n'
         lines += 'VARDIH ' + self.Config3.DeltaDihedral.get() + '\n'
         lines += 'VARFLX ' + self.Config3.DeltaDihedralFlex.get() + '\n'
+        lines += 'SPACER ' + self.Config3.GridSpacing.get() + '\n'
         
         return lines
 
@@ -286,6 +286,19 @@ class Manage(object):
             lines += 'INCHOH' + '\n'
             
         return lines
+
+    ''' ==================================================================================
+    @summary: Print_Scoring: Prints info related to atoms scoring
+    ================================================================================== '''
+    def Print_Scoring(self):
+
+        lines = ''
+        if self.Config3.ExcludeIntra.get():
+            lines += 'NOINTR' + '\n'
+        if self.Config3.LigandOnly.get():
+            lines += 'SCOLIG' + '\n'
+
+        return lines
         
     ''' ==================================================================================
     @summary: Print_CONSTANTS: Prints CONSTANTS variables of CONFIG input                        
@@ -297,15 +310,10 @@ class Manage(object):
         # genetic-algorithms
         lines += 'METOPT GA' + '\n'
  
-        # binding-site grid spacing
-        lines += 'SPACER ' + str(self.GRID_SPACING) + '\n'
-        
         # vcontacts plane definition
         lines += 'VCTPLA R' + '\n'
         # normalize area
         lines += 'NORMAR' + '\n'
-        # no intramolecular interactions
-        lines += 'NOINTR' + '\n'
         # vcontacts indexing
         lines += 'VINDEX' + '\n'
         # omit buried atoms in vonctacts calculations
@@ -313,18 +321,18 @@ class Manage(object):
         
         # output/input paths
         lines += 'STATEP ' + self.FlexAIDRunSimulationProject_Dir  + '\n'
-        lines +='TEMPOP ' + self.FlexAID.FlexAIDTempProject_Dir  + '\n'
-        lines +='DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n'
+        lines += 'TEMPOP ' + self.FlexAID.FlexAIDTempProject_Dir  + '\n'
+        lines += 'DEPSPA ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps') + '\n'
         
         # maximum number of results
-        lines +='MAXRES ' + str(self.NUMBER_RESULTS) + '\n'
+        lines += 'MAXRES ' + str(self.NUMBER_RESULTS) + '\n'
         
         # nrgsuite related variables
-        lines +='NRGSUI' + '\n'
-        lines +='NRGOUT 60' + '\n'
-        lines +='GRDBUF 1000' + '\n'
+        lines += 'NRGSUI' + '\n'
+        lines += 'NRGOUT 60' + '\n'
+        lines += 'GRDBUF 1000' + '\n'
         
-        lines +='ENDINP\n'
+        lines += 'ENDINP\n'
 
         return lines
 
@@ -369,7 +377,8 @@ class Manage(object):
         hasher.update(self.Print_VAR())
         hasher.update(self.Print_SLV())
         hasher.update(self.Print_HET())
-        
+        hasher.update(self.Print_Scoring())
+
         return hasher.digest()
 
     ''' ==================================================================================
@@ -420,6 +429,7 @@ class Manage(object):
         config_file.write(self.Print_VAR())
         config_file.write(self.Print_SLV())
         config_file.write(self.Print_HET())
+        config_file.write(self.Print_Scoring())
         config_file.write(self.Print_CONSTANTS())
         
         config_file.close()
@@ -506,11 +516,14 @@ class Manage(object):
             
             lines += 'FLEXSC %d %s %s\n' % (ResSeq, ChainID, ResName)
             
-        if os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','Lovell_LIB.dat')):
+        if self.Config3.RotInstances.get() and os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','rotobs.lst')):
+            lines += 'ROTOBS\n'
+        elif os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','Lovell_LIB.dat')):
             lines += 'ROTLIB\n'
-        #if os.path.isfile(os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','rotobs.lst')):
-        #    lines += 'ROTOBS\n'
 
+        Permea = 1.00 - float(self.Config3.RotPermeability.get())
+        lines += 'ROTPER ' + str(Permea) + '\n'
+        
         return lines
 
     ''' ==================================================================================
