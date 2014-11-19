@@ -97,7 +97,6 @@ class flexSC(Wizard):
 
         # Mask objects
         self.exc = [ self.TargetName ]
-        print self.TargetName
         General_cmd.mask_Objects(self.exc)
         cmd.zoom(self.TargetName)
 
