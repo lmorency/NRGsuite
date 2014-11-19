@@ -259,6 +259,5 @@ class anchor(Wizard):
                 self.AnchorAtom = General_cmd.get_ID(t[1],t[0])
                 self.RefreshDisplay()
             break
-        print self.AnchorAtom
         cmd.deselect()
 
