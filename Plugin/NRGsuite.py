@@ -221,7 +221,7 @@ if OSid != 'UNKNOWN':
             def StartAbout(self, menuindex):
                 
                 About.displayAbout(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                   NRGsuite_Path, OSid, True, 'About', 400, 350)
+                                   NRGsuite_Path, OSid, True, 'About', 400, 375)
             
             #================================================================================
             # Close the actual Project
