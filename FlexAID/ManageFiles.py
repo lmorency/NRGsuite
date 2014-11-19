@@ -1,6 +1,6 @@
 '''
     NRGsuite: PyMOL molecular tools interface
-    Copyright (C) 2011 Gaudreault, F., Morency, L.-P. & Najmanovich, R.
+    Copyright (C) 2011 Gaudreault, F., Morency, LP. & Najmanovich, R.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -487,7 +487,7 @@ class Manage(object):
             gaInp_file.write('BOOMFRAC 1.00\n')
         elif self.GAParam.RepModel.get() == 'STEADY':
             #gaInp_file.write('STEADNUM ' + str(self.GAParam.RepSS.get()) + '\n')
-            gaInp_file.write('STEADNUM ' + str(self.GAParam.NbChrom.get() - self.GAParam.NbChrom.get()* 0.05) + '\n')
+            gaInp_file.write('STEADNUM %d\n' % ( int(self.GAParam.NbChrom.get()) - int(float(self.GAParam.NbChrom.get())*float(self.GAParam.RepSS.get())) ) )
             
         if self.GAParam.RepDup.get():
             gaInp_file.write('DUPLICAT\n')

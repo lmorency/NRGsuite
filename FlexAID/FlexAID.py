@@ -1,6 +1,6 @@
 '''
     NRGsuite: PyMOL molecular tools interface
-    Copyright (C) 2011 Gaudreault, F., Morency, L.-P. & Najmanovich, R.
+    Copyright (C) 2011 Gaudreault, F., Morency, LP. & Najmanovich, R.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -63,7 +63,10 @@ class displayFlexAID(Base.Base):
         self.Btn_IOFiles_Clicked()
         
         # By default hide advanced tabs
-        self.bAdvancedView = False
+        if self.Prefs.AlwaysShowAdvancedView == 1:
+            self.bAdvancedView = True
+        else:
+            self.bAdvancedView = False
         self.Btn_Toggle_AdvView()
 
         # set files to copy when saving a session

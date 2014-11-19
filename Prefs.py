@@ -1,6 +1,6 @@
 '''
     NRGsuite: PyMOL molecular tools interface
-    Copyright (C) 2011 Gaudreault, F., Morency, L.-P. & Najmanovich, R.
+    Copyright (C) 2011 Gaudreault, F., Morency, LP. & Najmanovich, R.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class Prefs(object):
 
     # FONT SETTINGS
     DefaultFontType = 'Helvetica'
-    DefaultFontSize = 11
+    DefaultFontSize = 12
 
     def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0, PreferenceFilePath = None, AlwaysShowAdvancedView = 0):
 
@@ -107,7 +107,8 @@ class Prefs(object):
             f.close()
         except Exception, e:
             # error code || error message required "unable to write preferences"
-            print 'exception caught in Prefs.Write_User_Prefs'
+            print 'exception caught in Prefs.Write_User_Prefs()'
+            pass
 
     ''' ==================================================================================
     FUNCTION Write_User_Prefs: Save & Write the user's preferences into Preference file
@@ -203,7 +204,8 @@ class displayPrefs(Base.Base):
         try:
             self.Prefs.Write_User_Prefs()
         except:
-            print "Exception caught in Prefs.SaveDefault()."
+            print "Exception caught in Prefs.SaveDefault()"
+            pass
     
     ''' ==================================================================================
     FUNCTION Frame_Main: 
@@ -213,63 +215,76 @@ class displayPrefs(Base.Base):
         # Load User Preferences
         self.Prefs.Load_User_Prefs()
 
-        fTop = Frame(self.fMain, height=25, border=1, bg='blue')
+        fTop = Frame(self.fMain)#,bg='orange')
 
-        fText = Frame(self.fMain, border=1, bg='red')
-        fText.pack(fill=X, side=TOP, pady=10)
+        ######################## Font Options
 
-        # Title = Label(fText, text='NRGsuite Preferences Panel', height=3, font=self.font_Title_H)
-        # Title.pack(side=TOP, anchor=N)
-        # Title.pack_propagate(0)
+        fText = Frame(self.fMain)#, bg='red')
+        fText.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=2)
 
-        # FonType OptionMenu widget
-        fFont_options = Frame(fText)
-        fFont_options.pack(side=TOP,fill=X,padx=5,pady=5)
-        
-        fFontType_Label = Label(fFont_options, text='Preferred Font Type : ', font=self.font_Text_H)
-        fFontType_Label.pack(side=LEFT)
-        # fFontType_Label.pack_propagate(0)
+        Title_Font = Label(fText, text='Font Options', font=self.font_Title_H)
+        Title_Font.pack(side=TOP, anchor=W, padx=5, pady=2)
+        Title_Font.pack_propagate(0)
 
-        fontypes = ["Arial", "Tahoma", "Helvetica", "Courrier", "Lucida", "Times"]
+        fFont_options = Frame(fText)#,bg='green')
+        fFont_options.pack(side=TOP,fill=BOTH,padx=5,pady=0)
+        fFont_options2 = Frame(fText)#,bg='purple')
+        fFont_options2.pack(side=TOP,fill=BOTH,padx=5,pady=0)
+
+        fFontType_Label = Label(fFont_options, text='Preferred Font Type : ', font=self.font_Text)
+        fFontType_Label.pack(side=LEFT,anchor=W)
+        fFontType_Label.pack_propagate(0)
+
+        fontypes = ["Arial", "Lucida", "Helvetica", "Tahoma", "Times", "System", "Fixed", "Courrier"]
         fontypes.sort()
-        fFontType_OptionMenu = OptionMenu(fFont_options, self.FontType_StringVar,
-                                          command=self.Update_FontType, *fontypes)
-        fFontType_OptionMenu.configure(font=self.font_Text)
-        fFontType_OptionMenu.pack(side=LEFT)
+        fFontType_OptionMenu = OptionMenu(fFont_options, self.FontType_StringVar,command=self.Update_FontType, *fontypes)
+        fFontType_OptionMenu.configure(font=self.font_Text)#, bg='white')#,width=12)
+        fFontType_OptionMenu['menu'].config(font=self.font_Text)#, bg='white')
+        fFontType_OptionMenu.pack(side=RIGHT,anchor=E)#,fill=BOTH,expand=True)
         fFontType_OptionMenu.pack_propagate(0)
+        
+        fFontSize_Label = Label(fFont_options2, text='Preferred Font Size : ', font=self.font_Text)
+        fFontSize_Label.pack(side=LEFT,anchor=W)
 
-        fFontSize_Label = Label(fFont_options, text=' : Preferred Font Size', font=self.font_Text_H)
-        fFontSize_Label.pack(side=RIGHT)
-
-        fontsizes = [10,11,12,13,14]
-        fFontSize_OptionMenu = OptionMenu(fFont_options, self.FontSize_IntVar,
-                                          command=self.Update_FontSize,*fontsizes)
-        fFontSize_OptionMenu.configure(font=self.font_Text)
-        fFontSize_OptionMenu.pack(side=RIGHT)
+        fontsizes = [8,9,10,11,12,13,14]
+        fFontSize_OptionMenu = OptionMenu(fFont_options2, self.FontSize_IntVar,command=self.Update_FontSize, *fontsizes)
+        fFontSize_OptionMenu.configure(font=self.font_Text)#, bg='white')#, width=8)
+        fFontSize_OptionMenu['menu'].config(font=self.font_Text)#, bg='white')
+        fFontSize_OptionMenu.pack(side=RIGHT,anchor=E)#,fill=BOTH,expand=True)
         fFontSize_OptionMenu.pack_propagate(0)
 
-        ToggleAllFlexibleBonds = Checkbutton(fTop, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds, text='Automatically consider all rotable bonds of the ligand as flexible during the simulation', font=self.font_Text)
-        ToggleAllFlexibleBonds.pack(side=TOP)
+        ######################## FlexAID Options
+
+        fOptions = Frame(self.fMain)#, bg='yellow')
+
+        Title_FlexAID_Options = Label(fOptions, text='FlexAID Options', font=self.font_Title_H)
+        Title_FlexAID_Options.pack(side=TOP, anchor=W, padx=5, pady=2)
+        Title_FlexAID_Options.pack_propagate(0)
+
+        ToggleAllFlexibleBonds = Checkbutton(fOptions, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds, text='Automatically consider all rotable bonds of the ligand as flexible', font=self.font_Text)
+        ToggleAllFlexibleBonds.pack(side=TOP,anchor=W,padx=5, pady=2)
         ToggleAllFlexibleBonds.pack_propagate(0)
 
-        AlwaysShowAdvancedView = Checkbutton(fTop, variable=self.AlwaysShowAdvancedView_Var, command=self.Update_AlwaysShowAdvancedView, text='Automatically consider all rotable bonds of the ligand as flexible during the simulation', font=self.font_Text)
-        AlwaysShowAdvancedView.pack(side=TOP)
+        AlwaysShowAdvancedView = Checkbutton(fOptions, variable=self.AlwaysShowAdvancedView_Var, command=self.Update_AlwaysShowAdvancedView, text='Always show Advanced View in FlexAID', font=self.font_Text)
+        AlwaysShowAdvancedView.pack(side=TOP,anchor=W,padx=5, pady=2)
         AlwaysShowAdvancedView.pack_propagate(0)
+        fOptions.pack(side=TOP, fill=BOTH, padx=5, pady=2)
 
-        fButtons = Frame(fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=60)#, bg='green')
+        fButtons = Frame(fOptions, relief=RIDGE, border=0, width=self.WINDOWWIDTH)#, bg='blue')
 
         Btn_Save = Button(fButtons, text='Save Preferences', width=12, command=self.Btn_Save_Clicked, font=self.font_Text)
-        Btn_Save.pack(side=RIGHT,anchor=S,pady=0)
+        Btn_Save.pack(side=RIGHT,anchor=S, expand=True, fill=BOTH)
 
         Btn_Restore_Default = Button(fButtons, text='Restore Defaults', width=12, command=self.Btn_Default_Clicked, font=self.font_Text)
-        Btn_Restore_Default.pack(side=RIGHT, anchor=S,pady=0)
+        Btn_Restore_Default.pack(side=RIGHT, anchor=S, expand=True, fill=BOTH)
 
         Btn_Cancel = Button(fButtons, text='Cancel', width=12, command=self.Btn_Cancel_Clicked, font=self.font_Text)
-        Btn_Cancel.pack(side=RIGHT, anchor=S, pady=0)
+        Btn_Cancel.pack(side=RIGHT, anchor=S,  expand=True, fill=BOTH)
 
-        fButtons.pack(side=RIGHT, fill=X, expand=True)
-        fButtons.pack_propagate(0)
-        fTop.pack(fill=X, side=TOP, pady=0)
+        fButtons.pack(side=RIGHT, fill=X, expand=True,pady=5, padx=2)
+
+        fTop.pack(side=TOP, fill=BOTH, expand=True)
+        fTop.pack_propagate(0)
 
     ''' ==================================================================================
     FUNCTION Btn_Default_Clicked: Sets back the default config

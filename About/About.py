@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 '''
     NRGsuite: PyMOL molecular tools interface
-    Copyright (C) 2011 Gaudreault, F., Morency, L.-P. & Najmanovich, R.
+    Copyright (C) 2011 Gaudreault, F., Morency, LP. & Najmanovich, R.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ class displayAbout(Base.Base):
         Title = Label(fText, text='NRGsuite', height=3, font=self.font_Title)
         Title.pack(side=TOP, anchor=N)
         
-        Development = Label(fText, text='Developped by Francis Gaudreault', font=self.font_Text)
+        Development = Label(fText, text='Developped by Francis Gaudreault and Louis-Philippe Morency', font=self.font_Text)
         Development.pack(side=TOP)
         Supervision = Label(fText, text='Supervised by Dr. Rafael Najmanovich', font=self.font_Text)
         Supervision.pack(side=TOP)

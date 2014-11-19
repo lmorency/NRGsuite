@@ -1,6 +1,6 @@
 '''
     NRGsuite: PyMOL molecular tools interface
-    Copyright (C) 2011 Gaudreault, F., Morency, L.-P. & Najmanovich, R.
+    Copyright (C) 2011 Gaudreault, F., Morency, LP. & Najmanovich, R.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ OS = platform.system().upper()
 OSid = 'UNKNOWN'
 
 # SET the configuration location
-if OS == 'LINUX':
+if OS == 'LINUX' or OS == 'BSD':
     OSid = 'LINUX'
 elif OS == 'DARWIN':       
     OSid = 'MAC'    
@@ -185,7 +185,7 @@ if OSid != 'UNKNOWN':
                 
                 self.RootGetCleft = Toplevel(self.root)
                 GetCleft.displayGetCleft(self.RootGetCleft, self, menuindex, self.Project_Dir, Install_Dir,
-                                         NRGsuite_Path, OSid, True, 'GetCleft', 500, 550, self.RootPrefs)
+                                         NRGsuite_Path, OSid, True, 'NRGsuite - GetCleft', 500, 550, self.RootPrefs)
                     
             #================================================================================
             # STARTING FlexAID Conditional... 
@@ -194,7 +194,7 @@ if OSid != 'UNKNOWN':
                 
                 self.RootFlexAID = Toplevel(self.root)
                 FlexAID.displayFlexAID(self.RootFlexAID, self, menuindex, self.Project_Dir, Install_Dir, 
-                                       NRGsuite_Path, OSid, True, 'FlexAID', 800, 600, self.RootPrefs)
+                                       NRGsuite_Path, OSid, True, 'NRGsuite - FlexAID', 800, 600, self.RootPrefs)
                     
             #================================================================================
             # Load an existing Project
@@ -202,7 +202,7 @@ if OSid != 'UNKNOWN':
             def StartLoadProject(self, menuindex):
                 
                 LoadProject.displayLoadProject(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                               NRGsuite_Path, OSid, True, 'Load Project', 460, 350, self.RootPrefs)
+                                               NRGsuite_Path, OSid, True, 'NRGsuite - Load Project', 460, 350, self.RootPrefs)
                 
             #================================================================================
             # Create a New Project
@@ -210,14 +210,14 @@ if OSid != 'UNKNOWN':
             def StartNewProject(self, menuindex):
                         
                 NewProject.displayNewProject(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                             NRGsuite_Path, OSid, True, 'New Project', 420, 300, self.RootPrefs)
+                                             NRGsuite_Path, OSid, True, 'NRGsuite - New Project', 420, 300, self.RootPrefs)
                 
             #================================================================================
             # Loads the preferences menu to set the different options
             #================================================================================
             def StartPreferences(self, menuindex):
                 Prefs.displayPrefs(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                   NRGsuite_Path, OSid, True, 'NRGsuite Preferences', 575, 275, self.RootPrefs)
+                                   NRGsuite_Path, OSid, True, 'NRGsuite - Preferences', 450, 200, self.RootPrefs)
                 
             #================================================================================
             # Loads the about menu to see versionning
@@ -225,7 +225,7 @@ if OSid != 'UNKNOWN':
             def StartAbout(self, menuindex):
                 
                 About.displayAbout(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                   NRGsuite_Path, OSid, True, 'About', 400, 350, self.RootPrefs)
+                                   NRGsuite_Path, OSid, True, 'NRGsuite - About', 400, 350, self.RootPrefs)
             
             #================================================================================
             # Close the actual Project

@@ -1,6 +1,6 @@
 '''
     NRGsuite: PyMOL molecular tools interface
-    Copyright (C) 2011 Gaudreault, F., Morency, L.-P. & Najmanovich, R.
+    Copyright (C) 2011 Gaudreault, F., Morency, LP. & Najmanovich, R.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class GAParamVars(Vars.Vars):
     FitPeak = StringVar()
     FitScale = StringVar()
     RepModel = StringVar()
-    #RepSS = StringVar()
+    RepSS = StringVar()
     #RepB = StringVar()
     RepDup = IntVar()
     UseAGA = IntVar()
@@ -60,7 +60,7 @@ class GAParam(Tabs.Tab):
         self.FitPeak = self.Vars.FitPeak
         self.FitScale = self.Vars.FitScale
         self.RepModel = self.Vars.RepModel
-        #self.RepSS = self.Vars.RepSS
+        self.RepSS = self.Vars.RepSS
         #self.RepB = self.Vars.RepB
         self.RepDup = self.Vars.RepDup
         self.UseAGA = self.Vars.UseAGA
@@ -83,9 +83,9 @@ class GAParam(Tabs.Tab):
         self.FitScale.set('10.0')
         self.RepModel.set('BOOM')
         self.RepDup.set(0)
-        #self.RepSS.set('500')
+        self.RepSS.set('0.10')
         #self.RepB.set('500')
-        self.UseAGA.set(1)
+        self.UseAGA.set(0)
         self.AGAk1.set('0.95')
         self.AGAk2.set('0.10')
         self.AGAk3.set('0.95')
@@ -119,60 +119,60 @@ class GAParam(Tabs.Tab):
             self.FitModelTrace = self.FitModel.trace('w',self.FitModel_Toggle)
 
             self.NbChromTrace = self.NbChrom.trace('w', lambda *args, **kwargs:
-                                    self.Validate_Field(input=self.inputNbChr, var=self.NbChrom, min=1, max=100000,
-                                                        ndec=-1, tag='Chromosomes', _type=int))
+                                                   self.Validate_Field(input=self.inputNbChr, var=self.NbChrom, min=1, max=100000,
+                                                                       ndec=-1, tag='Chromosomes', _type=int))
 
             self.NbGenTrace = self.NbGen.trace('w', lambda *args, **kwargs:
-                                                    self.Validate_Field(input=self.inputNbGen, var=self.NbGen, min=1, 
-                                                                        max=100000, ndec=-1, tag='Generations', _type=int))
+                                               self.Validate_Field(input=self.inputNbGen, var=self.NbGen, min=1, 
+                                                                   max=100000, ndec=-1, tag='Generations', _type=int))
             
             self.CrossRateTrace = self.CrossRate.trace('w', lambda *args, **kwargs:
-                                                            self.Validate_Field(input=self.inputCR, var=self.CrossRate, min=0.000, 
-                                                                                max=1.000, ndec=3, tag='Crossover rate', _type=float))
+                                                       self.Validate_Field(input=self.inputCR, var=self.CrossRate, min=0.000, 
+                                                                           max=1.000, ndec=3, tag='Crossover rate', _type=float))
             
             self.MutaRateTrace = self.MutaRate.trace('w', lambda *args, **kwargs:
-                                                          self.Validate_Field(input=self.inputMR, var=self.MutaRate, min=0.000,
-                                                          max=1.000, ndec=3, tag='Mutation rate', _type=float))
+                                                     self.Validate_Field(input=self.inputMR, var=self.MutaRate, min=0.000,
+                                                                         max=1.000, ndec=3, tag='Mutation rate', _type=float))
 
             self.AGAk1Trace = self.AGAk1.trace('w', lambda *args, **kwargs:
-                                                    self.Validate_Field(input=self.entAGAk1, var=self.AGAk1, min=0.000,
-                                                    max=1.000, ndec=3, tag='Adaptive constant k1', _type=float))
+                                               self.Validate_Field(input=self.entAGAk1, var=self.AGAk1, min=0.000,
+                                                                   max=1.000, ndec=3, tag='Adaptive constant k1', _type=float))
             
             self.AGAk2Trace = self.AGAk2.trace('w', lambda *args, **kwargs:
-                                                    self.Validate_Field(input=self.entAGAk2, var=self.AGAk2, min=0.000,
-                                                    max=1.000, ndec=3, tag='Adaptive constant k2', _type=float))
+                                               self.Validate_Field(input=self.entAGAk2, var=self.AGAk2, min=0.000,
+                                                                   max=1.000, ndec=3, tag='Adaptive constant k2', _type=float))
 
             self.AGAk3Trace = self.AGAk3.trace('w', lambda *args, **kwargs:
-                                                    self.Validate_Field(input=self.entAGAk3, var=self.AGAk3, min=0.000,
-                                                    max=1.000, ndec=3, tag='Adaptive constant k3', _type=float))
+                                               self.Validate_Field(input=self.entAGAk3, var=self.AGAk3, min=0.000,
+                                                                   max=1.000, ndec=3, tag='Adaptive constant k3', _type=float))
 
             self.AGAk4Trace = self.AGAk4.trace('w', lambda *args, **kwargs:
-                                                    self.Validate_Field(input=self.entAGAk4, var=self.AGAk4, min=0.000,
-                                                    max=1.000, ndec=3, tag='Adaptive constant k4', _type=float))
+                                               self.Validate_Field(input=self.entAGAk4, var=self.AGAk4, min=0.000,
+                                                                   max=1.000, ndec=3, tag='Adaptive constant k4', _type=float))
 
             self.NbTopChromTrace = self.NbTopChrom.trace('w', lambda *args, **kwargs:
-                                                              self.Validate_Field(input=self.inputTopChr, var=self.NbTopChrom, min=0,
-                                                              max=self.inputNbChr, ndec=-1, tag='TOP complexes', _type=int))
+                                                         self.Validate_Field(input=self.inputTopChr, var=self.NbTopChrom, min=0,
+                                                                             max=self.inputNbChr, ndec=-1, tag='TOP complexes', _type=int))
 
             self.NbGenFreqTrace = self.NbGenFreq.trace('w', lambda *args, **kwargs:
-                                                            self.Validate_Field(input=self.inputGenFq, var=self.NbGenFreq, min=1,
-                                                            max=self.inputNbGen, ndec=-1, tag='Generations interval', _type=int))
+                                                       self.Validate_Field(input=self.inputGenFq, var=self.NbGenFreq, min=1,
+                                                                           max=self.inputNbGen, ndec=-1, tag='Generations interval', _type=int))
 
             self.FitScaleTrace = self.FitScale.trace('w', lambda *args, **kwargs:
-                                                          self.Validate_Field(input=self.entScale, var=self.FitScale, min=0.00,
-                                                          max=100.00, ndec=2, tag='Fitness scale', _type=float))
+                                                     self.Validate_Field(input=self.entScale, var=self.FitScale, min=0.00,
+                                                                         max=100.00, ndec=2, tag='Fitness scale', _type=float))
 
             self.FitPeakTrace = self.FitPeak.trace('w', lambda *args, **kwargs:
-                                                        self.Validate_Field(input=self.entPeak, var=self.FitPeak, min=0.00,
-                                                        max=100.00, ndec=2, tag='Fitness peak', _type=float))
+                                                   self.Validate_Field(input=self.entPeak, var=self.FitPeak, min=0.00,
+                                                                       max=100.00, ndec=2, tag='Fitness peak', _type=float))
 
             self.FitAlphaTrace = self.FitAlpha.trace('w', lambda *args, **kwargs:
-                                                          self.Validate_Field(input=self.entAlpha, var=self.FitAlpha, min=0.00,
-                                                          max=100.00, ndec=2, tag='Fitness alpha', _type=float))
+                                                     self.Validate_Field(input=self.entAlpha, var=self.FitAlpha, min=0.00,
+                                                                         max=100.00, ndec=2, tag='Fitness alpha', _type=float))
             
-            #self.RepSSTrace = self.RepSS.trace('w', lambda *args, **kwargs:
-            #                                        self.Validate_Field(input=self.entSS, var=self.RepSS, min=1,
-            #                                        max=1000, ndec=-1, tag='Reproduction steady-state', _type=int))
+            self.RepSSTrace = self.RepSS.trace('w', lambda *args, **kwargs:
+                                               self.Validate_Field(input=self.entSS, var=self.RepSS, min=0.00,
+                                                                   max=1.00, ndec=2, tag='Reproduction steady-state', _type=float))
 
             #self.RepBTrace = self.RepB.trace('w', lambda *args, **kwargs:
             #                                      self.Validate_Field(input=self.entB, var=self.RepB, min=0.10,
@@ -204,7 +204,7 @@ class GAParam(Tabs.Tab):
             self.FitScale.trace_vdelete('w',self.FitScaleTrace)
             self.FitPeak.trace_vdelete('w',self.FitPeakTrace)
             self.FitAlpha.trace_vdelete('w',self.FitAlphaTrace)
-            #self.RepSS.trace_vdelete('w',self.RepSSTrace)
+            self.RepSS.trace_vdelete('w',self.RepSSTrace)
             #self.RepB.trace_vdelete('w',self.RepBTrace)
         except:
             pass
@@ -382,10 +382,11 @@ class GAParam(Tabs.Tab):
         
         Label(fRepModelLine1, text='Reproduction model', font=self.top.font_Title).pack(side=LEFT)
         Radiobutton(fRepModelLine2, text='Elitism (Steady-state)', value='STEADY', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
-        #self.entSS = Entry(fRepModelLine2, width=5, background='white', justify=CENTER, textvariable=self.RepSS, font=self.top.font_Text)
-        #self.entSS.pack(side=RIGHT)
-        #Label(fRepModelLine2, text='Extra chrom.:', font=self.top.font_Text).pack(side=RIGHT)
-        #self.ValidRepSS = [1, False, self.entSS]
+        self.entSS = Entry(fRepModelLine2, width=5, background='white', justify=CENTER,
+                           textvariable=self.RepSS, font=self.top.font_Text, state='disabled')
+        self.entSS.pack(side=RIGHT)
+        Label(fRepModelLine2, text='Fraction:', font=self.top.font_Text).pack(side=RIGHT)
+        self.ValidRepSS = [1, False, self.entSS]
 
         Radiobutton(fRepModelLine3, text='Population boom', value='BOOM', variable=self.RepModel, font=self.top.font_Text).pack(side=LEFT)
         #self.entB = Entry(fRepModelLine3, width=5, background='white', justify=CENTER, textvariable=self.RepB, font=self.top.font_Text)
@@ -397,7 +398,7 @@ class GAParam(Tabs.Tab):
         
         self.Validator = [self.ValidNbGen, self.ValidNbGenFreq, self.ValidNbChrom, self.ValidNbTopChrom,
                           self.ValidCrossRate, self.ValidMutaRate, self.ValidFitAlpha, self.ValidFitPeak,
-                          self.ValidFitScale, #self.ValidRepSS, self.ValidRepB, 
+                          self.ValidFitScale, self.ValidRepSS, #self.ValidRepB, 
                           self.ValidAGAk1, self.ValidAGAk2, self.ValidAGAk3, self.ValidAGAk4]
         
         return self.fGAParam
@@ -407,15 +408,12 @@ class GAParam(Tabs.Tab):
     =================================================================================  '''    
     def RepModel_Toggle(self, *args):
         
-        '''
         if self.RepModel.get() == 'STEADY':
             self.entSS.config(state='normal')
-            self.entB.config(state='disabled')
-            
+            #self.entB.config(state='disabled')
         elif self.RepModel.get() == 'BOOM':
             self.entSS.config(state='disabled')
-            self.entB.config(state='normal')
-        '''
+            #self.entB.config(state='normal')
         
         return
  

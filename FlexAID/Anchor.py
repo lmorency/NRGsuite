@@ -1,6 +1,6 @@
 '''
     NRGsuite: PyMOL molecular tools interface
-    Copyright (C) 2011 Gaudreault, F., Morency, L.-P. & Najmanovich, R.
+    Copyright (C) 2011 Gaudreault, F., Morency, LP. & Najmanovich, R.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -259,6 +259,5 @@ class anchor(Wizard):
                 self.AnchorAtom = General_cmd.get_ID(t[1],t[0])
                 self.RefreshDisplay()
             break
-        print self.AnchorAtom
         cmd.deselect()
 
