@@ -1,10 +1,11 @@
+.gitignore
 *.pyc
+*.orig
+*/*.orig
+*.pdb
 */*.pyc
 GetCleft/WRK
 FlexAID/WRK
 *.db
-*.pyc
-*/*.pyc
 *~
 .DS_Store
-.gitignore
