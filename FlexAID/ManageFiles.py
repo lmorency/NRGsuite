@@ -722,31 +722,31 @@ class Manage(object):
         # Save the data to the configuration file
         report_file = open(self.Report, 'w')
 
-        report_file.write('%-35s%s\n' % ('Docking parameters', ''))
+        report_file.write('%-40s%s\n' % ('Docking parameters', ''))
         
-        report_file.write('%-35s%s\n' % ('Target name', self.IOFile.TargetName.get()))
-        report_file.write('%-35s%s\n' % ('Target file', self.IOFile.TargetPath.get()))
+        report_file.write('%-40s%s\n' % ('Target name', self.IOFile.TargetName.get()))
+        report_file.write('%-40s%s\n' % ('Target file', self.IOFile.TargetPath.get()))
 
-        report_file.write('%-35s%s\n' % ('Ligand name', self.IOFile.LigandName.get()))
-        report_file.write('%-35s%s\n' % ('Ligand file', self.IOFile.LigandPath.get()))
+        report_file.write('%-40s%s\n' % ('Ligand name', self.IOFile.LigandName.get()))
+        report_file.write('%-40s%s\n' % ('Ligand file', self.IOFile.LigandPath.get()))
 
-        report_file.write('%-35s%s\n' % ('Method optimization', 'Genetic algorithms'))
-        report_file.write('%-35s%s\n' % ('Scoring function', 'Complementarity function'))
+        report_file.write('%-40s%s\n' % ('Method optimization', 'Genetic algorithms'))
+        report_file.write('%-40s%s\n' % ('Scoring function', 'Complementarity function'))
         
         rngOpt = self.Config1.RngOpt.get()
         if rngOpt == 'LOCCEN':
-            report_file.write('%-35s%s\n' % ('Binding-site definition', 'Sphere'))
-            report_file.write('%-35s%s\n' % ('Sphere center (x,y,z)', 
+            report_file.write('%-40s%s\n' % ('Binding-site definition', 'Sphere'))
+            report_file.write('%-40s%s\n' % ('Sphere center (x,y,z)', 
                                            str(self.Config1.Vars.BindingSite.Sphere.Center[0]) + ',' + \
                                            str(self.Config1.Vars.BindingSite.Sphere.Center[1]) + ',' + \
                                            str(self.Config1.Vars.BindingSite.Sphere.Center[2])))
-            report_file.write('%-35s%s\n' % ('Sphere radius', str(self.Config1.Vars.BindingSite.Sphere.Radius) + 'A'))
-            report_file.write('%-35s%s\n' % ('Binding-site volume', 
+            report_file.write('%-40s%s\n' % ('Sphere radius', str(self.Config1.Vars.BindingSite.Sphere.Radius) + 'A'))
+            report_file.write('%-40s%s\n' % ('Binding-site volume', 
                                              str(4*3.1416*self.Config1.Vars.BindingSite.Sphere.Radius**3/3) + 'A^3'))
             
         elif rngOpt == 'LOCCLF':
-            report_file.write('%-35s%s\n' % ('Binding-site definition', 'Cleft'))
-            report_file.write('%-35s%s\n' % ('List of clefts', ','.join(self.Config1.Vars.BindingSite.Get_SortedCleftNames())))
+            report_file.write('%-40s%s\n' % ('Binding-site definition', 'Cleft'))
+            report_file.write('%-40s%s\n' % ('List of clefts', ','.join(self.Config1.Vars.BindingSite.Get_SortedCleftNames())))
             
             volume = 0.0
             for Cleft in self.Config1.Vars.BindingSite.listClefts:
@@ -758,19 +758,25 @@ class Manage(object):
             if type(volume) == float:
                 volume = str(volume) + 'A^3'
 
-            report_file.write('%-35s%s\n' % ('Binding-site volume', volume))
+            report_file.write('%-40s%s\n' % ('Binding-site volume', volume))
         
-        report_file.write('%-35s%s\n' % ('Binding-site resolution', '0.375A'))
+        report_file.write('%-40s%s\n' % ('Binding-site resolution', '0.375A'))
         #self.Config1.Generate_CleftBindingSite()
         #self.Copy_BindingSite()
            
         nflexsc = self.Config1.Vars.TargetFlex.Count_SideChain()
         if nflexsc > 0:
-            report_file.write('%-35s%s\n' % ('Target flexibility', 'Yes'))
-            report_file.write('%-35s%s\n' % ('Number of flexible side-chains', str(nflexsc)))
-            report_file.write('%-35s%s\n' % ('Flexible side-chains', self.Config1.Vars.TargetFlex.Output_List()))
+            report_file.write('%-40s%s\n' % ('Target flexibility', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Number of flexible side-chains', str(nflexsc)))
+            report_file.write('%-40s%s\n' % ('Flexible side-chains', self.Config1.Vars.TargetFlex.Output_List()))
+            report_file.write('%-40s%s\n' % ('Rotamer acceptance permeability',
+                                             str(float(self.Config3.RotPermeability.get()) * 100.0) + '%'))
+            if self.Config3.RotInstances.get():
+                report_file.write('%-40s%s\n' % ('Use rotamer instances', 'Yes'))
+            else:
+                report_file.write('%-40s%s\n' % ('Use rotamer instances', 'No'))
         else:
-            report_file.write('%-35s%s\n' % ('Target flexibility', 'No'))
+            report_file.write('%-40s%s\n' % ('Target flexibility', 'No'))
         
         nflexbonds = 0
         for k in self.IOFile.Vars.dictFlexBonds.keys():
@@ -778,101 +784,115 @@ class Manage(object):
                 nflexbonds += 1
         
         if nflexbonds > 0:
-            report_file.write('%-35s%s\n' % ('Ligand flexibility', 'Yes'))
-            report_file.write('%-35s%s\n' % ('Number flexible bonds', str(nflexbonds)))            
+            report_file.write('%-40s%s\n' % ('Ligand flexibility', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Number flexible bonds', str(nflexbonds)))            
         else:
-            report_file.write('%-35s%s\n' % ('Ligand flexibility', 'No'))
+            report_file.write('%-40s%s\n' % ('Ligand flexibility', 'No'))
         
         ncons = len(self.Config2.Vars.dictConstraints)
         if ncons:
-            report_file.write('%-35s%s\n' % ('Interaction constraints', 'Yes'))
-            report_file.write('%-35s%s\n' % ('Number of constraints', str(ncons)))
+            report_file.write('%-40s%s\n' % ('Interaction constraints', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Number of constraints', str(ncons)))
         else:
-            report_file.write('%-35s%s\n' % ('Interaction constraints', 'No'))
+            report_file.write('%-40s%s\n' % ('Interaction constraints', 'No'))
 
         if self.Config2.IntTranslation.get():
-            report_file.write('%-35s%s\n' % ('Translational degree of freedom', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Translational degree of freedom', 'Yes'))
         else:
-            report_file.write('%-35s%s\n' % ('Translational degree of freedom', 'No'))
+            report_file.write('%-40s%s\n' % ('Translational degree of freedom', 'No'))
 
         if self.Config2.IntRotation.get():
-            report_file.write('%-35s%s\n' % ('Rotational degree of freedom', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Rotational degree of freedom', 'Yes'))
         else:
-            report_file.write('%-35s%s\n' % ('Rotational degree of freedom', 'No'))
+            report_file.write('%-40s%s\n' % ('Rotational degree of freedom', 'No'))
         
         if self.Config2.UseReference.get():
-            report_file.write('%-35s%s\n' % ('Pose as reference', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Pose as reference', 'Yes'))
         else:
-            report_file.write('%-35s%s\n' % ('Pose as reference', 'No'))
+            report_file.write('%-40s%s\n' % ('Pose as reference', 'No'))
 
-        report_file.write('%-35s%s\n' % ('Atom types definition', self.IOFile.AtomTypes.get()))
+        report_file.write('%-40s%s\n' % ('Atom types definition', self.IOFile.AtomTypes.get()))
         
         if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
-            report_file.write('%-35s%s\n' % ('Pairwise energy matrix', 'scr_bin.dat'))
+            report_file.write('%-40s%s\n' % ('Pairwise energy matrix', 'scr_bin.dat'))
             
         elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
-            report_file.write('%-35s%s\n' % ('Pairwise energy matrix', 'M6_cons_3.dat'))
+            report_file.write('%-40s%s\n' % ('Pairwise energy matrix', 'M6_cons_3.dat'))
             
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
-            report_file.write('%-35s%s\n' % ('Pairwise energy matrix', 'MC_10p_3.dat'))
+            #report_file.write('%-40s%s\n' % ('Pairwise energy matrix', 'MC_10p_3.dat'))
+            report_file.write('%-40s%s\n' % ('Pairwise energy matrix', 'MC_st0r5.2_6.dat'))
         
         # permeability of atoms
-        report_file.write('%-35s%s\n' % ('Van der Waals permeability', 
+        report_file.write('%-40s%s\n' % ('Van der Waals permeability', 
                                          str(float(self.Config3.Permeability.get()) * 100.0) + '%'))
         
+        # atoms scoring
+        if self.Config3.ExcludeIntra.get():
+            report_file.write('%-40s%s\n' % ('Exclude intramolecular interactions', 'Yes'))
+        else:
+            report_file.write('%-40s%s\n' % ('Exclude intramolecular interactions', 'No'))
+
+        if self.Config3.LigandOnly.get():
+            report_file.write('%-40s%s\n' % ('Score ligand atoms only', 'Yes'))
+        else:
+            report_file.write('%-40s%s\n' % ('Score ligand atoms only', 'No'))
+            
         # heterogroups consideration
         if self.Config3.ExcludeHET.get():
-            report_file.write('%-35s%s\n' % ('Heteogroups excluded', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Heteogroups excluded', 'Yes'))
         elif self.Config3.IncludeHOH.get():
-            report_file.write('%-35s%s\n' % ('Heteogroups excluded', 'No'))
-            report_file.write('%-35s%s\n' % ('Water molecules included', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Heteogroups excluded', 'No'))
+            report_file.write('%-40s%s\n' % ('Water molecules included', 'Yes'))
         
-        report_file.write('%-35s%s\n' % ('Delta angle', self.Config3.DeltaAngle.get() + ' degrees'))
-        report_file.write('%-35s%s\n' % ('Delta dihedrals', self.Config3.DeltaDihedral.get() + ' degrees'))
-        report_file.write('%-35s%s\n' % ('Delta flexible dihedrals', self.Config3.DeltaDihedralFlex.get() + ' degrees'))
+        report_file.write('%-40s%s\n' % ('Delta angle', self.Config3.DeltaAngle.get() + ' degrees'))
+        report_file.write('%-40s%s\n' % ('Delta dihedrals', self.Config3.DeltaDihedral.get() + ' degrees'))
+        report_file.write('%-40s%s\n' % ('Delta flexible dihedrals', self.Config3.DeltaDihedralFlex.get() + ' degrees'))
+        report_file.write('%-40s%s\n' % ('Grid spacing', self.Config3.GridSpacing.get() + 'A'))
 
         if self.Config3.SolventTypeIndex.get() == 0:        
-            report_file.write('%-35s%s\n' % ('Solvent type', 'No-type'))
-            report_file.write('%-35s%s\n' % ('Solvent term', str(self.Config3.SolventTerm.get())))
+            report_file.write('%-40s%s\n' % ('Solvent type', 'No-type'))
+            report_file.write('%-40s%s\n' % ('Solvent term', str(self.Config3.SolventTerm.get())))
         else:
-            report_file.write('%-35s%s\n' % ('Solvent type', 'Type-based'))
+            report_file.write('%-40s%s\n' % ('Solvent type', 'Type-based'))
         
-        report_file.write('%-35s%s\n' % ('Maximum docking results', '10'))
+        report_file.write('%-40s%s\n' % ('Maximum docking results', '10'))
         
         report_file.write('\n')
-        report_file.write('%-35s%s\n' % ('Genetic algorithms parameters', ''))
+        report_file.write('%-40s%s\n' % ('Genetic algorithms parameters', ''))
 
-        report_file.write('%-35s%s\n' % ('Number chromosomes', str(self.GAParam.NbChrom.get())))
-        report_file.write('%-35s%s\n' % ('Number generations', str(self.GAParam.NbGen.get())))
+        report_file.write('%-40s%s\n' % ('Number chromosomes', str(self.GAParam.NbChrom.get())))
+        report_file.write('%-40s%s\n' % ('Number generations', str(self.GAParam.NbGen.get())))
         
         if self.GAParam.UseAGA.get():
-            report_file.write('%-35s%s\n' % ('Adaptive genetic operators', 'Yes'))
-            report_file.write('%-35s%s\n' % ('Maximum crossover rate', self.GAParam.AGAk1.get()))
-            report_file.write('%-35s%s\n' % ('Maximum mutation rate', self.GAParam.AGAk2.get()))
+            report_file.write('%-40s%s\n' % ('Adaptive genetic operators', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Maximum crossover rate', self.GAParam.AGAk1.get()))
+            report_file.write('%-40s%s\n' % ('Maximum mutation rate', self.GAParam.AGAk2.get()))
         else:
-            report_file.write('%-35s%s\n' % ('Adaptive genetic operators', 'No'))
-            report_file.write('%-35s%s\n' % ('Crossover rate', self.GAParam.CrossRate.get()))
-            report_file.write('%-35s%s\n' % ('Mutation rate', self.GAParam.MutaRate.get()))
+            report_file.write('%-40s%s\n' % ('Adaptive genetic operators', 'No'))
+            report_file.write('%-40s%s\n' % ('Crossover rate', self.GAParam.CrossRate.get()))
+            report_file.write('%-40s%s\n' % ('Mutation rate', self.GAParam.MutaRate.get()))
         
         if bContinue:
-            report_file.write('%-35s%s\n' % ('Start from random population', 'No'))
+            report_file.write('%-40s%s\n' % ('Start from random population', 'No'))
         else:
-            report_file.write('%-35s%s\n' % ('Start from random population', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Start from random population', 'Yes'))
             
         if self.GAParam.FitModel.get() == 'PSHARE':
-            report_file.write('%-35s%s\n' % ('Fitness model', 'Shared'))
+            report_file.write('%-40s%s\n' % ('Fitness model', 'Shared'))
         else:
-            report_file.write('%-35s%s\n' % ('Fitness model', 'Linear'))
+            report_file.write('%-40s%s\n' % ('Fitness model', 'Linear'))
 
         if self.GAParam.RepModel.get() == 'BOOM':
-            report_file.write('%-35s%s\n' % ('Reproduction model', 'Population boom'))
+            report_file.write('%-40s%s\n' % ('Reproduction model', 'Population boom'))
         else:
-            report_file.write('%-35s%s\n' % ('Reproduction model', 'Steady-state'))
+            report_file.write('%-40s%s\n' % ('Reproduction model', 'Steady-state'))
+            report_file.write('%-40s%s\n' % ('Steady-state fraction', self.GAParam.RepSS.get()))
 
         if self.GAParam.RepDup.get():
-            report_file.write('%-35s%s\n' % ('Allow duplicates', 'Yes'))
+            report_file.write('%-40s%s\n' % ('Allow duplicates', 'Yes'))
         else:
-            report_file.write('%-35s%s\n' % ('Allow duplicates', 'No'))
+            report_file.write('%-40s%s\n' % ('Allow duplicates', 'No'))
             
         return
         
