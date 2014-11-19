@@ -82,8 +82,8 @@ class Prefs(object):
                 # Catch exceptions
                 shutil.rmtree(self.PreferenceFilePath)
                 self.Load_User_Prefs()
-                print 'exception caught in Prefs.Load_User_Prefs. Old Preferences file removed.'
-                print 'reloading User\'s preferences.'
+                print 'Exception caught in Prefs.Load_User_Prefs(). Old Preferences file removed.'
+                print 'Reloading User\'s preferences.'
 
     ''' ==================================================================================
     FUNCTION GetFontType: Returns the font type preferred by the user
@@ -121,14 +121,17 @@ class Prefs(object):
         self.Write_User_Prefs()
 
 
-''' ==================================================================================
+''' 
+==================================================================================
 CLASS displayPrefs :     
-=================================================================================  '''
+==================================================================================
+'''
 class displayPrefs(Base.Base):
 
     def Def_Vars(self):
-        # IntVar() used for the ToggleAllFlexibleBonds Checkbutoton()
+        # IntVar() used for the ToggleAllFlexibleBonds and AlwaysShowAdvacnedView Checkbuttons()
         self.ToggleAllFlexibleBonds_Var = IntVar(0)
+        self.AlwaysShowAdvancedView_Var = IntVar(0)
         # IntVar() used for the FontSize OptionMenu()
         self.FontSize_IntVar = IntVar()
         self.FontSize_IntVar.set(self.Prefs.DefaultFontSize)
@@ -140,6 +143,8 @@ class displayPrefs(Base.Base):
         # ToggleAllFlexibleBonds preferred value set
         if self.Prefs.ToggleAllFlexibleBonds == 1:
             self.ToggleAllFlexibleBonds_Var.set(1)
+        if self.Prefs.AlwaysShowAdvancedView == 1:
+            self.AlwaysShowAdvancedView_Var.set(1)
         # FontType preferred value set
         if self.Prefs.FontType != self.FontType_StringVar.get():
             self.FontType_StringVar.set(self.Prefs.FontType)
@@ -163,6 +168,21 @@ class displayPrefs(Base.Base):
             return 1
 
     ''' ====================================================================================================
+    FUNCTION Update_AlwaysShowAdvancedView: Update the Prefs class with current ToggleAllFlexibleBonds value
+    ========================================================================================================  '''    
+    def Update_AlwaysShowAdvancedView(self):
+
+        if self.Prefs.AlwaysShowAdvancedView == 1:
+            self.AlwaysShowAdvancedView_Var.set(0)
+            self.Prefs.AlwaysShowAdvancedView = 0
+            return 0
+
+        elif self.Prefs.AlwaysShowAdvancedView == 0:
+            self.AlwaysShowAdvancedView_Var.set(1)
+            self.Prefs.AlwaysShowAdvancedView = 1
+            return 1
+
+    ''' ====================================================================================================
     FUNCTION Update_FontSize: Update the Prefs class with current FontSize value
     ========================================================================================================  '''    
     def Update_FontSize(self, val):
@@ -180,7 +200,10 @@ class displayPrefs(Base.Base):
     FUNCTION SaveDefault: Save & Write the user's preferences into Preference file
     =================================================================================  '''
     def SaveDefault(self):
-        self.Prefs.Write_User_Prefs()
+        try:
+            self.Prefs.Write_User_Prefs()
+        except:
+            print "Exception caught in Prefs.SaveDefault()."
     
     ''' ==================================================================================
     FUNCTION Frame_Main: 
@@ -225,8 +248,13 @@ class displayPrefs(Base.Base):
         fFontSize_OptionMenu.pack(side=RIGHT)
         fFontSize_OptionMenu.pack_propagate(0)
 
-        ToggleAllFlexibleBonds = Checkbutton(fTop,variable=self.ToggleAllFlexibleBonds_Var,command=self.Update_ToggleAllFlexibleBonds,text='Automatically consider all rotable bonds of the ligand as flexible during the simulation',font=self.font_Text)
+        ToggleAllFlexibleBonds = Checkbutton(fTop, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds, text='Automatically consider all rotable bonds of the ligand as flexible during the simulation', font=self.font_Text)
         ToggleAllFlexibleBonds.pack(side=TOP)
+        ToggleAllFlexibleBonds.pack_propagate(0)
+
+        AlwaysShowAdvancedView = Checkbutton(fTop, variable=self.AlwaysShowAdvancedView_Var, command=self.Update_AlwaysShowAdvancedView, text='Automatically consider all rotable bonds of the ligand as flexible during the simulation', font=self.font_Text)
+        AlwaysShowAdvancedView.pack(side=TOP)
+        AlwaysShowAdvancedView.pack_propagate(0)
 
         fButtons = Frame(fTop, relief=RIDGE, border=0, width=self.WINDOWWIDTH, height=60)#, bg='green')
 
