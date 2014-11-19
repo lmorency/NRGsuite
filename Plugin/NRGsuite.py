@@ -39,7 +39,7 @@ OS = platform.system().upper()
 OSid = 'UNKNOWN'
 
 # SET the configuration location
-if OS == 'LINUX':
+if OS == 'LINUX' or OS == 'BSD':
     OSid = 'LINUX'
 elif OS == 'DARWIN':       
     OSid = 'MAC'    
@@ -78,6 +78,7 @@ if OSid != 'UNKNOWN':
            os.path.isdir(GetCleft_Path) and os.path.isdir(About_Path):
         
             sys.path.append(Install_Dir)
+            import Prefs
             
             sys.path.append(Plugin_Path)
             
@@ -94,6 +95,7 @@ if OSid != 'UNKNOWN':
             sys.path.append(About_Path)
             import About
             
+
             from Tkinter import *
             
             #------------------------------------------------------------------#
@@ -107,7 +109,9 @@ if OSid != 'UNKNOWN':
                 
                 self.RootFlexAID = None
                 self.RootGetCleft = None
-                
+
+                self.RootPrefs = Prefs.Prefs()
+
                 # ADD a new main menu named Project to the menu bar
                 #self.menuBar.addmenu('NRGsuite', 'Najmanovich Research Group Suite')
                 self.menuBar.addcascademenu('Plugin',
@@ -172,7 +176,7 @@ if OSid != 'UNKNOWN':
                                          command = lambda s=self, menuindex=9 : StartAbout(s, menuindex))
                 
                 # Make the Load  - Create projects button clickable only
-                EnableDisableMenu(self, ['normal','normal','disabled','disabled','disabled','disabled','normal'] )
+                EnableDisableMenu(self, ['normal','normal','disabled','normal','disabled','disabled','normal'] )
             
             #================================================================================
             # STARTING GetCleft Conditional... 
@@ -181,7 +185,7 @@ if OSid != 'UNKNOWN':
                 
                 self.RootGetCleft = Toplevel(self.root)
                 GetCleft.displayGetCleft(self.RootGetCleft, self, menuindex, self.Project_Dir, Install_Dir,
-                                         NRGsuite_Path, OSid, True, 'GetCleft', 500, 550)
+                                         NRGsuite_Path, OSid, True, 'NRGsuite - GetCleft', 500, 550, self.RootPrefs)
                     
             #================================================================================
             # STARTING FlexAID Conditional... 
@@ -190,7 +194,7 @@ if OSid != 'UNKNOWN':
                 
                 self.RootFlexAID = Toplevel(self.root)
                 FlexAID.displayFlexAID(self.RootFlexAID, self, menuindex, self.Project_Dir, Install_Dir, 
-                                       NRGsuite_Path, OSid, True, 'FlexAID', 800, 600)
+                                       NRGsuite_Path, OSid, True, 'NRGsuite - FlexAID', 800, 600, self.RootPrefs)
                     
             #================================================================================
             # Load an existing Project
@@ -198,7 +202,7 @@ if OSid != 'UNKNOWN':
             def StartLoadProject(self, menuindex):
                 
                 LoadProject.displayLoadProject(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                               NRGsuite_Path, OSid, True, 'Load Project', 460, 350)
+                                               NRGsuite_Path, OSid, True, 'NRGsuite - Load Project', 460, 350, self.RootPrefs)
                 
             #================================================================================
             # Create a New Project
@@ -206,14 +210,14 @@ if OSid != 'UNKNOWN':
             def StartNewProject(self, menuindex):
                         
                 NewProject.displayNewProject(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                             NRGsuite_Path, OSid, True, 'New Project', 420, 300)
+                                             NRGsuite_Path, OSid, True, 'NRGsuite - New Project', 420, 300, self.RootPrefs)
                 
             #================================================================================
             # Loads the preferences menu to set the different options
             #================================================================================
             def StartPreferences(self, menuindex):
-                
-                return
+                Prefs.displayPrefs(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
+                                   NRGsuite_Path, OSid, True, 'NRGsuite - Preferences', 450, 200, self.RootPrefs)
                 
             #================================================================================
             # Loads the about menu to see versionning
@@ -221,7 +225,7 @@ if OSid != 'UNKNOWN':
             def StartAbout(self, menuindex):
                 
                 About.displayAbout(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                   NRGsuite_Path, OSid, True, 'About', 400, 375)
+                                   NRGsuite_Path, OSid, True, 'NRGsuite - About', 400, 350, self.RootPrefs)
             
             #================================================================================
             # Close the actual Project

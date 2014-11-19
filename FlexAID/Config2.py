@@ -64,6 +64,7 @@ class Config2(Tabs.Tab):
         self.IntTranslation = self.Vars.IntTranslation
         self.IntRotation = self.Vars.IntRotation
         self.ActiveCons = self.Vars.ActiveCons
+        self.dictFlexBonds = self.top.IOFile.Vars.dictFlexBonds
         self.ActiveConsMemory = self.ActiveCons.get()
         
     def Init_Vars(self):
@@ -75,8 +76,7 @@ class Config2(Tabs.Tab):
         self.IntRotation.set(1)
         self.SATStatus.set('')
         self.ConsStatus.set('No constraint(s) set')
-        self.FlexStatus.set('No flexible bond(s) set')
-
+        
         self.Vars.dictConstraints.clear()
         self.ResetFlexBonds()
         self.ResetAtomTypes()
@@ -126,9 +126,18 @@ class Config2(Tabs.Tab):
     FUNCTION ResetFlexBonds: Resets the selected flexible bonds of the ligand
     =================================================================================  '''    
     def ResetFlexBonds(self):
-    
-        for index in self.top.IOFile.Vars.dictFlexBonds.keys():
-            self.top.IOFile.Vars.dictFlexBonds[index][0] = 0
+        try:
+            if self.Prefs.ToggleAllFlexibleBonds == 1:
+                self.Update_FlexStatus()
+            else:
+                for index in self.dictFlexBonds.keys():
+                    self.dictFlexBonds[index][0] = 0
+                self.Update_FlexStatus()
+        except Exception:
+            print 'exception encountered in Config2.ResetFlexBonds()'
+            for index in self.dictFlexBonds.keys():
+                self.dictFlexBonds[index][0] = 0
+                self.Update_FlexStatus()
 
     ''' ==================================================================================
     FUNCTION FlexBondsRunning: Disables/enables controls related to Flexible lig. wizard
@@ -148,7 +157,7 @@ class Config2(Tabs.Tab):
             
             elif self.top.WizardResult > 0:
                 Status = ' (' + str(self.top.WizardResult) + ') flexible bond(s) set'
-                
+
             self.FlexStatus.set(Status)
     
     ''' ==================================================================================
@@ -219,6 +228,19 @@ class Config2(Tabs.Tab):
             
             self.queue.put(lambda: self.ConsStatus.set(Status))
             
+            self.ConsStatus.set(Status)
+
+    ''' ==================================================================================
+    FUNCTION Update_FlexStatus: Update self.FlexStatus StringVar
+    =================================================================================  '''                
+    def Update_FlexStatus(self):
+        if self.Prefs.ToggleAllFlexibleBonds == 1:
+            # status = '(' + str(len( self.dictFlexBonds)) + ') flexible bond(s) set'
+            status = '(' + 'all' + ') flexible bond(s) set'
+            self.FlexStatus.set(status)
+        else:
+            self.FlexStatus.set('No flexible bond(s) set')
+
     ''' ==================================================================================
     FUNCTION Frame: Generate the Configuration Options frame in the the middle 
                     frame section
@@ -267,7 +289,7 @@ class Config2(Tabs.Tab):
         fBondsLine2.pack(side=TOP, fill=X, padx=5, pady=2)
         fBondsLine3 = Frame(self.fBonds)
         fBondsLine3.pack(side=TOP, fill=X, padx=5, pady=2)
-        
+        self.Update_FlexStatus()
         Label(fBondsLine1, text='Ligand flexibility', font=self.top.font_Title).pack(side=TOP, anchor=W)
         Button(fBondsLine2, text='Add/Delete flexible bonds', font=self.top.font_Text,command=self.Btn_AddRemove_FlexBonds, width=40).pack(side=LEFT, anchor=NW,expand=True, fill=X)
         Entry(fBondsLine3, text='', state='disabled', textvariable=self.FlexStatus, font=self.top.font_Text, 

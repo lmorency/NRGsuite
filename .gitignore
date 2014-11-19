@@ -1,3 +1,5 @@
+*.pyc
+*/*.pyc
 GetCleft/WRK
 FlexAID/WRK
 *.db

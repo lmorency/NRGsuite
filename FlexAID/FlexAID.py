@@ -63,7 +63,10 @@ class displayFlexAID(Base.Base):
         self.Btn_IOFiles_Clicked()
         
         # By default hide advanced tabs
-        self.bAdvancedView = False
+        if self.Prefs.AlwaysShowAdvancedView == 1:
+            self.bAdvancedView = True
+        else:
+            self.bAdvancedView = False
         self.Btn_Toggle_AdvView()
 
         # set files to copy when saving a session
@@ -74,12 +77,12 @@ class displayFlexAID(Base.Base):
     def Build_Tabs(self):
         
         # Build class objects of each tab
-        self.IOFile = IOFile.IOFile(self, self.PyMOL, self.Btn_IOFiles, 'IOFile', IOFile.IOFileVars())
-        self.Config1 = Config1.Config1(self, self.PyMOL, self.Btn_Config1, 'Config1', Config1.Config1Vars())
-        self.Config2 = Config2.Config2(self, self.PyMOL, self.Btn_Config2, 'Config2', Config2.Config2Vars())
-        self.Config3 = Config3.Config3(self, self.PyMOL, self.Btn_Config3, 'Config3', Config3.Config3Vars())
-        self.GAParam = GAParam.GAParam(self, self.PyMOL, self.Btn_GAParam, 'GAParam', GAParam.GAParamVars())
-        self.Simulate = Simulate.Simulate(self, self.PyMOL, self.Btn_Simulate, 'Simulate', Simulate.SimulateVars())
+        self.IOFile = IOFile.IOFile(self, self.PyMOL, self.Btn_IOFiles, 'IOFile', IOFile.IOFileVars(), self.Prefs)
+        self.Config1 = Config1.Config1(self, self.PyMOL, self.Btn_Config1, 'Config1', Config1.Config1Vars(), self.Prefs)
+        self.Config2 = Config2.Config2(self, self.PyMOL, self.Btn_Config2, 'Config2', Config2.Config2Vars(), self.Prefs)
+        self.Config3 = Config3.Config3(self, self.PyMOL, self.Btn_Config3, 'Config3', Config3.Config3Vars(), self.Prefs)
+        self.GAParam = GAParam.GAParam(self, self.PyMOL, self.Btn_GAParam, 'GAParam', GAParam.GAParamVars(), self.Prefs)
+        self.Simulate = Simulate.Simulate(self, self.PyMOL, self.Btn_Simulate, 'Simulate', Simulate.SimulateVars(), self.Prefs)
 
         self.listTabs = [self.IOFile, self.Config1, self.Config2, self.Config3, self.GAParam, self.Simulate]
         

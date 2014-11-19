@@ -72,10 +72,10 @@ class displayGetCleft(Base.Base):
     def Build_Tabs(self):
     
         # Build class objects of each tab
-        self.Default = Default.Default(self, self.PyMOL, self.Btn_Config, 'Default', None)
+        self.Default = Default.Default(self, self.PyMOL, self.Btn_Config, 'Default', None, self.Prefs)
         self.Manage = ManageFiles2.Manage(self)
-        self.Crop = CropCleft.CropCleft(self, self.PyMOL, self.Btn_CropCleft, 'Partition', None)
-        self.Volume = Volume.EstimateVolume(self, self.PyMOL, self.Btn_Volume, 'Volume', None)
+        self.Crop = CropCleft.CropCleft(self, self.PyMOL, self.Btn_CropCleft, 'Partition', None, self.Prefs)
+        self.Volume = Volume.EstimateVolume(self, self.PyMOL, self.Btn_Volume, 'Volume', None, self.Prefs)
         
         self.listBtnTabs = [ self.Btn_Config, self.Btn_Volume, self.Btn_CropCleft ]
         self.listTabs = [ self.Default, self.Crop, self.Volume ]
