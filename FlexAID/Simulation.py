@@ -58,9 +58,9 @@ class Start(threading.Thread):
         self.top = top
         self.FlexAID = self.top.top
 
+        self.FlexAID.ProcessRunning = False
         self.FlexAID.ProcessError = False
-        self.FlexAID.ProcessRunning = True
-
+        
         self.start()
 
     # Start FlexAID on a side thread
@@ -76,6 +76,7 @@ class Start(threading.Thread):
             else:
                 self.FlexAID.Run = Popen(self.commandline, shell=True, stdout=logfile, stderr=STDOUT)
             
+            self.FlexAID.ProcessRunning = True            
             self.FlexAID.Run.wait()
             
             if self.FlexAID.Run.returncode != 0:
@@ -85,17 +86,22 @@ class Start(threading.Thread):
             print('  FATAL ERROR: Could not open logfile for FlexAID.')
             self.FlexAID.ProcessError = True
             
-        except:
+        except OSError:
             print('  FATAL ERROR: Could not run the executable FlexAID.')
             print('  Make sure you downloaded NRGsuite for the right platform.')
             self.FlexAID.ProcessError = True
-            
-        else:
             logfile.close()
+            
+        #else:
+        #    print('  FATAL ERROR: Unknown exception caught when running FlexAID.')
+        #    self.FlexAID.ProcessError = True
+        #    logfile.close()
         
-        self.FlexAID.Run = None
-        self.FlexAID.ProcessRunning = False
-
+        finally:
+            self.FlexAID.Run = None
+            self.FlexAID.ProcessRunning = False
+            self.FlexAID.ProcessDone = True
+            
         print("FlexAID starting thread has ended.")
     
 
@@ -177,9 +183,7 @@ class Parse(threading.Thread):
         self.listTmpPDB = self.top.Manage.listTmpPDB
 
         self.nbAtoms = len(self.DisAngDih)
-                
-        self.top.ProcessParsing = True
-
+        
         self.start()
     
     '''
@@ -199,8 +203,11 @@ class Parse(threading.Thread):
         self.queue.put(lambda: self.top.InitStatus())
         self.queue.put(lambda: self.top.progressBarHandler(0, self.NbTotalGen))
         
-        while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
+        # wait for FlexAID to start, to crash or to finish (if simulation is very short and quickly done)
+        #while self.FlexAID.ProcessRunning or self.FlexAID.ProcessError or self.top.ProcessDone:
+        #    time.sleep(INTERVAL)
             
+        while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
             time.sleep(self.INTERVAL)
 
             if self.ParseLines():

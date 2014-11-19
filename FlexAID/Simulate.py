@@ -71,6 +71,9 @@ class Simulate(Tabs.Tab):
         self.Manage = ManageFiles.Manage(self)
         
     def Init_Vars(self):
+
+        if self.Condition_Update(): return
+        
         self.ResultsName.set('')
         self.ProgBarText.set('... / ...')
         self.SimLigDisplay.set('sticks')
@@ -356,15 +359,17 @@ class Simulate(Tabs.Tab):
         
         self.ResultsContainer.Report = self.Manage.Report
         
-        # START SIMULATION
-        self.DisplayMessage('  Starting executable thread.', 2)
-        self.Start = Simulation.Start(self, commandline)
+        self.ProcessParsing = True
+        self.ProcessDone = False
+        self.Start_Update()
         
         # START PARSING AS THREAD
         self.DisplayMessage('  Starting parsing thread.', 2)
-
-        self.Start_Update()
         self.Parse = Simulation.Parse(self, self.queue)
+        
+        # START SIMULATION
+        self.DisplayMessage('  Starting executable thread.', 2)
+        self.Start = Simulation.Start(self, commandline)
         
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
