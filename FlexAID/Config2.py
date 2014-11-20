@@ -64,7 +64,6 @@ class Config2(Tabs.Tab):
         self.IntTranslation = self.Vars.IntTranslation
         self.IntRotation = self.Vars.IntRotation
         self.ActiveCons = self.Vars.ActiveCons
-        self.dictFlexBonds = self.top.IOFile.Vars.dictFlexBonds
         self.ActiveConsMemory = self.ActiveCons.get()
         
     def Init_Vars(self):
@@ -127,8 +126,8 @@ class Config2(Tabs.Tab):
     =================================================================================  '''    
     def ResetFlexBonds(self):
 
-        for index in self.dictFlexBonds.keys():
-            self.dictFlexBonds[index][0] = 0
+        for index in self.top.IOFile.Vars.dictFlexBonds.keys():
+            self.top.IOFile.Vars.dictFlexBonds[index][0] = 0
         self.Update_FlexStatus()
 
     ''' ==================================================================================
@@ -236,14 +235,16 @@ class Config2(Tabs.Tab):
     def Update_FlexStatus(self):
 
         nflexbonds = 0
-        for k in self.dictFlexBonds.keys():
-            if self.dictFlexBonds[k][0]:
+        for k in self.top.IOFile.Vars.dictFlexBonds.keys():
+            if self.top.IOFile.Vars.dictFlexBonds[k][0]:
                 nflexbonds += 1
+
         if nflexbonds:
             status = '(' + str(nflexbonds) + ') flexible bond(s) set'
             #status = '(' + 'all' + ') flexible bond(s) set'
         else:
             status = 'No flexible bond(s) set'
+
         self.FlexStatus.set(status)
 
     ''' ==================================================================================

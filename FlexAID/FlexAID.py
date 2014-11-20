@@ -301,8 +301,9 @@ class displayFlexAID(Base.Base):
                         self.Reset_All()
                         self.DisplayMessage("  ERROR: The loading of the session failed the integrity check.", 2)
                         return
-                            
+
                     Tab.Load_Session()
+                    Tab.Def_Vars()
                         
                 in_.close()
                 
