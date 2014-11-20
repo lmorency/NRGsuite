@@ -322,6 +322,7 @@ class IOFile(Tabs.Tab):
                        not self.Validate_ObjectSelection(Filebase, 'Ligand', 1):
                            
                         self.LigandName.set(Filebase)
+                        self.Reset_Ligand()
                         
                         if self.ForceSaveObject(LigandFile, Filebase, 'Ligand'):
                             self.LigandPath.set('')

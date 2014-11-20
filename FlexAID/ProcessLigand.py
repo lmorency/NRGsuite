@@ -158,6 +158,7 @@ class ProcLig(object):
             self.FlexAID.ProcessError = True
         finally:
             self.FlexAID.Run = None
+
         return self.FlexAID.ProcessError
         
 
