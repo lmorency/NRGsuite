@@ -261,11 +261,13 @@ class displayPrefs(Base.Base):
         Title_FlexAID_Options.pack(side=TOP, anchor=W, padx=5, pady=2)
         Title_FlexAID_Options.pack_propagate(0)
 
-        ToggleAllFlexibleBonds = Checkbutton(fOptions, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds, text='Automatically consider all rotable bonds of the ligand as flexible', font=self.font_Text)
+        ToggleAllFlexibleBonds = Checkbutton(fOptions, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds,
+                                             text=' Automatically consider all rotable bonds of the ligand as flexible', font=self.font_Text)
         ToggleAllFlexibleBonds.pack(side=TOP,anchor=W,padx=5, pady=2)
         ToggleAllFlexibleBonds.pack_propagate(0)
 
-        AlwaysShowAdvancedView = Checkbutton(fOptions, variable=self.AlwaysShowAdvancedView_Var, command=self.Update_AlwaysShowAdvancedView, text='Always show Advanced View in FlexAID', font=self.font_Text)
+        AlwaysShowAdvancedView = Checkbutton(fOptions, variable=self.AlwaysShowAdvancedView_Var, command=self.Update_AlwaysShowAdvancedView,
+                                             text=' Always show Advanced View in FlexAID', font=self.font_Text)
         AlwaysShowAdvancedView.pack(side=TOP,anchor=W,padx=5, pady=2)
         AlwaysShowAdvancedView.pack_propagate(0)
         fOptions.pack(side=TOP, fill=BOTH, padx=5, pady=2)

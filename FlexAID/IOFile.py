@@ -1019,7 +1019,7 @@ class IOFile(Tabs.Tab):
         
         if not len(self.Vars.dictFlexBonds):
             self.store_FlexBonds(flexInfo)
-        
+
         return 0
 
     #=======================================================================

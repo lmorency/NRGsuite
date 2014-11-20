@@ -126,18 +126,18 @@ class Config2(Tabs.Tab):
     FUNCTION ResetFlexBonds: Resets the selected flexible bonds of the ligand
     =================================================================================  '''    
     def ResetFlexBonds(self):
-        try:
-            if self.Prefs.ToggleAllFlexibleBonds == 1:
-                self.Update_FlexStatus()
-            else:
-                for index in self.dictFlexBonds.keys():
-                    self.dictFlexBonds[index][0] = 0
-                self.Update_FlexStatus()
-        except Exception:
-            print 'exception encountered in Config2.ResetFlexBonds()'
-            for index in self.dictFlexBonds.keys():
-                self.dictFlexBonds[index][0] = 0
-                self.Update_FlexStatus()
+
+        for index in self.dictFlexBonds.keys():
+            self.dictFlexBonds[index][0] = 0
+        self.Update_FlexStatus()
+
+    ''' ==================================================================================
+    FUNCTION After_Show: Actions related after showing the frame
+    ==================================================================================  '''  
+    def After_Show(self):
+                
+        #Show the list of selection/objects in case the user already worked in PyMOL
+        self.Update_FlexStatus()        
 
     ''' ==================================================================================
     FUNCTION FlexBondsRunning: Disables/enables controls related to Flexible lig. wizard
@@ -234,12 +234,17 @@ class Config2(Tabs.Tab):
     FUNCTION Update_FlexStatus: Update self.FlexStatus StringVar
     =================================================================================  '''                
     def Update_FlexStatus(self):
-        if self.Prefs.ToggleAllFlexibleBonds == 1:
-            # status = '(' + str(len( self.dictFlexBonds)) + ') flexible bond(s) set'
-            status = '(' + 'all' + ') flexible bond(s) set'
-            self.FlexStatus.set(status)
+
+        nflexbonds = 0
+        for k in self.dictFlexBonds.keys():
+            if self.dictFlexBonds[k][0]:
+                nflexbonds += 1
+        if nflexbonds:
+            status = '(' + str(nflexbonds) + ') flexible bond(s) set'
+            #status = '(' + 'all' + ') flexible bond(s) set'
         else:
-            self.FlexStatus.set('No flexible bond(s) set')
+            status = 'No flexible bond(s) set'
+        self.FlexStatus.set(status)
 
     ''' ==================================================================================
     FUNCTION Frame: Generate the Configuration Options frame in the the middle 

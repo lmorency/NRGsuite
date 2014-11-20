@@ -76,7 +76,6 @@ class Start(threading.Thread):
             self.FlexAID.ProcessRunning = True            
             self.FlexAID.Run.wait()
             
-            print self.FlexAID.Run.returncode
             if self.FlexAID.Run.returncode != 0:
                 self.FlexAID.ProcessError = True
                 
@@ -266,8 +265,8 @@ class Parse(threading.Thread):
                 # EOF signal - will resume from here next time
                 break
             
-            print Line
-            
+            #print Line
+
             m = re.match("Grid\[(\d+)\]=", Line)
             if m:
                 index = int(m.group(1))
