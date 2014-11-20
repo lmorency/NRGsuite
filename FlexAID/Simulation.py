@@ -75,7 +75,8 @@ class Start(threading.Thread):
             
             self.FlexAID.ProcessRunning = True            
             self.FlexAID.Run.wait()
-            
+
+            #print self.FlexAID.Run.returncode
             if self.FlexAID.Run.returncode != 0:
                 self.FlexAID.ProcessError = True
                 
@@ -99,6 +100,9 @@ class Start(threading.Thread):
             self.FlexAID.ProcessRunning = False
             self.FlexAID.ProcessDone = True
             
+        #print "ProcessRunning", self.FlexAID.ProcessRunning
+        #print "ProcessDone", self.FlexAID.ProcessDone
+        
         print("FlexAID starting thread has ended.")
     
 
@@ -174,6 +178,7 @@ class Parse(threading.Thread):
         self.listTmpPDB = self.top.Manage.listTmpPDB
 
         self.nbAtoms = len(self.DisAngDih)
+        self.auto_zoom = cmd.get("auto_zoom")
         
         self.start()
     
@@ -196,7 +201,6 @@ class Parse(threading.Thread):
         
         # send ready to simulate signal  
         print('  Signal sent to start simulation')
-        
         self.top.StartFlexAID = True
         
         # wait for FlexAID to start, to crash or to finish (if simulation is very short and quickly done)
@@ -209,10 +213,11 @@ class Parse(threading.Thread):
             if self.ParseLines():
                 break
         
-        self.ParseLines()
+        if not self.Error:
+            self.ParseLines()
         
         # Put back the auto_zoom to on
-        cmd.set("auto_zoom", -1)
+        cmd.set("auto_zoom", self.auto_zoom)
 
         if self.FlexAID.ProcessError or self.Error:
             self.queue.put(lambda: self.top.ErrorStatus(self.ErrorMsg))
@@ -249,6 +254,7 @@ class Parse(threading.Thread):
             self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files'
             return 1
 
+        #print "Parse starting at line", self.nRead.get(ParseFile,0)
         if self.nRead.get(ParseFile):
             # Resume a file that was not read completely
             self.Lines = self.Lines[self.nRead[ParseFile]:]
@@ -420,6 +426,7 @@ class Parse(threading.Thread):
             m = re.match("ERROR", Line)
             if m:
                 Line = Line.rstrip('\n')
+                self.Error = True
                 self.ErrorMsg = '*FlexAID ' + Line
 
                 try:

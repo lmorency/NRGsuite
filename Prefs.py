@@ -222,7 +222,7 @@ class displayPrefs(Base.Base):
         fText = Frame(self.fMain)#, bg='red')
         fText.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=2)
 
-        Title_Font = Label(fText, text='Font Options', font=self.font_Title_H)
+        Title_Font = Label(fText, text='Interface Font Options', font=self.font_Title_H)
         Title_Font.pack(side=TOP, anchor=W, padx=5, pady=2)
         Title_Font.pack_propagate(0)
 
