@@ -58,9 +58,6 @@ class Start(threading.Thread):
         self.top = top
         self.FlexAID = self.top.top
 
-        self.FlexAID.ProcessRunning = False
-        self.FlexAID.ProcessError = False
-        
         self.start()
 
     # Start FlexAID on a side thread
@@ -79,6 +76,7 @@ class Start(threading.Thread):
             self.FlexAID.ProcessRunning = True            
             self.FlexAID.Run.wait()
             
+            print self.FlexAID.Run.returncode
             if self.FlexAID.Run.returncode != 0:
                 self.FlexAID.ProcessError = True
                 
@@ -92,10 +90,10 @@ class Start(threading.Thread):
             self.FlexAID.ProcessError = True
             logfile.close()
             
-        #else:
-        #    print('  FATAL ERROR: Unknown exception caught when running FlexAID.')
-        #    self.FlexAID.ProcessError = True
-        #    logfile.close()
+        else:
+            #print('  FATAL ERROR: Unknown exception caught when running FlexAID.')
+            #self.FlexAID.ProcessError = True
+            logfile.close()
         
         finally:
             self.FlexAID.Run = None
@@ -107,12 +105,6 @@ class Start(threading.Thread):
 
 class Parse(threading.Thread):
     
-    # 100 msec
-    INTERVAL = 0.10
-    
-    # 1 minute timeout
-    TIMEOUT = INTERVAL * 600
-
     def __init__(self, top, queue):
         
         threading.Thread.__init__(self)
@@ -203,12 +195,17 @@ class Parse(threading.Thread):
         self.queue.put(lambda: self.top.InitStatus())
         self.queue.put(lambda: self.top.progressBarHandler(0, self.NbTotalGen))
         
+        # send ready to simulate signal  
+        print('  Signal sent to start simulation')
+        
+        self.top.StartFlexAID = True
+        
         # wait for FlexAID to start, to crash or to finish (if simulation is very short and quickly done)
-        #while self.FlexAID.ProcessRunning or self.FlexAID.ProcessError or self.top.ProcessDone:
-        #    time.sleep(INTERVAL)
+        while not self.FlexAID.ProcessRunning and not self.FlexAID.ProcessError and not self.FlexAID.ProcessDone:
+            time.sleep(self.top.INTERVAL)
             
         while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
-            time.sleep(self.INTERVAL)
+            time.sleep(self.top.INTERVAL)
 
             if self.ParseLines():
                 break
@@ -232,7 +229,7 @@ class Parse(threading.Thread):
                 
             cmd.frame(1)
         
-        self.top.ProcessParsing = False
+        self.FlexAID.ProcessParsing = False
 
         print("FlexAID parsing thread has ended.")
     
@@ -269,7 +266,7 @@ class Parse(threading.Thread):
                 # EOF signal - will resume from here next time
                 break
             
-            #print Line
+            print Line
             
             m = re.match("Grid\[(\d+)\]=", Line)
             if m:
@@ -413,8 +410,6 @@ class Parse(threading.Thread):
 
             m = re.match("SIGMA_SHARE", Line)
             if m:                            
-                # send ready to simulate signal  
-                print('  Signal sent to start simulation')
                 self.queue.put(lambda: self.top.RunStatus())
 
                 #self.ParseGA = True
@@ -570,7 +565,7 @@ class Parse(threading.Thread):
     def Remove_UPDATE(self):
     
         TIME = 0
-        while TIME < self.TIMEOUT:
+        while TIME < self.top.TIMEOUT:
             try:
                 os.remove(self.UPDATE)
                 break
@@ -578,11 +573,11 @@ class Parse(threading.Thread):
             except OSError:
                 pass
             
-            time.sleep(self.INTERVAL)
+            time.sleep(self.top.INTERVAL)
 
-            TIME = TIME + self.INTERVAL
+            TIME = TIME + self.top.INTERVAL
             
-        if TIME >= self.TIMEOUT:
+        if TIME >= self.top.TIMEOUT:
             return 1
             
         return 0
@@ -593,7 +588,7 @@ class Parse(threading.Thread):
     def CopyRead(self, ParseFile):
     
         TIME = 0
-        while TIME < self.TIMEOUT:
+        while TIME < self.top.TIMEOUT:
             
             try:
                 shutil.copy(ParseFile, self.READ)
@@ -609,11 +604,11 @@ class Parse(threading.Thread):
             except IOError:
                 pass
             
-            time.sleep(self.INTERVAL)
+            time.sleep(self.top.INTERVAL)
 
-            TIME = TIME + self.INTERVAL
+            TIME = TIME + self.top.INTERVAL
             
-        if TIME >= self.TIMEOUT:
+        if TIME >= self.top.TIMEOUT:
             return 1
             
         return 0
