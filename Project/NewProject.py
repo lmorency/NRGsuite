@@ -259,7 +259,7 @@ class displayNewProject(Base.Base):
             self.Btn_Browse.config(state='disabled')
             self.DirPath.config(state='disabled', font=self.font_Text)
 
-            self.ActualDirPath = self.self.NRGsuite_Dir
+            self.ActualDirPath = self.NRGsuite_Dir
             self.ProjDirPath.set(os.path.join(self.NameSpacer,self.ActualDirPath))
             
     ''' ==================================================================================
