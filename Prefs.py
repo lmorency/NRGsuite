@@ -412,9 +412,6 @@ class displayPrefs(Base.Base):
                 self.Install_Dir_StringVar.set(val)
             else:
                 pass
-                # os.path.mkdir(val)
-                # self.Prefs.Install_Dir = val
-                # self.Install_Dir_StringVar.set(val)
 
     ''' ==================================================================================
     FUNCTION DisplayMessage: Display the message  
