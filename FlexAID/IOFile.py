@@ -322,6 +322,7 @@ class IOFile(Tabs.Tab):
                        not self.Validate_ObjectSelection(Filebase, 'Ligand', 1):
                            
                         self.LigandName.set(Filebase)
+                        self.Reset_Ligand()
                         
                         if self.ForceSaveObject(LigandFile, Filebase, 'Ligand'):
                             self.LigandPath.set('')
@@ -1019,7 +1020,7 @@ class IOFile(Tabs.Tab):
         
         if not len(self.Vars.dictFlexBonds):
             self.store_FlexBonds(flexInfo)
-        
+
         return 0
 
     #=======================================================================

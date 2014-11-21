@@ -280,9 +280,15 @@ class displayPrefs(Base.Base):
         fText = Frame(self.fMain)#, bg='red')
         fText.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=2)
 
+<<<<<<< HEAD
         fFont_Title = Label(fText, text='Font Options', font=self.font_Title_H)
         fFont_Title.pack(side=TOP, anchor=W, padx=5, pady=2)
         fFont_Title.pack_propagate(0)
+=======
+        Title_Font = Label(fText, text='Interface Font Options', font=self.font_Title_H)
+        Title_Font.pack(side=TOP, anchor=W, padx=5, pady=2)
+        Title_Font.pack_propagate(0)
+>>>>>>> master
 
         fFont_options = Frame(fText)#,bg='green')
         fFont_options.pack(side=TOP,fill=BOTH,padx=5,pady=0)
@@ -322,11 +328,17 @@ class displayPrefs(Base.Base):
         Options_Title.pack(side=TOP, anchor=W, padx=5, pady=2)
         Options_Title.pack_propagate(0)
 
+<<<<<<< HEAD
         ToggleAllFlexibleBonds = Checkbutton(fOptions, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds, text='Automatically consider all rotable bonds of ligands as flexible', font=self.font_Text)
+=======
+        ToggleAllFlexibleBonds = Checkbutton(fOptions, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds,
+                                             text=' Automatically consider all rotable bonds of the ligand as flexible', font=self.font_Text)
+>>>>>>> master
         ToggleAllFlexibleBonds.pack(side=TOP,anchor=W,padx=5, pady=2)
         ToggleAllFlexibleBonds.pack_propagate(0)
 
-        AlwaysShowAdvancedView = Checkbutton(fOptions, variable=self.AlwaysShowAdvancedView_Var, command=self.Update_AlwaysShowAdvancedView, text='Always show Advanced View in FlexAID', font=self.font_Text)
+        AlwaysShowAdvancedView = Checkbutton(fOptions, variable=self.AlwaysShowAdvancedView_Var, command=self.Update_AlwaysShowAdvancedView,
+                                             text=' Always show Advanced View in FlexAID', font=self.font_Text)
         AlwaysShowAdvancedView.pack(side=TOP,anchor=W,padx=5, pady=2)
         AlwaysShowAdvancedView.pack_propagate(0)
 

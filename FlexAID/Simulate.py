@@ -22,6 +22,7 @@ from pymol import util
 from subprocess import Popen
 
 import os
+import time
 import re
 import pickle
 import shutil
@@ -56,6 +57,12 @@ class SimulateVars(Vars.Vars):
 
 class Simulate(Tabs.Tab):
     
+    # 100 msec
+    INTERVAL = 0.10
+    
+    # 1 minute timeout
+    TIMEOUT = INTERVAL * 600
+    
     def Def_Vars(self):
         
         self.ResultsName = StringVar()
@@ -71,6 +78,10 @@ class Simulate(Tabs.Tab):
         self.Manage = ManageFiles.Manage(self)
         
     def Init_Vars(self):
+
+        if self.Condition_Update():
+            return
+        
         self.ResultsName.set('')
         self.ProgBarText.set('... / ...')
         self.SimLigDisplay.set('sticks')
@@ -85,7 +96,6 @@ class Simulate(Tabs.Tab):
         
         self.ResultsContainer.Clear()
 
-        self.ProcessParsing = False
         self.Paused = False
         
     ''' ==================================================================================
@@ -356,15 +366,23 @@ class Simulate(Tabs.Tab):
         
         self.ResultsContainer.Report = self.Manage.Report
         
-        # START SIMULATION
-        self.DisplayMessage('  Starting executable thread.', 2)
-        self.Start = Simulation.Start(self, commandline)
+        self.top.ProcessRunning = False
+        self.top.ProcessError = False
+        self.top.ProcessParsing = True
+        self.top.ProcessDone = False
+        self.StartFlexAID = False
+        self.Start_Update()
         
         # START PARSING AS THREAD
         self.DisplayMessage('  Starting parsing thread.', 2)
-
-        self.Start_Update()
         self.Parse = Simulation.Parse(self, self.queue)
+        
+        while not self.StartFlexAID:
+            time.sleep(self.INTERVAL)
+            
+        # START SIMULATION
+        self.DisplayMessage('  Starting executable thread.', 2)
+        self.Start = Simulation.Start(self, commandline)
         
     ''' ==================================================================================
     FUNCTION Trace: Adds a callback function to StringVars
@@ -788,7 +806,7 @@ class Simulate(Tabs.Tab):
     ==================================================================================  '''               
     def Condition_Update(self):
 
-        if self.top.ProcessRunning or self.ProcessParsing:
+        if self.top.ProcessRunning or self.top.ProcessParsing:
             return True
         else:
             return False

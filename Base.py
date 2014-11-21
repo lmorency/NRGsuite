@@ -109,6 +109,8 @@ class Base(object):
         
         self.ProcessError = False
         self.ProcessRunning = False
+        self.ProcessParsing = False
+        self.ProcessDone = False
         
         self.fMain = Frame(self.root)
         self.fMain.pack(expand=True)
