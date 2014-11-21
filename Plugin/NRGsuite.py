@@ -66,8 +66,8 @@ def get_default_path_for_OSid():
 
 # get the installation path of the NRGsuite with the ENV variable NRGSUITE or
 # sets Install_Dir to the default (and preferred) installation directory
-Install_Dir = os.environ.get('NRGSUITE', get_default_path_for_OSid())
-
+Install_Dir = os.environ.get('NRGSUITE_INSTALLATION', get_default_path_for_OSid())
+ 
 if Install_Dir is '' or not os.path.isdir(Install_Dir):
     Install_Dir = get_default_path_for_OSid()
 
