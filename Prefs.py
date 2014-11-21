@@ -43,7 +43,7 @@ class Prefs(object):
 
     # FONT SETTINGS
     DefaultFontType = 'Helvetica'
-    DefaultFontSize = 12
+    DefaultFontSize = 11
 
     def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0, PreferenceFilePath = None, AlwaysShowAdvancedView = 0, OSid=None):
         self.FontType = self.DefaultFontType

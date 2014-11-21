@@ -64,7 +64,7 @@ def get_default_path_for_OSid():
 
     return Install_Dir
 
-# get the installation path of the NRGsuite with the ENV variable NRGSUITE or
+# get the installation path of the NRGsuite with the ENV variable NRGSUITE_INSTALLATION or
 # sets Install_Dir to the default (and preferred) installation directory
 Install_Dir = os.environ.get('NRGSUITE_INSTALLATION', get_default_path_for_OSid())
  
@@ -223,7 +223,7 @@ if os.path.isdir(Install_Dir):
         #================================================================================
         def StartPreferences(self, menuindex):
             Prefs.displayPrefs(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                               NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - Preferences', 450, 250, self.RootPrefs)
+                               NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - Preferences', 475, 310, self.RootPrefs)
             
         #================================================================================
         # Loads the about menu to see versionning
