@@ -350,7 +350,7 @@ class displayPrefs(Base.Base):
         Btn_InstallDir.pack(side=RIGHT,anchor=E,padx=2,pady=2)
         Btn_InstallDir['font'] = self.font_Text
 
-        fInstallDir.pack(side=TOP,fill=BOTH,expand=True, padx=5, pady=2)
+        # fInstallDir.pack(side=TOP,fill=BOTH,expand=True, padx=5, pady=2)
         # fInstallDir.pack_propagate(0)
         ### Buttons
         fButtons = Frame(fOptions, relief=RIDGE, border=0, width=self.WINDOWWIDTH)#, bg='blue')

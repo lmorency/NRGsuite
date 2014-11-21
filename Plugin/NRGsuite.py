@@ -72,7 +72,7 @@ if Install_Dir is '' or not os.path.isdir(Install_Dir):
     Install_Dir = get_default_path_for_OSid()
 
 if os.path.isdir(Install_Dir):
-    print Install_Dir
+
     NRGsuite_Path = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite')
     Plugin_Path = os.path.join(Install_Dir,'Plugin')
     Project_Path = os.path.join(Install_Dir,'Project')
@@ -223,7 +223,7 @@ if os.path.isdir(Install_Dir):
         #================================================================================
         def StartPreferences(self, menuindex):
             Prefs.displayPrefs(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                               NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - Preferences', 475, 310, self.RootPrefs)
+                               NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - Preferences', 475, 260, self.RootPrefs)
             
         #================================================================================
         # Loads the about menu to see versionning
