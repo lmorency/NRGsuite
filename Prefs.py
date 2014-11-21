@@ -28,9 +28,11 @@
 
 from Tkinter import *
 
-import os
+import sys, os, stat
+import platform
 import cPickle as pickle
-
+import tkFileDialog
+import shutil
 import Base
 
 
@@ -43,14 +45,49 @@ class Prefs(object):
     DefaultFontType = 'Helvetica'
     DefaultFontSize = 12
 
-    def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0, PreferenceFilePath = None, AlwaysShowAdvancedView = 0):
-
+    def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0, PreferenceFilePath = None, AlwaysShowAdvancedView = 0, OSid=None):
         self.FontType = self.DefaultFontType
         self.FontSize = self.DefaultFontSize
         self.ToggleAllFlexibleBonds = ToggleAllFlexibleBonds
         self.AlwaysShowAdvancedView = AlwaysShowAdvancedView
         self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
+        
+        # DETECT the operating system
+        OS = platform.system().upper()
+        self.OSid = 'UNKNOWN'
+
+        # SET the configuration location
+        if OS == 'LINUX' or OS == 'BSD':
+            self.OSid = 'LINUX'
+        elif OS == 'DARWIN':       
+            self.OSid = 'MAC'    
+        elif OS == 'WINDOWS' or OS == 'MICROSOFT' or OS == 'WIN32':
+            self.OSid = 'WIN'
+        else:
+            self.OSid = 'UNKNOWN'
+        self.Install_Dir = os.environ.get('NRGSUITE',self.get_default_path_for_OSid())
+        # Load Saved Preferences
         self.Load_User_Prefs()
+
+    '''=================================================================================================
+    FUNCTION get_default_path_for_OSid: returns the default (and preferred) installation path for any OS
+    ================================================================================================='''
+    def get_default_path_for_OSid(self):
+
+        if self.OSid == 'WIN':
+            ProgramFiles = os.getenv('PROGRAMFILES')
+            if ProgramFiles:
+                Install_Dir = os.path.join(ProgramFiles,'NRGsuite')
+            else:
+                Install_Dir = os.path.join('C:\\','Program Files','NRGsuite')
+                
+        elif self.OSid == 'MAC':
+            Install_Dir = os.path.join('/Applications','NRGsuite')
+
+        else:
+            Install_Dir = os.path.join('/usr','local','NRGsuite')
+
+        return Install_Dir
 
     ''' ==================================================================================
     FUNCTION Load_User_Prefs: Read the user preferences from the Preference file
@@ -59,10 +96,12 @@ class Prefs(object):
 
         if os.path.isfile(self.PreferenceFilePath):
             try:
-                # loading pickle object directly from user's preference file
+                # Loading pickle object directly from user's preference file
                 f = open(self.PreferenceFilePath, "rb")
                 Preferences = pickle.load(f)
                 f.close()
+
+                # Setting appropr 
                 self.FontType = Preferences.FontType
                 self.FontSize = Preferences.FontSize
 
@@ -77,6 +116,8 @@ class Prefs(object):
                 else:
                     self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
 
+                if os.path.isdir(Preferences.Install_Dir):
+                    self.Install_Dir = Preferences.Install_Dir
 
             except Exception, e:
                 # Catch exceptions
@@ -119,6 +160,7 @@ class Prefs(object):
         self.ToggleAllFlexibleBonds = 0
         self.AlwaysShowAdvancedView = 0
         self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
+        self.Install_Dir = os.environ.get('NRGSUITE',self.get_default_path_for_OSid())
         self.Write_User_Prefs()
 
 
@@ -139,6 +181,9 @@ class displayPrefs(Base.Base):
         # StringVar() used for the FontType OptionMenu()
         self.FontType_StringVar = StringVar()
         self.FontType_StringVar.set(self.Prefs.DefaultFontType)
+        # StringVar() used for the Install_Dir Label
+        self.Install_Dir_StringVar = StringVar()
+        self.Install_Dir_StringVar.set(self.Prefs.Install_Dir)
 
     def Init_Vars(self):
         # ToggleAllFlexibleBonds preferred value set
@@ -152,6 +197,10 @@ class displayPrefs(Base.Base):
         # FontSize preferred value set
         if self.Prefs.FontSize != self.FontSize_IntVar.get():
             self.FontSize_IntVar.set(self.Prefs.FontSize)
+        # Install_Dir
+        if self.Prefs.Install_Dir != self.Install_Dir_StringVar.get():
+            self.Install_Dir_StringVar.set(self.Prefs.Install_Dir)
+
 
     ''' ====================================================================================================
     FUNCTION Update_ToggleAllFlexibleBonds: Update the Prefs class with current ToggleAllFlexibleBonds value
@@ -197,6 +246,16 @@ class displayPrefs(Base.Base):
         self.Prefs.FontType = val
         self.FontType_StringVar.set(val)
 
+    ''' ====================================================================================================
+    FUNCTION Update_Install_Dir: Update the Prefs class with preferred NRGsuite installation directory
+    ========================================================================================================  '''    
+    def Update_Install_Dir(self, val):
+        if os.path.isdir(val):
+            self.Prefs.Install_Dir = val
+            self.Install_Dir_StringVar.set(val)
+        else:
+            print str(val) + " is not a recognized installation directory."
+
     ''' ==================================================================================
     FUNCTION SaveDefault: Save & Write the user's preferences into Preference file
     =================================================================================  '''
@@ -212,25 +271,26 @@ class displayPrefs(Base.Base):
     =================================================================================  '''    
     def Frame_Main(self):
 
-        # Load User Preferences
+        ### Load User Preferences
         self.Prefs.Load_User_Prefs()
 
         fTop = Frame(self.fMain)#,bg='orange')
 
-        ######################## Font Options
-
+        ### Font Options
         fText = Frame(self.fMain)#, bg='red')
         fText.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=2)
 
-        Title_Font = Label(fText, text='Font Options', font=self.font_Title_H)
-        Title_Font.pack(side=TOP, anchor=W, padx=5, pady=2)
-        Title_Font.pack_propagate(0)
+        fFont_Title = Label(fText, text='Font Options', font=self.font_Title_H)
+        fFont_Title.pack(side=TOP, anchor=W, padx=5, pady=2)
+        fFont_Title.pack_propagate(0)
 
         fFont_options = Frame(fText)#,bg='green')
         fFont_options.pack(side=TOP,fill=BOTH,padx=5,pady=0)
         fFont_options2 = Frame(fText)#,bg='purple')
         fFont_options2.pack(side=TOP,fill=BOTH,padx=5,pady=0)
 
+        # PadFontType = Label(fFont_options, text='')
+        # PadFontType.pack(padx=1, side=LEFT, anchor=W) 
         fFontType_Label = Label(fFont_options, text='Preferred Font Type : ', font=self.font_Text)
         fFontType_Label.pack(side=LEFT,anchor=W)
         fFontType_Label.pack_propagate(0)
@@ -243,6 +303,8 @@ class displayPrefs(Base.Base):
         fFontType_OptionMenu.pack(side=RIGHT,anchor=E)#,fill=BOTH,expand=True)
         fFontType_OptionMenu.pack_propagate(0)
         
+        # PadFontSize = Label(fFont_options2, text='')
+        # PadFontSize.pack(padx=1, side=LEFT, anchor=W) 
         fFontSize_Label = Label(fFont_options2, text='Preferred Font Size : ', font=self.font_Text)
         fFontSize_Label.pack(side=LEFT,anchor=W)
 
@@ -253,36 +315,55 @@ class displayPrefs(Base.Base):
         fFontSize_OptionMenu.pack(side=RIGHT,anchor=E)#,fill=BOTH,expand=True)
         fFontSize_OptionMenu.pack_propagate(0)
 
-        ######################## FlexAID Options
-
+        ### FlexAID Options
         fOptions = Frame(self.fMain)#, bg='yellow')
 
-        Title_FlexAID_Options = Label(fOptions, text='FlexAID Options', font=self.font_Title_H)
-        Title_FlexAID_Options.pack(side=TOP, anchor=W, padx=5, pady=2)
-        Title_FlexAID_Options.pack_propagate(0)
+        Options_Title = Label(fOptions, text='FlexAID Options', font=self.font_Title_H)
+        Options_Title.pack(side=TOP, anchor=W, padx=5, pady=2)
+        Options_Title.pack_propagate(0)
 
-        ToggleAllFlexibleBonds = Checkbutton(fOptions, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds, text='Automatically consider all rotable bonds of the ligand as flexible', font=self.font_Text)
+        ToggleAllFlexibleBonds = Checkbutton(fOptions, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds, text='Automatically consider all rotable bonds of ligands as flexible', font=self.font_Text)
         ToggleAllFlexibleBonds.pack(side=TOP,anchor=W,padx=5, pady=2)
         ToggleAllFlexibleBonds.pack_propagate(0)
 
         AlwaysShowAdvancedView = Checkbutton(fOptions, variable=self.AlwaysShowAdvancedView_Var, command=self.Update_AlwaysShowAdvancedView, text='Always show Advanced View in FlexAID', font=self.font_Text)
         AlwaysShowAdvancedView.pack(side=TOP,anchor=W,padx=5, pady=2)
         AlwaysShowAdvancedView.pack_propagate(0)
-        fOptions.pack(side=TOP, fill=BOTH, padx=5, pady=2)
 
+        ### Installation Directory Selection
+        fInstallDir = Frame(fOptions)
+        InstallDir_Title = Label(fInstallDir, text='NRGsuite Plugin Installation Directory', font=self.font_Title_H)
+        InstallDir_Title.pack(side=TOP,anchor=W,padx=5, pady=2)
+        InstallDir_Title.pack_propagate(0)
+        PadDir = Label(fInstallDir, text='')
+        PadDir.pack(padx=2, side=LEFT, anchor=W) 
+        DirEntry = Entry(fInstallDir, width=28, textvariable=self.Install_Dir_StringVar, background='white', disabledforeground='black')
+        DirEntry['font'] = self.font_Text_U
+        # DirEntry.config(state='enabled')
+        DirEntry.pack(side=LEFT,anchor=W,fill=X,expand=True)
+
+        Btn_InstallDir = Button(fInstallDir, text='Browse', width=7, command=self.Btn_InstallDir_Clicked)
+        Btn_InstallDir.pack(side=RIGHT,anchor=E,padx=2,pady=2)
+        Btn_InstallDir['font'] = self.font_Text
+
+        fInstallDir.pack(side=TOP,fill=BOTH,expand=True, padx=5, pady=2)
+        # fInstallDir.pack_propagate(0)
+        ### Buttons
         fButtons = Frame(fOptions, relief=RIDGE, border=0, width=self.WINDOWWIDTH)#, bg='blue')
 
-        Btn_Save = Button(fButtons, text='Save Preferences', width=12, command=self.Btn_Save_Clicked, font=self.font_Text)
+        Btn_Save = Button(fButtons, text='Save Preferences', width=10, command=self.Btn_Save_Clicked, font=self.font_Text)
         Btn_Save.pack(side=RIGHT,anchor=S, expand=True, fill=BOTH)
 
-        Btn_Restore_Default = Button(fButtons, text='Restore Defaults', width=12, command=self.Btn_Default_Clicked, font=self.font_Text)
+        Btn_Restore_Default = Button(fButtons, text='Restore Defaults', width=10, command=self.Btn_Default_Clicked, font=self.font_Text)
         Btn_Restore_Default.pack(side=RIGHT, anchor=S, expand=True, fill=BOTH)
 
-        Btn_Cancel = Button(fButtons, text='Cancel', width=12, command=self.Btn_Cancel_Clicked, font=self.font_Text)
+        Btn_Cancel = Button(fButtons, text='Cancel', width=10, command=self.Btn_Cancel_Clicked, font=self.font_Text)
         Btn_Cancel.pack(side=RIGHT, anchor=S,  expand=True, fill=BOTH)
 
         fButtons.pack(side=RIGHT, fill=X, expand=True,pady=5, padx=2)
+        fOptions.pack(side=TOP, fill=BOTH, padx=5, pady=2)
 
+        ### Framing
         fTop.pack(side=TOP, fill=BOTH, expand=True)
         fTop.pack_propagate(0)
 
@@ -291,6 +372,7 @@ class displayPrefs(Base.Base):
     ================================================================================== '''    
     def Btn_Save_Clicked(self):
         self.SaveDefault()
+        print "  Saved NRGsuite - Preferences."
         self.Quit()
 
     ''' ==================================================================================
@@ -298,6 +380,7 @@ class displayPrefs(Base.Base):
     ================================================================================== '''    
     def Btn_Default_Clicked(self):
         self.Prefs.Restore_Default_Prefs()
+        print "  Restored Default NRGsuite - Preferences."
         self.Quit()
 
     ''' ==================================================================================
@@ -305,6 +388,21 @@ class displayPrefs(Base.Base):
     ==================================================================================  '''        
     def Btn_Cancel_Clicked(self):
         self.Quit()
+
+    ''' ====================================================================================
+    FUNCTION Btn_InstallDir_Clicked: Opens a tkFileDialog to select plugin install directory
+    ====================================================================================  '''        
+    def Btn_InstallDir_Clicked(self):
+        val = tkFileDialog.askdirectory(initialdir=self.Install_Dir, title='Select an installation directory for the NRGsuite plugin')
+        if len(val) > 0:
+            if os.path.isdir(val):
+                self.Prefs.Install_Dir = val
+                self.Install_Dir_StringVar.set(val)
+            else:
+                pass
+                # os.path.mkdir(val)
+                # self.Prefs.Install_Dir = val
+                # self.Install_Dir_StringVar.set(val)
 
     ''' ==================================================================================
     FUNCTION DisplayMessage: Display the message  

@@ -132,7 +132,7 @@ class displayNewProject(Base.Base):
         PadDir.pack(padx=13, side=LEFT, anchor=W)       
         
         self.DirPath = Entry(fDirPath, width=38, textvariable=self.ProjDirPath, background='white', \
-                             disabledforeground='black')
+                             disabledforeground='black',bg='yellow')
         self.DirPath.pack(side=LEFT, anchor=W)
         self.DirPath['font'] = self.font_Text_U
         self.DirPath.config(state='disabled')
