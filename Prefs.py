@@ -32,7 +32,6 @@ import sys, os, stat
 import platform
 import cPickle as pickle
 import tkFileDialog
-import shutil
 import Base
 
 
@@ -45,7 +44,7 @@ class Prefs(object):
     DefaultFontType = 'Helvetica'
     DefaultFontSize = 11
 
-    def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0, PreferenceFilePath = None, AlwaysShowAdvancedView = 0, OSid=None):
+    def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0, PreferenceFilePath = None, AlwaysShowAdvancedView = 0, OSid=None, Install_Dir=None):
         self.FontType = self.DefaultFontType
         self.FontSize = self.DefaultFontSize
         self.ToggleAllFlexibleBonds = ToggleAllFlexibleBonds
@@ -123,10 +122,9 @@ class Prefs(object):
 
             except Exception, e:
                 # Catch exceptions
-                shutil.rmtree(self.PreferenceFilePath)
-                self.Load_User_Prefs()
-                print 'Exception caught in Prefs.Load_User_Prefs(). Old Preferences file removed.'
-                print 'Reloading User\'s preferences.'
+                self.Restore_Default_Prefs()
+                print ' Exception caught in Prefs.Load_User_Prefs().'
+                print ' Reloading Default Preferences.'
 
     ''' ==================================================================================
     FUNCTION GetFontType: Returns the font type preferred by the user
@@ -150,7 +148,7 @@ class Prefs(object):
             f.close()
         except Exception, e:
             # error code || error message required "unable to write preferences"
-            print 'exception caught in Prefs.Write_User_Prefs()'
+            print ' Exception caught in Prefs.Write_User_Prefs()'
             pass
 
     ''' ==================================================================================
