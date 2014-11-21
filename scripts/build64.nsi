@@ -21,6 +21,7 @@ PageExEnd
 
 Section writerc
   FileOpen $0 "$PROFILE\pymolrc.pml" a
+  FileWrite $0 `$\r$\n`
   FileWrite $0 `import os$\r$\n`
   FileWrite $0 `os.environ['NRGSUITE_INSTALLATION'] = "$INSTDIR"$\r$\n`
   FileClose $0

@@ -12,5 +12,6 @@ ln -s libinchi.0.dylib libinchi.dylib
 ln -s libopenbabel.4.0.2.dylib libopenbabel.4.dylib
 ln -s libopenbabel.4.dylib libopenbabel.dylib
 
+echo "" >> "$HOME/.pymolrc"
 echo "import os" >> "$HOME/.pymolrc"
 echo "os.environ['NRGSUITE_INSTALLATION'] = \"/Applications/NRGsuite\"" >> "$HOME/.pymolrc"

@@ -65,6 +65,7 @@ ln_ssl_crypto /usr/lib32/
 echo installation successful
 echo done.
 
+echo "" >> "$HOME/.pymolrc"
 echo "import os" >> "$HOME/.pymolrc"
 echo "os.environ['NRGSUITE_INSTALLATION'] = \"${INSTALL_PATH}/NRGsuite\"" >> "$HOME/.pymolrc"
 
