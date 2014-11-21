@@ -9,3 +9,4 @@ FlexAID/WRK
 *.db
 *~
 .DS_Store
+*.exe

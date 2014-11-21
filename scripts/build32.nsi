@@ -13,7 +13,7 @@ Section install
   SetOutPath $INSTDIR
 
   # define what to install and place it in the output path
-  File /r /x *.py~ "C:\Program Files\NRGsuite\*"
+  File /r /x *.py~ /x *.pyc /x scripts "C:\Program Files\NRGsuite\*"
 SectionEnd
 
 PageEx instfiles
