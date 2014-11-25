@@ -1,6 +1,7 @@
 #!/bin/sh
 
 SSLVERSION='0.9.8'
+INSTALL_PATH='/usr/local'
 
 ln_ssl_crypto()
 {
@@ -16,13 +17,11 @@ ln_ssl_crypto()
     fi
 }
 
-INSTALL_PATH='/usr/local'
-
 echo cleaning...
 rm -rf ${INSTALL_PATH}/NRGsuite
 
 echo un-archiving...
-tar -zxvf $1 --exclude ".git"
+tar -zxvf $1
 
 if [ "$?" -gt "0" ]
 then

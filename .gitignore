@@ -10,3 +10,6 @@ FlexAID/WRK
 *~
 .DS_Store
 *.exe
+*.pkg
+*.tar.gz
+*.tar
