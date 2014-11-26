@@ -282,7 +282,7 @@ class displayPrefs(Base.Base):
         fText = Frame(self.fMain)#, bg='red')
         fText.pack(side=TOP, fill=BOTH, expand=True, padx=5, pady=2)
 
-        fFont_Title = Label(fText, text='Font Options', font=self.font_Title_H)
+        fFont_Title = Label(fText, text='Font Options', font=self.font_Title)
         fFont_Title.pack(side=TOP, anchor=W, padx=5, pady=2)
         fFont_Title.pack_propagate(0)
 
@@ -297,7 +297,7 @@ class displayPrefs(Base.Base):
         fFontType_Label.pack(side=LEFT,anchor=W)
         fFontType_Label.pack_propagate(0)
 
-        fontypes = ["Arial", "Lucida", "Helvetica", "Tahoma", "Times", "System", "Fixed", "Courrier"]
+        fontypes = ["Arial", "Lucida", "Helvetica", "Times", "System", "Fixed", "Courrier"]
         fontypes.sort()
         fFontType_OptionMenu = OptionMenu(fFont_options, self.FontType_StringVar,command=self.Update_FontType, *fontypes)
         fFontType_OptionMenu.configure(font=self.font_Text)#, bg='white')#,width=12)
@@ -320,7 +320,7 @@ class displayPrefs(Base.Base):
         ### FlexAID Options
         fOptions = Frame(self.fMain)#, bg='yellow')
 
-        Options_Title = Label(fOptions, text='FlexAID Options', font=self.font_Title_H)
+        Options_Title = Label(fOptions, text='FlexAID Options', font=self.font_Title)
         Options_Title.pack(side=TOP, anchor=W, padx=5, pady=2)
         Options_Title.pack_propagate(0)
 
@@ -330,7 +330,7 @@ class displayPrefs(Base.Base):
         ToggleAllFlexibleBonds.pack_propagate(0)
 
         AlwaysShowAdvancedView = Checkbutton(fOptions, variable=self.AlwaysShowAdvancedView_Var, command=self.Update_AlwaysShowAdvancedView,
-                                             text=' Always show Advanced View in FlexAID', font=self.font_Text)
+                                             text='Always show Advanced View in FlexAID', font=self.font_Text)
         AlwaysShowAdvancedView.pack(side=TOP,anchor=W,padx=5, pady=2)
         AlwaysShowAdvancedView.pack_propagate(0)
 
