@@ -13,7 +13,9 @@ Section install
   SetOutPath $INSTDIR
 
   # define what to install and place it in the output path
-  File /r /x *.py~ /x *.pyc /x scripts "C:\Program Files\NRGsuite\*"
+  # NRGsuite git files
+  File /r /x *.py~ /x *.pyc /x *# /x *~ /x *.orig /x scripts /x dist /x .git /x .gitignore "C:\NRGsuite\*"
+  File /r /x .git /x .gitignore "C:\Executables\Win32\*"
 SectionEnd
 
 PageEx instfiles
