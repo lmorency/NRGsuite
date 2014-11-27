@@ -85,7 +85,7 @@ class GAParam(Tabs.Tab):
         self.RepDup.set(0)
         self.RepSS.set('0.10')
         #self.RepB.set('500')
-        self.UseAGA.set(0)
+        self.UseAGA.set(1)
         self.AGAk1.set('0.95')
         self.AGAk2.set('0.10')
         self.AGAk3.set('0.95')

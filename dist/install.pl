@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 $NRGSUITE_GIT_PATH = "/Users/francisgaudreault/Development/NRGsuite/NRGsuite";
-$EXECUTABLES_GIT_PATH = "/Users/francisgaudreault/Development/Executables";
+$EXECUTABLES_GIT_PATH = "/Users/francisgaudreault/Development/NRGsuite/Executables";
 
 for($i=0; $i<@ARGV; $i++){
     if($ARGV[$i] eq '-n'){

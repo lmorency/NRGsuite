@@ -324,7 +324,7 @@ class displayPrefs(Base.Base):
         Options_Title.pack(side=TOP, anchor=W, padx=5, pady=2)
         Options_Title.pack_propagate(0)
 
-        ToggleAllFlexibleBonds = Checkbutton(fOptions, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds, text='Automatically consider all rotable bonds of ligands as flexible', font=self.font_Text)
+        ToggleAllFlexibleBonds = Checkbutton(fOptions, variable=self.ToggleAllFlexibleBonds_Var, command=self.Update_ToggleAllFlexibleBonds, text=' Automatically consider all rotable bonds of ligands as flexible', font=self.font_Text)
 
         ToggleAllFlexibleBonds.pack(side=TOP,anchor=W,padx=5, pady=2)
         ToggleAllFlexibleBonds.pack_propagate(0)

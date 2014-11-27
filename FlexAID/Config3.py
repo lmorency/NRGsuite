@@ -373,10 +373,9 @@ class Config3(Tabs.Tab):
         optionTuple = '< No type >', '< Type-based >',
         self.optSolventType = apply(OptionMenu, (fSolventLine2, self.SolventType) + optionTuple)
 
-        self.optSolventType.config(bg=self.top.Color_White, font=self.top.font_Text, width=10)
+        self.optSolventType.config(bg=self.top.Color_White, font=self.top.font_Text, width=15)
         self.optSolventType['menu'].config(bg=self.top.Color_White, font=self.top.font_Text)
-        self.optSolventType.pack(side=RIGHT, fill=X, expand=True)
-
+        self.optSolventType.pack(side=RIGHT)
 
         Label(fSolventLine3, text='Solvent term:', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         self.entSolventTerm = Entry(fSolventLine3, textvariable=self.SolventTerm, font=self.top.font_Text, width=4, justify=CENTER, state='disabled')
