@@ -330,7 +330,7 @@ class displayPrefs(Base.Base):
         ToggleAllFlexibleBonds.pack_propagate(0)
 
         AlwaysShowAdvancedView = Checkbutton(fOptions, variable=self.AlwaysShowAdvancedView_Var, command=self.Update_AlwaysShowAdvancedView,
-                                             text='Always show Advanced View in FlexAID', font=self.font_Text)
+                                             text=' Always show Advanced View in FlexAID', font=self.font_Text)
         AlwaysShowAdvancedView.pack(side=TOP,anchor=W,padx=5, pady=2)
         AlwaysShowAdvancedView.pack_propagate(0)
 
