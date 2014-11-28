@@ -64,7 +64,6 @@ class Config2(Tabs.Tab):
         self.IntTranslation = self.Vars.IntTranslation
         self.IntRotation = self.Vars.IntRotation
         self.ActiveCons = self.Vars.ActiveCons
-        self.ActiveConsMemory = self.ActiveCons.get()
         
     def Init_Vars(self):
         
@@ -211,24 +210,22 @@ class Config2(Tabs.Tab):
         if boolRun:
             self.Start_Update()
             
-            if self.ActiveConsMemory:
+            if self.ActiveCons.get():
                 self.Disable_Frame(self.lblInteraction, self.sclConsDist)
             else:
                 self.Disable_Frame(self.lblInteraction)
         else:
-            self.End_Update()
-            
             self.Enable_Frame()
 
             if self.top.WizardResult == 0:
                 Status = 'No constraint(s) set'
             else:
                 Status = ' (' + str(self.top.WizardResult) + ') constraint(s) set'
-            
-            self.queue.put(lambda: self.ConsStatus.set(Status))
-            
-            self.ConsStatus.set(Status)
 
+            self.ConsStatus.set(Status)
+            
+            self.End_Update()
+                        
     ''' ==================================================================================
     FUNCTION Update_FlexStatus: Update self.FlexStatus StringVar
     =================================================================================  '''                
@@ -391,9 +388,9 @@ class Config2(Tabs.Tab):
         
         if self.top.WizardRunning():
             
-            if self.ActiveConsMemory:
+            if self.ActiveCons.get():
                 self.sclConsDist.config(state='normal')
-                self.queue.put(lambda:self.ConsDist.set(self.Vars.dictConstraints[self.ActiveConsMemory][5]))
+                self.ConsDist.set(self.Vars.dictConstraints[self.ActiveCons.get()][5])
             else:
                 self.sclConsDist.config(state='disabled')
             
@@ -406,7 +403,7 @@ class Config2(Tabs.Tab):
 
         if self.top.WizardRunning():
             
-            self.Vars.dictConstraints[self.ActiveConsMemory][5] = self.ConsDist.get()
+            self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
             
             self.top.ActiveWizard.refresh_distance()
             
