@@ -396,9 +396,6 @@ class Default(Tabs.Tab):
                 return            
             
             if self.listResidues.count(self.ResiduValue.get()) == 0:
-                for p in self.listResidues:
-                    print(p)
-                print 'ResiduValue.get() ' + self.ResiduValue.get()
                 self.DisplayMessage("  ERROR: The residue entered could not be found in the object/selection '" + self.defaultOption.get() + "'", 2)
                 self.EntryResidu.config(bg=self.top.Color_Red)
                 return
