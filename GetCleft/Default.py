@@ -396,6 +396,9 @@ class Default(Tabs.Tab):
                 return            
             
             if self.listResidues.count(self.ResiduValue.get()) == 0:
+                for p in self.listResidues:
+                    print(p)
+                print 'ResiduValue.get() ' + self.ResiduValue.get()
                 self.DisplayMessage("  ERROR: The residue entered could not be found in the object/selection '" + self.defaultOption.get() + "'", 2)
                 self.EntryResidu.config(bg=self.top.Color_Red)
                 return
@@ -474,7 +477,15 @@ class Default(Tabs.Tab):
         
         # Centralized on a residue
         if self.ResiduValue.get() != '':
-            Args += ' -a ' + self.ResiduValue.get() + '-'
+            resnumc = self.ResiduValue.get()
+            resre = re.search("[A-Z]+", resnumc[0:4])
+            res = str(resre.group(0))
+            numre = re.search("[0-9]+", resnumc[:-1])
+            num = str(numre.group(0))
+            chain = str(resnumc[-1])
+            while len(res) < 3:
+                res = '-' + res
+            Args += ' -a ' + res+num+chain+'-'
             
         # Output location
         OutputPath = self.top.GetCleftTempProject_Dir
