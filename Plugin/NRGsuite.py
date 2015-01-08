@@ -113,10 +113,11 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
             self.ProjectName = ''
             self.Project_Dir = ''
             
-            self.RootFlexAID = None
-            self.RootGetCleft = None
-
             self.RootPrefs = Prefs.Prefs()
+            self.RootFlexAID = None         # FlexAID Toplevel()
+            self.RootGetCleft = None        # GetCleft Toplevel()
+            self.FlexAID = None             # FlexAId.displayFlexAID() object initialized when FlexAID menu item is clicked
+            self.GetCleft = None            # GetCleft.displayGetCleft() object initialized when GetCleft menu item is clicked
 
             # ADD a new main menu named Project to the menu bar
             #self.menuBar.addmenu('NRGsuite', 'Najmanovich Research Group Suite')
@@ -190,7 +191,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
         def StartGetCleft(self, menuindex):
             
             self.RootGetCleft = Toplevel(self.root)
-            GetCleft.displayGetCleft(self.RootGetCleft, self, menuindex, self.Project_Dir, Install_Dir,
+            self.GetCleft = GetCleft.displayGetCleft(self.RootGetCleft, self, menuindex, self.Project_Dir, Install_Dir,
                                      NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - GetCleft', 500, 550, self.RootPrefs)
                 
         #================================================================================
@@ -199,7 +200,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
         def StartFlexAID(self, menuindex):
             
             self.RootFlexAID = Toplevel(self.root)
-            FlexAID.displayFlexAID(self.RootFlexAID, self, menuindex, self.Project_Dir, Install_Dir, 
+            self.FlexAID = FlexAID.displayFlexAID(self.RootFlexAID, self, menuindex, self.Project_Dir, Install_Dir, 
                                    NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - FlexAID', 800, 600, self.RootPrefs)
                 
         #================================================================================
@@ -222,7 +223,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
         # Loads the preferences menu to set the different options
         #================================================================================
         def StartPreferences(self, menuindex):
-            Prefs.displayPrefs(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
+            Preferences = Prefs.displayPrefs(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
                                NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - Preferences', 475, 260, self.RootPrefs)
             
         #================================================================================
@@ -239,16 +240,26 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
         def StartCloseProject(self, menuitem):
                             
             if self.RootFlexAID is not None:
-                self.RootFlexAID.destroy()
+                if self.FlexAID is not None:
+                    self.FlexAID.Quit()
+                    self.FlexAID = None
+                if self.RootFlexAID is not None:
+                    self.RootFlexAID.destroy()
+                    self.RootFlexAID = None
                 print('  FlexAID interface successfully closed.')
             
             if self.RootGetCleft is not None:
-                self.RootGetCleft.destroy()
+                if self.GetCleft is not None:
+                    self.GetCleft.Quit()
+                    self.GetCleft = None
+                if self.RootGetCleft is not None:
+                    self.RootGetCleft.destroy()
+                    self.RootGetCleft = None
                 print('  GetCleft interface successfully closed.')
                    
             EnableDisableMenu(self, ['normal','normal','disabled','disabled','disabled','disabled','normal'] )
             
-            print('\n   The project \'' + self.ProjectName + '\' was closed.')
+            print('\n  The project \'' + self.ProjectName + '\' was closed.')
 
         #================================================================================        
         # Set the NRGsuite Menu Options to Enable when a Project is created or loaded.

@@ -302,7 +302,6 @@ class Base(object):
         
         self.root.destroy()
         self.root = None
-        
         if self.menuindex != -1:
             self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='normal')
                 
