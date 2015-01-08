@@ -29,11 +29,22 @@ class Table(object):
 
     # Draws the whole Widget
     def Draw(self):
-
         self.build_Column()
         self.draw_Header()
         self.draw_VSB()
         self.draw_List()
+
+    def Undraw(self):
+        self.Clear()
+        for col in self.Columns.keys():
+            try:
+                self.Columns[col]['List'].pack_forget()
+                self.Columns[col]['List'].delete(0, END)
+                self.Columns[col]['Header'].pack_forget()
+                self.Columns[col]['Frame'].pack_forget()
+                self.Columns[col].delete(0,END)
+            except:
+                pass
 
     # Builds the columns (Frames)
     def build_Column(self):
