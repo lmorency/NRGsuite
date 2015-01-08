@@ -118,6 +118,8 @@ class displayLoadProject(Base.Base):
                                    self.Color_Blue)
         self.Table.Draw()
 
+
+
         # References to StringVar'
         self.ProjectName = self.Table.Columns['Name']['StringVar']
         self.LastUsed = self.Table.Columns['Last used']['StringVar']
@@ -184,6 +186,10 @@ class displayLoadProject(Base.Base):
         self.Btn_Load.pack(side=RIGHT, anchor=SE, padx=4, pady=3)
         self.Btn_Load.config(state='disabled')
         
+
+        for col in self.Table.Columns.keys():
+            self.Table.Columns[col]['List'].bind('<Double-Button-1>',self.Btn_Load_Clicked)
+
         fButtons.pack(fill=X, expand=True)
         fButtons.pack_propagate(0)
                 
@@ -312,7 +318,7 @@ class displayLoadProject(Base.Base):
     ''' ==================================================================================
     FUNCTION Btn_Load_Clicked: Load a project then quit the application.
     ==================================================================================  '''        
-    def Btn_Load_Clicked(self):
+    def Btn_Load_Clicked(self, *args):
         
         self.Update_ProjectFile()
         

@@ -106,7 +106,9 @@ class Table(object):
                                                         lambda event, List=self.Columns[self.ColNames[i]]['List']: 
                                                         self.OnButtonClick(event, List))
 
-
+            self.Columns[self.ColNames[i]]['List'].bind('<Double-Button-1>', 
+                                                        lambda event, List=self.Columns[self.ColNames[i]]['List']: 
+                                                        self.OnDoubleButtonClick(event, List))
             # Mac/Windows
             self.Columns[self.ColNames[i]]['List'].bind('<MouseWheel>', self.OnListboxMouseWheel)
 
@@ -150,7 +152,7 @@ class Table(object):
                 self.Columns[col]['StringVar'].set(self.Columns[col]['List'].get(Index)[1:])
         
             self.current = Index
-            
+
     ''' ==================================================================================
     FUNCTION OnListboxMouseWheel: Scroll the Listboxes based on the mouse wheel event.
     ==================================================================================  '''
