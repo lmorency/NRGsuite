@@ -1,6 +1,6 @@
-$NRGSUITE_GIT_PATH = "/Users/francisgaudreault/Development/NRGsuite/NRGsuite";
+$NRGSUITE_GIT_PATH = "/Users/lmorency/Documents/PhD/Programs/NRGsuite";
 $INSTALLATION_DIR = "/Applications/NRGsuite";
-$VERSION = '2.47b';
+$VERSION = '2.47d';
 
 for($i=0; $i<@ARGV; $i++){
     if($ARGV[$i] eq '-v'){

@@ -90,7 +90,7 @@ class constraint(Wizard):
             # Mask objects
             self.exc = [ self.TargetName, self.LigDisplay ]
             General_cmd.mask_Objects(self.exc)
-
+            self.FlexAID.PyMOL.lift() # used to lift PyMOL window above (currently raises the Interface window and need to be modified to raise the PyMOL Viewer)
             self.ErrorCode = 0
 
         except:

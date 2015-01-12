@@ -192,7 +192,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
             
             self.RootGetCleft = Toplevel(self.root)
             self.GetCleft = GetCleft.displayGetCleft(self.RootGetCleft, self, menuindex, self.Project_Dir, Install_Dir,
-                                     NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - GetCleft', 500, 550, self.RootPrefs)
+                                     NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - GetCleft', 500, 550, self.RootPrefs)
                 
         #================================================================================
         # STARTING FlexAID Conditional... 
@@ -201,7 +201,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
             
             self.RootFlexAID = Toplevel(self.root)
             self.FlexAID = FlexAID.displayFlexAID(self.RootFlexAID, self, menuindex, self.Project_Dir, Install_Dir, 
-                                   NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - FlexAID', 800, 600, self.RootPrefs)
+                                   NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - FlexAID', 800, 600, self.RootPrefs)
                 
         #================================================================================
         # Load an existing Project
@@ -209,7 +209,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
         def StartLoadProject(self, menuindex):
             
             LoadProject.displayLoadProject(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                           NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - Load Project', 460, 350, self.RootPrefs)
+                                           NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - Load Project', 460, 350, self.RootPrefs)
             
         #================================================================================
         # Create a New Project
@@ -217,14 +217,14 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
         def StartNewProject(self, menuindex):
                     
             NewProject.displayNewProject(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                         NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - New Project', 420, 300, self.RootPrefs)
+                                         NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - New Project', 420, 300, self.RootPrefs)
             
         #================================================================================
         # Loads the preferences menu to set the different options
         #================================================================================
         def StartPreferences(self, menuindex):
             Preferences = Prefs.displayPrefs(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                               NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - Preferences', 475, 260, self.RootPrefs)
+                               NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - Preferences', 475, 260, self.RootPrefs)
             
         #================================================================================
         # Loads the about menu to see versionning
@@ -232,7 +232,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
         def StartAbout(self, menuindex):
             
             About.displayAbout(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                               NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - About', 400, 350, self.RootPrefs)
+                               NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - About', 400, 350, self.RootPrefs)
         
         #================================================================================
         # Close the actual Project

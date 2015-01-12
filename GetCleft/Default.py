@@ -381,7 +381,7 @@ class Default(Tabs.Tab):
                     self.DisplayMessage("  ERROR: No atoms found for object/selection '" + self.defaultOption.get() + "'", 2)
                     return
                 
-                cmd.save(TmpFile, self.defaultOption.get())
+                cmd.save(TmpFile, self.defaultOption.get(), 1)
 
         except:
             self.DisplayMessage("  ERROR: Could not save the object/selection '" + self.defaultOption.get() + "'", 2)
