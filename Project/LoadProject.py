@@ -189,6 +189,7 @@ class displayLoadProject(Base.Base):
 
         for col in self.Table.Columns.keys():
             self.Table.Columns[col]['List'].bind('<Double-Button-1>',self.Btn_Load_Clicked)
+            self.Table.Columns[col]['List'].bind('<Return>',self.Btn_Load_Clicked)
 
         fButtons.pack(fill=X, expand=True)
         fButtons.pack_propagate(0)
