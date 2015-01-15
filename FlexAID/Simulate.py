@@ -655,16 +655,18 @@ class Simulate(Tabs.Tab):
             except OSError:
                 self.DisplayMessage('  ERROR: An error occured while trying to abort the simulation.', 0)
                 return
-                
-            self.Btn_PauseResume.config(state='disabled')
-            self.Btn_Stop.config(state='disabled')
-            self.Btn_Abort.config(state='disabled')
+            try:  
+                self.Btn_PauseResume.config(state='disabled')
+                self.Btn_Stop.config(state='disabled')
+                self.Btn_Abort.config(state='disabled')
 
-            self.Clean_Update()
-            self.AbortStatus()
-            
-            self.Parse.ParseFile = self.Manage.LOGFILE
-            self.Paused = False
+                self.Clean_Update()
+                self.AbortStatus()
+                
+                self.Parse.ParseFile = self.Manage.LOGFILE
+                self.Paused = False
+            except:
+                self.DisplayMessage('  ERROR: An errror occured while reseting parameters after .abort.',0)
     
     ''' =============================================================================== 
     FUNCTION Btn_StopSim: Stop the simulation 
@@ -682,14 +684,19 @@ class Simulate(Tabs.Tab):
                 self.DisplayMessage('  ERROR: An error occured while trying to stop the simulation.', 0)
                 return
 
-            self.Btn_PauseResume.config(state='disabled')
-            self.Btn_Stop.config(state='disabled')
-            self.Btn_Abort.config(state='disabled')
 
-            self.Clean_Update()
-            self.StopStatus()
-            self.Parse.ParseFile = self.Manage.LOGFILE
-            self.Paused = False
+            try:
+                self.Btn_PauseResume.config(state='disabled')
+                self.Btn_Stop.config(state='disabled')
+                self.Btn_Abort.config(state='disabled')
+
+                self.Clean_Update()
+                self.StopStatus()
+                self.Parse.ParseFile = self.Manage.LOGFILE
+                self.Paused = False
+            except:
+                self.DisplayMessage('  ERROR: An error occured while trying to reset paraments after .stop.',0)
+                return
 
     ''' ==================================================================================
     FUNCTION: Loads all result files

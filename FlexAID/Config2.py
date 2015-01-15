@@ -402,9 +402,8 @@ class Config2(Tabs.Tab):
     def ConsDist_Toggle(self, *args):
 
         if self.top.WizardRunning():
-            
-            self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
-            
+            if self.ActiveCons.get() in self.Vars.dictConstraints.keys():
+                self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
             self.top.ActiveWizard.refresh_distance()
             
     ''' ==================================================================================

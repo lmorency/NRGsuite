@@ -282,7 +282,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
                                Install_Dir + '\n\nInstallation CANCELLED...')
 
 elif sys.version < 2.5:
-    tkMessageBox.showerror('Unsupported Python version', 'The NRGsuite requires Python version 2.5 or newer. Your actual version is ' + sys.version + '. nInstallation CANCELLED...')
+    tkMessageBox.showerror('Unsupported Python version', 'The NRGsuite requires Python version 2.5 or newer. Your actual Python version is ' + sys.version + '. \n\nInstallation CANCELLED...')
 
 else:
     tkMessageBox.showerror('NRGsuite not found',

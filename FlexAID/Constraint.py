@@ -522,9 +522,16 @@ class constraint(Wizard):
     #=======================================================================
     def delete(self):
 
-        if self.ActiveConsMemory:
+        if self.ActiveConsMemory and self.ActiveConsMemory in self.dictConstraints.keys():
             del self.dictConstraints[self.ActiveConsMemory]
-            self.Next_Active()
+            if len(self.dictConstraints.keys()) > 0:
+                self.Next_Active()
+            else:
+                self.ActiveConsMemory = None;
+                self.queue.put(lambda: self.ActiveCons.set(''))
+                cmd.hide('label', self.MiddleDisplay)
+                cmd.zoom(self.LigDisplay)
+                cmd.refresh()
 
     #=======================================================================
         ''' refreshes the display of the constraints '''

@@ -106,9 +106,6 @@ class Table(object):
                                                         lambda event, List=self.Columns[self.ColNames[i]]['List']: 
                                                         self.OnButtonClick(event, List))
 
-            self.Columns[self.ColNames[i]]['List'].bind('<Double-Button-1>', 
-                                                        lambda event, List=self.Columns[self.ColNames[i]]['List']: 
-                                                        self.OnDoubleButtonClick(event, List))
             # Mac/Windows
             self.Columns[self.ColNames[i]]['List'].bind('<MouseWheel>', self.OnListboxMouseWheel)
 
