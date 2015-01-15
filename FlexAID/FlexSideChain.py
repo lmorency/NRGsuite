@@ -276,7 +276,7 @@ class flexSC(Wizard):
 
         self.queue.put(lambda: self.top.FlexSCRunning(False))
         self.FlexAID.ActiveWizard = None
-
+        self.queue.put(lambda: self.FlexAID.root.lift())
         cmd.set_wizard()
         cmd.refresh()
 

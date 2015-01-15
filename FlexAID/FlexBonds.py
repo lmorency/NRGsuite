@@ -169,7 +169,7 @@ class flexbond(Wizard):
         
         self.queue.put(lambda: self.top.FlexBondsRunning(False))
         self.FlexAID.ActiveWizard = None
-
+        self.queue.put(lambda: self.FlexAID.root.lift())
         cmd.set_wizard()
         cmd.set_view(self.View)
         cmd.refresh()

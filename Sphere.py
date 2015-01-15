@@ -109,7 +109,7 @@ class Sphere(Wizard):
 
         # Re-enable controls
         self.queue.put(lambda: self.top.SphereRunning(False))
-        
+        self.queue.put(lambda: self.top.top.root.lift())
         self.App.ActiveWizard = None
 
         cmd.set_wizard()

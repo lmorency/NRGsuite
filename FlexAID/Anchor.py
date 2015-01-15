@@ -66,7 +66,7 @@ class anchor(Wizard):
         cmd.window('hide')
         self.queue.put(lambda: cmd.window('show'))
         cmd.refresh_wizard()
-        
+
         self.ErrorCode = 1
 
         try:
@@ -123,6 +123,7 @@ class anchor(Wizard):
         cmd.refresh()
                 
         self.queue.put(lambda: self.top.AnchorRunning(False))
+        self.queue.put(lambda: self.FlexAID.root.lift())
         
     #=======================================================================
     ''' Displays the ligand to change anchor '''
