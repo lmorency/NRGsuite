@@ -57,14 +57,18 @@ class anchor(Wizard):
         self.auto_zoom = cmd.get("auto_zoom")
 
         self.ErrorStatus =  []
-        
+
     #=======================================================================
     ''' Executes the first steps of the Wizard'''
     #=======================================================================    
     def Start(self):
 
-        self.ErrorCode = 1
+        cmd.window('hide')
+        self.queue.put(lambda: cmd.window('show'))
+        cmd.refresh_wizard()
         
+        self.ErrorCode = 1
+
         try:
             self.selection_mode = cmd.get("mouse_selection_mode")
             cmd.set("mouse_selection_mode", 0) # set selection mode to atomic

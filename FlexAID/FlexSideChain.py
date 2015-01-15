@@ -46,7 +46,6 @@ class flexSC(Wizard):
         #print "New instance of FlexSC Wizard"
 
         Wizard.__init__(self)
-
         self.top = top
         self.queue = queue
         self.FlexAID = self.top.top
@@ -83,8 +82,9 @@ class flexSC(Wizard):
     #=======================================================================    
     def Start(self):
         
+        cmd.window('hide')
+        self.queue.put(lambda: cmd.window('show'))
         cmd.refresh_wizard()
-        
         # Display all Selected Flexible Bonds
         if self.show_SelectedSC():
             self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not display selected flexible side-chains", 1))

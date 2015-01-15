@@ -80,6 +80,10 @@ class constraint(Wizard):
     ''' Executes the first steps of the Wizard'''
     #=======================================================================    
     def Start(self):
+
+        cmd.window('hide')
+        self.queue.put(lambda: cmd.window('show'))
+        cmd.refresh_wizard()
     
         self.ErrorCode = 1
 
@@ -90,6 +94,7 @@ class constraint(Wizard):
             # Mask objects
             self.exc = [ self.TargetName, self.LigDisplay ]
             General_cmd.mask_Objects(self.exc)
+            
             self.ErrorCode = 0
 
         except:
@@ -97,7 +102,7 @@ class constraint(Wizard):
             self.queue.put(lambda: self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
-
+        
         if self.Display_Ligand():
             self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not display the ligand", 1))
             self.queue.put(lambda: self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1))

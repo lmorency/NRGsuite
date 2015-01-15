@@ -90,6 +90,10 @@ class flexbond(Wizard):
     #=======================================================================    
     def Start(self):
 
+        cmd.window('hide')
+        self.queue.put(lambda: cmd.window('show'))
+        cmd.refresh_wizard()
+
         self.ErrorCode = 1        
 
         try:
