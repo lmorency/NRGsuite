@@ -169,7 +169,7 @@ class Config2(Tabs.Tab):
         self.SATStatus.set('')
 
         self.SATRunning(True)
-        self.top.ActiveWizard = AtomTypes.setType(self, self.top.IOFile.OldTypes.get())
+        self.top.ActiveWizard = AtomTypes.setType(self, self.queue, self.top.IOFile.OldTypes.get())
 
         cmd.set_wizard(self.top.ActiveWizard)
         cmd.refresh()
@@ -402,9 +402,8 @@ class Config2(Tabs.Tab):
     def ConsDist_Toggle(self, *args):
 
         if self.top.WizardRunning():
-            
-            self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
-            
+            if self.ActiveCons.get() in self.Vars.dictConstraints.keys():
+                self.Vars.dictConstraints[self.ActiveCons.get()][5] = self.ConsDist.get()
             self.top.ActiveWizard.refresh_distance()
             
     ''' ==================================================================================

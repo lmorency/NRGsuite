@@ -57,14 +57,20 @@ class anchor(Wizard):
         self.auto_zoom = cmd.get("auto_zoom")
 
         self.ErrorStatus =  []
-        
+
     #=======================================================================
     ''' Executes the first steps of the Wizard'''
     #=======================================================================    
     def Start(self):
 
+        self.queue.put(lambda: self.FlexAID.root.withdraw())
+        cmd.window('hide')
+        cmd.window('show')
+        # self.queue.put(lambda: cmd.window('show'))
+        cmd.refresh_wizard()
+
         self.ErrorCode = 1
-        
+
         try:
             self.selection_mode = cmd.get("mouse_selection_mode")
             cmd.set("mouse_selection_mode", 0) # set selection mode to atomic
@@ -119,7 +125,8 @@ class anchor(Wizard):
         cmd.refresh()
                 
         self.queue.put(lambda: self.top.AnchorRunning(False))
-        
+        self.queue.put(lambda: self.FlexAID.root.deiconify())
+        self.queue.put(lambda: self.FlexAID.root.update())
     #=======================================================================
     ''' Displays the ligand to change anchor '''
     #=======================================================================    
@@ -260,4 +267,3 @@ class anchor(Wizard):
                 self.RefreshDisplay()
             break
         cmd.deselect()
-

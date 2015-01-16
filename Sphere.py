@@ -45,6 +45,7 @@ class Sphere(Wizard):
 
         self.SphereSize = SphereSize
         self.SphereDisplay = SphereDisplay
+        self.View = cmd.get_view()
 
         self.ErrorCode = 0
 
@@ -58,6 +59,12 @@ class Sphere(Wizard):
     ''' Execute the first steps of the wizard '''
     #=======================================================================    
     def Start(self):
+
+        self.queue.put(lambda: self.top.top.root.withdraw())
+        cmd.window('hide')
+        cmd.window('show')
+        # self.queue.put(lambda: cmd.window('show'))
+        cmd.refresh_wizard()
 
         self.ErrorCode = 1
 
@@ -104,12 +111,16 @@ class Sphere(Wizard):
             self.App.WizardError = True
 
         # Re-enable controls
-        self.queue.put(lambda: self.top.SphereRunning(False))
         
         self.App.ActiveWizard = None
 
         cmd.set_wizard()
+        cmd.set_view(self.View)
         cmd.refresh()
+                
+        self.queue.put(lambda: self.top.SphereRunning(False))
+        self.queue.put(lambda: self.top.top.root.deiconify())
+        self.queue.put(lambda: self.top.top.root.update())
         
     #=======================================================================
     ''' Display the Sphere in Pymol '''

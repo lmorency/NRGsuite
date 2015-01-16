@@ -29,11 +29,22 @@ class Table(object):
 
     # Draws the whole Widget
     def Draw(self):
-
         self.build_Column()
         self.draw_Header()
         self.draw_VSB()
         self.draw_List()
+
+    def Undraw(self):
+        self.Clear()
+        for col in self.Columns.keys():
+            try:
+                self.Columns[col]['List'].pack_forget()
+                self.Columns[col]['List'].delete(0, END)
+                self.Columns[col]['Header'].pack_forget()
+                self.Columns[col]['Frame'].pack_forget()
+                self.Columns[col].delete(0,END)
+            except:
+                pass
 
     # Builds the columns (Frames)
     def build_Column(self):
@@ -95,7 +106,6 @@ class Table(object):
                                                         lambda event, List=self.Columns[self.ColNames[i]]['List']: 
                                                         self.OnButtonClick(event, List))
 
-
             # Mac/Windows
             self.Columns[self.ColNames[i]]['List'].bind('<MouseWheel>', self.OnListboxMouseWheel)
 
@@ -139,7 +149,7 @@ class Table(object):
                 self.Columns[col]['StringVar'].set(self.Columns[col]['List'].get(Index)[1:])
         
             self.current = Index
-            
+
     ''' ==================================================================================
     FUNCTION OnListboxMouseWheel: Scroll the Listboxes based on the mouse wheel event.
     ==================================================================================  '''

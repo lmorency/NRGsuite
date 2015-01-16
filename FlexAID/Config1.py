@@ -464,7 +464,6 @@ class Config1(Tabs.Tab):
         self.top.ActiveWizard = FlexSideChain.flexSC(self,self.queue)
         cmd.set_wizard(self.top.ActiveWizard)
         cmd.refresh()
-
         self.top.ActiveWizard.Start()
 
     ''' ==================================================================================

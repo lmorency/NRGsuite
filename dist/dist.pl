@@ -17,15 +17,15 @@ sub build_excludes_string {
 }
 
 for($i=0; $i<@ARGV; $i++){
-    if($ARGV[$i] eq '-v'){
+    if($ARGV[$i] eq '-v' || $ARGV[$i] eq '--version'){
 	$VERSION = $ARGV[++$i];
-    }elsif($ARGV[$i] eq '-p'){
+    }elsif($ARGV[$i] eq '-p' || $ARGV[$i] eq '--platform'){
 	$PLATFORM = $ARGV[++$i];
     }
 }
 
 if("@PLATFORMS"!~/\b$PLATFORM\b/){ die "Invalid platform. Possible platforms are @PLATFORMS\n"; }
-if(!$VERSION){ die "No version entered." }
+if(!$VERSION){ die "No version entered. Please enter a version number with the -v or --version flag." }
 
 print "Platform is $PLATFORM\n";
 

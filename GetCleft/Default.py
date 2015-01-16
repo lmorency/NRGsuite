@@ -381,7 +381,7 @@ class Default(Tabs.Tab):
                     self.DisplayMessage("  ERROR: No atoms found for object/selection '" + self.defaultOption.get() + "'", 2)
                     return
                 
-                cmd.save(TmpFile, self.defaultOption.get())
+                cmd.save(TmpFile, self.defaultOption.get(), 1)
 
         except:
             self.DisplayMessage("  ERROR: Could not save the object/selection '" + self.defaultOption.get() + "'", 2)
@@ -474,7 +474,15 @@ class Default(Tabs.Tab):
         
         # Centralized on a residue
         if self.ResiduValue.get() != '':
-            Args += ' -a ' + self.ResiduValue.get() + '-'
+            resnumc = self.ResiduValue.get()
+            resre = re.search("[A-Z]+", resnumc[0:4])
+            res = str(resre.group(0))
+            numre = re.search("[0-9]+", resnumc[:-1])
+            num = str(numre.group(0))
+            chain = str(resnumc[-1])
+            while len(res) < 3:
+                res = '-' + res
+            Args += ' -a ' + res+num+chain+'-'
             
         # Output location
         OutputPath = self.top.GetCleftTempProject_Dir

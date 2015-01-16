@@ -68,7 +68,6 @@ class Simulate(Tabs.Tab):
         self.ResultsName = StringVar()
         self.SimStatus = StringVar()
         self.ProgBarText = StringVar()
-        
         # vars class objects
         self.SimLigDisplay = self.Vars.SimLigDisplay
         self.SimCartoonDisplay = self.Vars.SimCartoonDisplay
@@ -85,7 +84,7 @@ class Simulate(Tabs.Tab):
         self.ResultsName.set('')
         self.ProgBarText.set('... / ...')
         self.SimLigDisplay.set('sticks')
-        
+        self.hasConstraints = bool(self.top.Config2.Vars.dictConstraints)
         self.SimCartoonDisplay.set(1)
         self.SimLinesDisplay.set(0)
         
@@ -112,6 +111,30 @@ class Simulate(Tabs.Tab):
         
         self.BarWidth = self.ProgressBar.cget("width")
         self.BarHeight = self.ProgressBar.cget("height")
+
+        nConstraints = bool(self.top.Config2.Vars.dictConstraints)
+        if self.hasConstraints != nConstraints:
+            self.hasConstraints = nConstraints
+            self.Table.Undraw()
+            if self.hasConstraints:
+                self.Table = MultiList.Table(self.fTable, 6,
+                                           [ 'Color', 'TOP', 'CF', 'Apparent CF', 'Fitness', 'Last RMSD' ],
+                                           [ 40, 40, 167, 167, 120, 97 ],
+                                           [ 0, 6, 6, 6, 6, 6 ],
+                                           [ False, True, True, True, True, True ],
+                                           self.top.font_Text,
+                                           self.top.Color_Blue)
+            else:
+                self.Table = MultiList.Table(self.fTable, 5,
+                                           [ 'Color', 'TOP', 'CF', 'Fitness', 'Last RMSD' ],
+                                           [ 40, 40, 167, 120, 97 ],
+                                           [ 0, 6, 6, 6, 6, 6 ],
+                                           [ False, True, True, True, True ],
+                                           self.top.font_Text,
+                                           self.top.Color_Blue)
+            # self.fTable.pack(side=BOTTOM, fill=BOTH, expand=True)
+            # self.fTable.pack_propagate(0)
+            self.Table.Draw()
         
     ''' =============================================================================== 
     FUNCTION Frame: Generate the CSimulation frame in the the middle frame 
@@ -151,17 +174,26 @@ class Simulate(Tabs.Tab):
         Button(fNaviRes, text='Show next child', font=self.top.font_Text).pack(side=LEFT)
         Button(fNaviRes, text='Show previous child', font=self.top.font_Text).pack(side=LEFT)
         
-        fTable = Frame(self.fSimulate, height=150, pady=5, padx=5)
-        fTable.pack(side=BOTTOM, fill=BOTH, expand=True)
-        fTable.pack_propagate(0)
+        self.fTable = Frame(self.fSimulate, height=150, pady=5, padx=5)
+        self.fTable.pack(side=BOTTOM, fill=BOTH, expand=True)
+        self.fTable.pack_propagate(0)
         
-        self.Table = MultiList.Table(fTable, 6,
-                                   [ 'Color', 'TOP', 'CF', 'Apparent CF', 'Fitness', 'Last RMSD' ],
-                                   [ 40, 40, 167, 167, 120, 97 ],
-                                   [ 0, 6, 6, 6, 6, 6 ],
-                                   [ False, True, True, True, True, True ],
-                                   self.top.font_Text,
-                                   self.top.Color_Blue)
+        if self.hasConstraints:
+            self.Table = MultiList.Table(self.fTable, 6,
+                                       [ 'Color', 'TOP', 'CF', 'Apparent CF', 'Fitness', 'Last RMSD' ],
+                                       [ 40, 40, 167, 167, 120, 97 ],
+                                       [ 0, 6, 6, 6, 6, 6 ],
+                                       [ False, True, True, True, True, True ],
+                                       self.top.font_Text,
+                                       self.top.Color_Blue)
+        else:
+            self.Table = MultiList.Table(self.fTable, 5,
+                                       [ 'Color', 'TOP', 'CF', 'Fitness', 'Last RMSD' ],
+                                       [ 40, 40, 167, 120, 97 ],
+                                       [ 0, 6, 6, 6, 6, 6 ],
+                                       [ False, True, True, True, True ],
+                                       self.top.font_Text,
+                                       self.top.Color_Blue)
         self.Table.Draw()
         
         #fSep = Frame(self.fSimulate, height=3, relief=RAISED).pack(side=BOTTOM, fill=X, expand=True, pady=5)
@@ -494,9 +526,13 @@ class Simulate(Tabs.Tab):
         self.Table.Clear()
         
         for key in range(1, len(self.ColorList) + 1):
-            self.Table.Add( [ '', key, 0.000, 0.000, 0.000, 0.000 ],
+            if self.hasConstraints:
+                self.Table.Add( [ '', key, 0.000, 0.000, 0.000, 0.000 ],
                             [ self.ColorList[key-1], None, None, None, None ] )
-                            
+            else:
+                self.Table.Add( [ '', key, 0.000, 0.000, 0.000 ],
+                            [ self.ColorList[key-1], None, None, None, None ] )
+
             self.dictSimData[key] = [ 0.0, 0.0, 0.0, 'N/A' ]
     
     ''' ==================================================================================
@@ -526,13 +562,23 @@ class Simulate(Tabs.Tab):
         i = 0
         for key in sorted(self.dictSimData.keys()):
             if key == 'REF':
-                self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], 
+                if self.hasConstraints:
+                    self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], 
+                                  self.dictSimData[key][2], '0.000' ],
+                                [ self.top.Color_White, None, None, None, None, None ] )
+                else:
+                    self.Table.Add( [ '', key, self.dictSimData[key][0], 
                                   self.dictSimData[key][2], '0.000' ],
                                 [ self.top.Color_White, None, None, None, None, None ] )
             else:
-                self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1],
-                                  self.dictSimData[key][2], self.dictSimData[key][3] ],
-                                [ self.ColorList[i], None, None, None, None, None ] )
+                if self.hasConstraints:
+                    self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1],
+                                      self.dictSimData[key][2], self.dictSimData[key][3] ],
+                                    [ self.ColorList[i], None, None, None, None, None ] )
+                else:
+                    self.Table.Add( [ '', key, self.dictSimData[key][0],
+                                      self.dictSimData[key][2], self.dictSimData[key][3] ],
+                                    [ self.ColorList[i], None, None, None, None, None ] )
                 i += 1
     
     ''' =============================================================================== 
@@ -609,16 +655,18 @@ class Simulate(Tabs.Tab):
             except OSError:
                 self.DisplayMessage('  ERROR: An error occured while trying to abort the simulation.', 0)
                 return
-                
-            self.Btn_PauseResume.config(state='disabled')
-            self.Btn_Stop.config(state='disabled')
-            self.Btn_Abort.config(state='disabled')
+            try:  
+                self.Btn_PauseResume.config(state='disabled')
+                self.Btn_Stop.config(state='disabled')
+                self.Btn_Abort.config(state='disabled')
 
-            self.Clean_Update()
-            self.AbortStatus()
-            
-            self.Parse.ParseFile = self.Manage.LOGFILE
-            self.Paused = False
+                self.Clean_Update()
+                self.AbortStatus()
+                
+                self.Parse.ParseFile = self.Manage.LOGFILE
+                self.Paused = False
+            except:
+                self.DisplayMessage('  ERROR: An errror occured while reseting parameters after .abort.',0)
     
     ''' =============================================================================== 
     FUNCTION Btn_StopSim: Stop the simulation 
@@ -636,14 +684,19 @@ class Simulate(Tabs.Tab):
                 self.DisplayMessage('  ERROR: An error occured while trying to stop the simulation.', 0)
                 return
 
-            self.Btn_PauseResume.config(state='disabled')
-            self.Btn_Stop.config(state='disabled')
-            self.Btn_Abort.config(state='disabled')
 
-            self.Clean_Update()
-            self.StopStatus()
-            self.Parse.ParseFile = self.Manage.LOGFILE
-            self.Paused = False
+            try:
+                self.Btn_PauseResume.config(state='disabled')
+                self.Btn_Stop.config(state='disabled')
+                self.Btn_Abort.config(state='disabled')
+
+                self.Clean_Update()
+                self.StopStatus()
+                self.Parse.ParseFile = self.Manage.LOGFILE
+                self.Paused = False
+            except:
+                self.DisplayMessage('  ERROR: An error occured while trying to reset paraments after .stop.',0)
+                return
 
     ''' ==================================================================================
     FUNCTION: Loads all result files

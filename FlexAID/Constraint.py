@@ -80,7 +80,13 @@ class constraint(Wizard):
     ''' Executes the first steps of the Wizard'''
     #=======================================================================    
     def Start(self):
-    
+
+        self.queue.put(lambda: self.FlexAID.root.withdraw())
+        cmd.window('hide')
+        cmd.window('show')
+        # self.queue.put(lambda: cmd.window('show'))
+        cmd.refresh_wizard()
+        
         self.ErrorCode = 1
 
         try:
@@ -90,7 +96,7 @@ class constraint(Wizard):
             # Mask objects
             self.exc = [ self.TargetName, self.LigDisplay ]
             General_cmd.mask_Objects(self.exc)
-
+            
             self.ErrorCode = 0
 
         except:
@@ -98,7 +104,7 @@ class constraint(Wizard):
             self.queue.put(lambda: self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1))
             self.Quit_Wizard()
             return
-
+        
         if self.Display_Ligand():
             self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not display the ligand", 1))
             self.queue.put(lambda: self.FlexAID.DisplayMessage("         The wizard will abort prematurely", 1))
@@ -182,10 +188,13 @@ class constraint(Wizard):
 
         self.queue.put(lambda: self.top.ConsRunning(False))
         self.FlexAID.ActiveWizard = None
-        
-        cmd.set_view(self.View)
+
         cmd.set_wizard()
+        cmd.set_view(self.View)
         cmd.refresh()
+                
+        self.queue.put(lambda: self.FlexAID.root.deiconify())
+        self.queue.put(lambda: self.FlexAID.root.update())
 
     #=======================================================================
     ''' Button Done selected '''
@@ -518,9 +527,16 @@ class constraint(Wizard):
     #=======================================================================
     def delete(self):
 
-        if self.ActiveConsMemory:
+        if self.ActiveConsMemory and self.ActiveConsMemory in self.dictConstraints.keys():
             del self.dictConstraints[self.ActiveConsMemory]
-            self.Next_Active()
+            if len(self.dictConstraints.keys()) > 0:
+                self.Next_Active()
+            else:
+                self.ActiveConsMemory = None;
+                self.queue.put(lambda: self.ActiveCons.set(''))
+                cmd.hide('label', self.MiddleDisplay)
+                cmd.zoom(self.LigDisplay)
+                cmd.refresh()
 
     #=======================================================================
         ''' refreshes the display of the constraints '''

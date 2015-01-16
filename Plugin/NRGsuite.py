@@ -71,7 +71,7 @@ Install_Dir = os.environ.get('NRGSUITE_INSTALLATION', get_default_path_for_OSid(
 if Install_Dir is '' or not os.path.isdir(Install_Dir):
     Install_Dir = get_default_path_for_OSid()
 
-if os.path.isdir(Install_Dir):
+if os.path.isdir(Install_Dir) and sys.version >= 2.5:
 
     NRGsuite_Path = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite')
     Plugin_Path = os.path.join(Install_Dir,'Plugin')
@@ -113,10 +113,11 @@ if os.path.isdir(Install_Dir):
             self.ProjectName = ''
             self.Project_Dir = ''
             
-            self.RootFlexAID = None
-            self.RootGetCleft = None
-
             self.RootPrefs = Prefs.Prefs()
+            self.RootFlexAID = None         # FlexAID Toplevel()
+            self.RootGetCleft = None        # GetCleft Toplevel()
+            self.FlexAID = None             # FlexAId.displayFlexAID() object initialized when FlexAID menu item is clicked
+            self.GetCleft = None            # GetCleft.displayGetCleft() object initialized when GetCleft menu item is clicked
 
             # ADD a new main menu named Project to the menu bar
             #self.menuBar.addmenu('NRGsuite', 'Najmanovich Research Group Suite')
@@ -190,8 +191,8 @@ if os.path.isdir(Install_Dir):
         def StartGetCleft(self, menuindex):
             
             self.RootGetCleft = Toplevel(self.root)
-            GetCleft.displayGetCleft(self.RootGetCleft, self, menuindex, self.Project_Dir, Install_Dir,
-                                     NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - GetCleft', 500, 550, self.RootPrefs)
+            self.GetCleft = GetCleft.displayGetCleft(self.RootGetCleft, self, menuindex, self.Project_Dir, Install_Dir,
+                                     NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - GetCleft', 500, 550, self.RootPrefs)
                 
         #================================================================================
         # STARTING FlexAID Conditional... 
@@ -199,8 +200,8 @@ if os.path.isdir(Install_Dir):
         def StartFlexAID(self, menuindex):
             
             self.RootFlexAID = Toplevel(self.root)
-            FlexAID.displayFlexAID(self.RootFlexAID, self, menuindex, self.Project_Dir, Install_Dir, 
-                                   NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - FlexAID', 800, 600, self.RootPrefs)
+            self.FlexAID = FlexAID.displayFlexAID(self.RootFlexAID, self, menuindex, self.Project_Dir, Install_Dir, 
+                                   NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - FlexAID', 800, 600, self.RootPrefs)
                 
         #================================================================================
         # Load an existing Project
@@ -208,7 +209,7 @@ if os.path.isdir(Install_Dir):
         def StartLoadProject(self, menuindex):
             
             LoadProject.displayLoadProject(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                           NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - Load Project', 460, 350, self.RootPrefs)
+                                           NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - Load Project', 460, 350, self.RootPrefs)
             
         #================================================================================
         # Create a New Project
@@ -216,14 +217,14 @@ if os.path.isdir(Install_Dir):
         def StartNewProject(self, menuindex):
                     
             NewProject.displayNewProject(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                                         NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - New Project', 420, 300, self.RootPrefs)
+                                         NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - New Project', 420, 300, self.RootPrefs)
             
         #================================================================================
         # Loads the preferences menu to set the different options
         #================================================================================
         def StartPreferences(self, menuindex):
-            Prefs.displayPrefs(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                               NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - Preferences', 475, 260, self.RootPrefs)
+            Preferences = Prefs.displayPrefs(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
+                               NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - Preferences', 475, 260, self.RootPrefs)
             
         #================================================================================
         # Loads the about menu to see versionning
@@ -231,7 +232,7 @@ if os.path.isdir(Install_Dir):
         def StartAbout(self, menuindex):
             
             About.displayAbout(Toplevel(self.root), self, menuindex, self.Project_Dir, Install_Dir,
-                               NRGsuite_Path, self.RootPrefs.OSid, True, 'NRGsuite - About', 400, 350, self.RootPrefs)
+                               NRGsuite_Path, self.RootPrefs.OSid, self.root, 'NRGsuite - About', 400, 350, self.RootPrefs)
         
         #================================================================================
         # Close the actual Project
@@ -239,16 +240,26 @@ if os.path.isdir(Install_Dir):
         def StartCloseProject(self, menuitem):
                             
             if self.RootFlexAID is not None:
-                self.RootFlexAID.destroy()
+                if self.FlexAID is not None:
+                    self.FlexAID.Quit()
+                    self.FlexAID = None
+                if self.RootFlexAID is not None:
+                    self.RootFlexAID.destroy()
+                    self.RootFlexAID = None
                 print('  FlexAID interface successfully closed.')
             
             if self.RootGetCleft is not None:
-                self.RootGetCleft.destroy()
+                if self.GetCleft is not None:
+                    self.GetCleft.Quit()
+                    self.GetCleft = None
+                if self.RootGetCleft is not None:
+                    self.RootGetCleft.destroy()
+                    self.RootGetCleft = None
                 print('  GetCleft interface successfully closed.')
                    
             EnableDisableMenu(self, ['normal','normal','disabled','disabled','disabled','disabled','normal'] )
             
-            print('\n   The project \'' + self.ProjectName + '\' was closed.')
+            print('\n  The project \'' + self.ProjectName + '\' was closed.')
 
         #================================================================================        
         # Set the NRGsuite Menu Options to Enable when a Project is created or loaded.
@@ -269,6 +280,9 @@ if os.path.isdir(Install_Dir):
                                'The FlexAID and GetCleft applications ' + 
                                'need to be installed at this location: ' +
                                Install_Dir + '\n\nInstallation CANCELLED...')
+
+elif sys.version < 2.5:
+    tkMessageBox.showerror('Unsupported Python version', 'The NRGsuite requires Python version 2.5 or newer. Your actual Python version is ' + sys.version + '. \n\nInstallation CANCELLED...')
 
 else:
     tkMessageBox.showerror('NRGsuite not found',
