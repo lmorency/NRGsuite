@@ -17,19 +17,19 @@ ln_ssl_crypto()
     fi
 }
 
+if [ "$?" -gt "0" ]
+then
+echo the installation ended
+echo error: no archive given as argument or file not found
+echo e.g. "sh install.sh NRGsuite.tar.gz"
+exit 1
+fi
+
 echo cleaning...
 rm -rf ${INSTALL_PATH}/NRGsuite
 
 echo un-archiving...
 tar -zxvf $1
-
-if [ "$?" -gt "0" ]
-then
-echo the installation ended
-echo error: no archive given as argument or file not found
-echo e.g. "./sh install.sh NRGsuite_01012001.tar.gz"
-exit 1
-fi
 
 echo copying files...
 cp -a NRGsuite ${INSTALL_PATH}

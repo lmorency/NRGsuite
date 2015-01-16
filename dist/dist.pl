@@ -2,8 +2,8 @@
 
 @PLATFORMS = qw/MacOSX64 Linux32 Linux64 Win32 Win64/;
 @LINUX_EXCLUDES = qw/.git .gitignore scripts dist .DS_Store NRGsuite_Xcode NRGsuite_VS2012/;
-$EXECUTABLES_GIT_PATH = "/Users/lmorency/Documents/PhD/Programs/Executables";
-$NRGSUITE_GIT_PATH = "/Users/lmorency/Documents/PhD/Programs/NRGsuite";
+$EXECUTABLES_GIT_PATH = "/Users/francisgaudreault/Development/NRGsuite/Executables";
+$NRGSUITE_GIT_PATH = "/Users/francisgaudreault/Development/NRGsuite/NRGsuite";
 $PLATFORM = "MacOSX64";
 
 $ENV{'COPYFILE_DISABLE'}=true;
