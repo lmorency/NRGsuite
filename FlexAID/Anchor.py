@@ -63,8 +63,10 @@ class anchor(Wizard):
     #=======================================================================    
     def Start(self):
 
+        self.queue.put(lambda: self.FlexAID.root.withdraw())
         cmd.window('hide')
-        self.queue.put(lambda: cmd.window('show'))
+        cmd.window('show')
+        # self.queue.put(lambda: cmd.window('show'))
         cmd.refresh_wizard()
 
         self.ErrorCode = 1
@@ -123,8 +125,8 @@ class anchor(Wizard):
         cmd.refresh()
                 
         self.queue.put(lambda: self.top.AnchorRunning(False))
-        self.queue.put(lambda: self.FlexAID.root.lift())
-        
+        self.queue.put(lambda: self.FlexAID.root.deiconify())
+        self.queue.put(lambda: self.FlexAID.root.update())
     #=======================================================================
     ''' Displays the ligand to change anchor '''
     #=======================================================================    
@@ -265,4 +267,3 @@ class anchor(Wizard):
                 self.RefreshDisplay()
             break
         cmd.deselect()
-

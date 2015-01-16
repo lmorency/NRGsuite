@@ -81,8 +81,10 @@ class constraint(Wizard):
     #=======================================================================    
     def Start(self):
 
+        self.queue.put(lambda: self.FlexAID.root.withdraw())
         cmd.window('hide')
-        self.queue.put(lambda: cmd.window('show'))
+        cmd.window('show')
+        # self.queue.put(lambda: cmd.window('show'))
         cmd.refresh_wizard()
         
         self.ErrorCode = 1
@@ -186,10 +188,13 @@ class constraint(Wizard):
 
         self.queue.put(lambda: self.top.ConsRunning(False))
         self.FlexAID.ActiveWizard = None
-        self.queue.put(lambda: self.FlexAID.root.lift())
-        cmd.set_view(self.View)
+
         cmd.set_wizard()
+        cmd.set_view(self.View)
         cmd.refresh()
+                
+        self.queue.put(lambda: self.FlexAID.root.deiconify())
+        self.queue.put(lambda: self.FlexAID.root.update())
 
     #=======================================================================
     ''' Button Done selected '''

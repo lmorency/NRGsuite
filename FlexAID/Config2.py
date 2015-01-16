@@ -169,7 +169,7 @@ class Config2(Tabs.Tab):
         self.SATStatus.set('')
 
         self.SATRunning(True)
-        self.top.ActiveWizard = AtomTypes.setType(self, self.top.IOFile.OldTypes.get())
+        self.top.ActiveWizard = AtomTypes.setType(self, self.queue, self.top.IOFile.OldTypes.get())
 
         cmd.set_wizard(self.top.ActiveWizard)
         cmd.refresh()

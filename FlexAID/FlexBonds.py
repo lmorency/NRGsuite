@@ -90,8 +90,10 @@ class flexbond(Wizard):
     #=======================================================================    
     def Start(self):
 
+        self.queue.put(lambda: self.FlexAID.root.withdraw())
         cmd.window('hide')
-        self.queue.put(lambda: cmd.window('show'))
+        cmd.window('show')
+        # self.queue.put(lambda: cmd.window('show'))
         cmd.refresh_wizard()
 
         self.ErrorCode = 1        
@@ -169,10 +171,13 @@ class flexbond(Wizard):
         
         self.queue.put(lambda: self.top.FlexBondsRunning(False))
         self.FlexAID.ActiveWizard = None
-        self.queue.put(lambda: self.FlexAID.root.lift())
+
         cmd.set_wizard()
         cmd.set_view(self.View)
         cmd.refresh()
+                
+        self.queue.put(lambda: self.FlexAID.root.deiconify())
+        self.queue.put(lambda: self.FlexAID.root.update())
 
     #=======================================================================
     ''' Displays the ligand to be modified '''

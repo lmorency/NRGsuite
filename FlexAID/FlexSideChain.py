@@ -82,9 +82,12 @@ class flexSC(Wizard):
     #=======================================================================    
     def Start(self):
         
+        self.queue.put(lambda: self.FlexAID.root.withdraw())
         cmd.window('hide')
-        self.queue.put(lambda: cmd.window('show'))
+        cmd.window('show')
+        # self.queue.put(lambda: cmd.window('show'))
         cmd.refresh_wizard()
+
         # Display all Selected Flexible Bonds
         if self.show_SelectedSC():
             self.queue.put(lambda: self.FlexAID.DisplayMessage("  ERROR: Could not display selected flexible side-chains", 1))
@@ -276,12 +279,14 @@ class flexSC(Wizard):
 
         self.queue.put(lambda: self.top.FlexSCRunning(False))
         self.FlexAID.ActiveWizard = None
-        self.queue.put(lambda: self.FlexAID.root.lift())
-        cmd.set_wizard()
-        cmd.refresh()
 
+        cmd.set_wizard()
         cmd.set_view(self.View)
-        
+        cmd.refresh()
+                
+        self.queue.put(lambda: self.FlexAID.root.deiconify())
+        self.queue.put(lambda: self.FlexAID.root.update())
+             
      #=======================================================================   
     ''' gets atom information (coordinates and index)'''
     #=======================================================================    

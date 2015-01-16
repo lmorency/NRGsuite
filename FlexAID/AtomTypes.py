@@ -45,7 +45,7 @@ class setType(Wizard):
     #=======================================================================
     ''' Initialization of the interface '''
     #=======================================================================
-    def __init__(self, top, UseOldTypes):
+    def __init__(self, top, queue, UseOldTypes):
         
         #print "New instance of Wizard SetAtomType"
 
@@ -53,7 +53,7 @@ class setType(Wizard):
         
         self.top = top
         self.FlexAID = self.top.top
-      
+        self.queue = queue
         # Save view
         self.View = cmd.get_view()
         self.State = cmd.get_state()
@@ -163,6 +163,11 @@ class setType(Wizard):
     #=======================================================================
     def Start(self):
         
+        self.queue.put(lambda: self.FlexAID.root.withdraw())
+        cmd.window('hide')
+        self.queue.put(lambda: cmd.window('show'))
+        cmd.refresh_wizard()
+
         # Display the ligand from the PDB file
         if self.DisplayLigand():
             self.FlexAID.DisplayMessage("Error while trying to display the ligand from PDB file", 1)
@@ -213,6 +218,10 @@ class setType(Wizard):
             cmd.refresh()
 
             self.top.SATRunning(False)
+
+            self.queue.put(lambda: self.top.AnchorRunning(False))
+            self.queue.put(lambda: self.FlexAID.root.deiconify())
+            self.queue.put(lambda: self.FlexAID.root.update())
 
         except:
             pass
