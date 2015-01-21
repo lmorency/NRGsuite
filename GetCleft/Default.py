@@ -88,11 +88,15 @@ class Start(threading.Thread):
             if self.GetCleft.Run.returncode != 0:
                 self.GetCleft.ProcessError = True
                 
-        except:
-            print('  FATAL ERROR: Could not run the executable GetCleft.')
+        except OSError:
+            print('  FATAL ERROR (OSError exception raised): Could not run the executable GetCleft.')
             print('  Make sure you downloaded NRGsuite for the right platform.')
             self.GetCleft.ProcessError = True
-        
+
+        except ValueError:
+        	print('  FATAL ERROR (ValueError exception raised): Pipe opened with invalid arguments.')
+        	self.GetCleft.ProcessError = True
+
         self.GetCleft.Run = None
         self.GetCleft.ProcessRunning = False
         
