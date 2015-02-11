@@ -950,7 +950,7 @@ class Config1(Tabs.Tab):
                 cmd.set('sphere_transparency', 0.7, self.BindingSiteDisplay)
                 cmd.refresh()
 
-            elif self.Vars.BindingSite.Type == 2:
+            elif self.Vars.BindingSite.Type == 2 and self.Vars.BindingSite.listClefts:
 
                 self.Generate_CleftBindingSite()
 
@@ -983,7 +983,7 @@ class Config1(Tabs.Tab):
         #self.listSpheres = []
 
         out = file(self.CleftTmpPath, 'w')
-
+        print self.Vars.BindingSite.listClefts
         for Cleft in self.Vars.BindingSite.listClefts:
             in_ = open(Cleft.CleftFile, 'r')
             lines = in_.readlines()

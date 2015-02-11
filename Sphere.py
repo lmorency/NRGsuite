@@ -60,12 +60,12 @@ class Sphere(Wizard):
     #=======================================================================    
     def Start(self):
 
-        self.queue.put(lambda: self.top.top.root.withdraw())
+        # self.queue.put(lambda: self.top.top.root.withdraw())
         cmd.window('hide')
         cmd.window('show')
         # self.queue.put(lambda: cmd.window('show'))
         cmd.refresh_wizard()
-
+        cmd.zoom('TARGET__')
         self.ErrorCode = 1
 
         try:
@@ -119,7 +119,7 @@ class Sphere(Wizard):
         cmd.refresh()
                 
         self.queue.put(lambda: self.top.SphereRunning(False))
-        self.queue.put(lambda: self.top.top.root.deiconify())
+        self.queue.put(lambda: self.top.top.root. deiconify())
         self.queue.put(lambda: self.top.top.root.update())
         
     #=======================================================================
