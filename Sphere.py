@@ -119,7 +119,7 @@ class Sphere(Wizard):
         cmd.refresh()
                 
         self.queue.put(lambda: self.top.SphereRunning(False))
-        self.queue.put(lambda: self.top.top.root. deiconify())
+        self.queue.put(lambda: self.top.top.root.deiconify())
         self.queue.put(lambda: self.top.top.root.update())
         
     #=======================================================================
