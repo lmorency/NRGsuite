@@ -64,7 +64,7 @@ class Start(threading.Thread):
     def run(self):        
         
         print("FlexAID starting thread has begun.")
- 
+        
         try:
             logfile = open(self.top.Manage.LOGFILE, "w")
             
@@ -72,36 +72,31 @@ class Start(threading.Thread):
                 self.FlexAID.Run = Popen(self.commandline, shell=False, stdout=logfile, stderr=STDOUT)
             else:
                 self.FlexAID.Run = Popen(self.commandline, shell=True, stdout=logfile, stderr=STDOUT)
-            
-            self.FlexAID.ProcessRunning = True            
+                
+            print('  FlexAID is running, process waiting...')
+            self.top.SimulateState = 0 # Running
             self.FlexAID.Run.wait()
 
-            #print self.FlexAID.Run.returncode
-            if self.FlexAID.Run.returncode != 0:
-                self.FlexAID.ProcessError = True
-                
+            print("  FlexAID ended with returncode", self.FlexAID.Run.returncode)
+            self.top.SimulateState = self.FlexAID.Run.returncode
+            
         except IOError:
-            print('  FATAL ERROR: Could not open logfile for FlexAID.')
-            self.FlexAID.ProcessError = True
-            
+            print('  FATAL ERROR (IOError): Could not open logfile for FlexAID.')
+            self.top.SimulateState = 100
         except OSError:
-            print('  FATAL ERROR: Could not run the executable FlexAID.')
+            print('  FATAL ERROR (OSError): Could not run the executable FlexAID.')
             print('  Make sure you downloaded NRGsuite for the right platform.')
-            self.FlexAID.ProcessError = True
-            logfile.close()
-            
+            self.top.SimulateState = 200
         else:
-            #print('  FATAL ERROR: Unknown exception caught when running FlexAID.')
-            #self.FlexAID.ProcessError = True
-            logfile.close()
+            print('  FATAL ERROR: Unknown exception caught when running FlexAID.')
+            self.top.SimulateState = 300
         
-        finally:
-            self.FlexAID.Run = None
-            self.FlexAID.ProcessRunning = False
-            self.FlexAID.ProcessDone = True
-            
-        #print "ProcessRunning", self.FlexAID.ProcessRunning
-        #print "ProcessDone", self.FlexAID.ProcessDone
+        self.FlexAID.Run = None
+        
+        try:
+            logfile.close()
+        except:
+            pass
         
         print("FlexAID starting thread has ended.")
     
@@ -146,21 +141,17 @@ class Parse(threading.Thread):
         self.NbGenFreq = int(self.FlexAID.GAParam.NbGenFreq.get())      # Draw every XX generation
         self.NbTopChrom = int(self.FlexAID.GAParam.NbTopChrom.get())    # Number of Lines READ per Generation
 
-        self.Error = False
-        self.ErrorMsg = '*FlexAID ERROR: An unexpected error occured.'
-            
         self.Generation = -1
         self.Best = ''
         self.TOP = -1
         
+        self.ErrorMsg = ''
         self.State = 1
         self.CurrentState = 0
 
         self.Ori =  [ 0.0, 0.0, 0.0 ]    # Origin coordinate
         self.OriX = [ 0.0, 0.0, 0.0 ]   # Origin coordinate with X+1
         self.OriY = [ 0.0, 0.0, 0.0 ]   # Origin coordinate with Y+1
-
-        self.ParseGA = False
 
         self.nRead = dict()
         self.ListAtom = list()
@@ -201,25 +192,26 @@ class Parse(threading.Thread):
         
         # send ready to simulate signal  
         print('  Signal sent to start simulation')
-        self.top.StartFlexAID = True
+        self.top.ParseState = 0
         
+        print('  Waiting for FlexAID to start')
         # wait for FlexAID to start, to crash or to finish (if simulation is very short and quickly done)
-        while not self.FlexAID.ProcessRunning and not self.FlexAID.ProcessError and not self.FlexAID.ProcessDone:
+        while self.top.SimulateState < 0:
             time.sleep(self.top.INTERVAL)
             
-        while self.FlexAID.Run is not None and self.FlexAID.Run.poll() is None:
+        print('  Parsing the logfile of FlexAID')
+        while self.FlexAID.Run is not None: # and self.FlexAID.Run.poll() is None:
             time.sleep(self.top.INTERVAL)
-
             if self.ParseLines():
                 break
         
-        if not self.Error:
+        if not self.top.ParseState > 0:
             self.ParseLines()
         
         # Put back the auto_zoom to on
         cmd.set("auto_zoom", self.auto_zoom)
 
-        if self.FlexAID.ProcessError or self.Error:
+        if self.top.SimulateState > 0 or self.top.ParseState > 0:
             self.queue.put(lambda: self.top.ErrorStatus(self.ErrorMsg))
         else:
             self.queue.put(lambda: self.top.SuccessStatus())
@@ -233,7 +225,7 @@ class Parse(threading.Thread):
                 
             cmd.frame(1)
         
-        self.FlexAID.ProcessParsing = False
+        self.top.ParseState = 10
 
         print("FlexAID parsing thread has ended.")
     
@@ -250,8 +242,8 @@ class Parse(threading.Thread):
             return 0
 
         elif self.CopyRead(ParseFile):
-            self.Error = True
             self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files'
+            self.top.ParseState = 1
             return 1
 
         #print "Parse starting at line", self.nRead.get(ParseFile,0)
@@ -332,8 +324,8 @@ class Parse(threading.Thread):
 
                         else:
                             if self.Remove_UPDATE():
-                                self.Error = True
                                 self.ErrorMsg = '*NRGsuite ERROR: Could not successfully remove .update file'
+                                self.top.ParseState = 1
                                 return 1
 
                 continue
@@ -417,7 +409,6 @@ class Parse(threading.Thread):
             if m:                            
                 self.queue.put(lambda: self.top.RunStatus())
 
-                #self.ParseGA = True
                 self.ParseFile = self.UPDATE
 
                 continue
@@ -426,8 +417,8 @@ class Parse(threading.Thread):
             m = re.match("ERROR", Line)
             if m:
                 Line = Line.rstrip('\n')
-                self.Error = True
                 self.ErrorMsg = '*FlexAID ' + Line
+                self.top.ParseState = 2
 
                 try:
                     self.FlexAID.Run.terminate()
@@ -435,10 +426,7 @@ class Parse(threading.Thread):
                     pass
 
                 return 1
-
-        if self.Error:
-            return 1
-        
+                
         return 0
         
     '''=========================================================================

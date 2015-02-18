@@ -398,18 +398,31 @@ class Simulate(Tabs.Tab):
         
         self.ResultsContainer.Report = self.Manage.Report
         
-        self.top.ProcessRunning = False
-        self.top.ProcessError = False
-        self.top.ProcessParsing = True
-        self.top.ProcessDone = False
-        self.StartFlexAID = False
+        # return codes description
+        #       -1: Parse thread has not started yet
+        #        0: Parsing the logfile
+        #        1: NRGsuite update error
+        #        2: FlexAID error parsed
+        #       10: Done parsing
+        self.ParseState = -1
+        
+        # return codes description
+        #      -1: FlexAID Simulation thread not started yet
+        #       0: FlexAID is running
+        #       0: FlexAID is done (when FlexAID.Run is None)
+        # [1-100[: FlexAID return codes error
+        #     100: IOError exception when running Simulate thread
+        #     200: OSError exception when running Simulate thread
+        #     300: Other exception when running Simulate thread
+        self.SimulateState = -1
+        
         self.Start_Update()
         
         # START PARSING AS THREAD
         self.DisplayMessage('  Starting parsing thread.', 2)
         self.Parse = Simulation.Parse(self, self.queue)
         
-        while not self.StartFlexAID:
+        while self.ParseState < 0:
             time.sleep(self.INTERVAL)
             
         # START SIMULATION
