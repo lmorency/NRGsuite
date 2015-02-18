@@ -70,7 +70,7 @@ class constraint(Wizard):
         
         self.pick_count = 0
         self.ErrorStatus = [ "The active constraint is shown as a solid white line.",
-                             "Use the scaler in the interface to edit the interaction distance." ]
+                             "Use the scaler in the NRGsuite - FlexAID interface panel to edit the interaction distance." ]
 
         self.View = cmd.get_view()
         self.State = cmd.get_state()
@@ -81,11 +81,10 @@ class constraint(Wizard):
     #=======================================================================    
     def Start(self):
 
-        self.queue.put(lambda: self.FlexAID.root.withdraw())
         cmd.window('hide')
+        cmd.refresh_wizard()
         cmd.window('show')
         # self.queue.put(lambda: cmd.window('show'))
-        cmd.refresh_wizard()
         
         self.ErrorCode = 1
 

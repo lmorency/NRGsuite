@@ -249,7 +249,6 @@ class CropCleft(Tabs.Tab):
             self.Disable_Frame(self.ResizeSphere,self.lblRadius)
             
             self.ResizeSphere.config(from_=0.5,to=self.Sphere.MaxRadius)
-            print self.Sphere.Print()
             self.SphereSize.set(self.Sphere.Radius)
     
         else:

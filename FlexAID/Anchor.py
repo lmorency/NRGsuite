@@ -119,14 +119,15 @@ class anchor(Wizard):
         
         self.FlexAID.WizardResult = self.AnchorAtom
         self.FlexAID.ActiveWizard = None
+        
+        self.queue.put(lambda: self.top.AnchorRunning(False))
+        self.queue.put(lambda: self.FlexAID.root.deiconify())
+        self.queue.put(lambda: self.FlexAID.root.update())
 
         cmd.set_wizard()
         cmd.set_view(self.View)
         cmd.refresh()
                 
-        self.queue.put(lambda: self.top.AnchorRunning(False))
-        self.queue.put(lambda: self.FlexAID.root.deiconify())
-        self.queue.put(lambda: self.FlexAID.root.update())
     #=======================================================================
     ''' Displays the ligand to change anchor '''
     #=======================================================================    

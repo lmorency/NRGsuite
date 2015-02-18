@@ -101,7 +101,12 @@ class flexSC(Wizard):
         # Mask objects
         self.exc = [ self.TargetName ]
         General_cmd.mask_Objects(self.exc)
-        cmd.zoom(self.TargetName)
+        
+        if General_cmd.object_Exists(self.FlexAID.Config1.BindingSiteDisplay):
+            cmd.zoom(self.FlexAID.Config1.BindingSiteDisplay)
+        else:
+            cmd.zoom(self.TargetName)
+
 
         # remove any possible selection before selecting atoms
         cmd.deselect()
@@ -279,13 +284,14 @@ class flexSC(Wizard):
 
         self.queue.put(lambda: self.top.FlexSCRunning(False))
         self.FlexAID.ActiveWizard = None
+        
+        self.queue.put(lambda: self.FlexAID.root.deiconify())
+        self.queue.put(lambda: self.FlexAID.root.update())
 
         cmd.set_wizard()
         cmd.set_view(self.View)
         cmd.refresh()
                 
-        self.queue.put(lambda: self.FlexAID.root.deiconify())
-        self.queue.put(lambda: self.FlexAID.root.update())
              
      #=======================================================================   
     ''' gets atom information (coordinates and index)'''

@@ -49,7 +49,8 @@ class UpdateScreen(object):
         self.Line = Line
         
         # State on which updating is happening
-        self.State = State
+        # self.State = State
+        self.State = 1
         
         self.dictFlexBonds = self.top.dictFlexBonds
         

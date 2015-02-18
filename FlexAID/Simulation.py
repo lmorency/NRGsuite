@@ -263,7 +263,7 @@ class Parse(threading.Thread):
                 # EOF signal - will resume from here next time
                 break
             
-            print Line
+            #print Line
 
             m = re.match("Grid\[(\d+)\]=", Line)
             if m:
