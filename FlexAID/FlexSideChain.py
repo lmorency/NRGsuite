@@ -101,6 +101,7 @@ class flexSC(Wizard):
         # Mask objects
         self.exc = [ self.TargetName ]
         General_cmd.mask_Objects(self.exc)
+        
         if General_cmd.object_Exists(self.FlexAID.Config1.BindingSiteDisplay):
             cmd.zoom(self.FlexAID.Config1.BindingSiteDisplay)
         else:

@@ -81,12 +81,10 @@ class constraint(Wizard):
     #=======================================================================    
     def Start(self):
 
-        self.queue.put(lambda: self.FlexAID.root.lower())
-        self.queue.put(lambda: self.FlexAID.PyMOL.lower())
         cmd.window('hide')
+        cmd.refresh_wizard()
         cmd.window('show')
         # self.queue.put(lambda: cmd.window('show'))
-        cmd.refresh_wizard()
         
         self.ErrorCode = 1
 

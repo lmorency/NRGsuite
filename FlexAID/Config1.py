@@ -948,10 +948,10 @@ class Config1(Tabs.Tab):
                 cmd.refresh()
 
                 cmd.set('sphere_transparency', 0.7, self.BindingSiteDisplay)
+                cmd.color('purpleblue', self.BindingSiteDisplay)
                 cmd.refresh()
 
             elif self.Vars.BindingSite.Type == 2 and self.Vars.BindingSite.listClefts:
-
                 self.Generate_CleftBindingSite()
 
                 cmd.load(self.CleftTmpPath, self.BindingSiteDisplay, state=1)
@@ -965,10 +965,10 @@ class Config1(Tabs.Tab):
 
                 cmd.alter(self.BindingSiteDisplay,'vdw=2.00')
                 cmd.rebuild(self.BindingSiteDisplay)
+                cmd.color('purpleblue', self.BindingSiteDisplay)
                 cmd.refresh()
-
-            cmd.color('purpleblue', self.BindingSiteDisplay)
-            cmd.refresh()
+            # cmd.color('purpleblue', self.BindingSiteDisplay)
+            # cmd.refresh()
 
         except:
             self.DisplayMessage("  ERROR: while displaying the binding-site", 2)
@@ -983,7 +983,7 @@ class Config1(Tabs.Tab):
         #self.listSpheres = []
 
         out = file(self.CleftTmpPath, 'w')
-        print self.Vars.BindingSite.listClefts
+        # print self.Vars.BindingSite.listClefts
         for Cleft in self.Vars.BindingSite.listClefts:
             in_ = open(Cleft.CleftFile, 'r')
             lines = in_.readlines()
