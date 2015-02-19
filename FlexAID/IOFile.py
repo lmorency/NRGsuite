@@ -67,7 +67,8 @@ class IOFileVars(Vars.Vars):
     SmilesName = StringVar()
     Gen3D = IntVar()
     Anchor = IntVar()
-    
+    ResSeq = IntVar()
+
     def __init__(self):
         
         self.dictAtomTypes = dict()
@@ -100,7 +101,6 @@ class IOFile(Tabs.Tab):
         self.defaultOption = StringVar()
         self.FetchPDB = StringVar()
         #self.ReferencePath = StringVar()
-        self.ResSeq = IntVar()
                 
         # vars class objects
         self.Complex = self.Vars.Complex
@@ -123,7 +123,8 @@ class IOFile(Tabs.Tab):
 
         self.Gen3D = self.Vars.Gen3D
         self.Anchor = self.Vars.Anchor
-
+        self.ResSeq = self.Vars.ResSeq
+        
     def Init_Vars(self):
 
         self.ProcessedTargetPath.set('')
