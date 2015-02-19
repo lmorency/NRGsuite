@@ -111,7 +111,9 @@ class Base(object):
         self.ProcessRunning = False
         self.ProcessParsing = False
         self.ProcessDone = False
-        
+        self.ParseState = 10
+        self.SimulateState = -1
+
         self.fMain = Frame(self.root)
         self.fMain.pack(expand=True)
         

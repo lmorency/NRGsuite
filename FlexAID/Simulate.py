@@ -61,13 +61,15 @@ class Simulate(Tabs.Tab):
     INTERVAL = 0.10
     
     # 1 minute timeout
-    TIMEOUT = INTERVAL * 600
+    TIMEOUT = INTERVAL * 300
+    
+    SimStatus = StringVar()
+    ProgBarText = StringVar()
     
     def Def_Vars(self):
-        
+
         self.ResultsName = StringVar()
-        self.SimStatus = StringVar()
-        self.ProgBarText = StringVar()
+        
         # vars class objects
         self.SimLigDisplay = self.Vars.SimLigDisplay
         self.SimCartoonDisplay = self.Vars.SimCartoonDisplay
@@ -254,7 +256,7 @@ class Simulate(Tabs.Tab):
         self.TextPB = self.ProgressBar.create_text(self.ProgressBar.winfo_reqwidth()/2, self.ProgressBar.winfo_reqheight()/2, text='', fill='black')
         
         Label(fSim_ProgressLine3, text='Genetic algorithm progress:', font=self.top.font_Text).pack(side=LEFT)
-        Label(fSim_ProgressLine3, textvariable=self.ProgBarText, font=self.top.font_Text).pack(side=RIGHT) 
+        Label(fSim_ProgressLine3, textvariable=self.ProgBarText, font=self.top.font_Text).pack(side=RIGHT)
                                         
         #==================================================================================
         '''                           --- DISPLAY OPTIONS ---                           '''
@@ -404,27 +406,26 @@ class Simulate(Tabs.Tab):
         #        1: NRGsuite update error
         #        2: FlexAID error parsed
         #       10: Done parsing
-        self.ParseState = -1
+        self.top.ParseState = -1
         
         # return codes description
         #      -1: FlexAID Simulation thread not started yet
-        #       0: FlexAID is running
-        #       0: FlexAID is done (when FlexAID.Run is None)
+        #       0: FlexAID is running or done when FlexAID.Run is None
         # [1-100[: FlexAID return codes error
         #     100: IOError exception when running Simulate thread
         #     200: OSError exception when running Simulate thread
         #     300: Other exception when running Simulate thread
-        self.SimulateState = -1
-        
+        self.top.SimulateState = -1
+
         self.Start_Update()
         
         # START PARSING AS THREAD
         self.DisplayMessage('  Starting parsing thread.', 2)
         self.Parse = Simulation.Parse(self, self.queue)
         
-        while self.ParseState < 0:
+        while self.top.ParseState < 0:
             time.sleep(self.INTERVAL)
-            
+
         # START SIMULATION
         self.DisplayMessage('  Starting executable thread.', 2)
         self.Start = Simulation.Start(self, commandline)
@@ -843,10 +844,10 @@ class Simulate(Tabs.Tab):
     @summary: SUBROUTINE progressBarHandler: Update the progression bar in the interface                  
     '''
     def progressBarHandler(self, Generation, Total):
-        
+
         try:
             percentage = float(Generation)/float(Total)
-            
+
             if percentage > 1.0:
                 percentage = 1.0
 
@@ -854,7 +855,7 @@ class Simulate(Tabs.Tab):
                 percentage = 0.0
 
             # Change the Generation(s) done display
-            self.ProgBarText.set(str(Generation).rjust(4, ' ') + "/" + str(Total))        
+            self.ProgBarText.set(str(Generation).rjust(4, ' ') + "/" + str(Total))
 
             text = str(int(round(100.0 * percentage))) + " %"
             barValue = int(float(self.BarWidth) * percentage)
@@ -871,8 +872,8 @@ class Simulate(Tabs.Tab):
     FUNCTION Condition_Update: Tests tab specific conditions to trigger stopping
     ==================================================================================  '''               
     def Condition_Update(self):
-
-        if self.top.ProcessRunning or self.top.ProcessParsing:
+        
+        if self.top.ParseState != 10:
             return True
         else:
             return False

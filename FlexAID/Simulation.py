@@ -74,22 +74,22 @@ class Start(threading.Thread):
                 self.FlexAID.Run = Popen(self.commandline, shell=True, stdout=logfile, stderr=STDOUT)
                 
             print('  FlexAID is running, process waiting...')
-            self.top.SimulateState = 0 # Running
+            self.FlexAID.SimulateState = 0 # Running
             self.FlexAID.Run.wait()
 
-            print("  FlexAID ended with returncode", self.FlexAID.Run.returncode)
-            self.top.SimulateState = self.FlexAID.Run.returncode
+            print "  FlexAID ended with returncode", self.FlexAID.Run.returncode
+            self.FlexAID.SimulateState = self.FlexAID.Run.returncode
             
         except IOError:
             print('  FATAL ERROR (IOError): Could not open logfile for FlexAID.')
-            self.top.SimulateState = 100
+            self.FlexAID.SimulateState = 100
         except OSError:
             print('  FATAL ERROR (OSError): Could not run the executable FlexAID.')
             print('  Make sure you downloaded NRGsuite for the right platform.')
-            self.top.SimulateState = 200
-        else:
+            self.FlexAID.SimulateState = 200
+        except:
             print('  FATAL ERROR: Unknown exception caught when running FlexAID.')
-            self.top.SimulateState = 300
+            self.FlexAID.SimulateState = 300
         
         self.FlexAID.Run = None
         
@@ -190,13 +190,13 @@ class Parse(threading.Thread):
         self.queue.put(lambda: self.top.InitStatus())
         self.queue.put(lambda: self.top.progressBarHandler(0, self.NbTotalGen))
         
-        # send ready to simulate signal  
+        # send ready to simulate signal
         print('  Signal sent to start simulation')
-        self.top.ParseState = 0
+        self.FlexAID.ParseState = 0
         
         print('  Waiting for FlexAID to start')
         # wait for FlexAID to start, to crash or to finish (if simulation is very short and quickly done)
-        while self.top.SimulateState < 0:
+        while self.FlexAID.SimulateState < 0:
             time.sleep(self.top.INTERVAL)
             
         print('  Parsing the logfile of FlexAID')
@@ -205,13 +205,14 @@ class Parse(threading.Thread):
             if self.ParseLines():
                 break
         
-        if not self.top.ParseState > 0:
+        if not self.FlexAID.ParseState > 0:
             self.ParseLines()
         
         # Put back the auto_zoom to on
         cmd.set("auto_zoom", self.auto_zoom)
 
-        if self.top.SimulateState > 0 or self.top.ParseState > 0:
+        # error in simulation or parsing?
+        if self.FlexAID.SimulateState > 0 or self.FlexAID.ParseState > 0:
             self.queue.put(lambda: self.top.ErrorStatus(self.ErrorMsg))
         else:
             self.queue.put(lambda: self.top.SuccessStatus())
@@ -225,7 +226,7 @@ class Parse(threading.Thread):
                 
             cmd.frame(1)
         
-        self.top.ParseState = 10
+        self.FlexAID.ParseState = 10
 
         print("FlexAID parsing thread has ended.")
     
@@ -243,7 +244,7 @@ class Parse(threading.Thread):
 
         elif self.CopyRead(ParseFile):
             self.ErrorMsg = '*NRGsuite ERROR: Could not successfully copy/read temporary files'
-            self.top.ParseState = 1
+            self.FlexAID.ParseState = 1
             return 1
 
         #print "Parse starting at line", self.nRead.get(ParseFile,0)
@@ -325,7 +326,7 @@ class Parse(threading.Thread):
                         else:
                             if self.Remove_UPDATE():
                                 self.ErrorMsg = '*NRGsuite ERROR: Could not successfully remove .update file'
-                                self.top.ParseState = 1
+                                self.FlexAID.ParseState = 1
                                 return 1
 
                 continue
@@ -338,7 +339,6 @@ class Parse(threading.Thread):
                 #print("Generation " + str(self.Generation))
                 self.CurrentState = self.State + 1
 
-                #print "will update progressbar"
                 self.queue.put(lambda: self.top.progressBarHandler(self.Generation, self.NbTotalGen))
 
                 continue
@@ -418,7 +418,7 @@ class Parse(threading.Thread):
             if m:
                 Line = Line.rstrip('\n')
                 self.ErrorMsg = '*FlexAID ' + Line
-                self.top.ParseState = 2
+                self.FlexAID.ParseState = 2
 
                 try:
                     self.FlexAID.Run.terminate()
@@ -589,7 +589,7 @@ class Parse(threading.Thread):
 
                 readhandle = open(self.READ, 'r')
                 self.Lines = readhandle.readlines()
-                readhandle.close()                
+                readhandle.close()
                 break
                 
             except OSError:
