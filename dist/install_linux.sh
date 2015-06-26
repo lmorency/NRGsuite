@@ -46,7 +46,6 @@ chmod a+x ${INSTALL_PATH}/NRGsuite/FlexAID/WRK/FlexAID
 chmod a+x ${INSTALL_PATH}/NRGsuite/FlexAID/WRK/Process_Ligand
 chmod a+x ${INSTALL_PATH}/NRGsuite/GetCleft/WRK/GetCleft
 chmod a+x ${INSTALL_PATH}/NRGsuite/GetCleft/WRK/volume_calc
-chmod a+x ${INSTALL_PATH}/NRGsuite/IsoCleft/WRK/IsoCleft
 
 echo creating symbolic links...
 cd ${INSTALL_PATH}/NRGsuite/FlexAID/WRK/libs
