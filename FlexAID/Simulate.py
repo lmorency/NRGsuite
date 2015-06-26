@@ -949,7 +949,7 @@ class Simulate(Tabs.Tab):
             LoadFile = os.path.normpath(LoadFile)
             
             try:
-                in_ = open(LoadFile, 'r')
+                in_ = open(LoadFile, 'rb')
                 TmpResultsContainer = pickle.load(in_)
                 in_.close()
                 
@@ -1009,7 +1009,7 @@ class Simulate(Tabs.Tab):
     def Save_Results(self, SaveFile):
                             
         try:
-            out = open(SaveFile, 'w')
+            out = open(SaveFile, 'wb')
             pickle.dump(self.ResultsContainer, out)
             out.close()
             

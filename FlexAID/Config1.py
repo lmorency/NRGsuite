@@ -536,7 +536,7 @@ class Config1(Tabs.Tab):
             LoadPath = os.path.normpath(LoadPath)
 
             try:
-                in_ = open(LoadPath, 'r')
+                in_ = open(LoadPath, 'rb')
                 TargetFlex = pickle.load(in_)
                 in_.close()
 
@@ -584,7 +584,7 @@ class Config1(Tabs.Tab):
                     return
 
                 try:
-                    out = open(SaveFile, 'w')
+                    out = open(SaveFile, 'wb')
                     pickle.dump(self.Vars.TargetFlex, out)
                     out.close()
 
@@ -618,7 +618,7 @@ class Config1(Tabs.Tab):
             LoadPath = os.path.normpath(LoadPath)
 
             try:
-                in_ = open(LoadPath, 'r')
+                in_ = open(LoadPath, 'rb')
                 TmpBindingSite = pickle.load(in_)
                 in_.close()
 
@@ -674,7 +674,7 @@ class Config1(Tabs.Tab):
                     return
 
                 try:
-                    out = open(SaveFile, 'w')
+                    out = open(SaveFile, 'wb')
                     pickle.dump(self.Vars.BindingSite, out)
                     out.close()
 
@@ -901,7 +901,7 @@ class Config1(Tabs.Tab):
             self.DisplayMessage("  Could not find a Cleft folder for your target:", 2)
             self.DisplayMessage("  The default Cleft folder is used.", 2)
 
-            CleftPath = self.top.CleftProject_Dir
+            CleftPath = os.path.normpath(self.top.CleftProject_Dir)
 
         LoadFiles = tkFileDialog.askopenfilename(filetypes=[('NRG Cleft files','*.nrgclf')],
                                                  initialdir=CleftPath, title='Select cleft file(s) to load',
@@ -913,11 +913,33 @@ class Config1(Tabs.Tab):
 
                 LoadFile = os.path.normpath(LoadFile)
 
-                in_ = open(LoadFile, 'r')
-                Cleft = pickle.load(in_)
-                in_.close()
+                if os.path.exists(LoadFile):
+                    try:
+                        in_ = open(LoadFile, 'rb')
+                    except (Exception, IOError) as IOerr:
+                        print "Error while loading cleft file :"
+                        print "   filename: ", LoadFile
+                        print "   err no: ", IOerr.errno
+                        print "   err code: ", IOerr.errorcode[IOerr.errno]
+                        print "   err message: ", os.strerror(IOerr.errno)
+                        print "   err: ", IOerr
+                        # look if pass is necessary here because of the prints
+                        pass
 
-                self.Vars.BindingSite.Add_Cleft(Cleft)
+                    try:
+                        Cleft = pickle.load(in_)
+                    except (Exception, pickle.PickleError) as PicklingErr:
+                        print "error while unpickling the cleft file :"
+                        print "   err no: ", PicklingErr.errno
+                        print "   err code: ", PicklingErr.errorcode[PicklingErr.errno]
+                        print "   err message: ", os.strerror(PicklingErr.errno)
+                        print "   err: ", PicklingErr
+                        # look if pass is necessary here because of the prints
+                        pass
+
+                    in_.close()
+
+                    self.Vars.BindingSite.Add_Cleft(Cleft)
 
             self.Display_BindingSite()
             self.Update_Clefts_DDL()

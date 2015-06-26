@@ -290,7 +290,7 @@ class displayFlexAID(Base.Base):
             LoadFile = os.path.normpath(LoadFile)
             
             try:
-                in_ = open(LoadFile, 'r')
+                in_ = open(LoadFile, 'rb')
                 self.SessionPath = pickle.load(in_)
                 
                 for Tab in self.listTabs:
@@ -360,7 +360,7 @@ class displayFlexAID(Base.Base):
                 return
             
             try:
-                out = open(SaveFile, 'w')
+                out = open(SaveFile, 'wb')
                 pickle.dump(self.SessionPath, out)
                 
                 for Tab in self.listTabs:

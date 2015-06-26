@@ -626,7 +626,7 @@ class Default(Tabs.Tab):
                 LoadFile = os.path.normpath(LoadFile)
                 
                 try:
-                    in_ = open(LoadFile, 'r')
+                    in_ = open(LoadFile, 'rb')
                     Cleft = pickle.load(in_)
                     in_.close()
                     
@@ -713,7 +713,7 @@ class Default(Tabs.Tab):
                     Cleft.CleftName = NewCleftNamePrefix + CleftNameSuffix
                     
                     try:
-                        out = open(CleftSaveFile, 'w')
+                        out = open(CleftSaveFile, 'wb')
                         pickle.dump(Cleft, out)
                         out.close()
                     
