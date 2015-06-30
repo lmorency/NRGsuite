@@ -921,6 +921,7 @@ class Config1(Tabs.Tab):
                         in_ = open(LoadFile, 'rb')
                         Cleft = pickle.load(in_)
                         in_.close()
+                        self.Vars.BindingSite.Add_Cleft(Cleft)
                     
                     except IOError as IOerr:
                         self.DisplayMessage("Could not read the cleft file. Error while loading cleft file :",2)
@@ -933,10 +934,9 @@ class Config1(Tabs.Tab):
                         print PicklingErr
 
                     except Exception as UnknownErr:
-                        self.DisplayMessage("Unknown exceptions catched :")
+                        self.DisplayMessage("Unknown exceptions catched :",2)
                         print UnknownErr
 
-                    self.Vars.BindingSite.Add_Cleft(Cleft)
 
             self.Display_BindingSite()
             self.Update_Clefts_DDL()
