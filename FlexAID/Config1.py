@@ -919,19 +919,22 @@ class Config1(Tabs.Tab):
                 if os.path.exists(LoadFile):
                     try:
                         in_ = open(LoadFile, 'rb')
-                    except (IOError,Exception) as IOerr:
+                        Cleft = pickle.load(in_)
+                        in_.close()
+                    
+                    except IOError as IOerr:
                         self.DisplayMessage("Could not read the cleft file. Error while loading cleft file :",2)
                         self.DisplayMessage(str(IOerr),2)
                         print IOerr
 
-                    try:
-                        Cleft = pickle.load(in_)
-                    except (pickle.PickleError, Exception) as PicklingErr:
+                    except pickle.PickleError as PicklingErr:
                         self.DisplayMessage("Could not unpickle the cleft file. Error while unpickling the cleft file :",2)
                         self.DisplayMessage(str(PicklingErr),2)
                         print PicklingErr
 
-                    in_.close()
+                    except Exception as UnknownErr:
+                        self.DisplayMessage("Unknown exceptions catched :")
+                        print UnknownErr
 
                     self.Vars.BindingSite.Add_Cleft(Cleft)
 
