@@ -907,6 +907,9 @@ class Config1(Tabs.Tab):
                                                  initialdir=CleftPath, title='Select cleft file(s) to load',
                                                  multiple=1)
 
+        if type(LoadFiles) == 'str':
+            LoadFiles = [ LoadFiles ]
+
         if len(LoadFiles) > 0:
 
             for LoadFile in iter(LoadFiles):
@@ -916,26 +919,24 @@ class Config1(Tabs.Tab):
                 if os.path.exists(LoadFile):
                     try:
                         in_ = open(LoadFile, 'rb')
-                    except (Exception, IOError) as IOerr:
-                        print "Error while loading cleft file :"
-                        print "   filename: ", LoadFile
-                        print "   err no: ", IOerr.errno
-                        print "   err code: ", IOerr.errorcode[IOerr.errno]
-                        print "   err message: ", os.strerror(IOerr.errno)
-                        print "   err: ", IOerr
+                    except (IOError,Exception) as IOerr:
+                        self.DisplayMessage("Could not read the cleft file. Error while loading cleft file :")
+                        # print "Could not read the cleft file. Error while loading cleft file :"
+                        # print "   filename: ", LoadFile
+                        # print "   err no: ", IOerr.errno
+                        # print "   err: ", IOerr
                         # look if pass is necessary here because of the prints
-                        pass
+                        # pass
 
                     try:
                         Cleft = pickle.load(in_)
-                    except (Exception, pickle.PickleError) as PicklingErr:
-                        print "error while unpickling the cleft file :"
-                        print "   err no: ", PicklingErr.errno
-                        print "   err code: ", PicklingErr.errorcode[PicklingErr.errno]
-                        print "   err message: ", os.strerror(PicklingErr.errno)
-                        print "   err: ", PicklingErr
+                    except (pickle.PickleError, Exception) as PicklingErr:
+                        self.DisplayMessage("Could not unpickle the cleft file. Error while unpickling the cleft file :")
+                        # print "Could not unpickle the cleft file. Error while unpickling the cleft file :"
+                        # print "   err no: ", PicklingErr.errno
+                        # print "   err: ", PicklingErr
                         # look if pass is necessary here because of the prints
-                        pass
+                        # pass
 
                     in_.close()
 
