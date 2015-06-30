@@ -920,23 +920,16 @@ class Config1(Tabs.Tab):
                     try:
                         in_ = open(LoadFile, 'rb')
                     except (IOError,Exception) as IOerr:
-                        self.DisplayMessage("Could not read the cleft file. Error while loading cleft file :")
-                        # print "Could not read the cleft file. Error while loading cleft file :"
-                        # print "   filename: ", LoadFile
-                        # print "   err no: ", IOerr.errno
-                        # print "   err: ", IOerr
-                        # look if pass is necessary here because of the prints
-                        # pass
+                        self.DisplayMessage("Could not read the cleft file. Error while loading cleft file :",2)
+                        self.DisplayMessage(str(IOerr),2)
+                        print IOerr
 
                     try:
                         Cleft = pickle.load(in_)
                     except (pickle.PickleError, Exception) as PicklingErr:
-                        self.DisplayMessage("Could not unpickle the cleft file. Error while unpickling the cleft file :")
-                        # print "Could not unpickle the cleft file. Error while unpickling the cleft file :"
-                        # print "   err no: ", PicklingErr.errno
-                        # print "   err: ", PicklingErr
-                        # look if pass is necessary here because of the prints
-                        # pass
+                        self.DisplayMessage("Could not unpickle the cleft file. Error while unpickling the cleft file :",2)
+                        self.DisplayMessage(str(PicklingErr),2)
+                        print PicklingErr
 
                     in_.close()
 
