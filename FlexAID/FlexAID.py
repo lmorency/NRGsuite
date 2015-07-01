@@ -282,7 +282,7 @@ class displayFlexAID(Base.Base):
         LoadFile = tkFileDialog.askopenfilename(initialdir=self.FlexAIDSessionProject_Dir,
                                                 filetypes=[('NRG FlexAID Session','*.nrgfs')],
                                                 title='Select the Session to load')
-        
+        # LoadFile = self.root.master.splitlist(LoadFile)
         if len(LoadFile) > 0:
             
             self.Btn_IOFiles_Clicked()

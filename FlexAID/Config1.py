@@ -530,7 +530,7 @@ class Config1(Tabs.Tab):
 
         LoadPath = tkFileDialog.askopenfilename(filetypes=[('NRG TargetFlex file','*.nrgtf')],
                                                 initialdir=TargetFlexPath, title='Load a TargetFlex file')
-
+        # LoadPath = self.top.root.master.splitlist(LoadPath)
         if len(LoadPath) > 0:
 
             LoadPath = os.path.normpath(LoadPath)
@@ -612,7 +612,7 @@ class Config1(Tabs.Tab):
 
         LoadPath = tkFileDialog.askopenfilename(filetypes=[('NRG BindingSite','*.nrgbs')],
                                                 initialdir=BindingSitePath, title='Load a BindingSite file')
-
+        # LoadPath = self.top.root.master.splitlist(LoadPath)
         if len(LoadPath) > 0:
 
             LoadPath = os.path.normpath(LoadPath)
@@ -906,17 +906,16 @@ class Config1(Tabs.Tab):
         LoadFiles = tkFileDialog.askopenfilename(filetypes=[('NRG Cleft files','*.nrgclf')],
                                                  initialdir=CleftPath, title='Select cleft file(s) to load',
                                                  multiple=1)
-
-        if type(LoadFiles) == 'str':
-            LoadFiles = [ LoadFiles ]
+        LoadFiles = self.top.root.master.splitlist(LoadFiles) # allows the normalisation of filelists, namely list of lenght 1 under Windows won't be processed as a string anymore
 
         if len(LoadFiles) > 0:
 
             for LoadFile in iter(LoadFiles):
 
-                LoadFile = os.path.normpath(LoadFile)
+                LoadFile = os.path.normpath(os.path.abspath(LoadFile))
 
-                if os.path.exists(LoadFile):
+                if os.path.exists(LoadFile) and os.path.isfile(LoadFile):
+                    
                     try:
                         in_ = open(LoadFile, 'rb')
                         Cleft = pickle.load(in_)
@@ -924,7 +923,8 @@ class Config1(Tabs.Tab):
                         self.Vars.BindingSite.Add_Cleft(Cleft)
                     
                     except IOError as IOerr:
-                        self.DisplayMessage("Could not read the cleft file. Error while loading cleft file :",2)
+                        IOerrMessage = "Could not read the cleft file. Error while loading cleft file : " + LoadFile
+                        self.DisplayMessage(IOerrMessage,2)
                         self.DisplayMessage(str(IOerr),2)
                         print IOerr
 

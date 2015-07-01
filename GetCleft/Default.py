@@ -616,7 +616,7 @@ class Default(Tabs.Tab):
         LoadFiles = tkFileDialog.askopenfilename(filetypes=[('Cleft file','*.nrgclf')],
                                                  initialdir=CleftPath, title='Load cleft file(s)',
                                                  multiple=1)
-        
+        LoadFiles = self.top.root.master.splitlist(LoadFiles)
         if len(LoadFiles) > 0:
         
             TempBindingSite = BindingSite.BindingSite()

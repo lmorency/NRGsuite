@@ -943,7 +943,7 @@ class Simulate(Tabs.Tab):
         LoadFile = tkFileDialog.askopenfilename(initialdir=Results_Dir,
                                                 filetypes=[('NRG FlexAID Results','*.nrgfr')],
                                                 title='Load a Results file')
-
+        # LoadFile = self.top.root.master.splitlist(LoadFile)
         if len(LoadFile) > 0:
                                 
             LoadFile = os.path.normpath(LoadFile)

@@ -799,7 +799,7 @@ class IOFile(Tabs.Tab):
         
         Path = tkFileDialog.askopenfilename(filetypes=SupportedFormats,
                                             initialdir=self.savepath, title='Select a file to Load')
-
+        # Path = self.top.root.master.splitlist(Path)
         if len(Path) > 0:
         
             Path = os.path.normpath(Path)
