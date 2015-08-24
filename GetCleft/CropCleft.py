@@ -100,8 +100,8 @@ class CropCleft(Tabs.Tab):
     def Del_Trace(self):
 
         try:
-            self.Step1Selection.trace_vdelete('w',self.Step1SelectionTrace)
-            self.Step2Selection.trace_vdelete('w',self.Step2SelectionTrace)
+            self.queue.put(lambda: self.Step1Selection.trace_vdelete('w',self.Step1SelectionTrace))
+            self.queue.put(lambda: self.Step2Selection.trace_vdelete('w',self.Step2SelectionTrace))
         except:
             pass
 

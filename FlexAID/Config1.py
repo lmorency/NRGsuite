@@ -922,18 +922,18 @@ class Config1(Tabs.Tab):
                         in_.close()
                         self.Vars.BindingSite.Add_Cleft(Cleft)
                     
-                    except IOError as IOerr:
+                    except IOError, IOerr:
                         IOerrMessage = "Could not read the cleft file. Error while loading cleft file : " + LoadFile
                         self.DisplayMessage(IOerrMessage,2)
                         self.DisplayMessage(str(IOerr),2)
                         print IOerr
 
-                    except pickle.PickleError as PicklingErr:
+                    except pickle.PickleError, PicklingErr:
                         self.DisplayMessage("Could not unpickle the cleft file. Error while unpickling the cleft file :",2)
                         self.DisplayMessage(str(PicklingErr),2)
                         print PicklingErr
 
-                    except Exception as UnknownErr:
+                    except Exception, UnknownErr:
                         self.DisplayMessage("Unknown exceptions catched :",2)
                         print UnknownErr
 
