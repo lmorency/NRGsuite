@@ -7,10 +7,42 @@ chmod a+x /Applications/NRGsuite/GetCleft/WRK/volume_calc
 
 cd /Applications/NRGsuite/FlexAID/WRK/libs
 
+/usr/bin/install_name_tool -change /usr/local/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib libopenbabel.4.dylib
+/usr/bin/install_name_tool -change /usr/local/lib/libinchi.0.4.1.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libinchi.0.4.1.dylib libinchi.0.4.1.dylib
+
+/usr/bin/install_name_tool -change /usr/local/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib ../Process_Ligand
+/usr/bin/install_name_tool -change /usr/local/lib/libinchi.0.4.1.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libinchi.0.4.1.dylib ../Process_Ligand
+
+
 ln -s libinchi.0.4.1.dylib libinchi.0.dylib
 ln -s libinchi.0.dylib libinchi.dylib
 ln -s libopenbabel.4.0.2.dylib libopenbabel.4.dylib
 ln -s libopenbabel.4.dylib libopenbabel.dylib
+
+
+cd /Applications/NRGsuite/FlexAID/WRK/formats
+
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib mdlformat.so
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libinchi.0.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libinchi.0.dylib mdlformat.so
+
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib mol2format.so
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libinchi.0.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libinchi.0.dylib mol2format.so
+
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib pdbformat.so
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libinchi.0.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libinchi.0.dylib pdbformat.so
+
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib plugin_charges.so
+
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib plugin_descriptors.so
+
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib plugin_fingerprints.so
+
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib plugin_forcefields.so
+
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib plugin_ops.so
+
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libopenbabel.4.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libopenbabel.4.dylib smilesformat.so
+/usr/bin/install_name_tool -change /usr/local/Cellar/open-babel/2.3.2/lib/libinchi.0.dylib /Applications/NRGsuite/FlexAID/WRK/libs/libinchi.0.dylib smilesformat.so
 
 echo "" >> "$HOME/.pymolrc"
 echo "import os" >> "$HOME/.pymolrc"

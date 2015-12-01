@@ -147,8 +147,8 @@ class ProcLig(object):
             #self.FlexAID.Run.wait()
             
             out, err = self.FlexAID.Run.communicate()
-            #print "out", out
-            #print "err", err
+            # print "out", out
+            # print "err", err
             
             if self.FlexAID.Run.returncode != 0:
                 print "ProcessError!"
@@ -188,4 +188,4 @@ class ProcLig(object):
         os.putenv(variable, value)
         if os.getenv(variable) != value:
             os.environ[variable] = value
-    
+
