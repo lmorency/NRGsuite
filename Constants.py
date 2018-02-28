@@ -20,7 +20,7 @@
 from collections import defaultdict
 
 
-MAX_LIGAND_ATOMS = 100
+MAX_LIGAND_ATOMS = 200
 
 nAtoms = dict(zip(('VAL','LEU','ILE','MET', 
                    'PHE','ASN','ASP','GLN',  

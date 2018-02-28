@@ -28,7 +28,7 @@ for($i=0; $i<@ARGV; $i++){
 
 if("@PLATFORMS"!~/\b$PLATFORM\b/){ die "Invalid platform. Possible platforms are @PLATFORMS\n"; }
 if(!$VERSION){ die "No version entered. Please enter a version number with the -v or --version flag." }
-else {`sed -e "s/^    VERSION = .*/    VERSION = \'$VERSION\'/" ../Base.py > Base.py.tmp && mv Base.py.tmp ../Base.py`;}
+elsif($PLATFORM ne "Win") {`sed -e "s/^    VERSION = .*/    VERSION = \'$VERSION\'/" ../Base.py > Base.py.tmp && mv Base.py.tmp ../Base.py`;}
 print "Platform is $PLATFORM\n";
 
 if($PLATFORM eq 'MacOSX64'){

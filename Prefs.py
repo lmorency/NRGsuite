@@ -44,7 +44,7 @@ class Prefs(object):
     DefaultFontType = 'Helvetica'
     DefaultFontSize = 11
 
-    def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 0, PreferenceFilePath = None, AlwaysShowAdvancedView = 0, OSid=None, Install_Dir=None):
+    def __init__(self, FontType = None, FontSize = 0, ToggleAllFlexibleBonds = 1, PreferenceFilePath = None, AlwaysShowAdvancedView = 0, OSid=None, Install_Dir=None):
         self.FontType = self.DefaultFontType
         self.FontSize = self.DefaultFontSize
         self.ToggleAllFlexibleBonds = ToggleAllFlexibleBonds
@@ -157,7 +157,7 @@ class Prefs(object):
     def Restore_Default_Prefs(self):
         self.FontType = self.DefaultFontType
         self.FontSize = self.DefaultFontSize
-        self.ToggleAllFlexibleBonds = 0
+        self.ToggleAllFlexibleBonds = 1
         self.AlwaysShowAdvancedView = 0
         self.PreferenceFilePath = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite','.NRGprefs')
         self.Install_Dir = os.environ.get('NRGSUITE_INSTALLATION',self.get_default_path_for_OSid())

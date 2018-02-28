@@ -244,7 +244,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
                     self.FlexAID.Quit()
                     self.FlexAID = None
                 if self.RootFlexAID is not None:
-                    self.RootFlexAID.destroy()
+                    # self.RootFlexAID.destroy()
                     self.RootFlexAID = None
                 print('  FlexAID interface successfully closed.')
             
@@ -253,7 +253,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
                     self.GetCleft.Quit()
                     self.GetCleft = None
                 if self.RootGetCleft is not None:
-                    self.RootGetCleft.destroy()
+                    # self.RootGetCleft.destroy()
                     self.RootGetCleft = None
                 print('  GetCleft interface successfully closed.')
                    

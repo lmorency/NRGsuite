@@ -302,8 +302,10 @@ class Base(object):
 
         self.Del_Trace()
         
-        self.root.destroy()
-        self.root = None
+        if self.root is not None:
+            self.root.destroy()
+            self.root = None
+
         if self.menuindex != -1:
             self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='normal')
                 
