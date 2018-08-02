@@ -17,7 +17,14 @@
 
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkFileDialog
+else:
+    from tkinter import *
+    import tkinter.filedialog as tkFileDialog
+
 from pymol import util
 from subprocess import Popen
 
@@ -27,7 +34,6 @@ import re
 import pickle
 import shutil
 import glob
-import tkFileDialog
 
 import MultiList
 import General

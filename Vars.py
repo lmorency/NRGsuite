@@ -13,7 +13,7 @@ class Vars(object):
     
         dict_data = self.__class__.__dict__.copy()
 
-        for k in dict_data.keys():
+        for k in list(dict_data):
             v = dict_data[k]
             # object is not a method
             if not k.startswith('__'):
@@ -36,7 +36,7 @@ class Vars(object):
                 del dict_data[k]
         
         # Copy instance variables
-        dict_data = dict(dict_data.items() + self.__dict__.items())
+        dict_data.update(self.__dict__)
                 
         return dict_data
     
@@ -47,7 +47,7 @@ class Vars(object):
         
         Vars.dict_vars.clear()
         
-        for k in dict_data.keys():
+        for k in list(dict_data):
             v = dict_data[k]
             
             # object is a StringVar, IntVar, etc.
@@ -62,7 +62,7 @@ class Vars(object):
     # refresh the values of Vars to trigger Tracers
     def refresh(self):
         
-        for k, v in Vars.dict_vars.iteritems():
+        for k, v in Vars.dict_vars.items():
             var = self.__class__.__dict__.get(k)
             if var is not None:
                 var.set(v)

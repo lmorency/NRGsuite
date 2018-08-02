@@ -17,6 +17,8 @@
 
 '''
 
+from __future__ import print_function
+
 '''
 @title: Plugin_NRG suite (for Pymol)
 
@@ -28,7 +30,14 @@
 
 import sys, os, stat
 import platform
-import tkMessageBox
+
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkMessageBox
+else:
+    from tkinter import *
+    import tkinter.messagebox as tkMessageBox
+
 import time
 
 '''=================================================================================================
@@ -71,7 +80,7 @@ Install_Dir = os.environ.get('NRGSUITE_INSTALLATION', get_default_path_for_OSid(
 if Install_Dir is '' or not os.path.isdir(Install_Dir):
     Install_Dir = get_default_path_for_OSid()
 
-if os.path.isdir(Install_Dir) and sys.version >= 2.5:
+if os.path.isdir(Install_Dir) and sys.version_info > (2, 5):
 
     NRGsuite_Path = os.path.join(os.path.expanduser('~'),'Documents','NRGsuite')
     Plugin_Path = os.path.join(Install_Dir,'Plugin')
@@ -102,8 +111,6 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
         import About
         
 
-        from Tkinter import *
-        
         #------------------------------------------------------------------#
         #                        SETTING THE MENUS                         #
         #------------------------------------------------------------------# 
@@ -281,7 +288,7 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
                                'need to be installed at this location: ' +
                                Install_Dir + '\n\nInstallation CANCELLED...')
 
-elif sys.version < 2.5:
+elif sys.version_info < (2, 5):
     tkMessageBox.showerror('Unsupported Python version', 'The NRGsuite requires Python version 2.5 or newer. Your actual Python version is ' + sys.version + '. \n\nInstallation CANCELLED...')
 
 else:

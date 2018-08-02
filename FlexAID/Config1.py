@@ -17,13 +17,19 @@
 
 '''
 
-from Tkinter import *
+from __future__ import print_function
+
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkFileDialog
+else:
+    from tkinter import *
+    import tkinter.filedialog as tkFileDialog
 
 import os
-import tkFileDialog
 import Vars
 import Tabs
-import Queue
 import Constants
 import General
 import SphereObj
@@ -212,7 +218,7 @@ class Config1(Tabs.Tab):
         self.lblCenter = Label(fRangeOptLeftLine2, text='Center with:', width=10, font=self.top.font_Text)
         self.lblCenter.pack(side=LEFT)
         optionTuple = '',
-        self.OptMenuSphere = apply(OptionMenu, (fRangeOptLeftLine2, self.defOptSphere) + optionTuple)
+        self.OptMenuSphere = OptionMenu(*(fRangeOptLeftLine2, self.defOptSphere) + optionTuple)
         self.OptMenuSphere.config(state='disabled', width=15)
         self.OptMenuSphere.pack(side=LEFT, fill=X, expand=True)
 
@@ -257,7 +263,7 @@ class Config1(Tabs.Tab):
         self.Btn_DeleteOthersCleft.config(state='disabled')
 
         optionTuple = '',
-        self.OptMenuCleft = apply(OptionMenu, (fRangeOptRightLine3, self.defOptCleft) + optionTuple)
+        self.OptMenuCleft = OptionMenu(*(fRangeOptRightLine3, self.defOptCleft) + optionTuple)
         self.OptMenuCleft.config(state='disabled')
         self.OptMenuCleft.pack(side=RIGHT, fill=X, expand=True)
 
@@ -922,20 +928,20 @@ class Config1(Tabs.Tab):
                         in_.close()
                         self.Vars.BindingSite.Add_Cleft(Cleft)
                     
-                    except IOError, IOerr:
+                    except IOError as IOerr:
                         IOerrMessage = "Could not read the cleft file. Error while loading cleft file : " + LoadFile
                         self.DisplayMessage(IOerrMessage,2)
                         self.DisplayMessage(str(IOerr),2)
-                        print IOerr
+                        print(IOerr)
 
-                    except pickle.PickleError, PicklingErr:
+                    except pickle.PickleError as PicklingErr:
                         self.DisplayMessage("Could not unpickle the cleft file. Error while unpickling the cleft file :",2)
                         self.DisplayMessage(str(PicklingErr),2)
-                        print PicklingErr
+                        print(PicklingErr)
 
-                    except Exception, UnknownErr:
+                    except Exception as UnknownErr:
                         self.DisplayMessage("Unknown exceptions catched :",2)
-                        print UnknownErr
+                        print(UnknownErr)
 
 
             self.Display_BindingSite()

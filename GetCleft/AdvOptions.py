@@ -17,7 +17,11 @@
 
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+else:
+    from tkinter import *
 
 import functools
 import General
@@ -237,7 +241,7 @@ class AdvOptions(object):
  
         Label(fOthersLine3, text = 'Chain ID to be considered', font=self.top.font_Text).pack(side=LEFT, anchor=W)
         optionTuple = 'ALL',
-        EntryResult_C = apply(OptionMenu, (fOthersLine3, self.Entry_C) + optionTuple)
+        EntryResult_C = OptionMenu(*(fOthersLine3, self.Entry_C) + optionTuple)
         EntryResult_C.config(width=8, bg=self.top.Color_White, font=self.top.font_Text)
         EntryResult_C.pack(side=RIGHT)
         self.Entry_C.set('ALL')

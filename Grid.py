@@ -131,9 +131,9 @@ class Grid(threading.Thread):
                     xmin = float(int(self.dictSpheres[sph][1][0] - self.dictSpheres[sph][0] - self.Spacer));
                     ymin = float(int(self.dictSpheres[sph][1][1] - self.dictSpheres[sph][0] - self.Spacer));   
                     zmin = float(int(self.dictSpheres[sph][1][2] - self.dictSpheres[sph][0] - self.Spacer));
-                    xmax = float(int(self.dictSpheres[sph][1][0] + self.dictSpheres[sph][0] + self.Spacer + 1.0);
-                    ymax = float(int(self.dictSpheres[sph][1][1] + self.dictSpheres[sph][0] + self.Spacer + 1.0);
-                    zmax = float(int(self.dictSpheres[sph][1][2] + self.dictSpheres[sph][0] + self.Spacer + 1.0);
+                    xmax = float(int(self.dictSpheres[sph][1][0] + self.dictSpheres[sph][0] + self.Spacer + 1.0))
+                    ymax = float(int(self.dictSpheres[sph][1][1] + self.dictSpheres[sph][0] + self.Spacer + 1.0))
+                    zmax = float(int(self.dictSpheres[sph][1][2] + self.dictSpheres[sph][0] + self.Spacer + 1.0))
 
 
                 x = xmin

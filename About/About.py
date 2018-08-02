@@ -28,7 +28,11 @@
 @creation date:  Dec 8, 2010
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+else:
+    from tkinter import *
 
 import os
 import webbrowser

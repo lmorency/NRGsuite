@@ -17,10 +17,15 @@
 
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import Queue
+else:
+    from tkinter import *
+    import queue as Queue
 
 import General
-import Queue
 
 class Tab(object):
 

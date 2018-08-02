@@ -17,6 +17,7 @@
 
 '''
 
+from __future__ import print_function
 
 '''
 @title: FlexAID - Simulation.py
@@ -77,7 +78,7 @@ class Start(threading.Thread):
             self.FlexAID.SimulateState = 0 # Running
             self.FlexAID.Run.wait()
 
-            print "  FlexAID ended with returncode", self.FlexAID.Run.returncode
+            print("  FlexAID ended with returncode", self.FlexAID.Run.returncode)
             self.FlexAID.SimulateState = self.FlexAID.Run.returncode
             
         except IOError:

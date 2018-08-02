@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+from __future__ import print_function
+
 '''
 @title: Prefs.py
 
@@ -26,13 +28,18 @@
 @modification date : aug. 19 2104
 '''
 
-from Tkinter import *
-
 import sys, os, stat
 import platform
-import cPickle as pickle
-import tkFileDialog
 import Base
+
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import cPickle as pickle
+    import tkFileDialog
+else:
+    from tkinter import *
+    import pickle
+    import tkinter.filedialog as tkFileDialog
 
 
 """ *********************************************************************************
@@ -120,11 +127,11 @@ class Prefs(object):
                 if os.path.isdir(Preferences.Install_Dir):
                     self.Install_Dir = Preferences.Install_Dir
 
-            except Exception, e:
+            except Exception as e:
                 # Catch exceptions
                 self.Restore_Default_Prefs()
-                print ' Exception caught in Prefs.Load_User_Prefs().'
-                print ' Reloading Default Preferences.'
+                print(' Exception caught in Prefs.Load_User_Prefs().')
+                print(' Reloading Default Preferences.')
 
     ''' ==================================================================================
     FUNCTION GetFontType: Returns the font type preferred by the user
@@ -146,9 +153,9 @@ class Prefs(object):
             f = open(self.PreferenceFilePath,"wb")
             pickle.dump(self,f)
             f.close()
-        except Exception, e:
+        except Exception as e:
             # error code || error message required "unable to write preferences"
-            print ' Exception caught in Prefs.Write_User_Prefs()'
+            print(' Exception caught in Prefs.Write_User_Prefs()')
             pass
 
     ''' ==================================================================================
@@ -256,7 +263,7 @@ class displayPrefs(Base.Base):
             self.Prefs.Install_Dir = val
             self.Install_Dir_StringVar.set(val)
         else:
-            print str(val) + " is not a recognized installation directory."
+            print(str(val) + " is not a recognized installation directory.")
 
     ''' ==================================================================================
     FUNCTION SaveDefault: Save & Write the user's preferences into Preference file
@@ -265,7 +272,7 @@ class displayPrefs(Base.Base):
         try:
             self.Prefs.Write_User_Prefs()
         except:
-            print "Exception caught in Prefs.SaveDefault()"
+            print("Exception caught in Prefs.SaveDefault()")
             pass
     
     ''' ==================================================================================
@@ -376,7 +383,7 @@ class displayPrefs(Base.Base):
     ================================================================================== '''    
     def Btn_Save_Clicked(self):
         self.SaveDefault()
-        print "  Saved NRGsuite - Preferences."
+        print("  Saved NRGsuite - Preferences.")
         self.Quit()
 
     ''' ==================================================================================
@@ -384,7 +391,7 @@ class displayPrefs(Base.Base):
     ================================================================================== '''    
     def Btn_Default_Clicked(self):
         self.Prefs.Restore_Default_Prefs()
-        print "  Restored Default NRGsuite - Preferences."
+        print("  Restored Default NRGsuite - Preferences.")
         self.Quit()
 
     ''' ==================================================================================

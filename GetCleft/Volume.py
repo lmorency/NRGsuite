@@ -17,12 +17,22 @@
 
 '''
 
-from Tkinter import *
+from __future__ import print_function
+
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkFileDialog
+    import tkMessageBox
+else:
+    from tkinter import *
+    import tkinter.filedialog as tkFileDialog
+    import tkinter.messagebox as tkMessageBox
+
 from subprocess import Popen, PIPE
 
 import Tabs
 
-import tkMessageBox
 import MultiList
 import threading
 

@@ -17,7 +17,11 @@
 
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+else:
+    from tkinter import *
 
 import os
 import General
@@ -371,7 +375,7 @@ class Config3(Tabs.Tab):
         Label(fSolventLine2, text='Solvent type:', font=self.top.font_Text).pack(side=LEFT)
 
         optionTuple = '< No type >', '< Type-based >',
-        self.optSolventType = apply(OptionMenu, (fSolventLine2, self.SolventType) + optionTuple)
+        self.optSolventType = OptionMenu(*(fSolventLine2, self.SolventType) + optionTuple)
 
         self.optSolventType.config(bg=self.top.Color_White, font=self.top.font_Text, width=15)
         self.optSolventType['menu'].config(bg=self.top.Color_White, font=self.top.font_Text)

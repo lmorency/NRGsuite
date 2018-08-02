@@ -17,6 +17,8 @@
 
 '''
 
+from __future__ import print_function
+
 '''
 @title: GetCleft - Interface - Default tab
 
@@ -27,7 +29,15 @@
 @creation date:  Oct. 19, 2010
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkFileDialog
+    import tkMessageBox
+else:
+    from tkinter import *
+    import tkinter.filedialog as tkFileDialog
+    import tkinter.messagebox as tkMessageBox
 
 from subprocess import Popen, PIPE
 from time import time
@@ -36,8 +46,6 @@ from glob import glob
 import os
 import re
 import Tabs
-import tkFileDialog
-import tkMessageBox
 import General
 import CleftObj
 import BindingSite
@@ -233,7 +241,7 @@ class Default(Tabs.Tab):
         Button(fSelectionLine2, text='Refresh', command=self.Btn_RefreshOptMenu_Clicked, font=self.font_Text, width=10).pack(side=RIGHT, padx=5)
 
         optionTuple = ('',)
-        self.optionMenuWidget = apply(OptionMenu, (fSelectionLine2, self.defaultOption) + optionTuple)
+        self.optionMenuWidget = OptionMenu(*(fSelectionLine2, self.defaultOption) + optionTuple)
         self.optionMenuWidget.config(bg=self.Color_White, font=self.font_Text, width=15)
         self.optionMenuWidget.pack(side=RIGHT)
                 
@@ -835,7 +843,7 @@ class Default(Tabs.Tab):
         
         try:            
             if self.PyMOL:
-                cmd.fetch(PdbCode, async=0)
+                cmd.fetch(PdbCode, **{'async': 0})
                 cmd.refresh()
         except:
             self.DisplayMessage('  You entered an invalid PDB code.', 1)

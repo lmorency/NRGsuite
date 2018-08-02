@@ -28,7 +28,11 @@
 @creation date:  Feb. 9, 2013
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+else:
+    from tkinter import *
 
 import General
 
