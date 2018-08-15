@@ -27,7 +27,13 @@
 @creation date:  Aug. 25, 2010
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkFileDialog
+else:
+    from tkinter import *
+    import tkinter.filedialog as tkFileDialog
 
 import os
 import sys
@@ -35,7 +41,6 @@ import pickle
 import shutil
 import random
 import string
-import tkFileDialog
 
 import Base
 import General

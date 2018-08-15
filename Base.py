@@ -17,13 +17,21 @@
 
 '''
 
-from Tkinter import *
+from __future__ import print_function
+
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkFont
+else:
+    from tkinter import *
+    import tkinter.font as tkFont
+
 from subprocess import Popen, PIPE
 
 import ctypes
 import os
 
-import tkFont
 import Prefs
 import General
 

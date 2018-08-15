@@ -17,6 +17,7 @@
 
 '''
 
+from __future__ import print_function
 
 '''
 @title: FlexAID - ProcessLigand.py
@@ -151,7 +152,7 @@ class ProcLig(object):
             # print "err", err
             
             if self.FlexAID.Run.returncode != 0:
-                print "ProcessError!"
+                print("ProcessError!")
                 self.FlexAID.ProcessError = True
             
         except:

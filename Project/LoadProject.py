@@ -17,6 +17,8 @@
 
 '''
 
+from __future__ import print_function
+
 '''
 @title: LoadProject - Interface
 
@@ -27,11 +29,16 @@
 @creation date:  Dec 10, 2010
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkFileDialog
+else:
+    from tkinter import *
+    import tkinter.filedialog as tkFileDialog
 
 import os
 import time
-import tkFileDialog
 
 import Base
 import NRGsuite

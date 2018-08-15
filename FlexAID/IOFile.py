@@ -17,7 +17,15 @@
 
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkFileDialog
+    import tkMessageBox
+else:
+    from tkinter import *
+    import tkinter.filedialog as tkFileDialog
+    import tkinter.messagebox as tkMessageBox
 
 import math
 import os
@@ -25,8 +33,6 @@ import shutil
 
 import Vars
 import Tabs
-import tkFileDialog
-import tkMessageBox
 import General
 import Smiles
 import Constants
@@ -492,7 +498,7 @@ class IOFile(Tabs.Tab):
         Label(fPDB_options2Line2, text='PyMOL objects/selections:', width=25, justify=RIGHT, font=self.font_Text).pack(side=LEFT, anchor=E)
 
         optionTuple = ('',)
-        self.optionMenuWidget = apply(OptionMenu, (fPDB_options2Line2, self.defaultOption) + optionTuple)
+        self.optionMenuWidget = OptionMenu(*(fPDB_options2Line2, self.defaultOption) + optionTuple)
         self.optionMenuWidget.config(bg=self.Color_White, width=15, font=self.font_Text)
         self.optionMenuWidget.pack(side=LEFT)
         

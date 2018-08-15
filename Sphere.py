@@ -17,7 +17,12 @@
 
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+else:
+    from tkinter import *
+
 from pymol.wizard import Wizard
 from pymol import cmd
 

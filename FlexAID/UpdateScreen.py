@@ -17,6 +17,9 @@
 
 
 '''
+
+from __future__ import print_function
+
 from pymol import cmd
 from pymol import util
 
@@ -262,10 +265,10 @@ class UpdateScreen(object):
                                 ATmergeBA = ATflex_B + ATflex_A
                                 
                                 # Be sure the key exist before calling the value
-                                if self.top.FixedAngle.has_key(ATmergeAB):
+                                if ATmergeAB in self.top.FixedAngle:
                                     ATmerge = ATmergeAB
                                     Factor = 1
-                                elif self.top.FixedAngle.has_key(ATmergeBA):
+                                elif ATmergeBA in self.top.FixedAngle:
                                     ATmerge = ATmergeBA
                                     Factor = -1
                                 

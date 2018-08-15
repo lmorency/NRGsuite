@@ -27,14 +27,19 @@
 @creation date:  Dec. 6, 2010
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkMessageBox
+else:
+    from tkinter import *
+    import tkinter.messagebox as tkMessageBox
 
 import os
 import General
 import Geometry
 import Tabs
 import time
-import tkMessageBox
 
 if __debug__:
     from pymol import cmd
@@ -144,7 +149,7 @@ class CropCleft(Tabs.Tab):
         Label(fCropStep1Line2, text = 'Cleft objects:', width=15, font=self.top.font_Text).pack(side=LEFT)
 
         optionTuple = '',
-        self.OptCleftStep1 = apply(OptionMenu, (fCropStep1Line2, self.Step1Selection) + optionTuple)
+        self.OptCleftStep1 = OptionMenu(*(fCropStep1Line2, self.Step1Selection) + optionTuple)
         self.OptCleftStep1.config(width=20, bg=self.top.Color_White)
         self.OptCleftStep1.pack(side=LEFT, anchor=W)
 
@@ -177,7 +182,7 @@ class CropCleft(Tabs.Tab):
         Step2eBtn2.pack(side=RIGHT, anchor=E, padx=2)
         
         optionTuple = '',
-        self.OptCleftStep2 = apply(OptionMenu, (fCropStep2Line2, self.Step2Selection) + optionTuple)
+        self.OptCleftStep2 = OptionMenu(*(fCropStep2Line2, self.Step2Selection) + optionTuple)
         self.OptCleftStep2.config(width=20, bg=self.top.Color_White)
         self.OptCleftStep2.pack(side=LEFT, anchor=W)
 

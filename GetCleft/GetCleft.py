@@ -27,11 +27,17 @@
 @creation date:  Oct. 19, 2010
 '''
 
-from Tkinter import *
+import sys
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import tkFileDialog
+    import tkMessageBox
+else:
+    from tkinter import *
+    import tkinter.filedialog as tkFileDialog
+    import tkinter.messagebox as tkMessageBox
 
 import os
-import tkFileDialog
-import tkMessageBox
 
 import Base
 import CleftObj
