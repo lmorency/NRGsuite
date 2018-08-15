@@ -82,6 +82,13 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
     
     if os.path.isdir(Project_Path) and os.path.isdir(FlexAID_Path) and \
        os.path.isdir(GetCleft_Path) and os.path.isdir(About_Path):
+
+        # prime PyMOL's legacy plugin system
+        try:
+            from pymol.plugins import get_tk_root
+            get_tk_root()
+        except ImportError:
+            pass
     
         sys.path.append(Install_Dir)
         import Prefs
@@ -109,6 +116,12 @@ if os.path.isdir(Install_Dir) and sys.version >= 2.5:
         #------------------------------------------------------------------# 
         
         def __init__(self):
+            # workaround PyMOL's legacy plugin system
+            if not hasattr(self.menuBar, 'component'):
+                class DummyComponent:
+                    def __init__(self, _): pass
+                    def entryconfig(*_, **_k): pass
+                self.menuBar.component = DummyComponent
             
             self.ProjectName = ''
             self.Project_Dir = ''
