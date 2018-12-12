@@ -624,7 +624,11 @@ class Default(Tabs.Tab):
         LoadFiles = tkFileDialog.askopenfilename(filetypes=[('Cleft file','*.nrgclf')],
                                                  initialdir=CleftPath, title='Load cleft file(s)',
                                                  multiple=1)
-        LoadFiles = self.top.root.master.splitlist(LoadFiles)
+        
+        # LoadFiles can be string instead of list on Windows. here's a workaround
+        if self.top.OSid == 'WIN' :
+            LoadFiles = self.top.root.master.splitlist(LoadFiles) # allows the normalisation of filelists, namely list of lenght 1 under Windows won't be processed as a string anymore
+
         if len(LoadFiles) > 0:
         
             TempBindingSite = BindingSite.BindingSite()
