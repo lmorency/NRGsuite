@@ -237,7 +237,7 @@ class displayGetCleft(Base.Base):
     def Before_Quit(self):
         
         if not self.CopySession:                                    
-            answer = tkMessageBox.askyesno("Question",  # IBM---
+            answer = tkMessageBox.askyesno("Question",
                                               message="One or more cleft(s) are unsaved. Would you like to save them before leaving?",
                                               icon='warning')  
 
