@@ -915,7 +915,7 @@ class Config1(Tabs.Tab):
         
 	# LoadFiles can be string instead of list on Windows. here's a workaround
         if self.top.OSid == 'WIN' :
-		LoadFiles = self.top.root.master.splitlist(LoadFiles) # allows the normalisation of filelists, namely list of lenght 1 under Windows won't be processed as a string anymore
+        	LoadFiles = self.top.root.master.splitlist(LoadFiles) # allows the normalisation of filelists, namely list of lenght 1 under Windows won't be processed as a string anymore
 
         if len(LoadFiles) > 0:
 

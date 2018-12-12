@@ -45,7 +45,7 @@ class Base(object):
     # in milliseconds
     TKINTER_UPDATE_INTERVAL = 100
     
-    WEBSITE = 'http://bcb.med.usherbrooke.ca/'
+    WEBSITE = 'http://biophys.umontreal.ca/nrg'
     VERSION = '2.48l'
     
     ''' ==================================================================================
