@@ -218,28 +218,32 @@ class Manage(object):
     ================================================================================== '''
     def Print_RMSDST(self):
 
-        if self.Config2.UseReference.get():
-            return 'RMSDST ' + self.IOFile.ProcessedLigandPath.get() + '\n'
+        line = ''
         
-        return ''
+        if self.Config2.UseReference.get():
+            line = 'RMSDST ' + self.IOFile.ProcessedLigandPath.get() + '\n'
+        
+        return line
 
     ''' ==================================================================================
     @summary: Print_IMATRX: Prints the IMATRX line of CONFIG input                        
     ================================================================================== '''
     def Print_IMATRX(self):
 
+        line = ''
+        
         if self.IOFile.AtomTypes.get() == 'Sobolev': # 8 atom types only
-            return 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','scr_bin.dat') + '\n'
+            line = 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','scr_bin.dat') + '\n'
 
         elif self.IOFile.AtomTypes.get() == 'Gaudreault': # 12 atom types
-            return 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n'
+            line = 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','M6_cons_3.dat') + '\n'
 
         elif self.IOFile.AtomTypes.get() == 'Sybyl': # 26 atom types
             #return 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_10p_3.dat') + '\n'
             #return 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_5p_norm_P10_M2_2.dat') + '\n'
-            return 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_st0r5.2_6.dat') + '\n'
+            line = 'IMATRX ' + os.path.join(self.FlexAID.FlexAIDInstall_Dir,'deps','MC_st0r5.2_6.dat') + '\n'
             
-        return ''
+        return line
 
     ''' ==================================================================================
     @summary: Print_PERMEA: Prints the PERMEA line of CONFIG input                        
@@ -247,7 +251,8 @@ class Manage(object):
     def Print_PERMEA(self):
         
         Permea = 1.00 - float(self.Config3.Permeability.get())
-        return 'PERMEA ' + str(Permea) + '\n'
+        line = 'PERMEA ' + str(Permea) + '\n'
+        return line
 
     ''' ==================================================================================
     @summary: Print_VAR: Prints the VAR* and SPACER lines of CONFIG input
@@ -357,7 +362,7 @@ class Manage(object):
             line += ' %.3f' % self.Config1.Vars.BindingSite.Sphere.Center[2]
             line += ' %.3f\n' % self.Config1.Vars.BindingSite.Sphere.Radius
             
-            hasher.update(line)
+            hasher.update(line.encode('utf-8'))
             
         elif rngOpt == 'LOCCLF':
             self.Config1.Generate_CleftBindingSite()
@@ -372,14 +377,14 @@ class Manage(object):
             
             hasher = General.hashfile_update(self.TmpFile, hasher)
 
-        hasher.update(self.Print_OPTIMZ())
-        hasher.update(self.Print_RMSDST())
-        hasher.update(self.Print_IMATRX())
-        hasher.update(self.Print_PERMEA())
-        hasher.update(self.Print_VAR())
-        hasher.update(self.Print_SLV())
-        hasher.update(self.Print_HET())
-        hasher.update(self.Print_Scoring())
+        hasher.update(self.Print_OPTIMZ().encode('utf-8'))
+        hasher.update(self.Print_RMSDST().encode('utf-8'))
+        hasher.update(self.Print_IMATRX().encode('utf-8'))
+        hasher.update(self.Print_PERMEA().encode('utf-8'))
+        hasher.update(self.Print_VAR().encode('utf-8'))
+        hasher.update(self.Print_SLV().encode('utf-8'))
+        hasher.update(self.Print_HET().encode('utf-8'))
+        hasher.update(self.Print_Scoring().encode('utf-8'))
 
         return hasher.digest()
 
@@ -526,7 +531,7 @@ class Manage(object):
         Permea = 1.00 - float(self.Config3.RotPermeability.get())
         lines += 'ROTPER ' + str(Permea) + '\n'
         
-        return lines
+        return lines.encode('utf-8')
 
     ''' ==================================================================================
     FUNCTION Create_ConsFile: Creates the constraints file

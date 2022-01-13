@@ -169,4 +169,4 @@ def CreateNoList(pTotColor, pTotalColorList):
     
     noList.sort()
     
-    return noList
+    return [ int(i) for i in noList ]

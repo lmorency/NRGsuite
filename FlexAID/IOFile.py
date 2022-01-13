@@ -203,7 +203,7 @@ class IOFile(Tabs.Tab):
             
             self.ProcessMolecule( True, self.LigandPath.get(), self.ATOM_INDEX, self.AtomTypes.get(), 
                                   self.Anchor.get(), False, self.ProcessOnly, self.Gen3D.get(), False, 'ligand' )
-            
+
             if self.top.ProcessError:
                 return False
             else:
@@ -994,7 +994,7 @@ class IOFile(Tabs.Tab):
 
                 #HETTYP  902 1  N1  m   909  910  903    0
                 if Line.startswith('HETTYP'):
-                    
+
                     ATOM = Line[6:11].strip()
 
                     list = []
@@ -1010,10 +1010,10 @@ class IOFile(Tabs.Tab):
                     INDEX = Line[7:9].strip()
 
                     list = []
-                    for i in range(0,len(Line[10:])/5):
+                    for i in range(0,int(len(Line[10:])/5)):
                         list.append(Line[(10+i*5):(10+5+i*5)].strip())
                     flexInfo[INDEX] = list
-                
+
         except:
             self.DisplayMessage('  ERROR: Could not retrieve ligand input file', 1)
             return 1

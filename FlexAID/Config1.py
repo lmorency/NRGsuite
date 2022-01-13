@@ -915,7 +915,7 @@ class Config1(Tabs.Tab):
         
 	# LoadFiles can be string instead of list on Windows. here's a workaround
         if self.top.OSid == 'WIN' :
-        	LoadFiles = self.top.root.master.splitlist(LoadFiles) # allows the normalisation of filelists, namely list of lenght 1 under Windows won't be processed as a string anymore
+            LoadFiles = self.top.root.master.splitlist(LoadFiles) # allows the normalisation of filelists, namely list of lenght 1 under Windows won't be processed as a string anymore
 
         if len(LoadFiles) > 0:
 
@@ -930,7 +930,7 @@ class Config1(Tabs.Tab):
                         Cleft = pickle.load(in_)
                         in_.close()
                         self.Vars.BindingSite.Add_Cleft(Cleft)
-                    
+                        
                     except IOError as IOerr:
                         IOerrMessage = "Could not read the cleft file. Error while loading cleft file : " + LoadFile
                         self.DisplayMessage(IOerrMessage,2)
@@ -1010,7 +1010,7 @@ class Config1(Tabs.Tab):
 
         #self.listSpheres = []
 
-        out = file(self.CleftTmpPath, 'w')
+        out = open(self.CleftTmpPath, 'w')
         # print self.Vars.BindingSite.listClefts
         for Cleft in self.Vars.BindingSite.listClefts:
             in_ = open(Cleft.CleftFile, 'r')

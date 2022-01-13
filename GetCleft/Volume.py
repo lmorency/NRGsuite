@@ -86,6 +86,7 @@ class RunVolume(threading.Thread):
             else:
                 Lines = out.splitlines()
                 for Line in Lines:
+                    Line = Line.decode('utf-8')
                     if Line.startswith('Volume'):
                         Cleft.Volume = float(Line[8:].strip())
                         self.queue.put(lambda: self.top.Init_Table())
