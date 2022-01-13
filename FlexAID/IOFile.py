@@ -87,7 +87,7 @@ class IOFile(Tabs.Tab):
     ATOM_INDEX = 90000
     RESIDUE_NUMBER = 9999
     
-    LigandSupportedFormats = [ ('All supported formats', ('*.pdb','*.mol','*.mol2','*.sdf','*.smi')),
+    LigandSupportedFormats = [ ('All supported formats', '*.pdb *.mol *.mol2 *.sdf *.smi'),
                                ('PDB File','*.pdb'),
                                ('MOL File','*.mol'),
                                ('MOL2 File','*.mol2'),
