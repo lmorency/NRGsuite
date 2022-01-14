@@ -46,8 +46,8 @@ class Base(object):
     # in milliseconds
     TKINTER_UPDATE_INTERVAL = 100
     
-    WEBSITE = 'http://bcb.med.usherbrooke.ca/'
-    VERSION = '2.48l'
+    WEBSITE = 'http://biophys.umontreal.ca/nrg'
+    VERSION = '2.48m'
     
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
@@ -147,7 +147,6 @@ class Base(object):
         if self.pymol_major_version == 2:
             k = 0
             for mi in self.top.menuBar._menudict['NRGsuite'].actions():
-                print(mi,k,self.menuindex)
                 if k == self.menuindex:
                     mi.setEnabled(state)
                     break
@@ -348,9 +347,8 @@ class Base(object):
             self.root = None
 
         if self.menuindex != -1:
-            print("Enable !")
             self.Enable_MenuItem()
-                
+
         print('  Closed ' + self.Name)
 
     ''' ==================================================================================
