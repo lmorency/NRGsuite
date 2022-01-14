@@ -204,8 +204,11 @@ class displayNewProject(Base.Base):
     FUNCTION After_Quit: Do some tasks after killing a frame
     ==================================================================================  '''
     def After_Quit(self):
-        
-        NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal', 'normal' ] )
+
+        if self.pymol_major_version == 2:
+            NRGsuite.EnableDisableMenuQT(self.top, [ False, False, True, True, True, True, True ] )
+        else:
+            NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal', 'normal' ] )            
 
     ''' ==================================================================================
     FUNCTION Btn_Create_Clicked: Create the new project then quit the application.

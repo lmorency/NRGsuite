@@ -328,7 +328,7 @@ class displayLoadProject(Base.Base):
     def Btn_Load_Clicked(self, *args):
         
         self.Update_ProjectFile()
-        
+
         self.top.Project_Dir = self.ActualDirPath
         self.top.ProjectName = self.ActualFileName
         
@@ -343,8 +343,11 @@ class displayLoadProject(Base.Base):
     ==================================================================================  '''
     def After_Quit(self):
         
-        NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal', 'normal' ] )
-    
+        if self.pymol_major_version == 2:
+            NRGsuite.EnableDisableMenuQT(self.top, [ False, False, True, True, True, True, True ] )
+        else:
+            NRGsuite.EnableDisableMenu(self.top, [ 'disabled', 'disabled', 'normal', 'normal', 'normal', 'normal', 'normal' ] )            
+
     ''' ==================================================================================
     FUNCTION Btn_Browse_Clicked: Browse to specify the directory to install the project.
     ==================================================================================  '''        
