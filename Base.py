@@ -28,6 +28,7 @@ else:
     import tkinter.font as tkFont
 
 from subprocess import Popen, PIPE
+from pymol import cmd
 
 import ctypes
 import os
@@ -46,7 +47,7 @@ class Base(object):
     TKINTER_UPDATE_INTERVAL = 100
     
     WEBSITE = 'http://biophys.umontreal.ca/nrg'
-    VERSION = '2.48l'
+    VERSION = '2.48m'
     
     ''' ==================================================================================
     FUNCTION __init__ : Initialization of the variables of the interface
@@ -56,6 +57,7 @@ class Base(object):
         self.Name = Name
         self.OSid = OSid
         self.PyMOL = PyMOL
+        self.pymol_major_version = int(cmd.get_version()[0][0])
         
         self.NRGsuite_Dir = NRGsuite_Dir
         self.Install_Dir = Install_Dir
@@ -85,8 +87,8 @@ class Base(object):
 
         self.menuindex = menuindex
         if self.menuindex != -1:
-            self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='disabled')
-        
+            self.Disable_MenuItem()
+            
         self.WINDOWWIDTH = WINDOWWIDTH
         self.WINDOWHEIGHT = WINDOWHEIGHT
         
@@ -137,6 +139,36 @@ class Base(object):
         
         self.Clean()
                 
+    ''' ==================================================================================
+    FUNCTION Toggle_MenuItem: Toggle the state of the menu item associated to the GUI
+    ==================================================================================  '''  
+    def Toggle_MenuItem(self, state):
+
+        if self.pymol_major_version == 2:
+            k = 0
+            for mi in self.top.menuBar._menudict['NRGsuite'].actions():
+                if k == self.menuindex:
+                    mi.setEnabled(state)
+                    break
+                k += 1
+        else:
+            str_state = 'disabled' if state == False else 'normal'
+            self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state=str_state)
+    
+    ''' ==================================================================================
+    FUNCTION Disable_MenuItem: Disable the menu item associated to the GUI
+    ==================================================================================  '''  
+    def Disable_MenuItem(self):
+
+        self.Toggle_MenuItem(False)
+        
+    ''' ==================================================================================
+    FUNCTION Enable_MenuItem: Enable the menu item associated to the GUI
+    ==================================================================================  '''  
+    def Enable_MenuItem(self):
+
+        self.Toggle_MenuItem(True)
+        
     ''' ==================================================================================
     FUNCTION Frame_Main: Generate the Main interface containing ALL the Frames    
     ==================================================================================  '''  
@@ -315,8 +347,8 @@ class Base(object):
             self.root = None
 
         if self.menuindex != -1:
-            self.top.menuBar.component('NRGsuite-menu').entryconfig(self.menuindex, state='normal')
-                
+            self.Enable_MenuItem()
+
         print('  Closed ' + self.Name)
 
     ''' ==================================================================================

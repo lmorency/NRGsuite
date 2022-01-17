@@ -498,8 +498,7 @@ class Parse(threading.Thread):
             tot = len(self.ListAtom)
             
             # Get all the keys in the Dictionary (ALL the Atoms)
-            order = self.dictFlexBonds.keys()
-            order.sort()
+            order = sorted(list(self.dictFlexBonds.keys()))
         
             for k in order:
         

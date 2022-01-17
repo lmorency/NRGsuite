@@ -298,7 +298,7 @@ def hashfile_update(file, hasher):
     
     buf = afile.read(BLOCKSIZE)
     while len(buf) > 0:
-        hasher.update(buf)
+        hasher.update(buf.encode('utf-8'))
         buf = afile.read(BLOCKSIZE)
     
     afile.close()

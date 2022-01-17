@@ -40,6 +40,9 @@ else:
 
 import time
 
+from pymol import cmd
+pymol_major_version = int(cmd.get_version()[0][0])
+
 '''=================================================================================================
 FUNCTION get_default_path_for_OSid: returns the default (and preferred) installation path for any OS
 ================================================================================================='''
@@ -123,12 +126,6 @@ if os.path.isdir(Install_Dir) and sys.version_info > (2, 5):
         #------------------------------------------------------------------# 
         
         def __init__(self):
-            # workaround PyMOL's legacy plugin system
-            if not hasattr(self.menuBar, 'component'):
-                class DummyComponent:
-                    def __init__(self, _): pass
-                    def entryconfig(*_, **_k): pass
-                self.menuBar.component = DummyComponent
             
             self.ProjectName = ''
             self.Project_Dir = ''
@@ -201,9 +198,12 @@ if os.path.isdir(Install_Dir) and sys.version_info > (2, 5):
                                      'CfgFile',
                                      label='   About',
                                      command = lambda s=self, menuindex=9 : StartAbout(s, menuindex))
-            
+
             # Make the Load  - Create projects button clickable only
-            EnableDisableMenu(self, ['normal','normal','disabled','normal','disabled','disabled','normal'] )
+            if pymol_major_version == 2:
+                EnableDisableMenuQT(self, [True,True,False,True,False,False,True] )
+            else:
+                EnableDisableMenu(self, ['normal','normal','disabled','normal','disabled','disabled','normal'] )
         
         #================================================================================
         # STARTING GetCleft Conditional... 
@@ -277,16 +277,47 @@ if os.path.isdir(Install_Dir) and sys.version_info > (2, 5):
                     self.RootGetCleft = None
                 print('  GetCleft interface successfully closed.')
                    
-            EnableDisableMenu(self, ['normal','normal','disabled','disabled','disabled','disabled','normal'] )
+            if pymol_major_version == 2:
+                EnableDisableMenuQT(self, [True,True,False,True,False,False,True] )
+            else:
+                EnableDisableMenu(self, ['normal','normal','disabled','normal','disabled','disabled','normal'] )
             
             print('\n  The project \'' + self.ProjectName + '\' was closed.')
+
+        #================================================================================        
+        # Find children item in QMenu
+        #================================================================================
+        def findMenuItem(self, menu, name):
+            for mi in menu.actions():
+                if mi.text().strip() == name:
+                    return mi
+            return None
 
         #================================================================================        
         # Set the NRGsuite Menu Options to Enable when a Project is created or loaded.
         # Set to disable at start up or when a project is closed.
         #================================================================================
-        def EnableDisableMenu(self, states):
+        def EnableDisableMenuQT(self, states):
+
+            menuItems = [
+                'New Project...', 'Load Project...', 'Close Project',
+                'Preferences',
+                'Open FlexAID...', 'Open GetCleft...',
+                'About'
+            ]
+
+            NRGsuite = self.menuBar._menudict['NRGsuite']
+            for menuItem in menuItems:
+                mi = findMenuItem(self, NRGsuite, menuItem)
+                if mi is None: continue
+                mi.setEnabled(states.pop(0))
             
+        #================================================================================        
+        # Set the NRGsuite Menu Options to Enable when a Project is created or loaded.
+        # Set to disable at start up or when a project is closed.
+        #================================================================================
+        def EnableDisableMenu(self, states):
+
             self.menuBar.component('NRGsuite-menu').entryconfig(0, state=states.pop(0))    # new
             self.menuBar.component('NRGsuite-menu').entryconfig(1, state=states.pop(0))    # load
             self.menuBar.component('NRGsuite-menu').entryconfig(2, state=states.pop(0))    # close

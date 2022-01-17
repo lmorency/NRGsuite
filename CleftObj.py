@@ -32,7 +32,7 @@ class CleftObj(object):
     def Set_CleftMD5(self):
 
         md5 = hashlib.md5()
-        md5.update(self.CleftFile)
+        md5.update(self.CleftFile.encode('utf-8'))
         
         self.CleftMD5 = md5.digest()
     
