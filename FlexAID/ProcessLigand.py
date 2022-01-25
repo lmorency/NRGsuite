@@ -172,7 +172,8 @@ class ProcLig(object):
             if self.Target:
                 cmd.save(self.TmpMoleculeFile, self.TargetName + ' & ! hydrogens')
             else:
-                copy(self.MoleculeFile, self.TmpMoleculeFile)
+                if self.MoleculeFile != self.TmpMoleculeFile:
+                    copy(self.MoleculeFile, self.TmpMoleculeFile)
             
         except IOError:
             return 1
