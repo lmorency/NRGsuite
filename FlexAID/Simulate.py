@@ -567,7 +567,7 @@ class Simulate(Tabs.Tab):
             
             self.dictSimData[Result.ResultID] = [ Result.CF, Result.CFapp, 'N/A', Result.RMSD ]
             
-            if Result.ResultID != 'REF':
+            if Result.ResultID != -1:
                 NRes = NRes + 1
             
         return NRes
@@ -581,13 +581,13 @@ class Simulate(Tabs.Tab):
         
         i = 0
         for key in sorted(self.dictSimData.keys()):
-            if key == 'REF':
+            if key == -1:
                 if self.hasConstraints:
-                    self.Table.Add( [ '', key, self.dictSimData[key][0], self.dictSimData[key][1], 
+                    self.Table.Add( [ '', 'REF', self.dictSimData[key][0], self.dictSimData[key][1], 
                                   self.dictSimData[key][2], '0.000' ],
                                 [ self.top.Color_White, None, None, None, None, None ] )
                 else:
-                    self.Table.Add( [ '', key, self.dictSimData[key][0], 
+                    self.Table.Add( [ '', 'REF', self.dictSimData[key][0], 
                                   self.dictSimData[key][2], '0.000' ],
                                 [ self.top.Color_White, None, None, None, None, None ] )
             else:
@@ -774,8 +774,9 @@ class Simulate(Tabs.Tab):
             Result = self.ResultsContainer.Get_ResultID(key)
             if Result is not None:
                 try:
-                    ResultName = 'RESULT_' + str(Result.ResultID) + '__'
-                    ResultHBondsName = 'RESULT_' + str(Result.ResultID) + '_H_BONDS__'
+                    ResultID = str(Result.ResultID) if Result.ResultID != -1 else 'REF'
+                    ResultName = 'RESULT_' + ResultID + '__'
+                    ResultHBondsName = 'RESULT_' + ResultID + '_H_BONDS__'
 
                     cmd.load(Result.ResultFile, ResultName, state=1)
                     cmd.refresh()

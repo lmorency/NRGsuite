@@ -182,7 +182,7 @@ class Manage(object):
             
             m = re.search("RESULT_INI\.pdb$", file)
             if m:
-                Res = Result.Result(file, 'REF')
+                Res = Result.Result(file, -1)
                 
                 if self.Config2.UseReference.get():
                     self.top.ResultsContainer.Results.append(Res)
